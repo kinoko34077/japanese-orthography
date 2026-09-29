@@ -141,3 +141,15 @@ export interface CanonicalWorkspace {
   reviewHints: Located<ReviewHint>[];
   packMetadata: Located<PackMetadata>[];
 }
+
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
+
+export type ArtifactFileName =
+  | 'manifest.json'
+  | 'hot-relations.json'
+  | 'hot-safety.json'
+  | 'cold-review.json'
+  | 'audit-map.json';
+
+export type CompiledArtifact = Record<ArtifactFileName, string>;
