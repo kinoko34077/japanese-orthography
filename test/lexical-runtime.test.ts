@@ -18,6 +18,10 @@ async function artifact() {
   return compileLexicalSourceSlice(source);
 }
 
+async function historicalSinoSlice() {
+  return JSON.parse(await readFile('data/historical/sino/kkh-jion-first-slice.json', 'utf8')) as Record<string, any>;
+}
+
 test('lexical runtime returns zero, one, or multiple source-backed candidates', async () => {
   const lexicalSandbox = await loadRuntime('runtime/lexical-runtime.js');
   assert.equal(typeof lexicalSandbox.LexicalRuntime?.createLexicalRuntime, 'function');
@@ -73,21 +77,23 @@ test('lexical runtime does not invent a modern reading when source readings disa
   assert.equal(candidate.lexicalReading, 'れきし');
 });
 
-test('real lexical runtime injects into the existing resolver without a second pipeline', async () => {
-  const [lexicalSandbox, sharedSandbox] = await Promise.all([
+test('real lexical runtime and source-backed jion runtime inject into one resolver pipeline', async () => {
+  const [lexicalSandbox, historicalSandbox, sharedSandbox] = await Promise.all([
     loadRuntime('runtime/lexical-runtime.js'),
+    loadRuntime('runtime/historical-sino-runtime.js'),
     loadRuntime('runtime/transform-shared.js')
   ]);
   const resolverSandbox = await loadRuntime('runtime/orthography-resolver.js', { TransformShared: sharedSandbox.TransformShared });
-  const lexical = lexicalSandbox.LexicalRuntime.createLexicalRuntime(await artifact());
+  const compiled = await artifact();
+  const lexical = lexicalSandbox.LexicalRuntime.createLexicalRuntime(compiled);
+  const historicalSino = historicalSandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(
+    await historicalSinoSlice(),
+    { lexicalNamespaceId: lexical.lexicalNamespaceId }
+  );
   let lookups = 0;
   const resolver = resolverSandbox.OrthographyResolver.createResolver({
     lexicalLookup(surface: string) { lookups += 1; return lexical.lookup(surface); },
-    historicalLookup(candidate: any) {
-      return candidate.lexicalIdentity === 'unidic-cwj:2025.12:lemma:8098'
-        ? { route: 'sino', reading: 'がくかう', surface: '学校', evidenceRefs: ['acceptance:school'] }
-        : null;
-    },
+    historicalLookup(candidate: any) { return historicalSino.lookup(candidate); },
     contextualRelations: [{ id: 'acceptance:taifu', match: '台風', target: '颱風', lexicalBindingIds: ['unidic-cwj:2025.12:lemma:21903'] }],
     safeKanjiMap: { 学: '學' }
   });
@@ -96,16 +102,47 @@ test('real lexical runtime injects into the existing resolver without a second p
   assert.equal(school.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
   assert.equal(school.historical.surface, '學校');
   assert.equal(school.historical.kana, 'がくかう');
+  assert.deepEqual(Array.from(school.components, (component: any) => [
+    component.lexicalIdentity,
+    component.surface,
+    component.lexicalReading,
+    component.historicalKana,
+    component.renderedSurface
+  ]), [
+    [null, '学', 'がく', 'がく', '學'],
+    [null, '校', 'こう', 'かう', '校']
+  ]);
+  assert.ok(Array.from(school.evidenceRefs).includes('kkh-kana-school-gakkou'));
+  assert.equal(resolver.render(school, { mode: 'ruby-whole-explicit' }), '｜學校《がくかう》');
+  assert.equal(resolver.render(school, { mode: 'ruby-components-explicit' }), '｜學《がく》校《かう》');
+
   const alternateSchoolRuby = resolver.resolveUnit('｜学校《がっこ》');
   assert.equal(alternateSchoolRuby.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
   assert.equal(alternateSchoolRuby.reading.source, 'ruby-word');
   assert.equal(alternateSchoolRuby.reading.modernSurface, 'がっこ');
+  assert.equal(alternateSchoolRuby.historical.kana, 'がくかう');
+
+  const componentSchoolRuby = resolver.resolveUnit('｜学《がく》校《こう》');
+  assert.equal(componentSchoolRuby.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
+  assert.deepEqual(Array.from(componentSchoolRuby.components, (component: any) => component.readingSource), ['ruby-component', 'ruby-component']);
+  assert.equal(componentSchoolRuby.historical.kana, 'がくかう');
+
   assert.equal(resolver.resolveUnit('今日').kind, 'candidates');
   assert.equal(resolver.resolveUnit('｜今日《きょう》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:9128');
   assert.equal(resolver.resolveUnit('｜今日《こんにち》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:13244');
   assert.equal(resolver.resolveUnit('台風').historical.surface, '颱風');
-  assert.equal(resolver.resolveUnit('味わおう').morphology.conjugationForm, '意志推量形');
+  const native = resolver.resolveUnit('味わおう');
+  assert.equal(native.morphology.conjugationForm, '意志推量形');
+  assert.equal(native.historical.route, null);
+  assert.equal(native.historical.kana, null);
   assert.equal(resolver.resolveUnit('未知語').kind, 'unresolved');
+
+  const afterSchoolResolve = lookups;
+  resolver.render(school, { mode: 'plain' });
+  resolver.render(school, { mode: 'ruby-whole-explicit' });
+  resolver.render(school, { mode: 'ruby-components-explicit' });
+  assert.equal(lookups, afterSchoolResolve);
+
   const beforeProtected = lookups;
   assert.equal(resolver.resolveUnit('｜学校《がっこう》', { protected: true }).kind, 'protected');
   assert.equal(lookups, beforeProtected);
