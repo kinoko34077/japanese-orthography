@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1",
+  "kind": "japanese-orthography-historical-sino-slice",
+  "purpose": "#32 bounded source-backed Sino-Japanese historical-reading acceptance slice",
+  "lexicalNamespaceId": "6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144",
+  "source": {
+    "repository": "okikae/kkh",
+    "commit": "19b24f88ab55809a186d88c465959548495b26a2",
+    "license": "BSD-2-Clause",
+    "status": "beta-incomplete",
+    "files": [
+      {
+        "path": "kana-jisyo",
+        "blobSha": "6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be",
+        "role": "whole-word-historical-kana-evidence"
+      },
+      {
+        "path": "jion-jisyo",
+        "blobSha": "3447864cb4b661c586ae1a35ef7cc524b3d5d895",
+        "role": "component-jion-candidate-evidence"
+      }
+    ],
+    "notes": [
+      "The upstream jion-jisyo labels itself Beta/incomplete.",
+      "Source-level alternative readings are retained in sourceRecords and are not promoted to global character-reading rules."
+    ]
+  },
+  "sourceRecords": [
+    {
+      "id": "kkh-kana-school-gakkou",
+      "file": "kana-jisyo",
+      "enabled": true,
+      "raw": "がっこう /がくかう ;促音「学校」",
+      "surface": "学校",
+      "modernReading": "がっこう",
+      "historicalReading": "がくかう",
+      "sourceComment": "促音「学校」"
+    },
+    {
+      "id": "kkh-jion-gaku-gaku",
+      "file": "jion-jisyo",
+      "enabled": true,
+      "raw": "学 /がく",
+      "surface": "学",
+      "historicalReading": "がく"
+    },
+    {
+      "id": "kkh-jion-kou-kau",
+      "file": "jion-jisyo",
+      "enabled": true,
+      "raw": "校 /かう",
+      "surface": "校",
+      "historicalReading": "かう"
+    },
+    {
+      "id": "kkh-jion-kou-keu",
+      "file": "jion-jisyo",
+      "enabled": true,
+      "raw": "校 /けう",
+      "surface": "校",
+      "historicalReading": "けう"
+    }
+  ],
+  "relations": [
+    {
+      "lexicalIdentity": "unidic-cwj:2025.12:lemma:8098",
+      "surface": "学校",
+      "modernReading": "がっこう",
+      "historicalReading": "がくかう",
+      "components": [
+        {
+          "surface": "学",
+          "modernReading": "がく",
+          "historicalReading": "がく",
+          "readingClass": "on",
+          "evidenceRefs": ["kkh-jion-gaku-gaku"]
+        },
+        {
+          "surface": "校",
+          "modernReading": "こう",
+          "historicalReading": "かう",
+          "readingClass": "on",
+          "evidenceRefs": ["kkh-jion-kou-kau"]
+        }
+      ],
+      "evidenceRefs": [
+        "kkh-kana-school-gakkou",
+        "kkh-jion-gaku-gaku",
+        "kkh-jion-kou-kau"
+      ],
+      "selectionNote": "The active whole-word 学校 record establishes がくかう for this lexical relation. The separate 校/けう source record is retained as source-level alternative evidence and is not flattened into a global 校 reading."
+    }
+  ]
+}
