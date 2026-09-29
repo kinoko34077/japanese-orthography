@@ -35,13 +35,13 @@ async function readGolden(goldenDir: string): Promise<CompiledArtifact> {
 }
 
 export async function checkRoot(rootDir: string, goldenDir: string): Promise<void> {
-  const { workspace, diagnostics } = await validateRoot(rootDir);
+  const { workspace, diagnostics, integrationFixture } = await validateRoot(rootDir);
   printDiagnostics(diagnostics);
   if (diagnostics.length > 0) {
     throw new Error('Production check requires zero unresolved ERROR/REVIEW diagnostics');
   }
 
-  const bindings = createFirstSliceCompilationBindings(workspace);
+  const bindings = createFirstSliceCompilationBindings(integrationFixture);
   const first = compileWorkspace(workspace, bindings);
   const second = compileWorkspace(workspace, bindings);
   assertArtifactsEqual(first, second, 'Deterministic double compile failed');
