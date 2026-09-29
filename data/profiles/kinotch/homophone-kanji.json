@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1",
+  "profileId": "kinotch-fixed",
+  "packId": "homophone-kanji",
+  "sourcePack": "project-homophone",
+  "label": "同音漢字置換",
+  "kind": "dictionary-rules",
+  "groups": [
+    {
+      "id": "default",
+      "label": "既定",
+      "phraseRules": [
+        {
+          "match": "ドイツ",
+          "targets": [
+            "独逸",
+            "独乙"
+          ],
+          "priority": 90,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    }
+  ]
+}

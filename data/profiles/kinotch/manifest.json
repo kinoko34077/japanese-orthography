@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1",
+  "profileId": "kinotch-fixed",
+  "authority": "compatibility_profile",
+  "sourceSnapshots": [
+    {
+      "repository": "kinoko34077/txt-auto-replace",
+      "commit": "b1227053c5df94c148ca2027b897a69199801e4e",
+      "path": "transforms/40-legacy-kanji.json5",
+      "blobSha": "57177fb8fba471f9c169283dcbae5830d5bac64f",
+      "role": "legacy"
+    },
+    {
+      "repository": "kinoko34077/txt-auto-replace",
+      "commit": "b1227053c5df94c148ca2027b897a69199801e4e",
+      "path": "transforms/50-official-homophone-restoration.json5",
+      "blobSha": "c3e35dd4431deeb13b94a7f3d5e43f978ed73ef3",
+      "role": "official-homophone"
+    },
+    {
+      "repository": "kinoko34077/txt-auto-replace",
+      "commit": "b1227053c5df94c148ca2027b897a69199801e4e",
+      "path": "transforms/55-homophone-kanji.json5",
+      "blobSha": "3d4ff5f2c1bdf8dd1cea4832d0a6d08592a218fd",
+      "role": "project-homophone"
+    }
+  ],
+  "packs": [
+    {
+      "id": "legacy-kanji",
+      "file": "legacy-kanji.json",
+      "sourcePack": "legacy",
+      "genericSafety": "not_implied"
+    },
+    {
+      "id": "official-homophone-restoration",
+      "file": "official-homophone-restoration.json",
+      "sourcePack": "official-homophone",
+      "genericSafety": "not_implied"
+    },
+    {
+      "id": "homophone-kanji",
+      "file": "homophone-kanji.json",
+      "sourcePack": "project-homophone",
+      "genericSafety": "not_implied"
+    }
+  ]
+}
