@@ -35,6 +35,23 @@ jobs:
           status=$?
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit "$status"
+      - name: Generate Windows manifest diagnostics
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          rm -rf diag-context diag-profile
+          ORTHOGRAPHY_OUT_DIR="$PWD/diag-context" node --import tsx tools/compile.ts
+          ORTHOGRAPHY_PROFILE_OUT_DIR="$PWD/diag-profile" node --import tsx tools/compile-profile.ts
+          {
+            echo '=== contextual generated ==='
+            cat diag-context/manifest.json
+            echo '=== contextual golden ==='
+            cat test/golden/contextual-kanji/manifest.json
+            echo '=== profile generated ==='
+            cat diag-profile/manifest.json
+            echo '=== profile golden ==='
+            cat test/golden/kinotch-profile/manifest.json
+          } > manifest-diagnostics.txt
       - name: Publish diagnostic output
         if: always()
         uses: actions/github-script@v7
@@ -47,10 +64,11 @@ jobs:
             const fs = require('node:fs');
             const output = fs.existsSync('baseline-test.log') ? fs.readFileSync('baseline-test.log', 'utf8').trim() : '<log missing>';
             const tail = output.length > 50000 ? output.slice(-50000) : output;
+            const manifestDiagnostics = fs.existsSync('manifest-diagnostics.txt') ? `\n\n<details><summary>manifest diagnostics</summary>\n\n\`\`\`json\n${fs.readFileSync('manifest-diagnostics.txt', 'utf8')}\n\`\`\`\n</details>` : '';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: 23,
-              body: `## Baseline matrix diagnostic — ${process.env.MATRIX_OS} / Node ${process.env.MATRIX_NODE}\n\nExit: \`${process.env.TEST_EXIT || 'unknown'}\`\n\n<details><summary>npm test output</summary>\n\n\`\`\`text\n${tail}\n\`\`\`\n</details>`
+              body: `## Baseline matrix diagnostic — ${process.env.MATRIX_OS} / Node ${process.env.MATRIX_NODE}\n\nExit: \`${process.env.TEST_EXIT || 'unknown'}\`\n\n<details><summary>npm test output</summary>\n\n\`\`\`text\n${tail}\n\`\`\`\n</details>${manifestDiagnostics}`
             });
             if ((process.env.TEST_EXIT || '1') !== '0') core.setFailed(`npm test exited ${process.env.TEST_EXIT || 'unknown'}`);
