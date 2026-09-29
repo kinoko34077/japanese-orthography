@@ -23,7 +23,7 @@ function fromAjv(error: ErrorObject): Diagnostic {
 }
 
 export function createProfileSchemaValidator(): (document: unknown, schemaId: string) => Diagnostic[] {
-  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
   for (const path of schemaFiles) ajv.addSchema(loadSchema(path));
   return (document, schemaId) => {
     const validator = ajv.getSchema(schemaId);
