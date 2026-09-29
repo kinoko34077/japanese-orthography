@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { compileKinotchProfile, type CompiledProfileArtifact, type ProfileArtifactFileName } from './profile-compiler.ts';
 import { loadKinotchProfile } from './profile-loader.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 const fileNames: readonly ProfileArtifactFileName[] = [
   'manifest.json',
@@ -13,7 +14,10 @@ const fileNames: readonly ProfileArtifactFileName[] = [
 
 async function readGolden(dir: string): Promise<CompiledProfileArtifact> {
   return Object.fromEntries(
-    await Promise.all(fileNames.map(async (name) => [name, await readFile(resolve(dir, name), 'utf8')] as const))
+    await Promise.all(fileNames.map(async (name) => [
+      name,
+      normalizeCheckoutText(await readFile(resolve(dir, name), 'utf8'))
+    ] as const))
   ) as CompiledProfileArtifact;
 }
 
