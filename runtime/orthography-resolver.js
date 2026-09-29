@@ -309,7 +309,44 @@
       };
     };
 
-    const render = (unit) => unit?.historical?.surface ?? unit?.sourceText ?? unit?.sourceSurface ?? "";
+    const render = (unit, options = {}) => {
+      if (!unit) {
+        return "";
+      }
+      if (unit.kind === "protected") {
+        return unit.sourceText ?? unit.sourceSurface ?? "";
+      }
+
+      const mode = options.mode ?? "plain";
+      const surface = unit?.historical?.surface ?? unit?.sourceSurface ?? unit?.sourceText ?? "";
+      const historicalKana = unit?.historical?.kana ?? null;
+      if (mode === "plain" || !historicalKana) {
+        return surface;
+      }
+
+      if (mode === "ruby-whole-explicit") {
+        return `｜${surface}《${historicalKana}》`;
+      }
+      if (mode === "ruby-whole-implicit") {
+        return `${surface}《${historicalKana}》`;
+      }
+
+      const components = Array.isArray(unit.components) ? unit.components : [];
+      const componentRuby = components.map((component) => {
+        const componentSurface = component.renderedSurface ?? component.surface ?? "";
+        const componentKana = component.historicalKana ?? component.lexicalReading ?? null;
+        return componentKana ? `${componentSurface}《${componentKana}》` : componentSurface;
+      }).join("");
+
+      if (mode === "ruby-components-explicit") {
+        return componentRuby ? `｜${componentRuby}` : `｜${surface}《${historicalKana}》`;
+      }
+      if (mode === "ruby-components-implicit") {
+        return componentRuby || `${surface}《${historicalKana}》`;
+      }
+
+      return surface;
+    };
 
     return {
       resolveUnit,
