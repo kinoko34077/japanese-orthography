@@ -48,6 +48,20 @@ test('pinned KKH slice resolves real UniDic 学校 identity without flattening s
   assert.ok(slice.sourceRecords.some((record: any) => record.file === 'jion-jisyo' && record.surface === '校' && record.historicalReading === 'けう'));
 });
 
+test('historical Sino runtime rejects malformed pinned source identity', async () => {
+  const [sandbox, slice] = await Promise.all([
+    loadRuntime('runtime/historical-sino-runtime.js'),
+    loadSlice()
+  ]);
+  const malformed = structuredClone(slice);
+  malformed.source.files[0].blobSha = 'not-a-git-blob-sha';
+
+  assert.throws(
+    () => sandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(malformed, { lexicalNamespaceId: namespaceId }),
+    /source file blob SHA/
+  );
+});
+
 test('historical Sino runtime rejects a lexical namespace mismatch', async () => {
   const [sandbox, slice] = await Promise.all([
     loadRuntime('runtime/historical-sino-runtime.js'),
