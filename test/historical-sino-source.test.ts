@@ -46,6 +46,13 @@ test('pinned KKH slice resolves real UniDic 学校 identity without flattening s
   assert.ok(slice.sourceRecords.some((record: any) => record.file === 'kana-jisyo' && record.modernReading === 'がっこう' && record.historicalReading === 'がくかう'));
   assert.ok(slice.sourceRecords.some((record: any) => record.file === 'jion-jisyo' && record.surface === '校' && record.historicalReading === 'かう'));
   assert.ok(slice.sourceRecords.some((record: any) => record.file === 'jion-jisyo' && record.surface === '校' && record.historicalReading === 'けう'));
+  assert.ok(slice.projectEvidenceRecords.some((record: any) => (
+    record.id === 'project-school-component-readings' &&
+    record.commentId === 5890398199 &&
+    record.modernComponentReadings?.['校'] === 'こう'
+  )));
+  assert.ok(relation.evidenceRefs.includes('project-school-component-readings'));
+  assert.ok(relation.components[1].evidenceRefs.includes('project-school-component-readings'));
 });
 
 test('historical Sino runtime rejects malformed pinned source identity', async () => {
@@ -59,6 +66,20 @@ test('historical Sino runtime rejects malformed pinned source identity', async (
   assert.throws(
     () => sandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(malformed, { lexicalNamespaceId: namespaceId }),
     /source file blob SHA/
+  );
+});
+
+test('historical Sino runtime rejects dangling evidence references', async () => {
+  const [sandbox, slice] = await Promise.all([
+    loadRuntime('runtime/historical-sino-runtime.js'),
+    loadSlice()
+  ]);
+  const malformed = structuredClone(slice);
+  malformed.relations[0].components[0].evidenceRefs = ['missing-evidence-id'];
+
+  assert.throws(
+    () => sandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(malformed, { lexicalNamespaceId: namespaceId }),
+    /Unknown historical Sino evidence ref/
   );
 });
 
