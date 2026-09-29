@@ -68,3 +68,20 @@ test('semantic profile validation rejects duplicate pack, group and phrase ident
   assert.ok(diagnostics.some((item) => item.code === 'E_PROFILE_DUPLICATE_GROUP'));
   assert.ok(diagnostics.some((item) => item.code === 'E_PROFILE_DUPLICATE_RULE'));
 });
+
+test('semantic profile validation binds each manifest file declaration to its pack identity', () => {
+  const swappedManifest = {
+    ...manifest,
+    sourceSnapshots: [
+      ...manifest.sourceSnapshots,
+      { ...manifest.sourceSnapshots[0], path: 'transforms/55-homophone-kanji.json5', role: 'project-homophone' }
+    ],
+    packs: [
+      { id: 'legacy-kanji', file: 'legacy-kanji.json', sourcePack: 'legacy', genericSafety: 'not_implied' },
+      { id: 'homophone-kanji', file: 'homophone-kanji.json', sourcePack: 'project-homophone', genericSafety: 'not_implied' }
+    ]
+  };
+  const projectPack = { ...pack, packId: 'homophone-kanji', sourcePack: 'project-homophone' };
+  const diagnostics = validateProfileDocuments(swappedManifest, [projectPack, pack]);
+  assert.ok(diagnostics.some((item) => item.code === 'E_PROFILE_PACK_REF_MISMATCH'));
+});

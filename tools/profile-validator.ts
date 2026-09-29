@@ -79,11 +79,20 @@ export function validateProfileDocuments(
     }
   }
 
-  const manifestPackIds = new Set(typedManifest.packs?.map((pack) => pack.id) ?? []);
-  for (const pack of typedPacks) {
+  const manifestPackRefs = Array.isArray(typedManifest.packs) ? typedManifest.packs : [];
+  const manifestPackIds = new Set(manifestPackRefs.map((pack) => pack.id));
+  for (const [index, pack] of typedPacks.entries()) {
     if (!manifestPackIds.has(pack.packId)) {
-      diagnostics.push({ severity: 'ERROR', code: 'E_PROFILE_UNDECLARED_PACK', path: '/', message: `Pack ${pack.packId} is not declared by manifest` });
+      diagnostics.push({ severity: 'ERROR', code: 'E_PROFILE_UNDECLARED_PACK', path: '/', message: 'Pack ' + pack.packId + ' is not declared by manifest' });
     }
+    const declared = manifestPackRefs[index];
+    if (declared && (declared.id !== pack.packId || declared.sourcePack !== pack.sourcePack)) {
+      diagnostics.push({ severity: 'ERROR', code: 'E_PROFILE_PACK_REF_MISMATCH', path: '/packs/' + index,
+        message: 'Manifest pack ' + declared.id + ' (' + declared.sourcePack + ') does not match loaded pack ' + pack.packId + ' (' + pack.sourcePack + ')' });
+    }
+  }
+  if (typedPacks.length !== manifestPackRefs.length) {
+    diagnostics.push({ severity: 'ERROR', code: 'E_PROFILE_PACK_REF_MISMATCH', path: '/packs', message: 'Manifest pack count does not match loaded pack count' });
   }
   return diagnostics;
 }
