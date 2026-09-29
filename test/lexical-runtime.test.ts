@@ -28,6 +28,7 @@ test('lexical runtime returns zero, one, or multiple source-backed candidates', 
   assert.equal(school.length, 1);
   assert.equal(school[0].lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
   assert.equal(school[0].reading, 'がっこう');
+  assert.deepEqual(Array.from(school[0].modernReadings), ['がっこ', 'がっこう']);
   assert.equal(school[0].lexicalOrigin, 'sino');
 
   const today = runtime.lookup('今日');
@@ -68,6 +69,10 @@ test('real lexical runtime injects into the existing resolver without a second p
   assert.equal(school.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
   assert.equal(school.historical.surface, '學校');
   assert.equal(school.historical.kana, 'がくかう');
+  const alternateSchoolRuby = resolver.resolveUnit('｜学校《がっこ》');
+  assert.equal(alternateSchoolRuby.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
+  assert.equal(alternateSchoolRuby.reading.source, 'ruby-word');
+  assert.equal(alternateSchoolRuby.reading.modernSurface, 'がっこ');
   assert.equal(resolver.resolveUnit('今日').kind, 'candidates');
   assert.equal(resolver.resolveUnit('｜今日《きょう》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:9128');
   assert.equal(resolver.resolveUnit('｜今日《こんにち》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:13244');
