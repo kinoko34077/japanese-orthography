@@ -39,11 +39,11 @@ test('real UniDic source slice compiles to one deterministic lexical artifact', 
     assert.equal(surface.get('味わおう')?.candidateCount, 1);
 
     const schoolCandidate = artifact.candidates[school.candidateOffset];
-    assert.equal(artifact.lemmas[schoolCandidate.localLemmaId].sourceLemmaId, 8098);
-    assert.equal(artifact.lemmas[schoolCandidate.localLemmaId].lexicalOrigin, 'sino');
+    assert.equal(artifact.lemmas[schoolCandidate.lemmaIndex].sourceLemmaId, 8098);
+    assert.equal(artifact.lemmas[schoolCandidate.lemmaIndex].lexicalOrigin, 'sino');
     const todaySourceLemmaIds = artifact.candidates
       .slice(today.candidateOffset, today.candidateOffset + today.candidateCount)
-      .map((candidate: any) => artifact.lemmas[candidate.localLemmaId].sourceLemmaId);
+      .map((candidate: any) => artifact.lemmas[candidate.lemmaIndex].sourceLemmaId);
     assert.deepEqual(todaySourceLemmaIds, [9128, 13244]);
     assert.ok(artifact.sections.every((section: any) => /^[0-9a-f]{64}$/.test(section.sha256)));
   } finally {
