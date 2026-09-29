@@ -89,6 +89,24 @@ test('compile preserves prior dist generation when validation fails', async () =
   }
 });
 
+test('compile uses explicit local fixture bindings rather than source-qualified evidence identities', async () => {
+  const fixture = await copiedWorkspace();
+  const outDir = join(fixture.root, 'dist', 'contextual-kanji');
+  try {
+    const result = runTool('compile.ts', fixture.root, outDir);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const relations = JSON.parse(await readFile(join(outDir, 'hot-relations.json'), 'utf8')) as Array<{ lexicalBindingIds?: string[] }>;
+    const ids = relations.flatMap((relation) => relation.lexicalBindingIds ?? []);
+    assert.ok(ids.length > 0);
+    for (const id of ids) {
+      assert.match(id, /^fixture-local-/);
+      assert.doesNotMatch(id, /kkh-kanji-jisyo|kanjipedia|kotobank/);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test('production check succeeds for two deterministic clean builds and golden output', () => {
   const result = runTool('check.ts', repoRoot);
   assert.equal(result.status, 0, result.stderr || result.stdout);
