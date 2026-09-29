@@ -1,7 +1,7 @@
 import { performance } from 'node:perf_hooks';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
-import { compileLexicalSourceSlice, serializeLexicalArtifact, type UniDicSourceSlice } from './lexical-compiler.ts';
+import { compileLexicalSourceSlice, serializeLexicalArtifact, type LexicalArtifact, type UniDicSourceSlice } from './lexical-compiler.ts';
 
 const sourcePath = 'data/lexical/sources/unidic-cwj-202512-first-slice.json';
 const runtimePath = 'runtime/lexical-runtime.js';
@@ -9,18 +9,18 @@ const runtimePath = 'runtime/lexical-runtime.js';
 const sourceText = await readFile(sourcePath, 'utf8');
 const runtimeSource = await readFile(runtimePath, 'utf8');
 const sourceSlice = JSON.parse(sourceText) as UniDicSourceSlice;
-const artifact = compileLexicalSourceSlice(sourceSlice);
-const artifactText = serializeLexicalArtifact(artifact);
+const compiledArtifact = compileLexicalSourceSlice(sourceSlice);
+const artifactText = serializeLexicalArtifact(compiledArtifact);
 const normalizedProjectionText = JSON.stringify({
-  lemmas: artifact.lemmas,
-  morphologies: artifact.morphologies,
-  candidates: artifact.candidates,
-  surfaceIndex: artifact.surfaceIndex
+  lemmas: compiledArtifact.lemmas,
+  morphologies: compiledArtifact.morphologies,
+  candidates: compiledArtifact.candidates,
+  surfaceIndex: compiledArtifact.surfaceIndex
 });
-const surfaceIndexText = JSON.stringify(artifact.surfaceIndex);
 
 const heapBefore = process.memoryUsage().heapUsed;
 const initStart = performance.now();
+const artifact = JSON.parse(artifactText) as LexicalArtifact;
 const sandbox: Record<string, any> = {};
 sandbox.globalThis = sandbox;
 vm.runInNewContext(runtimeSource, sandbox, { filename: runtimePath });
@@ -50,19 +50,26 @@ const decodeTotalMs = performance.now() - decodeStart;
 const sourceSliceBytes = Buffer.byteLength(sourceText, 'utf8');
 const runtimeModuleBytes = Buffer.byteLength(runtimeSource, 'utf8');
 const runtimeArtifactBytes = Buffer.byteLength(artifactText, 'utf8');
+const surfaceIndexBytes = artifact.sections.find((entry) => entry.id === 'surfaceIndex')?.byteLength ?? 0;
 
 const report = {
   schemaVersion: 1,
   scope: 'real-lexical-evidence-acceptance-slice',
   productionThreshold: null,
   caveat: 'Development baseline for the bounded acceptance slice; not a production/full-corpus threshold.',
+  environment: {
+    node: process.version,
+    platform: process.platform,
+    arch: process.arch
+  },
   lexicalNamespaceId: artifact.lexicalNamespaceId,
   artifactContentId: artifact.artifactContentId,
   sourceSliceBytes,
   normalizedProjectionBytes: Buffer.byteLength(normalizedProjectionText, 'utf8'),
   runtimeArtifactBytes,
-  surfaceIndexBytes: Buffer.byteLength(surfaceIndexText, 'utf8'),
+  surfaceIndexBytes,
   runtimeModuleBytes,
+  coldInitializationIncludesArtifactParse: true,
   coldInitializationMs,
   retainedHeapDeltaBytes,
   firstLookupMs,
@@ -81,6 +88,7 @@ const report = {
   observableLoadCopies: {
     count: 3,
     bytes: sourceSliceBytes + runtimeModuleBytes + runtimeArtifactBytes,
+    description: 'Harness-observable UTF-8 source/runtime/artifact byte inputs; VM/runtime internal copies are not exposed by Node.',
     internalRuntimeCopiesObserved: false
   }
 };
