@@ -35,10 +35,18 @@ test('pinned KKH native slice resolves 思う by real lexical identity and prese
   assert.ok(slice.source.files.some((file: any) => (
     file.path === 'kana-jisyo' && file.blobSha === '6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be'
   )));
+  assert.equal(slice.relations[0].requiredMorphology.conjugationType, '五段-ワア行');
+  assert.equal(slice.relations[0].requiredMorphology.conjugationForm, '終止形-一般');
   assert.equal(relation.route, 'native');
   assert.equal(relation.surface, '思ふ');
   assert.equal(relation.reading, null);
   assert.deepEqual(Array.from(relation.evidenceRefs), ['kkh-kana-omou-omofu']);
+
+  assert.equal(runtime.lookup({
+    lexicalIdentity: 'unidic-cwj:2025.12:lemma:5255',
+    lexicalOrigin: 'native',
+    morphology: { conjugationType: '五段-ワア行', conjugationForm: '連用形-ウ音便' }
+  }), null);
 
   const variants = slice.sourceRecords.filter((record: any) => record.surface === '味わおう');
   assert.deepEqual(Array.from(variants, (record: any) => record.historicalSurface), ['味はゝう', '味ははう']);
