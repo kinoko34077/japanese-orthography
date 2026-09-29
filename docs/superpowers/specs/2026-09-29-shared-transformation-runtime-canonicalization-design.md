@@ -84,7 +84,7 @@ The three JavaScript files are initially adopted byte-for-byte from the already-
 - runtime semantics version;
 - ordered module list;
 - byte length;
-- SHA-256 payload digest;
+- exact Git blob identity;
 - original adopted Git blob identity;
 - dependency relation (`transform-engine` requires `transform-shared`).
 
@@ -101,7 +101,7 @@ Each consumer receives:
    - core repository;
    - exact core commit;
    - runtime manifest identity;
-   - per-module digest/length;
+   - per-module Git blob identity/length;
    - local operational path;
 3. an offline verifier that fails when:
    - a local runtime module differs from the pinned canonical payload identity;
