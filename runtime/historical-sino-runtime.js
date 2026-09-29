@@ -13,6 +13,26 @@
     }
   };
 
+  const requireGitSha = (value, label) => {
+    if (typeof value !== "string" || !/^[0-9a-f]{40}$/.test(value)) {
+      throw new TypeError(`Invalid ${label}`);
+    }
+  };
+
+  const validateSource = (source) => {
+    requireNonEmptyString(source?.repository, "historical Sino source repository");
+    requireGitSha(source?.commit, "historical Sino source commit SHA");
+    requireNonEmptyString(source?.license, "historical Sino source license");
+    requireNonEmptyString(source?.status, "historical Sino source status");
+    if (!Array.isArray(source?.files) || source.files.length === 0) {
+      throw new TypeError("Historical Sino source requires files");
+    }
+    for (const file of source.files) {
+      requireNonEmptyString(file?.path, "historical Sino source file path");
+      requireGitSha(file?.blobSha, "historical Sino source file blob SHA");
+    }
+  };
+
   const normalizeComponent = (component) => {
     requireNonEmptyString(component?.surface, "historical Sino component surface");
     requireNonEmptyString(component?.modernReading, "historical Sino component modern reading");
@@ -31,6 +51,7 @@
   const normalizeRelation = (relation) => {
     requireNonEmptyString(relation?.lexicalIdentity, "historical Sino lexical identity");
     requireNonEmptyString(relation?.surface, "historical Sino surface");
+    requireNonEmptyString(relation?.modernReading, "historical Sino modern reading");
     requireNonEmptyString(relation?.historicalReading, "historical Sino historical reading");
     return {
       route: "sino",
@@ -46,6 +67,7 @@
       throw new TypeError("Unsupported historical Sino slice");
     }
     requireNonEmptyString(slice.lexicalNamespaceId, "historical Sino lexical namespace");
+    validateSource(slice.source);
     const expectedNamespace = options.lexicalNamespaceId ?? slice.lexicalNamespaceId;
     if (slice.lexicalNamespaceId !== expectedNamespace) {
       throw new Error("Historical Sino lexical namespace mismatch");
@@ -69,7 +91,7 @@
 
     return {
       lexicalNamespaceId: slice.lexicalNamespaceId,
-      source: slice.source ?? null,
+      source: slice.source,
       lookup
     };
   };
