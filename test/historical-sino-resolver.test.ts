@@ -78,3 +78,38 @@ test('resolver adopts historical relation components when the lexical candidate 
   assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit' }), '｜學校《がくかう》');
   assert.equal(resolver.render(unit, { mode: 'ruby-components-explicit' }), '｜學《がく》校《かう》');
 });
+
+test('resolver does not reuse source-surface relation components for a different contextual target', async () => {
+  const resolverSandbox = await loadUmd('runtime/orthography-resolver.js');
+  const resolver = resolverSandbox.OrthographyResolver.createResolver({
+    lexicalLookup(surface: string) {
+      return surface === '台風' ? [{
+        lexicalIdentity: 'lex-taifu',
+        surface: '台風',
+        reading: 'たいふう',
+        lexicalOrigin: 'sino',
+        components: [],
+        viableBindingIds: ['bind-taifu'],
+        evidenceRefs: []
+      }] : [];
+    },
+    historicalLookup() {
+      return {
+        route: 'sino',
+        reading: 'たいふう',
+        surface: '台風',
+        components: [
+          { lexicalIdentity: null, surface: '台', lexicalReading: 'たい', historicalKana: 'たい' },
+          { lexicalIdentity: null, surface: '風', lexicalReading: 'ふう', historicalKana: 'ふう' }
+        ],
+        evidenceRefs: ['synthetic:jion']
+      };
+    },
+    contextualRelations: [{ id: 'ctx-taifu', match: '台風', target: '颱風', lexicalBindingIds: ['bind-taifu'] }]
+  });
+
+  const unit = resolver.resolveUnit('台風');
+  assert.equal(unit.historical.surface, '颱風');
+  assert.deepEqual(Array.from(unit.components), []);
+  assert.equal(resolver.render(unit, { mode: 'ruby-components-explicit' }), '｜颱風《たいふう》');
+});
