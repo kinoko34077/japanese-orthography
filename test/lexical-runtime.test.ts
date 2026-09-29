@@ -46,6 +46,33 @@ test('lexical runtime returns zero, one, or multiple source-backed candidates', 
   assert.equal(native[0].morphology.conjugationForm, '意志推量形');
 });
 
+test('lexical runtime does not invent a modern reading when source readings disagree with lForm', async () => {
+  const lexicalSandbox = await loadRuntime('runtime/lexical-runtime.js');
+  const runtime = lexicalSandbox.LexicalRuntime.createLexicalRuntime({
+    schemaVersion: '1',
+    kind: 'japanese-orthography-lexical-artifact',
+    lexicalNamespaceId: 'test-namespace',
+    artifactContentId: 'test-artifact',
+    lemmas: [{
+      lemmaIndex: 0,
+      sourceLemmaId: 1,
+      lemma: '例',
+      lForm: 'レキシ',
+      lexicalReading: 'れきし',
+      lexicalOrigin: 'native',
+      lexicalIdentity: 'test:lemma:1'
+    }],
+    morphologies: [{ morphologyId: 0, pos: ['名詞', '普通名詞', '一般', '*'], cType: '*', cForm: '*' }],
+    candidates: [{ lemmaIndex: 0, morphologyId: 0, modernReadings: ['げんだい', 'げんだいべつ'] }],
+    surfaceIndex: [{ surface: '例', candidateOffset: 0, candidateCount: 1 }]
+  });
+
+  const candidate = runtime.lookup('例')[0];
+  assert.equal(candidate.reading, null);
+  assert.deepEqual(Array.from(candidate.modernReadings), ['げんだい', 'げんだいべつ']);
+  assert.equal(candidate.lexicalReading, 'れきし');
+});
+
 test('real lexical runtime injects into the existing resolver without a second pipeline', async () => {
   const [lexicalSandbox, sharedSandbox] = await Promise.all([
     loadRuntime('runtime/lexical-runtime.js'),
