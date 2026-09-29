@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { compileLexicalSourceSlice, type UniDicSourceSlice } from '../tools/lexical-compiler.ts';
 
 const sourcePath = resolve('data/lexical/sources/unidic-cwj-202512-first-slice.json');
 
@@ -11,6 +12,10 @@ function compile(outPath: string) {
   return spawnSync(process.execPath, ['--import', 'tsx', 'tools/compile-lexical.ts', sourcePath, outPath], {
     cwd: resolve('.'), encoding: 'utf8'
   });
+}
+
+async function sourceSlice(): Promise<UniDicSourceSlice> {
+  return JSON.parse(await readFile(sourcePath, 'utf8')) as UniDicSourceSlice;
 }
 
 test('real UniDic source slice compiles to one deterministic lexical artifact', async () => {
@@ -49,4 +54,20 @@ test('real UniDic source slice compiles to one deterministic lexical artifact', 
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test('lexical source slice rejects malformed records before normalization', async () => {
+  const base = await sourceSlice();
+
+  const emptySurface = structuredClone(base);
+  emptySurface.records[0]!.surface = '';
+  assert.throws(() => compileLexicalSourceSlice(emptySurface), /surface/i);
+
+  const malformedPos = structuredClone(base);
+  malformedPos.records[0]!.pos = ['名詞', '普通名詞', '一般'] as any;
+  assert.throws(() => compileLexicalSourceSlice(malformedPos), /pos/i);
+
+  const invalidLemmaId = structuredClone(base);
+  invalidLemmaId.records[0]!.sourceLemmaId = -1;
+  assert.throws(() => compileLexicalSourceSlice(invalidLemmaId), /sourceLemmaId/i);
 });
