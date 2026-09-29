@@ -16,14 +16,14 @@ Primary runtime/data anchor:
 思う / おもう
   -> UniDic-CWJ 2025.12 identity unidic-cwj:2025.12:lemma:5255
   -> lexical origin native
-  -> morphology 五段-ワア行
+  -> morphology 五段-ワア行 / 終止形-一般
   -> KKH `思う /思ふ ;ハ行四段`
   -> historical surface 思ふ
 ```
 
-The relation is keyed by lexical identity, native origin and required morphology. It does not create a global `う -> ふ` rule.
+The relation is keyed by lexical identity, native origin and the accepted morphology boundary. It does not create a global `う -> ふ` rule. For this first slice, `思ふ` is admitted only for the UniDic terminal-form candidate; same-lemma attributive or ウ音便 candidates fail closed until separately evidenced.
 
-The accepted UniDic slice exposes multiple morphology candidates for the surface `思う`. The resolver therefore remains conservative and returns candidates rather than collapsing them merely because they share a lemma and historical relation.
+The accepted UniDic slice exposes multiple morphology candidates for the surface `思う`. The resolver therefore remains conservative and returns candidates rather than collapsing them merely because they share a lemma. Only the terminal-form candidate currently joins the historical relation.
 
 The same KKH pin contains both:
 
