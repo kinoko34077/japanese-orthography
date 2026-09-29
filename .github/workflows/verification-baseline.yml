@@ -6,6 +6,10 @@ on:
       - fix/23-verification-baseline
   pull_request:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   test:
     strategy:
