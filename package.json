@@ -4,10 +4,13 @@
   "description": "Reusable Japanese orthography transformation core for historical kana, kyujitai, ruby parsing, and contextual restoration",
   "scripts": {
     "validate": "node --import tsx tools/validate.ts",
+    "validate:profile": "node --import tsx tools/validate-profile.ts",
     "compile": "node --import tsx tools/compile.ts",
+    "compile:profile": "node --import tsx tools/compile-profile.ts",
     "test": "node --import tsx --test",
     "typecheck": "tsc --noEmit",
-    "check": "npm run validate && npm test && npm run typecheck && node --import tsx tools/check.ts"
+    "check:profile": "node --import tsx tools/check-profile.ts",
+    "check": "npm run validate && npm run validate:profile && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile"
   },
   "repository": {
     "type": "git",

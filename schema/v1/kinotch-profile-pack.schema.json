@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "kinotch-profile-pack-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "profileId", "packId", "sourcePack", "label", "kind"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "profileId": { "type": "string", "minLength": 1 },
+    "packId": { "type": "string", "minLength": 1 },
+    "sourcePack": { "enum": ["legacy", "official-homophone", "project-homophone"] },
+    "label": { "type": "string", "minLength": 1 },
+    "kind": { "const": "dictionary-rules" },
+    "phraseRules": { "type": "array", "items": { "$ref": "#/$defs/phraseRule" } },
+    "characterMapPriority": { "type": "integer" },
+    "characterMap": { "$ref": "#/$defs/characterMap" },
+    "groups": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/group" } }
+  },
+  "oneOf": [
+    {
+      "required": ["phraseRules", "characterMapPriority", "characterMap"],
+      "properties": { "groups": false }
+    },
+    {
+      "required": ["groups"],
+      "properties": {
+        "phraseRules": false,
+        "characterMapPriority": false,
+        "characterMap": false
+      }
+    }
+  ],
+  "$defs": {
+    "phraseRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["match", "targets", "priority", "candidate"],
+      "properties": {
+        "match": { "type": "string", "minLength": 1 },
+        "targets": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "priority": { "type": "integer" },
+        "candidate": { "type": "boolean" }
+      }
+    },
+    "characterMap": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "phraseRules", "characterMapPriority", "characterMap"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "phraseRules": { "type": "array", "items": { "$ref": "#/$defs/phraseRule" } },
+        "characterMapPriority": { "type": "integer" },
+        "characterMap": { "$ref": "#/$defs/characterMap" }
+      }
+    }
+  }
+}

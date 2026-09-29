@@ -1,0 +1,2688 @@
+{
+  "schemaVersion": "1",
+  "profileId": "kinotch-fixed",
+  "packId": "official-homophone-restoration",
+  "sourcePack": "official-homophone",
+  "label": "告示・同音書換復元",
+  "kind": "dictionary-rules",
+  "groups": [
+    {
+      "id": "kana-あ",
+      "label": "あ行",
+      "phraseRules": [
+        {
+          "match": "愛欲",
+          "targets": [
+            "愛慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "安逸",
+          "targets": [
+            "安佚"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暗影",
+          "targets": [
+            "暗翳"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暗唱",
+          "targets": [
+            "暗誦"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暗夜",
+          "targets": [
+            "闇夜"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "案分",
+          "targets": [
+            "按分"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-い",
+      "label": "い行",
+      "phraseRules": [
+        {
+          "match": "意向",
+          "targets": [
+            "意嚮"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "慰謝料",
+          "targets": [
+            "慰藉料"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "衣装",
+          "targets": [
+            "衣裳"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "遺跡",
+          "targets": [
+            "遺蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "一丁",
+          "targets": [
+            "一挺"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "陰影",
+          "targets": [
+            "陰翳"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-え",
+      "label": "え行",
+      "phraseRules": [
+        {
+          "match": "英才",
+          "targets": [
+            "頴才"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "英知",
+          "targets": [
+            "叡智"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "園地",
+          "targets": [
+            "苑地"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "援護",
+          "targets": [
+            "掩護"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-お",
+      "label": "お行",
+      "phraseRules": [
+        {
+          "match": "憶説",
+          "targets": [
+            "臆説"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "憶測",
+          "targets": [
+            "臆測"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "恩義",
+          "targets": [
+            "恩誼"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-か",
+      "label": "か行",
+      "phraseRules": [
+        {
+          "match": "火炎",
+          "targets": [
+            "火焔"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "画期的",
+          "targets": [
+            "劃期的"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "画然",
+          "targets": [
+            "劃然"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "回送",
+          "targets": [
+            "廻送"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "回虫",
+          "targets": [
+            "蛔虫"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "回転",
+          "targets": [
+            "廻転"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "回復",
+          "targets": [
+            "恢復"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "回廊",
+          "targets": [
+            "廻廊"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "壊滅",
+          "targets": [
+            "潰滅"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "壊乱",
+          "targets": [
+            "潰乱"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "快活",
+          "targets": [
+            "快濶"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "戒告",
+          "targets": [
+            "誡告"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "皆既食",
+          "targets": [
+            "皆既蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "開削",
+          "targets": [
+            "開鑿"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "外郭",
+          "targets": [
+            "外廓"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "格闘",
+          "targets": [
+            "挌闘"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "郭大",
+          "targets": [
+            "廓大"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "活発",
+          "targets": [
+            "活潑"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "乾留",
+          "targets": [
+            "乾溜"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "干害",
+          "targets": [
+            "旱害"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "干天",
+          "targets": [
+            "旱天"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "管弦楽",
+          "targets": [
+            "管絃楽"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "肝心",
+          "targets": [
+            "肝腎"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "間欠",
+          "targets": [
+            "間歇"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-き",
+      "label": "き行",
+      "phraseRules": [
+        {
+          "match": "企画",
+          "targets": [
+            "企劃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "奇形",
+          "targets": [
+            "畸形"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "奇跡",
+          "targets": [
+            "奇蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "奇談",
+          "targets": [
+            "綺談"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希元素",
+          "targets": [
+            "稀元素"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希釈",
+          "targets": [
+            "稀釈"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希少",
+          "targets": [
+            "稀少"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希代",
+          "targets": [
+            "稀代"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希薄",
+          "targets": [
+            "稀薄"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "希硫酸",
+          "targets": [
+            "稀硫酸"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "機知",
+          "targets": [
+            "機智"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "気炎",
+          "targets": [
+            "気焔"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "記章",
+          "targets": [
+            "徽章"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "飢餓",
+          "targets": [
+            "饑餓"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "技量",
+          "targets": [
+            "技倆"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "喫水",
+          "targets": [
+            "吃水"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "糾弾",
+          "targets": [
+            "糺弾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "糾明",
+          "targets": [
+            "糺明"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "旧跡",
+          "targets": [
+            "旧蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "漁労",
+          "targets": [
+            "漁撈"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "供応",
+          "targets": [
+            "饗応"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶悪",
+          "targets": [
+            "兇悪"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶漢",
+          "targets": [
+            "兇漢"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶器",
+          "targets": [
+            "兇器"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶行",
+          "targets": [
+            "兇行"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶刃",
+          "targets": [
+            "兇刃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶変",
+          "targets": [
+            "兇変"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "凶暴",
+          "targets": [
+            "兇暴"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "強固",
+          "targets": [
+            "鞏固"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "教戒",
+          "targets": [
+            "教誨"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "吟唱",
+          "targets": [
+            "吟誦"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "御者",
+          "targets": [
+            "馭者"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-く",
+      "label": "く行",
+      "phraseRules": [
+        {
+          "match": "区画",
+          "targets": [
+            "区劃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "掘削",
+          "targets": [
+            "掘鑿"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "薫製",
+          "targets": [
+            "燻製"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "訓戒",
+          "targets": [
+            "訓誡"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-け",
+      "label": "け行",
+      "phraseRules": [
+        {
+          "match": "下克上",
+          "targets": [
+            "下剋上"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "係船",
+          "targets": [
+            "繋船"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "係争",
+          "targets": [
+            "繋争"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "係属",
+          "targets": [
+            "繋属"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "係留",
+          "targets": [
+            "繋留"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "決壊",
+          "targets": [
+            "決潰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "決起",
+          "targets": [
+            "蹶起"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "決別",
+          "targets": [
+            "訣別"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "月食",
+          "targets": [
+            "月蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "研摩",
+          "targets": [
+            "研磨"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "険阻",
+          "targets": [
+            "嶮岨"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "元凶",
+          "targets": [
+            "元兇"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "厳然",
+          "targets": [
+            "儼然"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "弦歌",
+          "targets": [
+            "絃歌"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-こ",
+      "label": "こ行",
+      "phraseRules": [
+        {
+          "match": "強欲",
+          "targets": [
+            "強慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "興奮",
+          "targets": [
+            "昂奮",
+            "亢奮"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "古希",
+          "targets": [
+            "古稀"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "古跡",
+          "targets": [
+            "古蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "枯渇",
+          "targets": [
+            "涸渇"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "雇用",
+          "targets": [
+            "雇傭"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "交歓",
+          "targets": [
+            "交驩"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "交差",
+          "targets": [
+            "交叉"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "広壮",
+          "targets": [
+            "宏壮"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "広大",
+          "targets": [
+            "宏大"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "広範",
+          "targets": [
+            "広汎"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "広報",
+          "targets": [
+            "弘報"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "広野",
+          "targets": [
+            "曠野"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "控除",
+          "targets": [
+            "扣除"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "更生",
+          "targets": [
+            "甦生"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "硬骨",
+          "targets": [
+            "鯁骨"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "講和",
+          "targets": [
+            "媾和"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "鉱業",
+          "targets": [
+            "礦業"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "鉱石",
+          "targets": [
+            "礦石"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "香典",
+          "targets": [
+            "香奠"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "高騰",
+          "targets": [
+            "昂騰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "高揚",
+          "targets": [
+            "昂揚"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "骨格",
+          "targets": [
+            "骨骼"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "根底",
+          "targets": [
+            "根柢"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "混交",
+          "targets": [
+            "混淆"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "混迷",
+          "targets": [
+            "昏迷"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-さ",
+      "label": "さ行",
+      "phraseRules": [
+        {
+          "match": "座視",
+          "targets": [
+            "坐視"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "座州",
+          "targets": [
+            "坐洲"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "座礁",
+          "targets": [
+            "坐礁"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "雑踏",
+          "targets": [
+            "雑沓"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "三弦",
+          "targets": [
+            "三絃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "散水",
+          "targets": [
+            "撒水"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "散布",
+          "targets": [
+            "撒布"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "賛仰",
+          "targets": [
+            "讃仰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "賛辞",
+          "targets": [
+            "讃辞"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "賛嘆",
+          "targets": [
+            "讃嘆"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "賛美",
+          "targets": [
+            "讃美"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "酢酸",
+          "targets": [
+            "醋酸"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-し",
+      "label": "し行",
+      "phraseRules": [
+        {
+          "match": "刺激",
+          "targets": [
+            "刺戟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "史跡",
+          "targets": [
+            "史蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "死体",
+          "targets": [
+            "屍体"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "死没",
+          "targets": [
+            "死歿"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "試練",
+          "targets": [
+            "試煉"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "七転八倒",
+          "targets": [
+            "七顚八倒"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "射幸心",
+          "targets": [
+            "射倖心"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "車両",
+          "targets": [
+            "車輌"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "手跡",
+          "targets": [
+            "手蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "収集",
+          "targets": [
+            "蒐集"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "終息",
+          "targets": [
+            "終熄"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "集荷",
+          "targets": [
+            "蒐荷"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "集落",
+          "targets": [
+            "聚落"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "俊才",
+          "targets": [
+            "駿才"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "書簡",
+          "targets": [
+            "書翰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "叙情",
+          "targets": [
+            "抒情"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "昇叙",
+          "targets": [
+            "陞叙"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "消夏",
+          "targets": [
+            "銷夏"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "消却",
+          "targets": [
+            "銷却"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "消沈",
+          "targets": [
+            "銷鎮"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "焦燥",
+          "targets": [
+            "焦躁"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "称賛／賞賛",
+          "targets": [
+            "称讃",
+            "賞讃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "障害",
+          "targets": [
+            "障碍"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "障壁",
+          "targets": [
+            "牆壁"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "情義",
+          "targets": [
+            "情誼"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "蒸留",
+          "targets": [
+            "蒸溜"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "色欲",
+          "targets": [
+            "色慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "食尽",
+          "targets": [
+            "蝕甚"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "食欲",
+          "targets": [
+            "食慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "伸長",
+          "targets": [
+            "伸暢"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "侵食",
+          "targets": [
+            "侵蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "侵略",
+          "targets": [
+            "侵掠"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "浸食",
+          "targets": [
+            "浸蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "浸透",
+          "targets": [
+            "滲透"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "真跡",
+          "targets": [
+            "真蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "針術",
+          "targets": [
+            "鍼術"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "尋問",
+          "targets": [
+            "訊問"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-す",
+      "label": "す行",
+      "phraseRules": [
+        {
+          "match": "衰退",
+          "targets": [
+            "衰頽"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-せ",
+      "label": "せ行",
+      "phraseRules": [
+        {
+          "match": "制御",
+          "targets": [
+            "制馭",
+            "制禦"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "性欲",
+          "targets": [
+            "性慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "生息",
+          "targets": [
+            "棲息",
+            "栖息"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "絶賛",
+          "targets": [
+            "絶讃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "先鋭",
+          "targets": [
+            "尖鋭"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "先端",
+          "targets": [
+            "尖端"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "専断",
+          "targets": [
+            "擅断"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "戦々恐々",
+          "targets": [
+            "戦々兢々"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "戦没",
+          "targets": [
+            "戦歿"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "扇情",
+          "targets": [
+            "煽情"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "扇動",
+          "targets": [
+            "煽動"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "洗浄",
+          "targets": [
+            "洗滌"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "船倉",
+          "targets": [
+            "船艙"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "選考",
+          "targets": [
+            "銓衡"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "全壊",
+          "targets": [
+            "全潰"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-そ",
+      "label": "そ行",
+      "phraseRules": [
+        {
+          "match": "象眼",
+          "targets": [
+            "象嵌"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "疎水",
+          "targets": [
+            "疏水"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "疎通",
+          "targets": [
+            "疏通"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "疎明",
+          "targets": [
+            "疏明"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "阻止",
+          "targets": [
+            "沮止"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "阻喪",
+          "targets": [
+            "沮喪"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "倉皇",
+          "targets": [
+            "蒼煌"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "掃滅",
+          "targets": [
+            "剿滅"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "相克",
+          "targets": [
+            "相剋"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "総合",
+          "targets": [
+            "綜合"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "総菜",
+          "targets": [
+            "惣菜"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "装丁",
+          "targets": [
+            "装釘",
+            "装幀"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "族生",
+          "targets": [
+            "簇生"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-た",
+      "label": "た行",
+      "phraseRules": [
+        {
+          "match": "退色",
+          "targets": [
+            "褪色"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "退勢",
+          "targets": [
+            "頽勢"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "退廃",
+          "targets": [
+            "頽廃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "台風",
+          "targets": [
+            "颱風"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "大欲",
+          "targets": [
+            "大慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "奪略",
+          "targets": [
+            "奪掠"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "嘆願",
+          "targets": [
+            "歎願"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "炭鉱",
+          "targets": [
+            "炭礦"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "短編",
+          "targets": [
+            "短篇"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "端座",
+          "targets": [
+            "端坐"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暖房",
+          "targets": [
+            "煖房"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暖炉",
+          "targets": [
+            "煖炉"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ち",
+      "label": "ち行",
+      "phraseRules": [
+        {
+          "match": "知恵",
+          "targets": [
+            "智慧"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "知能",
+          "targets": [
+            "智能"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "知謀",
+          "targets": [
+            "智謀"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "注解",
+          "targets": [
+            "註解"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "注釈",
+          "targets": [
+            "註釈"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "注文",
+          "targets": [
+            "註文"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "長編",
+          "targets": [
+            "長篇"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "沈殿",
+          "targets": [
+            "沈澱"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-て",
+      "label": "て行",
+      "phraseRules": [
+        {
+          "match": "手帳",
+          "targets": [
+            "手帖"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "丁重",
+          "targets": [
+            "鄭重"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "丁寧",
+          "targets": [
+            "叮嚀"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "低回",
+          "targets": [
+            "彽徊"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "停泊",
+          "targets": [
+            "碇泊"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "抵触",
+          "targets": [
+            "牴触",
+            "觝触"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "転倒",
+          "targets": [
+            "顚倒"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "転覆",
+          "targets": [
+            "顚覆"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-と",
+      "label": "と行",
+      "phraseRules": [
+        {
+          "match": "途絶",
+          "targets": [
+            "杜絶"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "倒壊",
+          "targets": [
+            "倒潰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "踏襲",
+          "targets": [
+            "蹈襲"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "特集",
+          "targets": [
+            "特輯"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-に",
+      "label": "に行",
+      "phraseRules": [
+        {
+          "match": "日食",
+          "targets": [
+            "日蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-は",
+      "label": "は行",
+      "phraseRules": [
+        {
+          "match": "破棄",
+          "targets": [
+            "破毀"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "破砕",
+          "targets": [
+            "破摧"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "背徳",
+          "targets": [
+            "悖徳"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "薄幸",
+          "targets": [
+            "薄倖"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "発酵",
+          "targets": [
+            "醗酵"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "抜粋",
+          "targets": [
+            "抜萃"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "反旗",
+          "targets": [
+            "叛旗"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "反逆",
+          "targets": [
+            "叛逆"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "反発",
+          "targets": [
+            "反撥"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "反乱",
+          "targets": [
+            "叛乱"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "繁殖",
+          "targets": [
+            "蕃殖"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "蛮族",
+          "targets": [
+            "蕃族"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "暴露",
+          "targets": [
+            "曝露"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ひ",
+      "label": "ひ行",
+      "phraseRules": [
+        {
+          "match": "飛語",
+          "targets": [
+            "蜚語"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "筆跡",
+          "targets": [
+            "筆蹟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "病没",
+          "targets": [
+            "病歿"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ふ",
+      "label": "ふ行",
+      "phraseRules": [
+        {
+          "match": "符丁",
+          "targets": [
+            "符牒"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "腐食",
+          "targets": [
+            "腐蝕"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "腐乱",
+          "targets": [
+            "腐爛"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "風刺",
+          "targets": [
+            "諷刺"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "物欲",
+          "targets": [
+            "物慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-へ",
+      "label": "へ行",
+      "phraseRules": [
+        {
+          "match": "編集",
+          "targets": [
+            "編輯"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "辺境",
+          "targets": [
+            "辺疆"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ほ",
+      "label": "ほ行",
+      "phraseRules": [
+        {
+          "match": "保育",
+          "targets": [
+            "哺育"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "保母",
+          "targets": [
+            "保姆"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "舗装",
+          "targets": [
+            "鋪装"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "補佐",
+          "targets": [
+            "輔佐"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "補導",
+          "targets": [
+            "輔導"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "包帯",
+          "targets": [
+            "繃帯"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "包丁",
+          "targets": [
+            "庖丁"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "崩壊",
+          "targets": [
+            "崩潰"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "放棄",
+          "targets": [
+            "抛棄"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "放物線",
+          "targets": [
+            "抛物線"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "妨害",
+          "targets": [
+            "妨碍"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "膨大",
+          "targets": [
+            "厖大"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "防御",
+          "targets": [
+            "防禦"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ま",
+      "label": "ま行",
+      "phraseRules": [
+        {
+          "match": "摩滅",
+          "targets": [
+            "磨滅"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-む",
+      "label": "む行",
+      "phraseRules": [
+        {
+          "match": "無知",
+          "targets": [
+            "無智"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "無欲",
+          "targets": [
+            "無慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-め",
+      "label": "め行",
+      "phraseRules": [
+        {
+          "match": "名誉欲",
+          "targets": [
+            "名誉慾"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "綿花",
+          "targets": [
+            "棉花"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-も",
+      "label": "も行",
+      "phraseRules": [
+        {
+          "match": "模索",
+          "targets": [
+            "摸索"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "盲動",
+          "targets": [
+            "妄動"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-や",
+      "label": "や行",
+      "phraseRules": [
+        {
+          "match": "野卑",
+          "targets": [
+            "野鄙"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-よ",
+      "label": "よ行",
+      "phraseRules": [
+        {
+          "match": "溶解",
+          "targets": [
+            "熔解"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "溶岩",
+          "targets": [
+            "熔岩"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "溶鉱炉",
+          "targets": [
+            "鎔鉱炉"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "溶接",
+          "targets": [
+            "熔接"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-ら",
+      "label": "ら行",
+      "phraseRules": [
+        {
+          "match": "落盤",
+          "targets": [
+            "落磐"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "利口",
+          "targets": [
+            "悧巧"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "理屈",
+          "targets": [
+            "理窟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "理知",
+          "targets": [
+            "理智"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "里謡",
+          "targets": [
+            "俚謡"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "離反",
+          "targets": [
+            "離叛"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "略奪",
+          "targets": [
+            "掠奪"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "了解",
+          "targets": [
+            "諒解"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "了承",
+          "targets": [
+            "諒承"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "輪郭",
+          "targets": [
+            "輪廓"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-れ",
+      "label": "れ行",
+      "phraseRules": [
+        {
+          "match": "練炭",
+          "targets": [
+            "煉炭"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "練乳",
+          "targets": [
+            "煉乳"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連係",
+          "targets": [
+            "連繋"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連合",
+          "targets": [
+            "聯合"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連座",
+          "targets": [
+            "連坐"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連珠",
+          "targets": [
+            "聯珠"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連想",
+          "targets": [
+            "聯想"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連邦",
+          "targets": [
+            "聯邦"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連盟",
+          "targets": [
+            "聯盟"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連絡",
+          "targets": [
+            "聯絡"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "連立",
+          "targets": [
+            "聯立"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    },
+    {
+      "id": "kana-わ",
+      "label": "わ行",
+      "phraseRules": [
+        {
+          "match": "湾曲",
+          "targets": [
+            "彎曲"
+          ],
+          "priority": 50,
+          "candidate": true
+        },
+        {
+          "match": "湾入",
+          "targets": [
+            "彎入"
+          ],
+          "priority": 50,
+          "candidate": true
+        }
+      ],
+      "characterMapPriority": 10,
+      "characterMap": {}
+    }
+  ]
+}
