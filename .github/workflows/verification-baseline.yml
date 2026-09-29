@@ -21,4 +21,22 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Run tests and publish diagnostic output
+        uses: actions/github-script@v7
+        env:
+          MATRIX_OS: ${{ matrix.os }}
+          MATRIX_NODE: ${{ matrix.node }}
+        with:
+          script: |
+            const { spawnSync } = require('node:child_process');
+            const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+            const result = spawnSync(command, ['test'], { encoding: 'utf8' });
+            const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`.trim();
+            const tail = output.length > 50000 ? output.slice(-50000) : output;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 23,
+              body: `## Baseline matrix diagnostic — ${process.env.MATRIX_OS} / Node ${process.env.MATRIX_NODE}\n\nExit: \`${result.status}\`\n\n<details><summary>npm test output</summary>\n\n\`\`\`text\n${tail}\n\`\`\`\n</details>`
+            });
+            if (result.status !== 0) core.setFailed(`npm test exited ${result.status}`);
