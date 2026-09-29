@@ -23,8 +23,12 @@ test('historical Sino runtime resolves a source-backed relation by lexical ident
     source: {
       repository: 'example/source',
       commit: '0123456789abcdef0123456789abcdef01234567',
-      file: 'jion-jisyo',
-      blobSha: '0123456789abcdef0123456789abcdef01234567'
+      license: 'BSD-2-Clause',
+      status: 'test-fixture',
+      files: [{
+        path: 'jion-jisyo',
+        blobSha: '0123456789abcdef0123456789abcdef01234567'
+      }]
     },
     relations: [{
       lexicalIdentity: 'namespace-1:lemma:1',
