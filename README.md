@@ -23,13 +23,15 @@ npm test
 npm run compile
 npm run check
 npm run bench:resolver
+node --import tsx tools/bench-lexical-runtime.ts --json
 ```
 
 - `npm run validate` performs schema, pack-local semantic, and configured integration validation without mutating canonical source.
 - `npm run compile` validates and atomically replaces `dist/contextual-kanji/` only after a complete successful build.
-- `npm test` runs structural, semantic, integration, compiler, canonical-slice, resolver, and CLI tests.
+- `npm test` runs structural, semantic, integration, compiler, canonical-slice, lexical-runtime, resolver, and CLI tests.
 - `npm run check` requires zero unresolved `ERROR`/`REVIEW` diagnostics, runs the complete tests/typecheck, proves deterministic compilation, and compares generated output with tracked golden artifacts.
 - `npm run bench:resolver` measures the bounded resolver first slice with a fixed local corpus. Its output is a reproducible development baseline, not a production threshold or a full-corpus performance claim.
+- `tools/bench-lexical-runtime.ts` measures the bounded real-lexical acceptance slice and reports its environment, artifact/index/module bytes, cold initialization including artifact parse, retained heap delta, lookup timing/throughput, and harness-observable load copies. It likewise does not define production thresholds.
 
 ## First-slice integration fixture
 
@@ -39,6 +41,32 @@ The repository author commands currently use `test/fixtures/integration/first-sl
 - the external `safe-kanji/char-tai-to-dai` export required by the `台` fallback tests.
 
 These fixture bindings are **not** canonical lexical identities and are not production Pmin local IDs. They exist only to prove that source-qualified canonical evidence is bound through an explicit per-build input instead of being copied into hot runtime IDs. A future consumer build must supply its real namespace-local bindings and external-pack exports before using the generated sections.
+
+## Real lexical evidence acceptance slice
+
+`data/lexical/sources/unidic-cwj-202512-first-slice.json` is a bounded, source-traceable extraction used to prove the next lexical boundary with real UniDic-CWJ 2025.12 evidence. It pins the source `lex.csv` SHA-256 `bd00a695ba897a3250965257341e1929ae062dfa2e63b223a05bcc02f22e74a2` and retains representative source rows for Sino-Japanese, native inflection, ambiguity and contextual-restoration anchors.
+
+The bounded path is:
+
+```text
+real UniDic source slice
+  -> tools/lexical-compiler.ts
+  -> deterministic lexical artifact
+  -> runtime/lexical-runtime.js lookup
+  -> runtime/orthography-resolver.js
+```
+
+The compiler normalizes only the fields needed by this phase, keeps zero/one/multiple surface candidates distinct, and records section digests plus a slice-specific `artifactContentId`. The artifact pins the independently reconstructed full-source lexical namespace:
+
+```text
+6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144
+```
+
+That namespace identifies the full-source lexical identity meaning established from UniDic-CWJ 2025.12; the bounded slice does **not** mint a replacement namespace from its subset rows. Its physical dense lemma handle is named `lemmaIndex` specifically because it is only slice-local and must not be confused with a full-namespace `localLemmaId`. Concrete subset integrity is instead carried by section digests and `artifactContentId`.
+
+The runtime adapter exposes source-qualified lexical identities, readings, lexical origin and morphology to the existing resolver. Explicit whole-word Ruby filters compatible lexical candidates using source-backed modern-reading evidence; ambiguity remains representable rather than being collapsed by storage order. OOV input fails closed, and protected input bypasses lexical lookup. Browser-class and Worker-class VM probes load the same core runtime without mutating either consumer repository.
+
+This is an **acceptance slice**, not production-scale lexical coverage. It does not freeze a final binary format, public package/API, consumer bundle loader, or release/distribution mechanism, and it is not a claim that the bounded JSON artifact is the final full-corpus physical layout.
 
 ## Orthography resolver first slice
 
@@ -74,7 +102,7 @@ The same resolved `学校` unit can be serialized without re-analysis as, for ex
 學《がく》校《かう》
 ```
 
-`test/fixtures/orthography-resolution/first-slice.json` is deliberately small deterministic evidence for architectural verification. It is **not** production lexical coverage, a public data format, or a replacement for the compact lexical artifact/data work owned elsewhere in the repository.
+`test/fixtures/orthography-resolution/first-slice.json` remains deliberately small deterministic evidence for resolver-semantic verification. It is not production lexical coverage or a public data format; the real lexical acceptance path above tests the source/compiler/runtime boundary separately.
 
 ## Resolver benchmark
 
@@ -98,4 +126,4 @@ Node/VM internal copies that the runtime does not expose are explicitly marked u
 
 ## Current boundary
 
-This repository now owns canonical corpus/build-time behavior, the fixed compatibility/runtime foundation, and a bounded resolver runtime proof. It still does not migrate or change `txt-auto-replace`, `kinotch-api`, or any other consumer, and it does not release, deploy, or publish generated artifacts. The contextual `dist/` output and orthography-resolution fixture remain test-bound and must not be treated as consumer-ready publication artifacts.
+This repository now owns canonical corpus/build-time behavior, the fixed compatibility/runtime foundation, a bounded resolver runtime proof, and a bounded real-source lexical artifact/lookup acceptance path. It still does not migrate or change `txt-auto-replace`, `kinotch-api`, or any other consumer, and it does not release, deploy, or publish generated artifacts. The contextual `dist/` output, resolver semantic fixture and real lexical acceptance slice remain development/verification surfaces rather than consumer-ready publication artifacts; full-corpus lexical packaging, production bundle compatibility/loading and consumer integration remain later explicitly selected phases.
