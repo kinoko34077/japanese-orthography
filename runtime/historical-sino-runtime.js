@@ -33,7 +33,54 @@
     }
   };
 
-  const normalizeComponent = (component) => {
+  const buildEvidenceIndex = (slice) => {
+    const sourceFiles = new Set(slice.source.files.map((file) => file.path));
+    if (!Array.isArray(slice.sourceRecords) || slice.sourceRecords.length === 0) {
+      throw new TypeError("Historical Sino slice requires source records");
+    }
+
+    const evidenceIds = new Set();
+    const addId = (record, label) => {
+      requireNonEmptyString(record?.id, label);
+      if (evidenceIds.has(record.id)) {
+        throw new Error(`Duplicate historical Sino evidence id: ${record.id}`);
+      }
+      evidenceIds.add(record.id);
+    };
+
+    for (const record of slice.sourceRecords) {
+      addId(record, "historical Sino source record id");
+      requireNonEmptyString(record?.file, "historical Sino source record file");
+      if (!sourceFiles.has(record.file)) {
+        throw new Error(`Unknown historical Sino source record file: ${record.file}`);
+      }
+    }
+
+    for (const record of Array.isArray(slice.projectEvidenceRecords) ? slice.projectEvidenceRecords : []) {
+      addId(record, "historical Sino project evidence id");
+    }
+
+    return evidenceIds;
+  };
+
+  const normalizeEvidenceRefs = (value, evidenceIds, label) => {
+    if (!Array.isArray(value) || value.length === 0) {
+      throw new TypeError(`${label} requires evidence refs`);
+    }
+    const refs = [];
+    for (const ref of value) {
+      requireNonEmptyString(ref, `${label} evidence ref`);
+      if (!evidenceIds.has(ref)) {
+        throw new Error(`Unknown historical Sino evidence ref: ${ref}`);
+      }
+      if (!refs.includes(ref)) {
+        refs.push(ref);
+      }
+    }
+    return refs;
+  };
+
+  const normalizeComponent = (component, evidenceIds) => {
     requireNonEmptyString(component?.surface, "historical Sino component surface");
     requireNonEmptyString(component?.modernReading, "historical Sino component modern reading");
     requireNonEmptyString(component?.historicalReading, "historical Sino component historical reading");
@@ -44,11 +91,11 @@
       lexicalOrigin: "sino",
       readingClass: component.readingClass ?? "on",
       historicalKana: component.historicalReading,
-      evidenceRefs: Array.isArray(component.evidenceRefs) ? [...component.evidenceRefs] : []
+      evidenceRefs: normalizeEvidenceRefs(component.evidenceRefs, evidenceIds, "Historical Sino component")
     };
   };
 
-  const normalizeRelation = (relation) => {
+  const normalizeRelation = (relation, evidenceIds) => {
     requireNonEmptyString(relation?.lexicalIdentity, "historical Sino lexical identity");
     requireNonEmptyString(relation?.surface, "historical Sino surface");
     requireNonEmptyString(relation?.modernReading, "historical Sino modern reading");
@@ -57,8 +104,10 @@
       route: "sino",
       reading: relation.historicalReading,
       surface: relation.surface,
-      components: Array.isArray(relation.components) ? relation.components.map(normalizeComponent) : [],
-      evidenceRefs: Array.isArray(relation.evidenceRefs) ? [...relation.evidenceRefs] : []
+      components: Array.isArray(relation.components)
+        ? relation.components.map((component) => normalizeComponent(component, evidenceIds))
+        : [],
+      evidenceRefs: normalizeEvidenceRefs(relation.evidenceRefs, evidenceIds, "Historical Sino relation")
     };
   };
 
@@ -68,6 +117,7 @@
     }
     requireNonEmptyString(slice.lexicalNamespaceId, "historical Sino lexical namespace");
     validateSource(slice.source);
+    const evidenceIds = buildEvidenceIndex(slice);
     const expectedNamespace = options.lexicalNamespaceId ?? slice.lexicalNamespaceId;
     if (slice.lexicalNamespaceId !== expectedNamespace) {
       throw new Error("Historical Sino lexical namespace mismatch");
@@ -78,7 +128,7 @@
       if (relationByIdentity.has(relation?.lexicalIdentity)) {
         throw new Error(`Duplicate historical Sino relation: ${relation.lexicalIdentity}`);
       }
-      relationByIdentity.set(relation.lexicalIdentity, normalizeRelation(relation));
+      relationByIdentity.set(relation.lexicalIdentity, normalizeRelation(relation, evidenceIds));
     }
 
     const lookup = (candidate) => {
