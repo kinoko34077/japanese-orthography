@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1",
+  "kind": "integration_fixture",
+  "lexicalNamespace": {
+    "id": "pmin-current",
+    "compatibleSourceNamespaces": [
+      "kanjipedia",
+      "kkh-kanji-jisyo",
+      "kotobank"
+    ],
+    "bindings": {
+      "constraint-buben-original": ["fixture-local-0001"],
+      "constraint-fu-attach": ["fixture-local-0002"],
+      "constraint-fu-transfer": ["fixture-local-0003"],
+      "constraint-goben-botanical": ["fixture-local-0004"],
+      "constraint-goben-business": ["fixture-local-0005"],
+      "constraint-taifu": ["fixture-local-0006"],
+      "constraint-taimitsu": ["fixture-local-0007"],
+      "constraint-taito": ["fixture-local-0008"]
+    }
+  },
+  "externalPacks": [
+    {
+      "packId": "safe-kanji",
+      "exportedRelationIds": ["char-tai-to-dai"]
+    }
+  ]
+}
