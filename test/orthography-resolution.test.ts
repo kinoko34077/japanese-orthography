@@ -126,6 +126,29 @@ test("学校 plain, whole Ruby, and component Ruby converge semantically", async
   assert.equal(componentsExplicit.reading.source, "lexical");
 });
 
+test("whole Ruby filters ambiguous lexical candidates before disposition", async () => {
+  const sharedSandbox = await loadUmd("runtime/transform-shared.js");
+  const resolverSandbox = await loadUmd("runtime/orthography-resolver.js", {
+    TransformShared: sharedSandbox.TransformShared
+  });
+  const api = resolverSandbox.OrthographyResolver as ResolverApi;
+  const candidates = [
+    { lexicalIdentity: "unidic-cwj:2025.12:lemma:9128", surface: "今日", reading: "きょう", lexicalOrigin: "native", evidenceRefs: ["unidic-cwj:2025.12:lemma:9128"] },
+    { lexicalIdentity: "unidic-cwj:2025.12:lemma:13244", surface: "今日", reading: "こんにち", lexicalOrigin: "sino", evidenceRefs: ["unidic-cwj:2025.12:lemma:13244"] }
+  ];
+  const resolver = api.createResolver({ lexicalLookup: (surface: string) => surface === "今日" ? candidates : [] });
+  assert.equal(resolver.resolveUnit("今日").kind, "candidates");
+  const native = resolver.resolveUnit("｜今日《きょう》");
+  assert.equal(native.kind, "resolved");
+  assert.equal(native.lexicalIdentity, "unidic-cwj:2025.12:lemma:9128");
+  assert.equal(native.reading.source, "ruby-word");
+  assert.equal(native.lexicalOrigin, "native");
+  const sino = resolver.resolveUnit("｜今日《こんにち》");
+  assert.equal(sino.kind, "resolved");
+  assert.equal(sino.lexicalIdentity, "unidic-cwj:2025.12:lemma:13244");
+  assert.equal(sino.lexicalOrigin, "sino");
+});
+
 test("台風 resolves contextually to 颱風 without global 台 replacement", async () => {
   const { resolver } = await createHarness();
   const taifu = resolver.resolveUnit("台風");
