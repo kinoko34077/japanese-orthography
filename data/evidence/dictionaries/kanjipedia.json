@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1",
+  "source": {
+    "id": "kanjipedia",
+    "kind": "dictionary",
+    "title": "漢字ペディア",
+    "locator": "https://www.kanjipedia.jp/"
+  },
+  "evidence": [
+    {
+      "id": "ev-ben-family",
+      "sourceRef": "kanjipedia",
+      "locator": "https://www.kanjipedia.jp/kanji/0006281500/",
+      "sourceClass": "lexical",
+      "claim": {
+        "type": "attestation",
+        "form": "弁",
+        "lexicalIdentity": "modern merged family: 辨 / 瓣 / 辯 / original 弁",
+        "senseNote": "Modern 弁 covers distinct historical meaning families and an original crown/headdress meaning."
+      }
+    },
+    {
+      "id": "ev-buben-original",
+      "sourceRef": "kanjipedia",
+      "locator": "https://www.kanjipedia.jp/kotoba/0006076300",
+      "sourceClass": "lexical",
+      "claim": {
+        "type": "exclusion",
+        "form": "武弁",
+        "senseNote": "弁 is the original crown/headdress character in this lexical item; do not restore to a merged substitute family."
+      }
+    },
+    {
+      "id": "ev-taifu",
+      "sourceRef": "kanjipedia",
+      "locator": "https://www.kanjipedia.jp/kotoba/0004510300",
+      "sourceClass": "lexical",
+      "claim": {
+        "type": "mapping",
+        "direction": "modern_to_historical",
+        "rawFrom": "台風",
+        "rawTo": "颱風"
+      }
+    }
+  ]
+}

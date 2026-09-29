@@ -1,0 +1,27 @@
+{
+  "name": "japanese-orthography",
+  "version": "0.0.0",
+  "description": "Reusable Japanese orthography transformation core for historical kana, kyujitai, ruby parsing, and contextual restoration",
+  "scripts": {
+    "validate": "node --import tsx tools/validate.ts",
+    "compile": "node --import tsx tools/compile.ts",
+    "test": "node --import tsx --test",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run validate && npm test && npm run typecheck && node --import tsx tools/check.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kinoko34077/japanese-orthography.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.3",
+    "ajv": "8.20.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "private": true
+}

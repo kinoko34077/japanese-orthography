@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1",
+  "packId": "contextual-kanji",
+  "restorationUnits": [
+    { "id": "unit-buben-original", "family": "merged-ben-preserve", "modernKey": "武弁" },
+    { "id": "unit-goben", "family": "merged-ben-ambiguous", "modernKey": "合弁" }
+  ],
+  "positiveRelations": [
+    { "id": "rel-goben-business", "unitId": "unit-goben", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "合弁", "lexicalConstraintSetId": "constraint-goben-business", "target": "合辦", "evidenceRefs": ["ev-goben-business"], "admission": "admitted" },
+    { "id": "rel-goben-botanical", "unitId": "unit-goben", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "合弁", "lexicalConstraintSetId": "constraint-goben-botanical", "target": "合瓣", "evidenceRefs": ["ev-goben-botanical"], "admission": "admitted" }
+  ],
+  "safetyConstraints": [
+    { "id": "safe-buben-original", "unitId": "unit-buben-original", "kind": "contextual_kanji", "channel": "surface", "match": "武弁", "lexicalConstraintSetId": "constraint-buben-original", "effect": "preserve_exact", "evidenceRefs": ["ev-buben-original"], "admission": "admitted" }
+  ],
+  "reviewHints": [
+    { "id": "review-bengo-oracle", "kind": "contextual_kanji", "channel": "surface", "match": "弁護", "proposedTarget": "辯護", "evidenceRefs": ["ev-oracle-bengo"], "reason": "oracle_only" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1",
+  "packId": "contextual-kanji",
+  "restorationUnits": [
+    { "id": "unit-fu-attach", "family": "fu-attach-accompany", "modernKey": "付す", "notes": "One semantic restoration unit compiled as exact inflection surfaces." }
+  ],
+  "positiveRelations": [
+    { "id": "rel-fu-sa", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "付さ", "lexicalConstraintSetId": "constraint-fu-attach", "target": "附さ", "evidenceRefs": ["ev-fu-sa"], "admission": "admitted" },
+    { "id": "rel-fu-shi", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "付し", "lexicalConstraintSetId": "constraint-fu-attach", "target": "附し", "evidenceRefs": ["ev-fu-shi"], "admission": "admitted" },
+    { "id": "rel-fu-su", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "付す", "lexicalConstraintSetId": "constraint-fu-attach", "target": "附す", "evidenceRefs": ["ev-fu-su"], "admission": "admitted" },
+    { "id": "rel-fu-se", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "付せ", "lexicalConstraintSetId": "constraint-fu-attach", "target": "附せ", "evidenceRefs": ["ev-fu-se"], "admission": "admitted" },
+    { "id": "rel-fu-so", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "付そ", "lexicalConstraintSetId": "constraint-fu-attach", "target": "附そ", "evidenceRefs": ["ev-fu-so"], "admission": "admitted" }
+  ],
+  "safetyConstraints": [
+    { "id": "safe-fu-transfer", "unitId": "unit-fu-attach", "kind": "contextual_kanji", "channel": "surface", "match": "付す", "lexicalConstraintSetId": "constraint-fu-transfer", "effect": "preserve_exact", "evidenceRefs": ["ev-fu-transfer-exclusion"], "admission": "admitted" }
+  ],
+  "reviewHints": []
+}

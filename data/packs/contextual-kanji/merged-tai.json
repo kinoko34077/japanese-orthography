@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1",
+  "packId": "contextual-kanji",
+  "restorationUnits": [
+    { "id": "unit-taifu", "family": "tai-lexical-override", "modernKey": "台風" },
+    { "id": "unit-taito", "family": "tai-lexical-override", "modernKey": "台頭" },
+    { "id": "unit-taimitsu", "family": "tai-original-preserve", "modernKey": "台密" }
+  ],
+  "positiveRelations": [
+    { "id": "rel-taifu", "unitId": "unit-taifu", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "台風", "lexicalConstraintSetId": "constraint-taifu", "target": "颱風", "evidenceRefs": ["ev-taifu"], "admission": "admitted" },
+    { "id": "rel-taito", "unitId": "unit-taito", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "台頭", "lexicalConstraintSetId": "constraint-taito", "target": "擡頭", "evidenceRefs": ["ev-taito"], "admission": "admitted" }
+  ],
+  "safetyConstraints": [
+    { "id": "safe-taimitsu", "unitId": "unit-taimitsu", "kind": "contextual_kanji", "channel": "surface", "match": "台密", "lexicalConstraintSetId": "constraint-taimitsu", "effect": "block_fallback", "evidenceRefs": ["ev-taimitsu"], "blocks": [{ "packId": "safe-kanji", "relationId": "char-tai-to-dai" }], "admission": "admitted" }
+  ],
+  "reviewHints": []
+}

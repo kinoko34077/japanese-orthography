@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1",
+  "source": {
+    "id": "kotobank",
+    "kind": "dictionary",
+    "title": "コトバンク",
+    "locator": "https://kotobank.jp/"
+  },
+  "evidence": [
+    {
+      "id": "ev-goben-business",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E5%90%88%E5%BC%81-497396 / business sense",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "合弁", "rawTo": "合辦" }
+    },
+    {
+      "id": "ev-goben-botanical",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E5%90%88%E5%BC%81-497396 / botanical sense",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "合弁", "rawTo": "合瓣" }
+    },
+    {
+      "id": "ev-taito",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E5%8F%B0-90713 / 台頭 uses 台 as substitute for 擡",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "台頭", "rawTo": "擡頭" }
+    },
+    {
+      "id": "ev-taimitsu",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E5%8F%B0%E5%AF%86-92047",
+      "sourceClass": "lexical",
+      "claim": {
+        "type": "exclusion",
+        "form": "台密",
+        "senseNote": "天台宗の密教を指す略称。original 台 lexical class; broad 台→臺 fallback must not apply."
+      }
+    }
+  ]
+}

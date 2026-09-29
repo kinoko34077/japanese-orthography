@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1",
+  "source": {
+    "id": "kkh-kanji-jisyo",
+    "kind": "secondary_transcription",
+    "title": "okikae/kkh kanji-jisyo",
+    "versionRef": "19b24f88ab55809a186d88c465959548495b26a2",
+    "locator": "https://github.com/okikae/kkh/blob/19b24f88ab55809a186d88c465959548495b26a2/kanji-jisyo"
+  },
+  "evidence": [
+    { "id": "ev-fu-sa", "sourceRef": "kkh-kanji-jisyo", "locator": "active row: 付さ→附さ", "sourceClass": "lexical", "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "付さ", "rawTo": "附さ" } },
+    { "id": "ev-fu-shi", "sourceRef": "kkh-kanji-jisyo", "locator": "active row: 付し→附し", "sourceClass": "lexical", "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "付し", "rawTo": "附し" } },
+    { "id": "ev-fu-su", "sourceRef": "kkh-kanji-jisyo", "locator": "active row: 付す→附す", "sourceClass": "lexical", "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "付す", "rawTo": "附す" } },
+    { "id": "ev-fu-se", "sourceRef": "kkh-kanji-jisyo", "locator": "active row: 付せ→附せ", "sourceClass": "lexical", "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "付せ", "rawTo": "附せ" } },
+    { "id": "ev-fu-so", "sourceRef": "kkh-kanji-jisyo", "locator": "active row: 付そ→附そ", "sourceClass": "lexical", "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "付そ", "rawTo": "附そ" } },
+    {
+      "id": "ev-fu-transfer-exclusion",
+      "sourceRef": "kkh-kanji-jisyo",
+      "locator": "comment on 付さ family: 与える、交付するの意味では用いない「証書を付する」抔",
+      "sourceClass": "lexical",
+      "claim": {
+        "type": "exclusion",
+        "form": "付す",
+        "senseNote": "与える・交付する意味では附への復元を行わない。source example: 証書を付する"
+      }
+    }
+  ]
+}
