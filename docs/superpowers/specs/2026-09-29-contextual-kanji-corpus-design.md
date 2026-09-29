@@ -193,19 +193,23 @@ EvidenceRecord {
   sourceRef
   locator
   sourceClass: official | lexical | usage | specialized | override
-  sourceBehavior?        # upstream default/variant/active/disabled/etc.; audit only
+  sourceBehavior?: {
+    kind: primary | default | variant | active | disabled | other
+    rawValue?
+  }
   claim
 }
 ```
 
-`sourceBehavior` records meaningful upstream behavior when a source distinguishes default, variant, active, disabled, or similar source-local states. It is audit/provenance information only; it does not automatically become project admission or runtime priority.
+`sourceBehavior` records meaningful upstream behavior when a source distinguishes a primary assertion, default, variant, active/disabled entry, or another source-local state. It is audit/provenance information only; it does not automatically become project admission or runtime priority. `rawValue` preserves a source-specific state when the normalized `kind` alone would lose information.
 
-`claim` is a discriminated union.
+`claim` is a discriminated union whose `type` field is part of the canonical structure.
 
 #### Mapping evidence
 
 ```text
-mapping {
+claim: {
+  type: mapping
   direction: historical_to_modern | modern_to_historical
   rawFrom
   rawTo
@@ -228,7 +232,8 @@ reason:         間 -> 閒 belongs to downstream character/variant rendering
 #### Attestation evidence
 
 ```text
-attestation {
+claim: {
+  type: attestation
   form
   reading?
   lexicalIdentity?
@@ -241,7 +246,8 @@ This records that a form, reading, lexical identity, or sense is attested. It is
 #### Exclusion evidence
 
 ```text
-exclusion {
+claim: {
+  type: exclusion
   form
   senseNote
 }
@@ -328,6 +334,12 @@ SafetyConstraint {
 
 `preserve_exact` keeps a recognized lexical class unchanged. `block_fallback` prevents a referenced broad relation from firing when contextual evidence owns the exception.
 
+For the first slice:
+
+- `block_fallback` requires a non-empty `blocks` list;
+- `preserve_exact` does not acquire an implicit cross-pack target merely because a broad fallback exists;
+- a referenced relation must resolve during workspace/integration validation before the constraint can participate in automatic runtime safety resolution.
+
 ### 6.8 `ReviewHint`
 
 ```text
@@ -389,11 +401,19 @@ The first slice does not introduce numeric confidence scores.
 
 Validation has three outcomes:
 
-- **ERROR** — a mechanically provable contract violation; build fails;
-- **REVIEW** — a deterministic finding that cannot be safely converted into a hard semantic conclusion from available canonical inputs; build output may be inspected but the finding must remain visible;
+- **ERROR** — a mechanically provable contract violation;
+- **REVIEW** — a deterministic finding that cannot be safely converted into a hard semantic conclusion from available canonical inputs;
 - **OK** — the checked invariant is satisfied.
 
-The validator must not hide uncertainty by inventing linguistic knowledge.
+Command behavior for the first slice is explicit:
+
+- `validate` exits non-zero on any `ERROR` and reports `REVIEW` findings separately;
+- `compile` does not emit a successful generation when validation contains an `ERROR`;
+- repository `check` fails on either `ERROR` or an unresolved `REVIEW` produced by canonical production data;
+- test fixtures may intentionally assert `REVIEW` outcomes without treating the fixture itself as a repository failure;
+- the first slice has no generic suppression mechanism for `REVIEW`; production data must resolve the finding or move unresolved knowledge to an explicit `ReviewHint`/non-hot representation.
+
+A `REVIEW` classification therefore means “not proven invalid by the validator,” not “safe to ignore.” The validator must not hide uncertainty by inventing linguistic knowledge.
 
 ### 8.1 Pack-local hard errors
 
@@ -407,13 +427,15 @@ Fail validation when locally provable, including at least:
 - accepted relation/safety record with no admission-sufficient recoverable evidence;
 - duplicate exact executable authority for the same direction/channel/match/constraint/target;
 - data representation that would silently collapse multiple admitted targets;
-- orphan `RestorationUnit` where the unit has no meaningful owned relation/safety/evidence linkage;
+- `RestorationUnit` referenced by no relation or safety record;
 - required lexical-binding declaration missing from a relation that requires lexical identity;
 - explicit raw-source/projected canonical mismatch without projection audit information;
 - candidate-oracle/review-only evidence promoted to automatic authority without independent admission-sufficient evidence;
 - structurally provable pure-character-map contamination;
 - structurally provable unsafe one-character reverse promotion;
 - non-deterministic compilation of the same normalized canonical knowledge.
+
+“Admission-sufficient” is a project policy judgment represented by admitted canonical evidence/relations; the validator does not infer source authority from popularity or source count. A `candidate_oracle` alone is never admission-sufficient for hot automatic authority in the first slice.
 
 For one-character reverse promotion, the validator must not use length alone as linguistic proof. The hard-error case is a relation promoted to context-free automatic reverse authority solely from directional substitution evidence without an accepted contextual/lexical safety basis.
 
@@ -446,7 +468,7 @@ The first implementation must not embed hidden hard-coded lists of historical ch
 
 The compiler is build-time only. Consumer runtimes do not depend on TypeScript, Ajv, npm, canonical source layout, or source-level evidence objects.
 
-Proposed command surface:
+First-slice command surface:
 
 ```text
 npm run validate
@@ -460,7 +482,7 @@ Responsibilities:
 - `validate` reads canonical source and produces no canonical mutation;
 - `compile` runs required validation and writes only derived `dist/` output;
 - `test` executes structural, semantic, integration-fixture, and golden tests;
-- `check` runs validation, deterministic compile checks, and tests.
+- `check` runs validation, deterministic compile checks, and tests, and enforces the production-data zero-unresolved-REVIEW gate described above.
 
 A failed validation/compile must not leave a newly activated partial artifact. Implementation should build into a staging location and replace generated output only after all required sections are complete and validated.
 
