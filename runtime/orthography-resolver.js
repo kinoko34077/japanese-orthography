@@ -7,14 +7,17 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (TransformShared) {
   "use strict";
 
+  const emptyContextualDecision = () => ({
+    status: "none",
+    target: null,
+    candidates: [],
+    relationIds: []
+  });
+
   const emptyHistorical = (surface, disposition = "UNRESOLVED") => ({
     route: null,
     kana: null,
-    contextualKanji: {
-      status: "none",
-      target: null,
-      candidates: []
-    },
+    contextualKanji: emptyContextualDecision(),
     deterministicKanji: null,
     surface,
     disposition,
@@ -102,6 +105,156 @@
     });
   };
 
+  const bindingEligible = (entry, candidate) => {
+    const required = Array.isArray(entry?.lexicalBindingIds) ? entry.lexicalBindingIds : [];
+    if (required.length === 0) {
+      return true;
+    }
+    const viable = Array.isArray(candidate?.viableBindingIds) ? candidate.viableBindingIds : [];
+    return viable.some((bindingId) => required.includes(bindingId));
+  };
+
+  const resolveContextualKanji = (surface, candidate, relations, safety) => {
+    const preserve = (Array.isArray(safety) ? safety : []).find((entry) => (
+      entry?.effect === "preserve_exact" && entry.match === surface && bindingEligible(entry, candidate)
+    ));
+    if (preserve) {
+      return {
+        status: "preserve",
+        target: null,
+        candidates: [],
+        relationIds: [preserve.id].filter(Boolean)
+      };
+    }
+
+    const eligibleRelations = (Array.isArray(relations) ? relations : []).filter((entry) => (
+      entry?.match === surface && typeof entry?.target === "string" && bindingEligible(entry, candidate)
+    ));
+    const targets = [];
+    for (const relation of eligibleRelations) {
+      if (!targets.includes(relation.target)) {
+        targets.push(relation.target);
+      }
+    }
+
+    if (targets.length === 1) {
+      return {
+        status: "resolved",
+        target: targets[0],
+        candidates: targets,
+        relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
+      };
+    }
+    if (targets.length > 1) {
+      return {
+        status: "candidates",
+        target: null,
+        candidates: targets,
+        relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
+      };
+    }
+    return emptyContextualDecision();
+  };
+
+  const applySafeKanjiMap = (surface, safeKanjiMap) => Array.from(`${surface ?? ""}`).map((char) => (
+    Object.prototype.hasOwnProperty.call(safeKanjiMap ?? {}, char) ? safeKanjiMap[char] : char
+  )).join("");
+
+  const resolveHistorical = (candidate, sourceSurface, components, config) => {
+    const relation = typeof config.historicalLookup === "function"
+      ? config.historicalLookup(candidate)
+      : null;
+    const relationAllowed = !relation?.requiresMorphology || candidate?.morphology != null;
+    const acceptedRelation = relationAllowed ? relation : null;
+    const contextualKanji = resolveContextualKanji(
+      sourceSurface,
+      candidate,
+      config.contextualRelations,
+      config.contextualSafety
+    );
+
+    const componentRelations = new Map(
+      (Array.isArray(acceptedRelation?.components) ? acceptedRelation.components : [])
+        .map((component) => [component.lexicalIdentity, component])
+    );
+    const resolvedComponents = components.map((component) => {
+      const componentRelation = componentRelations.get(component.lexicalIdentity);
+      return {
+        ...component,
+        historicalKana: componentRelation?.historicalKana ?? null,
+        renderedSurface: applySafeKanjiMap(component.surface, config.safeKanjiMap ?? {})
+      };
+    });
+
+    if (contextualKanji.status === "preserve") {
+      return {
+        components: resolvedComponents,
+        historical: {
+          route: acceptedRelation?.route ?? null,
+          kana: acceptedRelation?.reading ?? null,
+          contextualKanji,
+          deterministicKanji: null,
+          surface: sourceSurface,
+          disposition: "PRESERVE",
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+        }
+      };
+    }
+
+    if (contextualKanji.status === "candidates") {
+      return {
+        components: resolvedComponents,
+        historical: {
+          route: acceptedRelation?.route ?? null,
+          kana: acceptedRelation?.reading ?? null,
+          contextualKanji,
+          deterministicKanji: null,
+          surface: sourceSurface,
+          disposition: "CANDIDATES",
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+        }
+      };
+    }
+
+    if (contextualKanji.status === "resolved") {
+      return {
+        components: resolvedComponents,
+        historical: {
+          route: acceptedRelation?.route ?? null,
+          kana: acceptedRelation?.reading ?? null,
+          contextualKanji,
+          deterministicKanji: null,
+          surface: contextualKanji.target,
+          disposition: "AUTO",
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+        }
+      };
+    }
+
+    const relationSurface = acceptedRelation?.surface ?? sourceSurface;
+    const renderedSurface = applySafeKanjiMap(relationSurface, config.safeKanjiMap ?? {});
+    const deterministicKanji = renderedSurface === relationSurface
+      ? null
+      : {
+          status: "resolved",
+          source: relationSurface,
+          target: renderedSurface
+        };
+
+    return {
+      components: resolvedComponents,
+      historical: {
+        route: acceptedRelation?.route ?? null,
+        kana: acceptedRelation?.reading ?? null,
+        contextualKanji,
+        deterministicKanji,
+        surface: renderedSurface,
+        disposition: acceptedRelation || deterministicKanji ? "AUTO" : "SOURCE_REVIEW",
+        evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+      }
+    };
+  };
+
   const createResolver = (config = {}) => {
     if (typeof config.lexicalLookup !== "function") {
       throw new TypeError("createResolver requires lexicalLookup(surface)");
@@ -135,6 +288,7 @@
       const reading = evidence.wholeRuby
         ? { modernSurface: evidence.wholeRuby.reading, source: "ruby-word" }
         : { modernSurface: candidate.reading ?? null, source: candidate.reading ? "lexical" : "unknown" };
+      const historicalResolution = resolveHistorical(candidate, evidence.baseSurface, components, config);
 
       return {
         kind: "resolved",
@@ -145,10 +299,13 @@
         reading,
         lexicalOrigin: candidate.lexicalOrigin ?? "unknown",
         morphology: candidate.morphology ?? null,
-        components,
+        components: historicalResolution.components,
         viableBindingIds: candidate.viableBindingIds ?? [],
-        historical: emptyHistorical(evidence.baseSurface),
-        evidenceRefs: [...(candidate.evidenceRefs ?? [])]
+        historical: historicalResolution.historical,
+        evidenceRefs: [
+          ...(candidate.evidenceRefs ?? []),
+          ...(historicalResolution.historical.evidenceRefs ?? [])
+        ]
       };
     };
 
