@@ -17,8 +17,18 @@
     "groups": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/group" } }
   },
   "oneOf": [
-    { "required": ["phraseRules", "characterMapPriority", "characterMap"], "not": { "required": ["groups"] } },
-    { "required": ["groups"], "not": { "anyOf": [{ "required": ["phraseRules"] }, { "required": ["characterMapPriority"] }, { "required": ["characterMap"] }] } }
+    {
+      "required": ["phraseRules", "characterMapPriority", "characterMap"],
+      "properties": { "groups": false }
+    },
+    {
+      "required": ["groups"],
+      "properties": {
+        "phraseRules": false,
+        "characterMapPriority": false,
+        "characterMap": false
+      }
+    }
   ],
   "$defs": {
     "phraseRule": {
