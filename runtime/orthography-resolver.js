@@ -175,9 +175,12 @@
     Object.prototype.hasOwnProperty.call(safeKanjiMap ?? {}, char) ? safeKanjiMap[char] : char
   )).join("");
 
-  const resolveHistoricalComponents = (components, acceptedRelation, safeKanjiMap) => {
+  const resolveHistoricalComponents = (components, acceptedRelation, safeKanjiMap, options = {}) => {
     const relationComponents = Array.isArray(acceptedRelation?.components) ? acceptedRelation.components : [];
     if (!Array.isArray(components) || components.length === 0) {
+      if (options.allowRelationFallback === false) {
+        return [];
+      }
       return relationComponents.map((component) => ({
         ...component,
         renderedSurface: applySafeKanjiMap(component.surface, safeKanjiMap)
@@ -213,7 +216,8 @@
     const resolvedComponents = resolveHistoricalComponents(
       components,
       acceptedRelation,
-      config.safeKanjiMap ?? {}
+      config.safeKanjiMap ?? {},
+      { allowRelationFallback: contextualKanji.status !== "resolved" }
     );
 
     if (contextualKanji.status === "preserve") {
