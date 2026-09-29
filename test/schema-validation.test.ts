@@ -76,3 +76,81 @@ test('contextual schema accepts explicit block_fallback refs and rejects unknown
   assert.deepEqual(validate(document, 'contextual-kanji-pack-v1'), []);
   assert.ok(validate({ ...document, surprise: true }, 'contextual-kanji-pack-v1').length > 0);
 });
+
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { loadCanonicalWorkspace } from '../tools/load-workspace.ts';
+
+async function withWorkspace(run: (root: string) => Promise<void>): Promise<void> {
+  const root = await mkdtemp(join(tmpdir(), 'orthography-workspace-'));
+  try {
+    await mkdir(join(root, 'data', 'evidence'), { recursive: true });
+    await mkdir(join(root, 'data', 'lexical', 'constraints'), { recursive: true });
+    await mkdir(join(root, 'data', 'packs', 'contextual-kanji'), { recursive: true });
+    await run(root);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+async function writeJson(path: string, value: unknown): Promise<void> {
+  await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function emptyPack(packId = 'contextual-kanji') {
+  return { schemaVersion: '1', packId, restorationUnits: [], positiveRelations: [], safetyConstraints: [], reviewHints: [] };
+}
+test('workspace discovery is deterministic and retains diagnostic source locations', async () => {
+  await withWorkspace(async (root) => {
+    const claim = { type: 'attestation', form: '熔接' };
+    await writeJson(join(root, 'data', 'evidence', 'z.json'), {
+      ...evidenceDoc(claim), source: { ...source, id: 'source-z' }
+    });
+    await writeJson(join(root, 'data', 'evidence', 'a.json'), {
+      ...evidenceDoc(claim), source: { ...source, id: 'source-a' }
+    });
+    await writeJson(join(root, 'data', 'lexical', 'constraints', 'contextual-kanji.json'), {
+      schemaVersion: '1', lexicalEvidence: [], constraintSets: []
+    });
+    await writeJson(join(root, 'data', 'packs', 'contextual-kanji', 'base.json'), emptyPack());
+
+    const workspace = await loadCanonicalWorkspace(root);
+    assert.deepEqual(workspace.sources.map((x) => x.value.id), ['source-a', 'source-z']);
+    assert.equal(workspace.sources[0]!.location.file, 'data/evidence/a.json');
+    assert.equal(workspace.packMetadata.length, 1);
+  });
+});
+
+test('workspace loader fails closed on duplicate source document identity', async () => {
+  await withWorkspace(async (root) => {
+    const doc = evidenceDoc({ type: 'attestation', form: '熔接' });
+    await writeJson(join(root, 'data', 'evidence', 'one.json'), doc);
+    await writeJson(join(root, 'data', 'evidence', 'two.json'), doc);
+    await assert.rejects(loadCanonicalWorkspace(root), { code: 'E_DUPLICATE_DOCUMENT_IDENTITY' });
+  });
+});
+test('workspace loader rejects malformed JSON and malformed UTF-8', async () => {
+  await withWorkspace(async (root) => {
+    const jsonPath = join(root, 'data', 'evidence', 'bad-json.json');
+    await writeFile(jsonPath, '{ nope', 'utf8');
+    await assert.rejects(loadCanonicalWorkspace(root), { code: 'E_INVALID_JSON' });
+  });
+  await withWorkspace(async (root) => {
+    const utf8Path = join(root, 'data', 'evidence', 'bad-utf8.json');
+    await writeFile(utf8Path, Buffer.from([0xff, 0xfe, 0xfd]));
+    await assert.rejects(loadCanonicalWorkspace(root), { code: 'E_INVALID_UTF8' });
+  });
+});
+
+test('workspace loader preserves duplicate record IDs for semantic validation', async () => {
+  await withWorkspace(async (root) => {
+    const doc = evidenceDoc({ type: 'attestation', form: '熔接' });
+    doc.evidence.push({ ...doc.evidence[0]!, locator: 'row-2' });
+    await writeJson(join(root, 'data', 'evidence', 'evidence.json'), doc);
+    const workspace = await loadCanonicalWorkspace(root);
+    assert.equal(workspace.evidence.length, 2);
+    assert.deepEqual(workspace.evidence.map((x) => x.value.id), ['ev-1', 'ev-1']);
+    assert.equal(workspace.evidence[1]!.location.file, 'data/evidence/evidence.json');
+  });
+});
