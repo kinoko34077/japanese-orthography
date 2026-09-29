@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contextual-kanji-pack-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packId", "restorationUnits", "positiveRelations", "safetyConstraints", "reviewHints"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "packId": { "type": "string", "minLength": 1 },
+    "restorationUnits": { "type": "array", "items": { "$ref": "#/$defs/restorationUnit" } },
+    "positiveRelations": { "type": "array", "items": { "$ref": "#/$defs/positiveRelation" } },
+    "safetyConstraints": { "type": "array", "items": { "$ref": "#/$defs/safetyConstraint" } },
+    "reviewHints": { "type": "array", "items": { "$ref": "#/$defs/reviewHint" } }
+  },
+  "$defs": {
+    "restorationUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "family", "modernKey"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "family": { "type": "string", "minLength": 1 },
+        "modernKey": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" }
+      }
+    },
+    "positiveRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "unitId", "kind", "direction", "channel", "match", "target", "evidenceRefs", "admission"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "unitId": { "type": "string", "minLength": 1 },
+        "kind": { "const": "contextual_kanji" },
+        "direction": { "const": "modern_to_historical" },
+        "channel": { "const": "surface" },
+        "match": { "type": "string", "minLength": 1 },
+        "lexicalConstraintSetId": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "evidenceRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "admission": { "enum": ["admitted", "disabled"] }
+      }
+    },
+    "safetyConstraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "channel", "match", "effect", "evidenceRefs", "admission"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "unitId": { "type": "string", "minLength": 1 },
+        "kind": { "const": "contextual_kanji" },
+        "channel": { "const": "surface" },
+        "match": { "type": "string", "minLength": 1 },
+        "lexicalConstraintSetId": { "type": "string", "minLength": 1 },
+        "effect": { "enum": ["preserve_exact", "block_fallback"] },
+        "evidenceRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "blocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "external-relation-ref-v1" }
+        },
+        "admission": { "enum": ["admitted", "disabled"] }
+      },
+      "allOf": [{
+        "if": { "properties": { "effect": { "const": "block_fallback" } }, "required": ["effect"] },
+        "then": { "properties": { "blocks": { "type": "array", "minItems": 1 } }, "required": ["blocks"] }
+      }]
+    },
+    "reviewHint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "channel", "match", "evidenceRefs", "reason"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "const": "contextual_kanji" },
+        "channel": { "const": "surface" },
+        "match": { "type": "string", "minLength": 1 },
+        "lexicalConstraintSetId": { "type": "string", "minLength": 1 },
+        "proposedTarget": { "type": "string", "minLength": 1 },
+        "evidenceRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "reason": {
+          "enum": ["oracle_only", "unresolved_evidence", "ambiguous_binding", "normalization_review"]
+        }
+      }
+    }
+  }
+}

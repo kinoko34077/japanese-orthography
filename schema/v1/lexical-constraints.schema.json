@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lexical-constraints-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "lexicalEvidence", "constraintSets"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "lexicalEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sourceRef", "sourceIdentity", "evidenceRefs"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "sourceRef": { "type": "string", "minLength": 1 },
+          "sourceIdentity": { "type": "string", "minLength": 1 },
+          "lForm": { "type": "string" },
+          "lexicalOrigin": { "type": "string" },
+          "evidenceRefs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "constraintSets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "lexicalEvidenceRefs"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "lexicalEvidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

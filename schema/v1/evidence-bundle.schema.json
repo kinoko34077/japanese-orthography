@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence-bundle-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "source", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "source": { "$ref": "#/$defs/sourceDescriptor" },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidenceRecord" }
+    }
+  },
+  "$defs": {
+    "sourceDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "title", "locator"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": ["primary_official", "dictionary", "usage_corpus", "specialized_reference", "project_override", "secondary_transcription", "candidate_oracle"]
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "versionRef": { "type": "string" },
+        "locator": { "type": "string", "minLength": 1 },
+        "licenseNote": { "type": "string" },
+        "pinnedRefOrDigest": { "type": "string" }
+      }
+    },
+    "evidenceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sourceRef", "locator", "sourceClass", "claim"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sourceRef": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 },
+        "sourceClass": { "enum": ["official", "lexical", "usage", "specialized", "override"] },
+        "sourceBehavior": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state"],
+          "properties": {
+            "state": { "enum": ["default", "variant", "active", "disabled"] },
+            "note": { "type": "string" }
+          }
+        },
+        "claim": { "$ref": "#/$defs/claim" }
+      }
+    },
+    "claim": {
+      "oneOf": [
+        { "$ref": "#/$defs/mappingClaim" },
+        { "$ref": "#/$defs/attestationClaim" },
+        { "$ref": "#/$defs/exclusionClaim" }
+      ]
+    },
+    "mappingClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "direction", "rawFrom", "rawTo"],
+      "properties": {
+        "type": { "const": "mapping" },
+        "direction": { "enum": ["historical_to_modern", "modern_to_historical"] },
+        "rawFrom": { "type": "string", "minLength": 1 },
+        "rawTo": { "type": "string", "minLength": 1 },
+        "projectedFrom": { "type": "string", "minLength": 1 },
+        "projectedTo": { "type": "string", "minLength": 1 },
+        "projectionNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "attestationClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "form"],
+      "properties": {
+        "type": { "const": "attestation" },
+        "form": { "type": "string", "minLength": 1 },
+        "reading": { "type": "string" },
+        "lexicalIdentity": { "type": "string" },
+        "senseNote": { "type": "string" }
+      }
+    },
+    "exclusionClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "form", "senseNote"],
+      "properties": {
+        "type": { "const": "exclusion" },
+        "form": { "type": "string", "minLength": 1 },
+        "senseNote": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

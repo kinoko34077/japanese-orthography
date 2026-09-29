@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "external-relation-ref-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packId", "relationId"],
+  "properties": {
+    "packId": { "type": "string", "minLength": 1 },
+    "relationId": { "type": "string", "minLength": 1 }
+  }
+}
