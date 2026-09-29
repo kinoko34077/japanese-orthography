@@ -7,6 +7,7 @@
   "properties": {
     "schemaVersion": { "const": "1" },
     "packId": { "type": "string", "minLength": 1 },
+    "requiresLexicalNamespaceId": { "type": "string", "minLength": 1 },
     "restorationUnits": { "type": "array", "items": { "$ref": "#/$defs/restorationUnit" } },
     "positiveRelations": { "type": "array", "items": { "$ref": "#/$defs/positiveRelation" } },
     "safetyConstraints": { "type": "array", "items": { "$ref": "#/$defs/safetyConstraint" } },

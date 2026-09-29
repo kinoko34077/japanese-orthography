@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1",
+  "source": {
+    "id": "culture-agency-1956-douon",
+    "kind": "primary_official",
+    "title": "同音の漢字による書きかえ",
+    "versionRef": "昭和31年7月5日 国語審議会報告",
+    "locator": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kakuki/03/pdf/doon.pdf"
+  },
+  "evidence": [
+    {
+      "id": "ev-douon-yosetsu",
+      "sourceRef": "culture-agency-1956-douon",
+      "locator": "table entry: 熔接→溶接",
+      "sourceClass": "official",
+      "claim": { "type": "mapping", "direction": "historical_to_modern", "rawFrom": "熔接", "rawTo": "溶接" }
+    },
+    {
+      "id": "ev-douon-kanketsu",
+      "sourceRef": "culture-agency-1956-douon",
+      "locator": "table entry: 間歇→間欠",
+      "sourceClass": "official",
+      "claim": { "type": "mapping", "direction": "historical_to_modern", "rawFrom": "間歇", "rawTo": "間欠" }
+    },
+    {
+      "id": "ev-douon-sotei-kugi",
+      "sourceRef": "culture-agency-1956-douon",
+      "locator": "table entry: 装釘（幀）→装丁 / 装釘 branch",
+      "sourceClass": "official",
+      "claim": { "type": "mapping", "direction": "historical_to_modern", "rawFrom": "装釘", "rawTo": "装丁" }
+    },
+    {
+      "id": "ev-douon-sotei-tei",
+      "sourceRef": "culture-agency-1956-douon",
+      "locator": "table entry: 装釘（幀）→装丁 / 装幀 branch",
+      "sourceClass": "official",
+      "claim": { "type": "mapping", "direction": "historical_to_modern", "rawFrom": "装幀", "rawTo": "装丁" }
+    },
+    {
+      "id": "ev-douon-santan",
+      "sourceRef": "culture-agency-1956-douon",
+      "locator": "table entry: 讃嘆→賛嘆",
+      "sourceClass": "official",
+      "claim": { "type": "mapping", "direction": "historical_to_modern", "rawFrom": "讃嘆", "rawTo": "賛嘆" }
+    }
+  ]
+}

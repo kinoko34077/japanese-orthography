@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1",
+  "lexicalEvidence": [
+    {
+      "id": "lex-fu-attach",
+      "sourceRef": "kkh-kanji-jisyo",
+      "sourceIdentity": "kkh:付す:attach-accompany",
+      "evidenceRefs": ["ev-fu-sa", "ev-fu-shi", "ev-fu-su", "ev-fu-se", "ev-fu-so"]
+    },
+    {
+      "id": "lex-fu-transfer",
+      "sourceRef": "kkh-kanji-jisyo",
+      "sourceIdentity": "kkh:付す:transfer-issue-preserve",
+      "evidenceRefs": ["ev-fu-transfer-exclusion"]
+    },
+    {
+      "id": "lex-buben-original",
+      "sourceRef": "kanjipedia",
+      "sourceIdentity": "kanjipedia:武弁:original-crown",
+      "evidenceRefs": ["ev-buben-original"]
+    },
+    {
+      "id": "lex-goben-business",
+      "sourceRef": "kotobank",
+      "sourceIdentity": "kotobank:合弁:business",
+      "evidenceRefs": ["ev-goben-business"]
+    },
+    {
+      "id": "lex-goben-botanical",
+      "sourceRef": "kotobank",
+      "sourceIdentity": "kotobank:合弁:botanical",
+      "evidenceRefs": ["ev-goben-botanical"]
+    },
+    {
+      "id": "lex-taifu",
+      "sourceRef": "kanjipedia",
+      "sourceIdentity": "kanjipedia:台風:typhoon",
+      "evidenceRefs": ["ev-taifu"]
+    },
+    {
+      "id": "lex-taito",
+      "sourceRef": "kotobank",
+      "sourceIdentity": "kotobank:台頭:raise-emerge",
+      "evidenceRefs": ["ev-taito"]
+    },
+    {
+      "id": "lex-taimitsu",
+      "sourceRef": "kotobank",
+      "sourceIdentity": "kotobank:台密:tendai-esoteric",
+      "evidenceRefs": ["ev-taimitsu"]
+    }
+  ],
+  "constraintSets": [
+    { "id": "constraint-fu-attach", "lexicalEvidenceRefs": ["lex-fu-attach"] },
+    { "id": "constraint-fu-transfer", "lexicalEvidenceRefs": ["lex-fu-transfer"] },
+    { "id": "constraint-buben-original", "lexicalEvidenceRefs": ["lex-buben-original"] },
+    { "id": "constraint-goben-business", "lexicalEvidenceRefs": ["lex-goben-business"] },
+    { "id": "constraint-goben-botanical", "lexicalEvidenceRefs": ["lex-goben-botanical"] },
+    { "id": "constraint-taifu", "lexicalEvidenceRefs": ["lex-taifu"] },
+    { "id": "constraint-taito", "lexicalEvidenceRefs": ["lex-taito"] },
+    { "id": "constraint-taimitsu", "lexicalEvidenceRefs": ["lex-taimitsu"] }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1",
+  "source": {
+    "id": "ostrichbeta-kyujitai-conversion",
+    "kind": "candidate_oracle",
+    "title": "Ostrichbeta/kyujitai-conversion convert.csv",
+    "versionRef": "575e4a4e4f6f0b7947fd246522e2203967a18c27",
+    "locator": "https://github.com/Ostrichbeta/kyujitai-conversion/blob/575e4a4e4f6f0b7947fd246522e2203967a18c27/convert.csv"
+  },
+  "evidence": [
+    {
+      "id": "ev-oracle-bengo",
+      "sourceRef": "ostrichbeta-kyujitai-conversion",
+      "locator": "convert.csv row: 弁護,辯護",
+      "sourceClass": "usage",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "弁護", "rawTo": "辯護" }
+    }
+  ]
+}

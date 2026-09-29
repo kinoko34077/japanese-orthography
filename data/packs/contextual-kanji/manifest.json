@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1",
+  "packId": "contextual-kanji",
+  "requiresLexicalNamespaceId": "pmin-current",
+  "restorationUnits": [],
+  "positiveRelations": [],
+  "safetyConstraints": [],
+  "reviewHints": []
+}

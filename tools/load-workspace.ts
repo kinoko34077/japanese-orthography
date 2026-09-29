@@ -120,12 +120,26 @@ export async function loadCanonicalWorkspace(rootDir: string): Promise<Canonical
   }
 
   const packFiles = await listJsonFiles(join(rootDir, 'data', 'packs', 'contextual-kanji'));
+  const packMetadataIndex = new Map<string, number>();
   for (const absolutePath of packFiles) {
     const file = diagnosticLocation(rootDir, absolutePath);
     const document = requireSchema<ContextualKanjiPackDocument>(
       await readStrictJson(rootDir, absolutePath), 'contextual-kanji-pack-v1', file
     );
-    workspace.packMetadata.push(locate({ packId: document.packId }, file, '/'));
+    const metadataIndex = packMetadataIndex.get(document.packId);
+    if (metadataIndex === undefined) {
+      const metadata = document.requiresLexicalNamespaceId === undefined
+        ? { packId: document.packId }
+        : { packId: document.packId, requiresLexicalNamespaceId: document.requiresLexicalNamespaceId };
+      workspace.packMetadata.push(locate(metadata, file, '/'));
+      packMetadataIndex.set(document.packId, workspace.packMetadata.length - 1);
+    } else if (document.requiresLexicalNamespaceId !== undefined) {
+      const existing = workspace.packMetadata[metadataIndex]!.value;
+      if (existing.requiresLexicalNamespaceId !== undefined && existing.requiresLexicalNamespaceId !== document.requiresLexicalNamespaceId) {
+        throw new CanonicalLoadError('E_PACK_METADATA_CONFLICT', `Conflicting lexical namespace for pack ${document.packId}`, file);
+      }
+      existing.requiresLexicalNamespaceId = document.requiresLexicalNamespaceId;
+    }
     document.restorationUnits.forEach((value, index) => {
       workspace.restorationUnits.push(locate(value, file, `/restorationUnits/${index}`));
     });

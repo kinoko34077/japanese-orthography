@@ -119,6 +119,7 @@ export interface LexicalConstraintsDocument {
 export interface ContextualKanjiPackDocument {
   schemaVersion: '1';
   packId: string;
+  requiresLexicalNamespaceId?: string;
   restorationUnits: RestorationUnit[];
   positiveRelations: PositiveRelation[];
   safetyConstraints: SafetyConstraint[];
