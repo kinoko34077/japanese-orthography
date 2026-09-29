@@ -127,17 +127,48 @@ function section(id: string, value: unknown): { id: string; sha256: string; byte
   return { id, sha256: sha256(text), byteLength: Buffer.byteLength(text, 'utf8') };
 }
 
+function requireNonEmptyString(value: unknown, label: string): asserts value is string {
+  if (typeof value !== 'string' || value.trim() === '') throw new Error(`Invalid ${label}`);
+}
+
 function validateSourceIdentity(source: UniDicSourceSlice['source']): void {
+  requireNonEmptyString(source.dictionary, 'source dictionary');
+  requireNonEmptyString(source.version, 'source version');
   if (!/^[0-9a-f]{64}$/.test(source.archiveMemberSha256)) throw new Error('Invalid source lex.csv SHA-256');
+  if (!Number.isSafeInteger(source.archiveMemberBytes) || source.archiveMemberBytes <= 0) throw new Error('Invalid source archiveMemberBytes');
+  if (!Number.isSafeInteger(source.archiveMemberRows) || source.archiveMemberRows <= 0) throw new Error('Invalid source archiveMemberRows');
   if (!/^[0-9a-f]{64}$/.test(source.lexicalNamespaceId)) throw new Error('Invalid lexicalNamespaceId');
-  if (source.lexicalNamespaceEvidence.trim() === '') throw new Error('Missing lexical namespace evidence');
+  requireNonEmptyString(source.lexicalNamespaceEvidence, 'lexical namespace evidence');
+}
+
+function validateSourceRecord(record: UniDicSourceRecord, index: number): void {
+  const prefix = `record[${index}]`;
+  requireNonEmptyString(record.surface, `${prefix}.surface`);
+  if (!Array.isArray(record.pos) || record.pos.length !== 4 || !record.pos.every((value) => typeof value === 'string' && value.length > 0)) {
+    throw new Error(`Invalid ${prefix}.pos`);
+  }
+  requireNonEmptyString(record.cType, `${prefix}.cType`);
+  requireNonEmptyString(record.cForm, `${prefix}.cForm`);
+  requireNonEmptyString(record.lForm, `${prefix}.lForm`);
+  requireNonEmptyString(record.lemma, `${prefix}.lemma`);
+  requireNonEmptyString(record.goshu, `${prefix}.goshu`);
+  requireNonEmptyString(record.kana, `${prefix}.kana`);
+  if (!Number.isSafeInteger(record.sourceLemmaId) || record.sourceLemmaId <= 0) {
+    throw new Error(`Invalid ${prefix}.sourceLemmaId`);
+  }
+}
+
+function validateSourceSlice(sourceSlice: UniDicSourceSlice): void {
+  validateSourceIdentity(sourceSlice.source);
+  if (!Array.isArray(sourceSlice.records) || sourceSlice.records.length === 0) throw new Error('Lexical source slice requires records');
+  sourceSlice.records.forEach(validateSourceRecord);
 }
 
 export function compileLexicalSourceSlice(sourceSlice: UniDicSourceSlice): LexicalArtifact {
   if (sourceSlice.schemaVersion !== '1' || sourceSlice.kind !== 'unidic_cwj_source_slice') {
     throw new Error('Unsupported lexical source slice');
   }
-  validateSourceIdentity(sourceSlice.source);
+  validateSourceSlice(sourceSlice);
 
   const lemmaBySourceId = new Map<number, { lemma: string; lForm: string; lexicalOrigin: LexicalOrigin }>();
   for (const record of sourceSlice.records) {
