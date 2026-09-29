@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1",
+  "kind": "japanese-orthography-historical-native-slice",
+  "purpose": "#35 bounded source-backed native historical-kana acceptance slice",
+  "lexicalNamespaceId": "6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144",
+  "source": {
+    "repository": "okikae/kkh",
+    "commit": "19b24f88ab55809a186d88c465959548495b26a2",
+    "license": "BSD-2-Clause",
+    "status": "pinned-source-slice",
+    "files": [
+      {
+        "path": "kana-jisyo",
+        "blobSha": "6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be",
+        "role": "native-historical-kana-evidence"
+      }
+    ]
+  },
+  "sourceRecords": [
+    {
+      "id": "kkh-kana-omou-omofu",
+      "file": "kana-jisyo",
+      "enabled": true,
+      "raw": "思う /思ふ ;ハ行四段",
+      "surface": "思う",
+      "historicalSurface": "思ふ",
+      "sourceComment": "ハ行四段"
+    },
+    {
+      "id": "kkh-kana-ajiwaou-odoriji",
+      "file": "kana-jisyo",
+      "enabled": true,
+      "raw": "味わおう /味はゝう ;ハ行四段「踊り字」",
+      "surface": "味わおう",
+      "historicalSurface": "味はゝう",
+      "sourceComment": "ハ行四段「踊り字」"
+    },
+    {
+      "id": "kkh-kana-ajiwaou-expanded",
+      "file": "kana-jisyo",
+      "enabled": true,
+      "raw": "味わおう /味ははう ;ハ行四段「意志推量：おう」",
+      "surface": "味わおう",
+      "historicalSurface": "味ははう",
+      "sourceComment": "ハ行四段「意志推量：おう」"
+    }
+  ],
+  "relations": [
+    {
+      "lexicalIdentity": "unidic-cwj:2025.12:lemma:5255",
+      "surface": "思う",
+      "historicalSurface": "思ふ",
+      "requiredMorphology": {
+        "conjugationType": "五段-ワア行"
+      },
+      "evidenceRefs": [
+        "kkh-kana-omou-omofu"
+      ]
+    }
+  ]
+}
