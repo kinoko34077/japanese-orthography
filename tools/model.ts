@@ -127,6 +127,7 @@ export interface ContextualKanjiPackDocument {
 
 export interface PackMetadata {
   packId: string;
+  requiresLexicalNamespaceId?: string;
 }
 
 export interface CanonicalWorkspace {
