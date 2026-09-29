@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1",
+  "lexicalRecords": [
+    {
+      "lexicalIdentity": "lex-gakkou",
+      "surface": "学校",
+      "reading": "がっこう",
+      "lexicalOrigin": "sino",
+      "viableBindingIds": ["fixture-resolver-school"],
+      "components": [
+        {
+          "lexicalIdentity": "component-gaku",
+          "surface": "学",
+          "lexicalReading": "がく",
+          "lexicalOrigin": "sino",
+          "readingClass": "on"
+        },
+        {
+          "lexicalIdentity": "component-kou",
+          "surface": "校",
+          "lexicalReading": "こう",
+          "lexicalOrigin": "sino",
+          "readingClass": "on"
+        }
+      ],
+      "evidenceRefs": ["fixture:lexical:学校"]
+    },
+    {
+      "lexicalIdentity": "lex-taifu",
+      "surface": "台風",
+      "reading": "たいふう",
+      "lexicalOrigin": "sino",
+      "viableBindingIds": ["fixture-local-0006"],
+      "evidenceRefs": ["fixture:lexical:台風"]
+    },
+    {
+      "lexicalIdentity": "lex-goben",
+      "surface": "合弁",
+      "reading": "ごうべん",
+      "lexicalOrigin": "sino",
+      "viableBindingIds": ["fixture-local-0004", "fixture-local-0005"],
+      "evidenceRefs": ["fixture:lexical:合弁"]
+    },
+    {
+      "lexicalIdentity": "lex-buben",
+      "surface": "武弁",
+      "reading": "ぶべん",
+      "lexicalOrigin": "sino",
+      "viableBindingIds": ["fixture-local-0001"],
+      "evidenceRefs": ["fixture:lexical:武弁"]
+    },
+    {
+      "lexicalIdentity": "lex-awanai",
+      "surface": "合わない",
+      "lemma": "合う",
+      "reading": "あわない",
+      "lexicalOrigin": "native",
+      "viableBindingIds": ["fixture-resolver-awanai"],
+      "morphology": {
+        "pos": "verb",
+        "conjugationType": "godan-w-row",
+        "conjugationForm": "irrealis-negative"
+      },
+      "evidenceRefs": ["fixture:lexical:合わない"]
+    }
+  ],
+  "historicalRelations": [
+    {
+      "lexicalIdentity": "lex-gakkou",
+      "route": "sino",
+      "reading": "がくかう",
+      "components": [
+        {
+          "lexicalIdentity": "component-gaku",
+          "historicalKana": "がく"
+        },
+        {
+          "lexicalIdentity": "component-kou",
+          "historicalKana": "かう"
+        }
+      ],
+      "evidenceRefs": ["fixture:jion:学校"]
+    },
+    {
+      "lexicalIdentity": "lex-taifu",
+      "route": "sino",
+      "reading": "たいふう",
+      "evidenceRefs": ["fixture:jion:台風"]
+    },
+    {
+      "lexicalIdentity": "lex-goben",
+      "route": "sino",
+      "reading": "ごうべん",
+      "evidenceRefs": ["fixture:jion:合弁"]
+    },
+    {
+      "lexicalIdentity": "lex-buben",
+      "route": "sino",
+      "reading": "ぶべん",
+      "evidenceRefs": ["fixture:jion:武弁"]
+    },
+    {
+      "lexicalIdentity": "lex-awanai",
+      "route": "native",
+      "reading": "あはない",
+      "surface": "合はない",
+      "requiresMorphology": true,
+      "evidenceRefs": ["fixture:historical-native:合う"]
+    }
+  ],
+  "safeKanjiMap": {
+    "学": "學"
+  }
+}
