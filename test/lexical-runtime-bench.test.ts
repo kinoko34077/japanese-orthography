@@ -17,10 +17,14 @@ test('lexical runtime benchmark emits reproducible acceptance-slice baseline', (
   assert.equal(report.productionThreshold, null);
   assert.match(report.caveat, /baseline/i);
   assert.equal(report.lexicalNamespaceId, '6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144');
+  assert.equal(report.environment.node, process.version);
+  assert.equal(report.environment.platform, process.platform);
+  assert.equal(report.environment.arch, process.arch);
 
   for (const key of ['sourceSliceBytes', 'normalizedProjectionBytes', 'runtimeArtifactBytes', 'surfaceIndexBytes', 'runtimeModuleBytes']) {
     assert.ok(Number.isInteger(report[key]) && report[key] > 0, key);
   }
+  assert.equal(report.coldInitializationIncludesArtifactParse, true);
   assert.ok(Number.isFinite(report.coldInitializationMs) && report.coldInitializationMs >= 0);
   assert.ok(Number.isFinite(report.retainedHeapDeltaBytes));
   assert.ok(Number.isFinite(report.firstLookupMs) && report.firstLookupMs >= 0);
