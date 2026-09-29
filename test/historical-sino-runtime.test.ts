@@ -30,14 +30,31 @@ test('historical Sino runtime resolves a source-backed relation by lexical ident
         blobSha: '0123456789abcdef0123456789abcdef01234567'
       }]
     },
+    sourceRecords: [
+      { id: 'source:jion:school', file: 'jion-jisyo' },
+      { id: 'source:jion:gaku', file: 'jion-jisyo' },
+      { id: 'source:jion:kou', file: 'jion-jisyo' }
+    ],
     relations: [{
       lexicalIdentity: 'namespace-1:lemma:1',
       surface: '学校',
       modernReading: 'がっこう',
       historicalReading: 'がくかう',
       components: [
-        { surface: '学', modernReading: 'がく', historicalReading: 'がく', readingClass: 'on' },
-        { surface: '校', modernReading: 'こう', historicalReading: 'かう', readingClass: 'on' }
+        {
+          surface: '学',
+          modernReading: 'がく',
+          historicalReading: 'がく',
+          readingClass: 'on',
+          evidenceRefs: ['source:jion:gaku']
+        },
+        {
+          surface: '校',
+          modernReading: 'こう',
+          historicalReading: 'かう',
+          readingClass: 'on',
+          evidenceRefs: ['source:jion:kou']
+        }
       ],
       evidenceRefs: ['source:jion:school']
     }]
