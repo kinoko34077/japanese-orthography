@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "semanticsVersion": "1",
+  "modules": [
+    {
+      "id": "transform-shared",
+      "path": "runtime/transform-shared.js",
+      "byteLength": 44306,
+      "gitBlob": "24518621cb7816f8daee6bc67911a14bed74cac6"
+    },
+    {
+      "id": "transform-engine",
+      "path": "runtime/transform-engine.js",
+      "byteLength": 107309,
+      "gitBlob": "9ed98ce3b8075828ee431ef30cfa7d9bcdd31f49",
+      "requires": [
+        "transform-shared"
+      ]
+    },
+    {
+      "id": "structured-dictionary",
+      "path": "runtime/structured-dictionary.js",
+      "byteLength": 21805,
+      "gitBlob": "21d9c1bc17b7ceadf29630d10ac3f905b2047883"
+    }
+  ]
+}
