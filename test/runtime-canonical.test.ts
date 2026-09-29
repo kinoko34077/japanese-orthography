@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
+import { normalizeCheckoutText } from "../tools/verification-text.ts";
 
 type RuntimeManifest = {
   schemaVersion: number;
@@ -31,8 +32,8 @@ function computeGitBlobSha(payload: Buffer): string {
   return createHash("sha1").update(header).update(payload).digest("hex");
 }
 
-function readCanonicalGitBlob(path: string): Buffer {
-  return execFileSync("git", ["cat-file", "blob", `HEAD:${path}`]);
+async function readCanonicalizedWorkingTreeBlob(path: string): Promise<Buffer> {
+  return Buffer.from(normalizeCheckoutText(await readFile(path, "utf8")), "utf8");
 }
 
 function readCanonicalGitBlobSha(path: string): string {
@@ -51,7 +52,7 @@ test("canonical runtime manifest pins exact module payloads", async () => {
   assert.equal(manifest.semanticsVersion, "1");
 
   for (const module of manifest.modules) {
-    const payload = readCanonicalGitBlob(module.path);
+    const payload = await readCanonicalizedWorkingTreeBlob(module.path);
     assert.equal(payload.byteLength, module.byteLength, module.id);
     assert.equal(computeGitBlobSha(payload), module.gitBlob, module.id);
     assert.equal(readCanonicalGitBlobSha(module.path), module.gitBlob, module.id);
