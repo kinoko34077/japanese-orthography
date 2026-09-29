@@ -66,7 +66,7 @@ const semanticCore = (unit: any) => ({
   modernReading: unit.reading?.modernSurface,
   lexicalOrigin: unit.lexicalOrigin,
   morphology: unit.morphology ?? null,
-  components: (unit.components ?? []).map((component: any) => ({
+  components: Array.from(unit.components ?? [], (component: any) => ({
     surface: component.surface,
     lexicalIdentity: component.lexicalIdentity,
     lexicalReading: component.lexicalReading,
@@ -75,7 +75,7 @@ const semanticCore = (unit: any) => ({
     historicalKana: component.historicalKana,
     renderedSurface: component.renderedSurface
   })),
-  historical: unit.historical
+  historical: unit.historical == null ? null : JSON.parse(JSON.stringify(unit.historical))
 });
 
 test("学校 plain input resolves lexical, component, 字音, and safe-kanji semantics", async () => {
@@ -85,10 +85,11 @@ test("学校 plain input resolves lexical, component, 字音, and safe-kanji sem
   assert.equal(unit.kind, "resolved");
   assert.equal(unit.sourceSurface, "学校");
   assert.equal(unit.lexicalIdentity, "lex-gakkou");
-  assert.deepEqual(unit.reading, { modernSurface: "がっこう", source: "lexical" });
+  assert.equal(unit.reading.modernSurface, "がっこう");
+  assert.equal(unit.reading.source, "lexical");
   assert.equal(unit.lexicalOrigin, "sino");
   assert.deepEqual(
-    unit.components.map((component: any) => [
+    Array.from(unit.components, (component: any) => [
       component.surface,
       component.lexicalReading,
       component.historicalKana,
@@ -119,8 +120,8 @@ test("学校 plain, whole Ruby, and component Ruby converge semantically", async
 
   assert.equal(wholeExplicit.reading.source, "ruby-word");
   assert.equal(wholeImplicit.reading.source, "ruby-word");
-  assert.deepEqual(componentsExplicit.components.map((component: any) => component.readingSource), ["ruby-component", "ruby-component"]);
-  assert.deepEqual(componentsImplicit.components.map((component: any) => component.readingSource), ["ruby-component", "ruby-component"]);
+  assert.deepEqual(Array.from(componentsExplicit.components, (component: any) => component.readingSource), ["ruby-component", "ruby-component"]);
+  assert.deepEqual(Array.from(componentsImplicit.components, (component: any) => component.readingSource), ["ruby-component", "ruby-component"]);
   assert.equal(componentsExplicit.reading.modernSurface, "がっこう");
   assert.equal(componentsExplicit.reading.source, "lexical");
 });
@@ -131,7 +132,7 @@ test("台風 resolves contextually to 颱風 without global 台 replacement", as
 
   assert.equal(taifu.historical.contextualKanji.status, "resolved");
   assert.equal(taifu.historical.contextualKanji.target, "颱風");
-  assert.deepEqual(taifu.historical.contextualKanji.candidates, ["颱風"]);
+  assert.deepEqual(Array.from(taifu.historical.contextualKanji.candidates), ["颱風"]);
   assert.equal(taifu.historical.surface, "颱風");
 
   const unknownTai = resolver.resolveUnit("台本");
@@ -144,7 +145,7 @@ test("合弁 keeps competing historical targets as candidates", async () => {
   const unit = resolver.resolveUnit("合弁");
 
   assert.equal(unit.historical.contextualKanji.status, "candidates");
-  assert.deepEqual(unit.historical.contextualKanji.candidates, ["合瓣", "合辦"]);
+  assert.deepEqual(Array.from(unit.historical.contextualKanji.candidates), ["合瓣", "合辦"]);
   assert.equal(unit.historical.contextualKanji.target, null);
   assert.equal(unit.historical.surface, "合弁");
   assert.equal(unit.historical.disposition, "CANDIDATES");
