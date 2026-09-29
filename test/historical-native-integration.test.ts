@@ -39,7 +39,14 @@ test('real lexical native candidates join source-backed native evidence without 
   assert.ok(candidates.every((candidate: any) => (
     candidate.lexicalIdentity === 'unidic-cwj:2025.12:lemma:5255' && candidate.lexicalOrigin === 'native'
   )));
-  assert.deepEqual(Array.from(candidates, (candidate: any) => native.lookup(candidate)?.surface), ['思ふ', '思ふ', '思ふ']);
+
+  const accepted = candidates.filter((candidate: any) => native.lookup(candidate) !== null);
+  assert.equal(accepted.length, 1);
+  assert.equal(accepted[0].morphology.conjugationForm, '終止形-一般');
+  assert.equal(native.lookup(accepted[0]).surface, '思ふ');
+  assert.ok(candidates
+    .filter((candidate: any) => candidate.morphology.conjugationForm !== '終止形-一般')
+    .every((candidate: any) => native.lookup(candidate) === null));
 
   const resolver = resolverSandbox.OrthographyResolver.createResolver({
     lexicalLookup(surface: string) { return lexical.lookup(surface); },
