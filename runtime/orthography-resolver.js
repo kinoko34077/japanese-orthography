@@ -175,6 +175,31 @@
     Object.prototype.hasOwnProperty.call(safeKanjiMap ?? {}, char) ? safeKanjiMap[char] : char
   )).join("");
 
+  const resolveHistoricalComponents = (components, acceptedRelation, safeKanjiMap, options = {}) => {
+    const relationComponents = Array.isArray(acceptedRelation?.components) ? acceptedRelation.components : [];
+    if (!Array.isArray(components) || components.length === 0) {
+      if (options.allowRelationFallback === false) {
+        return [];
+      }
+      return relationComponents.map((component) => ({
+        ...component,
+        renderedSurface: applySafeKanjiMap(component.surface, safeKanjiMap)
+      }));
+    }
+
+    const componentRelations = new Map(
+      relationComponents.map((component) => [component.lexicalIdentity, component])
+    );
+    return components.map((component) => {
+      const componentRelation = componentRelations.get(component.lexicalIdentity);
+      return {
+        ...component,
+        historicalKana: componentRelation?.historicalKana ?? null,
+        renderedSurface: applySafeKanjiMap(component.surface, safeKanjiMap)
+      };
+    });
+  };
+
   const resolveHistorical = (candidate, sourceSurface, components, config) => {
     const relation = typeof config.historicalLookup === "function"
       ? config.historicalLookup(candidate)
@@ -188,18 +213,12 @@
       config.contextualSafety
     );
 
-    const componentRelations = new Map(
-      (Array.isArray(acceptedRelation?.components) ? acceptedRelation.components : [])
-        .map((component) => [component.lexicalIdentity, component])
+    const resolvedComponents = resolveHistoricalComponents(
+      components,
+      acceptedRelation,
+      config.safeKanjiMap ?? {},
+      { allowRelationFallback: contextualKanji.status !== "resolved" }
     );
-    const resolvedComponents = components.map((component) => {
-      const componentRelation = componentRelations.get(component.lexicalIdentity);
-      return {
-        ...component,
-        historicalKana: componentRelation?.historicalKana ?? null,
-        renderedSurface: applySafeKanjiMap(component.surface, config.safeKanjiMap ?? {})
-      };
-    });
 
     if (contextualKanji.status === "preserve") {
       return {
@@ -302,11 +321,16 @@
       }
 
       const candidate = candidates[0];
-      const components = attachComponentRuby(candidate.components ?? [], evidence.componentRuby);
       const reading = evidence.wholeRuby
         ? { modernSurface: evidence.wholeRuby.reading, source: "ruby-word" }
         : { modernSurface: candidate.reading ?? null, source: candidate.reading ? "lexical" : "unknown" };
-      const historicalResolution = resolveHistorical(candidate, evidence.baseSurface, components, config);
+      const historicalResolution = resolveHistorical(
+        candidate,
+        evidence.baseSurface,
+        candidate.components ?? [],
+        config
+      );
+      const components = attachComponentRuby(historicalResolution.components, evidence.componentRuby);
 
       return {
         kind: "resolved",
@@ -317,7 +341,7 @@
         reading,
         lexicalOrigin: candidate.lexicalOrigin ?? "unknown",
         morphology: candidate.morphology ?? null,
-        components: historicalResolution.components,
+        components,
         viableBindingIds: candidate.viableBindingIds ?? [],
         historical: historicalResolution.historical,
         evidenceRefs: [
