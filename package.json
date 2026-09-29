@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "description": "Reusable Japanese orthography transformation core for historical kana, kyujitai, ruby parsing, and contextual restoration",
   "scripts": {
+    "validate": "node --import tsx tools/validate.ts",
+    "compile": "node --import tsx tools/compile.ts",
     "test": "node --import tsx --test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "npm run validate && npm test && npm run typecheck && node --import tsx tools/check.ts"
   },
   "repository": {
     "type": "git",
