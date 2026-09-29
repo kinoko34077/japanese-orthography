@@ -24,9 +24,10 @@
   };
 
   const chooseReading = (lemma, modernReadings) => {
+    if (modernReadings.length === 0) return lemma.lexicalReading ?? null;
     if (modernReadings.length === 1) return modernReadings[0];
     if (modernReadings.includes(lemma.lexicalReading)) return lemma.lexicalReading;
-    return lemma.lexicalReading ?? modernReadings[0] ?? null;
+    return null;
   };
 
   const createLexicalRuntime = (artifact) => {
