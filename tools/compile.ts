@@ -9,12 +9,15 @@ import {
 } from './validate.ts';
 
 export async function compileRoot(rootDir: string, outDir: string): Promise<void> {
-  const { workspace, diagnostics } = await validateRoot(rootDir);
+  const { workspace, diagnostics, integrationFixture } = await validateRoot(rootDir);
   printDiagnostics(diagnostics);
   if (diagnostics.some((diagnostic) => diagnostic.severity === 'ERROR')) {
     throw new Error('Compilation blocked by validation ERROR diagnostics');
   }
-  const artifact = compileWorkspace(workspace, createFirstSliceCompilationBindings(workspace));
+  const artifact = compileWorkspace(
+    workspace,
+    createFirstSliceCompilationBindings(integrationFixture)
+  );
   await writeArtifactAtomically(artifact, outDir);
 }
 
