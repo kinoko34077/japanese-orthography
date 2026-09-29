@@ -39,9 +39,9 @@
     const surfaceIndex = Array.isArray(artifact.surfaceIndex) ? artifact.surfaceIndex : [];
 
     const decodeCandidate = (record) => {
-      const lemma = lemmas[record.localLemmaId];
+      const lemma = lemmas[record.lemmaIndex];
       const morphology = morphologies[record.morphologyId];
-      if (!lemma || lemma.localLemmaId !== record.localLemmaId || !morphology || morphology.morphologyId !== record.morphologyId) {
+      if (!lemma || lemma.lemmaIndex !== record.lemmaIndex || !morphology || morphology.morphologyId !== record.morphologyId) {
         throw new Error("Lexical artifact candidate references an invalid table entry");
       }
       const modernReadings = Array.isArray(record.modernReadings) ? [...record.modernReadings] : [];

@@ -13,7 +13,9 @@
     "compressedMemberDataStart": 2740841535,
     "compressedMemberCrc32": "7c045d92",
     "downloadPage": "https://clrd.ninjal.ac.jp/unidic/back_number.html",
-    "licenseSummary": "GPL v2.0 / LGPL v2.1 / modified BSD"
+    "licenseSummary": "GPL v2.0 / LGPL v2.1 / modified BSD",
+    "lexicalNamespaceId": "6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144",
+    "lexicalNamespaceEvidence": "japanese-orthography#6:issuecomment-5879401121"
   },
   "selection": {
     "surfaces": [
