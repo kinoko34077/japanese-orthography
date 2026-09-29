@@ -295,7 +295,7 @@
 
       const lookupResult = config.lexicalLookup(evidence.baseSurface) ?? [];
       const candidates = Array.isArray(lookupResult) && evidence.wholeRuby?.reading
-        ? lookupResult.filter((candidate) => candidate?.reading === evidence.wholeRuby.reading)
+        ? lookupResult.filter((candidate) => (candidate?.reading === evidence.wholeRuby.reading || (Array.isArray(candidate?.modernReadings) && candidate.modernReadings.includes(evidence.wholeRuby.reading))))
         : lookupResult;
       if (!Array.isArray(candidates) || candidates.length !== 1) {
         return unresolvedUnit(evidence, Array.isArray(candidates) ? candidates : []);
