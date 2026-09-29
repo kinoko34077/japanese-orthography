@@ -8,6 +8,7 @@ import {
   printDiagnostics,
   validateRoot
 } from './validate.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 const artifactFiles: readonly ArtifactFileName[] = [
   'manifest.json',
@@ -29,7 +30,10 @@ function assertArtifactsEqual(first: CompiledArtifact, second: CompiledArtifact,
 
 async function readGolden(goldenDir: string): Promise<CompiledArtifact> {
   const entries = await Promise.all(
-    artifactFiles.map(async (name) => [name, await readFile(resolve(goldenDir, name), 'utf8')] as const)
+    artifactFiles.map(async (name) => [
+      name,
+      normalizeCheckoutText(await readFile(resolve(goldenDir, name), 'utf8'))
+    ] as const)
   );
   return Object.fromEntries(entries) as CompiledArtifact;
 }
