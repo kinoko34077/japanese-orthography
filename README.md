@@ -90,7 +90,9 @@ The evidence slice pins `okikae/kkh` commit `19b24f88ab55809a186d88c465959548495
 - `kana-jisyo` blob `6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be` supplies the active whole-word relation `がっこう -> がくかう` for `学校`;
 - `jion-jisyo` blob `3447864cb4b661c586ae1a35ef7cc524b3d5d895` supplies component 字音 candidate evidence including `学 / がく`, `校 / かう`, and the alternative `校 / けう`.
 
-The alternative is retained as source evidence rather than flattened into a global `校 -> かう` rule. The project relation is keyed by the exact UniDic lexical identity and full-source lexical namespace, so namespace mismatch, unknown lexical identity, and non-Sino candidates fail closed. The upstream `jion-jisyo` describes itself as Beta/incomplete; this slice therefore proves the evidence/runtime boundary only and makes no broad-coverage claim.
+The modern component readings `学 = がく` and `校 = こう` are kept as separate project-canonical acceptance evidence from repository objective comment `#5890398199`; they are not attributed to KKH's historical 字音 records. The selected relation therefore joins project-canonical modern component readings to the pinned KKH whole-word/component historical evidence while retaining `校 / けう` as an unselected source alternative rather than flattening it into a global `校 -> かう` rule.
+
+The project relation is keyed by the exact UniDic lexical identity and full-source lexical namespace, so namespace mismatch, unknown lexical identity, malformed/dangling evidence, and non-Sino candidates fail closed. The upstream `jion-jisyo` describes itself as Beta/incomplete; this slice therefore proves the evidence/runtime boundary only and makes no broad-coverage claim.
 
 When the lexical artifact has no component records, the accepted historical relation may provide component evidence without fabricating UniDic component lexical identities. Those components are used only when they remain aligned with the rendered lexical surface; if a separate contextual-kanji relation changes the surface to a different target, source-surface fallback components are withheld rather than serialized inconsistently.
 
