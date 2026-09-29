@@ -51,7 +51,8 @@
       "surface": "思う",
       "historicalSurface": "思ふ",
       "requiredMorphology": {
-        "conjugationType": "五段-ワア行"
+        "conjugationType": "五段-ワア行",
+        "conjugationForm": "終止形-一般"
       },
       "evidenceRefs": [
         "kkh-kana-omou-omofu"
