@@ -105,8 +105,12 @@
     });
   };
 
+  const relationBindingIds = (entry) => (
+    Array.isArray(entry?.lexicalBindingIds) ? entry.lexicalBindingIds : []
+  );
+
   const bindingEligible = (entry, candidate) => {
-    const required = Array.isArray(entry?.lexicalBindingIds) ? entry.lexicalBindingIds : [];
+    const required = relationBindingIds(entry);
     if (required.length === 0) {
       return true;
     }
@@ -127,9 +131,11 @@
       };
     }
 
-    const eligibleRelations = (Array.isArray(relations) ? relations : []).filter((entry) => (
-      entry?.match === surface && typeof entry?.target === "string" && bindingEligible(entry, candidate)
+    const matchingRelations = (Array.isArray(relations) ? relations : []).filter((entry) => (
+      entry?.match === surface && typeof entry?.target === "string"
     ));
+    const viable = Array.isArray(candidate?.viableBindingIds) ? candidate.viableBindingIds : [];
+    const eligibleRelations = matchingRelations.filter((entry) => bindingEligible(entry, candidate));
     const targets = [];
     for (const relation of eligibleRelations) {
       if (!targets.includes(relation.target)) {
@@ -137,7 +143,18 @@
       }
     }
 
-    if (targets.length === 1) {
+    if (targets.length === 0) {
+      return emptyContextualDecision();
+    }
+
+    const hasGlobalRelation = eligibleRelations.some((entry) => relationBindingIds(entry).length === 0);
+    const coversAllViableBindings = hasGlobalRelation || (
+      viable.length > 0 && viable.every((bindingId) => (
+        eligibleRelations.some((entry) => relationBindingIds(entry).includes(bindingId))
+      ))
+    );
+
+    if (targets.length === 1 && coversAllViableBindings) {
       return {
         status: "resolved",
         target: targets[0],
@@ -145,15 +162,13 @@
         relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
       };
     }
-    if (targets.length > 1) {
-      return {
-        status: "candidates",
-        target: null,
-        candidates: targets,
-        relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
-      };
-    }
-    return emptyContextualDecision();
+
+    return {
+      status: "candidates",
+      target: null,
+      candidates: targets,
+      relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
+    };
   };
 
   const applySafeKanjiMap = (surface, safeKanjiMap) => Array.from(`${surface ?? ""}`).map((char) => (
