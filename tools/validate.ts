@@ -1,5 +1,6 @@
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadCanonicalWorkspace } from './load-workspace.ts';
 import { validatePackLocal } from './semantic-validator.ts';
 import {
@@ -10,43 +11,86 @@ import {
 import type { CanonicalWorkspace, Diagnostic } from './model.ts';
 import type { CompilationBindings } from './compiler.ts';
 
-export const FIRST_SLICE_EXTERNAL_PACKS: readonly ExternalPackIndex[] = [{
-  packId: 'safe-kanji',
-  exportedRelationIds: new Set(['char-tai-to-dai'])
-}];
+interface FirstSliceIntegrationFixture {
+  schemaVersion: '1';
+  kind: 'integration_fixture';
+  lexicalNamespace: {
+    id: string;
+    compatibleSourceNamespaces: string[];
+    bindings: Record<string, string[]>;
+  };
+  externalPacks: Array<{
+    packId: string;
+    exportedRelationIds: string[];
+  }>;
+}
 
-export const FIRST_SLICE_LEXICAL_NAMESPACE: LexicalNamespaceDescriptor = {
-  id: 'pmin-current',
-  compatibleSourceNamespaces: new Set(['kkh-kanji-jisyo', 'kanjipedia', 'kotobank'])
-};
+const repositoryRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
 
-export function createFirstSliceCompilationBindings(workspace: CanonicalWorkspace): CompilationBindings {
-  const lexicalById = new Map(workspace.lexicalEvidence.map((record) => [record.value.id, record.value]));
-  const lexicalBindings = new Map<string, readonly string[]>();
-  for (const constraint of workspace.lexicalConstraintSets) {
-    const ids = constraint.value.lexicalEvidenceRefs.flatMap((ref) => {
-      const lexical = lexicalById.get(ref);
-      return lexical ? [`${lexical.sourceRef}:${lexical.sourceIdentity}`] : [];
-    });
-    if (ids.length > 0) lexicalBindings.set(constraint.value.id, [...new Set(ids)].sort());
+export function loadFirstSliceIntegrationFixture(): FirstSliceIntegrationFixture {
+  const fixturePath = resolve(
+    process.env.ORTHOGRAPHY_INTEGRATION_FIXTURE ??
+      resolve(repositoryRoot, 'test', 'fixtures', 'integration', 'first-slice.json')
+  );
+  const fixture = JSON.parse(readFileSync(fixturePath, 'utf8')) as Partial<FirstSliceIntegrationFixture>;
+  if (
+    fixture.schemaVersion !== '1' ||
+    fixture.kind !== 'integration_fixture' ||
+    !fixture.lexicalNamespace ||
+    typeof fixture.lexicalNamespace.id !== 'string' ||
+    !Array.isArray(fixture.lexicalNamespace.compatibleSourceNamespaces) ||
+    !fixture.lexicalNamespace.bindings ||
+    !Array.isArray(fixture.externalPacks)
+  ) {
+    throw new Error(`Invalid first-slice integration fixture: ${fixturePath}`);
   }
-  return { lexicalNamespaceId: FIRST_SLICE_LEXICAL_NAMESPACE.id, lexicalBindings };
+  return fixture as FirstSliceIntegrationFixture;
+}
+
+function lexicalNamespaceDescriptor(fixture: FirstSliceIntegrationFixture): LexicalNamespaceDescriptor {
+  return {
+    id: fixture.lexicalNamespace.id,
+    compatibleSourceNamespaces: new Set(fixture.lexicalNamespace.compatibleSourceNamespaces)
+  };
+}
+
+function externalPackIndexes(fixture: FirstSliceIntegrationFixture): readonly ExternalPackIndex[] {
+  return fixture.externalPacks.map((pack) => ({
+    packId: pack.packId,
+    exportedRelationIds: new Set(pack.exportedRelationIds)
+  }));
+}
+
+export function createFirstSliceCompilationBindings(
+  fixture: FirstSliceIntegrationFixture
+): CompilationBindings {
+  return {
+    lexicalNamespaceId: fixture.lexicalNamespace.id,
+    lexicalBindings: new Map(
+      Object.entries(fixture.lexicalNamespace.bindings).map(([constraintId, ids]) => [
+        constraintId,
+        [...new Set(ids)].sort((a, b) => a.localeCompare(b, 'en'))
+      ])
+    )
+  };
 }
 
 export async function validateRoot(rootDir: string): Promise<{
   workspace: CanonicalWorkspace;
   diagnostics: Diagnostic[];
+  integrationFixture: FirstSliceIntegrationFixture;
 }> {
   const workspace = await loadCanonicalWorkspace(rootDir);
+  const integrationFixture = loadFirstSliceIntegrationFixture();
   const diagnostics = [
     ...validatePackLocal(workspace),
     ...validateIntegration(
       workspace,
-      FIRST_SLICE_EXTERNAL_PACKS,
-      FIRST_SLICE_LEXICAL_NAMESPACE
+      externalPackIndexes(integrationFixture),
+      lexicalNamespaceDescriptor(integrationFixture)
     )
   ];
-  return { workspace, diagnostics };
+  return { workspace, diagnostics, integrationFixture };
 }
 
 export function printDiagnostics(diagnostics: readonly Diagnostic[]): void {
