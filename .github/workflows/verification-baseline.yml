@@ -11,7 +11,7 @@ permissions:
   issues: write
 
 jobs:
-  test:
+  check:
     strategy:
       fail-fast: false
       matrix:
@@ -25,50 +25,32 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      - name: Run tests and capture output
-        id: tests
+      - name: Run full repository check
+        id: checks
         continue-on-error: true
         shell: bash
         run: |
           set +e
-          npm test > baseline-test.log 2>&1
+          npm run check > baseline-check.log 2>&1
           status=$?
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit "$status"
-      - name: Generate Windows manifest diagnostics
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          rm -rf diag-context diag-profile
-          ORTHOGRAPHY_OUT_DIR="$PWD/diag-context" node --import tsx tools/compile.ts
-          ORTHOGRAPHY_PROFILE_OUT_DIR="$PWD/diag-profile" node --import tsx tools/compile-profile.ts
-          {
-            echo '=== contextual generated ==='
-            cat diag-context/manifest.json
-            echo '=== contextual golden ==='
-            cat test/golden/contextual-kanji/manifest.json
-            echo '=== profile generated ==='
-            cat diag-profile/manifest.json
-            echo '=== profile golden ==='
-            cat test/golden/kinotch-profile/manifest.json
-          } > manifest-diagnostics.txt
-      - name: Publish diagnostic output
+      - name: Publish verification result
         if: always()
         uses: actions/github-script@v7
         env:
           MATRIX_OS: ${{ matrix.os }}
           MATRIX_NODE: ${{ matrix.node }}
-          TEST_EXIT: ${{ steps.tests.outputs.exit_code }}
+          CHECK_EXIT: ${{ steps.checks.outputs.exit_code }}
         with:
           script: |
             const fs = require('node:fs');
-            const output = fs.existsSync('baseline-test.log') ? fs.readFileSync('baseline-test.log', 'utf8').trim() : '<log missing>';
+            const output = fs.existsSync('baseline-check.log') ? fs.readFileSync('baseline-check.log', 'utf8').trim() : '<log missing>';
             const tail = output.length > 50000 ? output.slice(-50000) : output;
-            const manifestDiagnostics = fs.existsSync('manifest-diagnostics.txt') ? `\n\n<details><summary>manifest diagnostics</summary>\n\n\`\`\`json\n${fs.readFileSync('manifest-diagnostics.txt', 'utf8')}\n\`\`\`\n</details>` : '';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: 23,
-              body: `## Baseline matrix diagnostic — ${process.env.MATRIX_OS} / Node ${process.env.MATRIX_NODE}\n\nExit: \`${process.env.TEST_EXIT || 'unknown'}\`\n\n<details><summary>npm test output</summary>\n\n\`\`\`text\n${tail}\n\`\`\`\n</details>${manifestDiagnostics}`
+              body: `## Full verification matrix — ${process.env.MATRIX_OS} / Node ${process.env.MATRIX_NODE}\n\nExit: \`${process.env.CHECK_EXIT || 'unknown'}\`\n\n<details><summary>npm run check output</summary>\n\n\`\`\`text\n${tail}\n\`\`\`\n</details>`
             });
-            if ((process.env.TEST_EXIT || '1') !== '0') core.setFailed(`npm test exited ${process.env.TEST_EXIT || 'unknown'}`);
+            if ((process.env.CHECK_EXIT || '1') !== '0') core.setFailed(`npm run check exited ${process.env.CHECK_EXIT || 'unknown'}`);
