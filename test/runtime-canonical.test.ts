@@ -11,7 +11,7 @@ type RuntimeManifest = {
     id: string;
     path: string;
     byteLength: number;
-    sha256: string;
+    gitBlob: string;
     adoptedGitBlob: string;
     requires?: string[];
   }>;
@@ -33,7 +33,7 @@ test("canonical runtime manifest pins exact module payloads", async () => {
   for (const module of manifest.modules) {
     const payload = await readFile(module.path);
     assert.equal(payload.byteLength, module.byteLength, module.id);
-    assert.equal(createHash("sha256").update(payload).digest("hex"), module.sha256, module.id);
+    const gitBlob = createHash("sha1").update(`blob ${payload.byteLength}\\0`).update(payload).digest("hex");\n    assert.equal(gitBlob, module.gitBlob, module.id);
   }
 });
 
