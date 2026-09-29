@@ -13,9 +13,9 @@ Make `kinoko34077/japanese-orthography` the canonical owner of the already-fixed
 1. old-character / legacy-kanji conversion; and
 2. homophone-kanji rewrite/restoration.
 
-This migration does **not** re-research, re-select, clean up, or linguistically reinterpret the accepted list contents as a prerequisite. The immediate purpose is ownership consolidation: one canonical rule source in `japanese-orthography`, reproducible consumer artifacts, and no manually maintained authoritative duplicate in `txt-auto-replace` / `kinotch-api`.
+This migration does **not** re-research, re-select, clean up, or linguistically reinterpret the accepted list contents as a prerequisite. The immediate purpose is ownership consolidation: one canonical rule source in `japanese-orthography` and reproducible consumer artifacts instead of manually maintained authoritative duplicates.
 
-The first consumer migration is `txt-auto-replace`. `kinotch-api` is explicitly deferred to a later bounded cross-repository work order after the first consumer proves parity.
+The overall migration program ultimately removes independent rule authority from both `txt-auto-replace` and `kinotch-api`. This **first slice migrates only `txt-auto-replace`**. `kinotch-api` is explicitly deferred to a later bounded cross-repository work order after the first consumer proves parity.
 
 ## 2. Fixed source snapshots
 
@@ -48,7 +48,7 @@ For the pinned first slice:
 - existing source keys are not removed;
 - existing targets are not replaced merely because a newer linguistic model would choose another representation;
 - priorities / candidate flags that affect existing engine behavior are preserved;
-- multi-target values remain multi-target values;
+- multi-target values remain multi-target values and their target ordering is not silently changed;
 - official and project-extension homophone sources remain distinguishable;
 - entry normalization may change storage syntax only when it is mechanically proven behavior-preserving.
 
@@ -149,12 +149,15 @@ The bridge manifest contains at least:
 artifactSchemaVersion
 sourceProfileId
 canonicalSourceDigest
-sourceCommit
+coreCommit
+adoptedSourceSetDigest
 files[] {
   path
   payloadDigest
 }
 ```
+
+`coreCommit` identifies the `japanese-orthography` source revision that generated the bridge. `adoptedSourceSetDigest` identifies the pinned legacy source snapshots recorded by the canonical profile; it is distinct from the core commit so later canonical-format/tooling changes do not erase provenance of the originally adopted lists.
 
 The generated JSON5 files must be semantically equivalent to the pinned source bundles under the existing `txt-auto-replace` engine contract.
 
@@ -170,10 +173,10 @@ Rationale:
 - the purpose of this slice is ownership consolidation, not package-distribution infrastructure;
 - a generated snapshot keeps browser runtime behavior and loading topology unchanged;
 - rollback is a normal consumer PR revert;
-- exact source commit/digest can be recorded and checked;
+- exact core commit/source-set identity/digests can be recorded and checked;
 - it satisfies the requirement that consumer copies are generated artifacts rather than manually maintained authoritative knowledge.
 
-The consumer keeps the same three operational filenames, but they become generated outputs with an adjacent source lock/manifest recording the exact `japanese-orthography` source commit and artifact digests. Local hand edits to those generated files are invalid; changes originate in `japanese-orthography` and are regenerated.
+The consumer keeps the same three operational filenames, but they become generated outputs with an adjacent source lock/manifest recording the exact `japanese-orthography` core commit and artifact digests. Local hand edits to those generated files are invalid; changes originate in `japanese-orthography` and are regenerated.
 
 Alternative mechanisms are deferred:
 
@@ -224,7 +227,7 @@ For each pinned source pack, mechanically verify canonical adoption against the 
 - no extra input key is silently invented;
 - every target/value is preserved;
 - priorities and candidate flags are preserved where present;
-- multi-target order/representation is preserved when the existing engine treats it as semantic;
+- multi-target ordering is preserved;
 - official/project source identity remains separate.
 
 The test is set/content equality against the pinned blob, not a new linguistic approval process.
