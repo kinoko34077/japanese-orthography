@@ -1,6 +1,6 @@
 # Fixed Legacy/Homophone Rule Packs → Shared Core Migration Design
 
-Status: **PROPOSED — user review required before implementation planning**
+Status: **ACCEPTED — user-approved 2026-09-29**
 
 Owning issue: `japanese-orthography#4`
 Related corpus authority: `japanese-orthography#2`
