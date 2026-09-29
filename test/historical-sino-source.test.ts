@@ -28,8 +28,11 @@ test('pinned KKH slice resolves real UniDic 学校 identity without flattening s
     lexicalOrigin: 'sino'
   });
 
+  assert.equal(slice.source.repository, 'okikae/kkh');
   assert.equal(slice.source.commit, '19b24f88ab55809a186d88c465959548495b26a2');
-  assert.equal(slice.source.blobSha, '3447864cb4b661c586ae1a35ef7cc524b3d5d895');
+  assert.equal(slice.source.license, 'BSD-2-Clause');
+  assert.ok(slice.source.files.some((file: any) => file.path === 'kana-jisyo' && file.blobSha === '6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be'));
+  assert.ok(slice.source.files.some((file: any) => file.path === 'jion-jisyo' && file.blobSha === '3447864cb4b661c586ae1a35ef7cc524b3d5d895'));
   assert.equal(slice.source.status, 'beta-incomplete');
   assert.equal(relation.reading, 'がくかう');
   assert.deepEqual(Array.from(relation.components, (component: any) => [
@@ -40,8 +43,9 @@ test('pinned KKH slice resolves real UniDic 学校 identity without flattening s
     ['学', 'がく', 'がく'],
     ['校', 'こう', 'かう']
   ]);
-  assert.ok(slice.sourceRecords.some((record: any) => record.surface === '校' && record.historicalReading === 'かう'));
-  assert.ok(slice.sourceRecords.some((record: any) => record.surface === '校' && record.historicalReading === 'けう'));
+  assert.ok(slice.sourceRecords.some((record: any) => record.file === 'kana-jisyo' && record.modernReading === 'がっこう' && record.historicalReading === 'がくかう'));
+  assert.ok(slice.sourceRecords.some((record: any) => record.file === 'jion-jisyo' && record.surface === '校' && record.historicalReading === 'かう'));
+  assert.ok(slice.sourceRecords.some((record: any) => record.file === 'jion-jisyo' && record.surface === '校' && record.historicalReading === 'けう'));
 });
 
 test('historical Sino runtime rejects a lexical namespace mismatch', async () => {
