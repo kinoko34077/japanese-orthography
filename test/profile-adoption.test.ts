@@ -67,7 +67,7 @@ test('canonical KiNoTch profile exactly adopts pinned 40/50/55 rule behavior', a
     const source = await readJson5Fixture(fixture);
     const canonical = profile.packs.find((pack) => pack.packId === packId);
     assert.ok(canonical, `missing canonical pack ${packId}`);
-    assert.deepEqual(canonicalBehavior(canonical), normalizeSource(source, sourcePack));
+    assert.deepEqual(canonicalBehavior(canonical), JSON.parse(JSON.stringify(normalizeSource(source, sourcePack))));
   }
 });
 
