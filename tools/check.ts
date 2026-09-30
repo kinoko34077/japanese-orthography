@@ -23,7 +23,7 @@ const repositoryRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
 function assertArtifactsEqual(first: CompiledArtifact, second: CompiledArtifact, label: string): void {
   for (const name of artifactFiles) {
     if (first[name] !== second[name]) {
-      throw new Error(`${label}: ${name} differs\nACTUAL:\n${first[name]}\nEXPECTED:\n${second[name]}`);
+      throw new Error(`${label}: ${name} differs`);
     }
   }
 }
