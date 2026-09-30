@@ -20,6 +20,22 @@
       "locator": "学 -> 學 is a bare deterministic control excluded from contextual corpus ownership"
     },
     {
+      "id": "project-ben-contextual-ruling",
+      "kind": "project_ruling",
+      "repository": "kinoko34077/japanese-orthography",
+      "issue": 2,
+      "commentId": 5881995193,
+      "locator": "弁 requires lexical/sense restoration rather than broad character fallback"
+    },
+    {
+      "id": "project-tai-guarded-ruling",
+      "kind": "project_ruling",
+      "repository": "kinoko34077/japanese-orthography",
+      "issue": 2,
+      "commentId": 5882033932,
+      "locator": "台 base relation requires guarded fallback with lexical overrides/preserves"
+    },
+    {
       "id": "kinotch-legacy-compat-profile",
       "kind": "compatibility_snapshot",
       "repository": "kinoko34077/japanese-orthography",
@@ -50,12 +66,12 @@
     },
     {
       "id": "ev-ben-contextual-negative",
-      "sourceRef": "project-deterministic-layer-ruling",
+      "sourceRef": "project-ben-contextual-ruling",
       "role": "contextual-negative-control"
     },
     {
       "id": "ev-tai-guarded-negative",
-      "sourceRef": "project-deterministic-layer-ruling",
+      "sourceRef": "project-tai-guarded-ruling",
       "role": "guarded-fallback-negative-control"
     }
   ],
