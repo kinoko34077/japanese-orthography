@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1",
+  "kind": "japanese-orthography-contextual-lexical-binding-slice",
+  "purpose": "#38 bounded real lexical binding for contextual-kanji runtime acceptance",
+  "bindingNamespaceId": "pmin-current",
+  "sourceLexicalNamespaceId": "6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144",
+  "source": {
+    "dictionary": "UniDic-CWJ",
+    "version": "2025.12",
+    "lexicalSourcePath": "data/lexical/sources/unidic-cwj-202512-first-slice.json",
+    "archiveMemberSha256": "bd00a695ba897a3250965257341e1929ae062dfa2e63b223a05bcc02f22e74a2"
+  },
+  "sourceEvidence": {
+    "surface": "台風",
+    "sourceLemmaId": 21903,
+    "lexicalIdentity": "unidic-cwj:2025.12:lemma:21903",
+    "lexicalOrigin": "sino",
+    "reading": "たいふう"
+  },
+  "bindings": {
+    "constraint-taifu": [
+      "unidic-cwj:2025.12:lemma:21903"
+    ]
+  }
+}
