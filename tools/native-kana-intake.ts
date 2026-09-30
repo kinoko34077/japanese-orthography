@@ -143,10 +143,21 @@ function stripHeadwordAnnotations(value: string): string {
 }
 
 function splitReadingAlternatives(value: string): string[] {
-  const noteAlternatives = [...value.matchAll(/「([^」]+)」説も/g)]
-    .flatMap(match => (match[1] ?? '').split('、'));
-  const base = value.split('（')[0]!.trim();
-  const baseAlternatives = base.split('、');
+  const assertedNotePatterns = [
+    /「([^」]+)」説も/g,
+    /「([^」]+)」は古形/g,
+    /「([^」]+)」が新形/g,
+    /古語は「([^」]+)」も/g
+  ];
+  const noteAlternatives = assertedNotePatterns.flatMap(pattern => (
+    [...value.matchAll(pattern)].flatMap(match => (match[1] ?? '').split('、'))
+  ));
+
+  const outsideNotes = value
+    .replace(/（[^）]*）/g, '')
+    .replace(/\([^)]*\)/g, '');
+  const baseAlternatives = outsideNotes.split('、');
+
   return canonicalizeAlternatives(
     [...baseAlternatives, ...noteAlternatives]
       .map(item => item.replace(/^[\s　]+|[\s　]+$/g, ''))
