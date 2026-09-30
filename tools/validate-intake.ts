@@ -2,17 +2,25 @@ import { resolve } from 'node:path';
 import { IntakeLoadError, loadIntakeWorkspace } from './load-intake.ts';
 import type { SourceSnapshot } from './intake-model.ts';
 
+function isGitObjectId(value: string | undefined): boolean {
+  return value !== undefined && /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(value);
+}
+
 function requirePinnedSnapshot(snapshot: SourceSnapshot, file?: string): void {
   const requiresRepositoryPin =
     snapshot.sourceClass === 'committed-reference'
     || snapshot.sourceClass === 'external-repository';
 
   if (!requiresRepositoryPin) return;
-  if (snapshot.repository && snapshot.commit && snapshot.blobSha) return;
+  if (
+    snapshot.repository
+    && isGitObjectId(snapshot.commit)
+    && isGitObjectId(snapshot.blobSha)
+  ) return;
 
   throw new IntakeLoadError(
     'E_INTAKE_UNPINNED_SOURCE',
-    `Source ${snapshot.sourceId} must pin repository, commit, and blobSha`,
+    `Source ${snapshot.sourceId} must pin repository, exact commit object ID, and blob object ID`,
     file
   );
 }
