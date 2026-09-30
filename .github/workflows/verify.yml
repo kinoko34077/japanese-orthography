@@ -18,11 +18,4 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Compile diagnostic artifact
-        run: ORTHOGRAPHY_OUT_DIR=/tmp/phase46c-compiled npm run compile
-      - name: Upload diagnostic artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: phase46c-evidence-compiled
-          path: /tmp/phase46c-compiled
       - run: npm run check
