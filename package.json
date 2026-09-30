@@ -5,13 +5,14 @@
   "scripts": {
     "validate": "node --import tsx tools/validate.ts",
     "validate:profile": "node --import tsx tools/validate-profile.ts",
+    "validate:intake": "node --import tsx tools/validate-intake.ts",
     "compile": "node --import tsx tools/compile.ts",
     "compile:profile": "node --import tsx tools/compile-profile.ts",
     "test": "node --import tsx --test",
     "typecheck": "tsc --noEmit",
     "bench:resolver": "node --import tsx tools/bench-orthography-resolution.ts --json",
     "check:profile": "node --import tsx tools/check-profile.ts",
-    "check": "npm run validate && npm run validate:profile && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile"
+    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile"
   },
   "repository": {
     "type": "git",
