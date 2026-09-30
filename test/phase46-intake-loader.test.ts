@@ -16,7 +16,7 @@ function bundle(sourceId: string, recordId: string, sourceRef = sourceId): Intak
       repository: 'kinoko34077/japanese-orthography',
       commit: '44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09',
       path: `sources/${sourceId}.json`,
-      blobSha: `blob-${sourceId}`,
+      blobSha: '1111111111111111111111111111111111111111',
       coverageRole: 'candidate-only'
     }],
     records: [{
