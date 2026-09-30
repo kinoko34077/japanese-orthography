@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
@@ -18,4 +18,21 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Materialize Phase 4.6D native authority artifact
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git fetch origin "$HEAD_REF"
+          git checkout -B "$HEAD_REF" "origin/$HEAD_REF"
+          node --import tsx tools/native-kana-compiler.ts
+          git add data/historical/native/phase46d-native-kana.json
+          if git diff --cached --quiet; then
+            echo "Native authority artifact already committed."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "data: materialize Phase 4.6D native authority [skip ci]"
+            git push origin "HEAD:$HEAD_REF"
+          fi
       - run: npm run check
