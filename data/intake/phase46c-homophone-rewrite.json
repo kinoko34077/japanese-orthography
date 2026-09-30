@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography_intake_bundle",
+  "snapshots": [
+    {
+      "sourceId": "phase46c-culture-agency-1956-douon",
+      "sourceClass": "official",
+      "path": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kakuki/03/pdf/doon.pdf",
+      "coverageRole": "supplemental"
+    }
+  ],
+  "records": [
+    {
+      "id": "phase46c-homophone-yosetsu",
+      "sourceRef": "phase46c-culture-agency-1956-douon",
+      "sourceLocator": "table entry: 熔接→溶接",
+      "sourceRecordKind": "mapping",
+      "responsibility": "lexical_historical_kanji",
+      "disposition": "admitted",
+      "modernSurface": "溶接",
+      "historicalSurface": "熔接",
+      "evidenceRefs": ["ev-douon-yosetsu"]
+    },
+    {
+      "id": "phase46c-homophone-kanketsu",
+      "sourceRef": "phase46c-culture-agency-1956-douon",
+      "sourceLocator": "table entry: 間歇→間欠",
+      "sourceRecordKind": "mapping",
+      "responsibility": "lexical_historical_kanji",
+      "disposition": "admitted",
+      "modernSurface": "間欠",
+      "historicalSurface": "間歇",
+      "evidenceRefs": ["ev-douon-kanketsu"]
+    },
+    {
+      "id": "phase46c-homophone-santan",
+      "sourceRef": "phase46c-culture-agency-1956-douon",
+      "sourceLocator": "table entry: 讃嘆→賛嘆",
+      "sourceRecordKind": "mapping",
+      "responsibility": "lexical_historical_kanji",
+      "disposition": "admitted",
+      "modernSurface": "賛嘆",
+      "historicalSurface": "讃嘆",
+      "evidenceRefs": ["ev-douon-santan"]
+    },
+    {
+      "id": "phase46c-homophone-sotei",
+      "sourceRef": "phase46c-culture-agency-1956-douon",
+      "sourceLocator": "table entry: 装釘（幀）→装丁",
+      "sourceRecordKind": "alternative",
+      "responsibility": "lexical_historical_kanji",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "装丁",
+      "alternatives": ["装幀", "装釘"],
+      "evidenceRefs": ["ev-douon-sotei-kugi", "ev-douon-sotei-tei"]
+    }
+  ]
+}

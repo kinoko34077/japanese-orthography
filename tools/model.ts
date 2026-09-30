@@ -1,3 +1,5 @@
+import type { Responsibility } from './intake-model.ts';
+
 export type DiagnosticSeverity = 'ERROR' | 'REVIEW';
 
 export interface Diagnostic {
@@ -75,6 +77,8 @@ export interface PositiveRelation {
   channel: 'surface';
   match: string;
   lexicalConstraintSetId?: string;
+  responsibility?: Responsibility;
+  intakeRecordRef?: string;
   target: string;
   evidenceRefs: string[];
   admission: 'admitted' | 'disabled';
