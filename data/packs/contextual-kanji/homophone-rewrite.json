@@ -8,11 +8,11 @@
     { "id": "unit-sotei", "family": "homophone-rewrite", "modernKey": "装丁" }
   ],
   "positiveRelations": [
-    { "id": "rel-yosetsu-yosetsu", "unitId": "unit-yosetsu", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "溶接", "target": "熔接", "evidenceRefs": ["ev-douon-yosetsu"], "admission": "admitted" },
-    { "id": "rel-kanketsu-kanketsu", "unitId": "unit-kanketsu", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "間欠", "target": "間歇", "evidenceRefs": ["ev-douon-kanketsu"], "admission": "admitted" },
-    { "id": "rel-santan-santan", "unitId": "unit-santan", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "賛嘆", "target": "讃嘆", "evidenceRefs": ["ev-douon-santan"], "admission": "admitted" },
-    { "id": "rel-sotei-kugi", "unitId": "unit-sotei", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "装丁", "target": "装釘", "evidenceRefs": ["ev-douon-sotei-kugi"], "admission": "admitted" },
-    { "id": "rel-sotei-tei", "unitId": "unit-sotei", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "装丁", "target": "装幀", "evidenceRefs": ["ev-douon-sotei-tei"], "admission": "admitted" }
+    { "id": "rel-yosetsu-yosetsu", "unitId": "unit-yosetsu", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "溶接", "responsibility": "lexical_historical_kanji", "intakeRecordRef": "phase46c-homophone-yosetsu", "target": "熔接", "evidenceRefs": ["ev-douon-yosetsu"], "admission": "admitted" },
+    { "id": "rel-kanketsu-kanketsu", "unitId": "unit-kanketsu", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "間欠", "responsibility": "lexical_historical_kanji", "intakeRecordRef": "phase46c-homophone-kanketsu", "target": "間歇", "evidenceRefs": ["ev-douon-kanketsu"], "admission": "admitted" },
+    { "id": "rel-santan-santan", "unitId": "unit-santan", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "賛嘆", "responsibility": "lexical_historical_kanji", "intakeRecordRef": "phase46c-homophone-santan", "target": "讃嘆", "evidenceRefs": ["ev-douon-santan"], "admission": "admitted" },
+    { "id": "rel-sotei-kugi", "unitId": "unit-sotei", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "装丁", "responsibility": "lexical_historical_kanji", "intakeRecordRef": "phase46c-homophone-sotei", "target": "装釘", "evidenceRefs": ["ev-douon-sotei-kugi"], "admission": "admitted" },
+    { "id": "rel-sotei-tei", "unitId": "unit-sotei", "kind": "contextual_kanji", "direction": "modern_to_historical", "channel": "surface", "match": "装丁", "responsibility": "lexical_historical_kanji", "intakeRecordRef": "phase46c-homophone-sotei", "target": "装幀", "evidenceRefs": ["ev-douon-sotei-tei"], "admission": "admitted" }
   ],
   "safetyConstraints": [],
   "reviewHints": []
