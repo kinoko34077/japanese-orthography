@@ -49,7 +49,27 @@
   ],
   "evidenceRecords": [
     {
+      "id": "ev-en-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-ou-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
       "id": "ev-gaku-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-hou-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-ryu-official",
       "sourceRef": "bunkacho-joyo-character-form",
       "role": "same-character-form-authority"
     },
@@ -93,6 +113,18 @@
   ],
   "mappings": [
     {
+      "modern": "円",
+      "historical": "圓",
+      "admission": "unconditional",
+      "evidenceRefs": ["ev-en-official"]
+    },
+    {
+      "modern": "応",
+      "historical": "應",
+      "admission": "unconditional",
+      "evidenceRefs": ["ev-ou-official"]
+    },
+    {
       "modern": "学",
       "historical": "學",
       "admission": "unconditional",
@@ -103,6 +135,18 @@
       "regressionEvidenceRefs": [
         "ev-gaku-compat-profile"
       ]
+    },
+    {
+      "modern": "宝",
+      "historical": "寶",
+      "admission": "unconditional",
+      "evidenceRefs": ["ev-hou-official"]
+    },
+    {
+      "modern": "竜",
+      "historical": "龍",
+      "admission": "unconditional",
+      "evidenceRefs": ["ev-ryu-official"]
     }
   ]
 }
