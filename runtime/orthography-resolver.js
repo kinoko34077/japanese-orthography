@@ -201,12 +201,14 @@
   };
 
   const resolveHistorical = (candidate, sourceSurface, components, config) => {
-    const identityRelation = candidate && typeof config.historicalLookup === "function"
-      ? config.historicalLookup(candidate)
+    const historicalDecision = candidate && typeof config.historicalLookup === "function"
+      ? config.historicalLookup(candidate, sourceSurface)
       : null;
+    const sinoCandidates = historicalDecision?.status === "candidates" ? historicalDecision : null;
+    const identityRelation = sinoCandidates ? null : historicalDecision;
     const identityAllowed = !identityRelation?.requiresMorphology || candidate?.morphology != null;
     const acceptedIdentityRelation = identityAllowed ? identityRelation : null;
-    const surfaceDecision = !acceptedIdentityRelation && typeof config.historicalSurfaceLookup === "function"
+    const surfaceDecision = !acceptedIdentityRelation && !sinoCandidates && typeof config.historicalSurfaceLookup === "function"
       ? config.historicalSurfaceLookup(sourceSurface)
       : null;
     const surfaceRelation = surfaceDecision?.status === "resolved"
@@ -281,6 +283,22 @@
           surface: contextualKanji.target,
           disposition: "AUTO",
           evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+        }
+      };
+    }
+
+    if (sinoCandidates && contextualKanji.status === "none") {
+      return {
+        components: resolvedComponents,
+        historical: {
+          route: sinoCandidates.route ?? "sino",
+          kana: null,
+          contextualKanji,
+          deterministicKanji: null,
+          surface: sourceSurface,
+          disposition: "CANDIDATES",
+          evidenceRefs: [...(sinoCandidates.evidenceRefs ?? [])],
+          sinoCandidates: { readings: [...(sinoCandidates.readings ?? [])] }
         }
       };
     }

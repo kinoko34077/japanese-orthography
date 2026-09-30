@@ -122,6 +122,18 @@ Source ordering does not select a winner. `味わおう` retains both `味はゝ
 
 Detailed original anchor boundary: `docs/phase2a-native-slice.md`. Phase-4.6D design and execution are tracked under #70 and the accepted Phase-4.6D plan.
 
+## Source-complete 字音仮名遣い authority (Phase 4.6E)
+
+`仮名遣等資料/字音仮名遣い表.html` (blob `89dd7a1`) is the coverage oracle. `tools/sino-table-parser.ts` extracts one record per listed character: 2,013 records, zero parser remainder, 77 heading readings. `data/intake/phase46e-sino-kana.json` classifies all of them (2,011 admitted including 132 grey "same as modern" identity rows; `(漁)` and the `その他` catch-all row excluded with reasons). `validate:sino-kana` in `npm run check` fails on drift, remainder, or stale artifacts.
+
+`data/historical/sino/phase46e-sino-kana.json` keys each relation by `(character, modern reading, optional usage context)`:
+
+- `resolveHistoricalSino({ character, modernReading, context })` reproduces every admitted table relation exactly; without a context, `法 / ほう` returns the complete set `はふ / ほふ`.
+- `reconstructWord(surface, modernReading)` aligns a kanji-only word against the table, allowing the table's voicing note and gemination (く/き/ち/つ codas keep their spelling; ふ codas become っ). Sounds the table does not list keep modern spelling, except geminated codas whose base reading cannot be known. Multiple spellings → candidates; `学校 / がっこう → がくかう`, `銀行 / ぎんこう → ぎんかう`.
+- The resolver bundle uses this artifact; lexical identity relations (the accepted `学校` relation) keep precedence, and ambiguous reconstructions surface as `CANDIDATES`.
+
+The companion `字音仮名_まとめ.xlsx` and KKH `jion-jisyo` are not used as inputs.
+
 ## Real contextual-kanji lexical-binding acceptance slice
 
 `data/lexical/bindings/contextual-kanji-unidic-first-slice.json` connects one already-canonical contextual relation to the accepted real UniDic lexical path without duplicating the relation in a second corpus.
