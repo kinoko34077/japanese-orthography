@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography_intake_bundle",
+  "snapshots": [
+    {
+      "sourceId": "phase46b-bunkacho-joyo-character-form",
+      "sourceClass": "official",
+      "path": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kakuki/19/tosin01/04.html",
+      "coverageRole": "supplemental"
+    },
+    {
+      "sourceId": "phase46b-kkh-kanji-jisyo",
+      "sourceClass": "external-repository",
+      "repository": "okikae/kkh",
+      "commit": "19b24f88ab55809a186d88c465959548495b26a2",
+      "path": "kanji-jisyo",
+      "blobSha": "95c5db9b5bacb82ab2a685f24f74fef3b32f9992",
+      "license": "BSD-2-Clause",
+      "coverageRole": "candidate-only"
+    }
+  ],
+  "records": [
+    {
+      "id": "phase46b-character-en",
+      "sourceRef": "phase46b-bunkacho-joyo-character-form",
+      "sourceLocator": "常用漢字表の字体説明: 円(圓)",
+      "sourceRecordKind": "mapping",
+      "responsibility": "character_form",
+      "disposition": "admitted",
+      "modernSurface": "円",
+      "historicalSurface": "圓",
+      "evidenceRefs": [
+        "phase46b-bunkacho-joyo-character-form:円(圓)",
+        "phase46b-kkh-kanji-jisyo:円 /圓"
+      ]
+    },
+    {
+      "id": "phase46b-character-ou",
+      "sourceRef": "phase46b-bunkacho-joyo-character-form",
+      "sourceLocator": "常用漢字表の字体説明: 応(應)",
+      "sourceRecordKind": "mapping",
+      "responsibility": "character_form",
+      "disposition": "admitted",
+      "modernSurface": "応",
+      "historicalSurface": "應",
+      "evidenceRefs": [
+        "phase46b-bunkacho-joyo-character-form:応(應)",
+        "phase46b-kkh-kanji-jisyo:応 /應"
+      ]
+    },
+    {
+      "id": "phase46b-character-gaku",
+      "sourceRef": "phase46b-bunkacho-joyo-character-form",
+      "sourceLocator": "常用漢字表の字体説明: 学(學)",
+      "sourceRecordKind": "mapping",
+      "responsibility": "character_form",
+      "disposition": "admitted",
+      "modernSurface": "学",
+      "historicalSurface": "學",
+      "evidenceRefs": [
+        "phase46b-bunkacho-joyo-character-form:学(學)"
+      ]
+    },
+    {
+      "id": "phase46b-character-takara",
+      "sourceRef": "phase46b-bunkacho-joyo-character-form",
+      "sourceLocator": "常用漢字表の字体説明: 宝(寶)",
+      "sourceRecordKind": "mapping",
+      "responsibility": "character_form",
+      "disposition": "admitted",
+      "modernSurface": "宝",
+      "historicalSurface": "寶",
+      "evidenceRefs": [
+        "phase46b-bunkacho-joyo-character-form:宝(寶)",
+        "phase46b-kkh-kanji-jisyo:宝 /寶"
+      ]
+    },
+    {
+      "id": "phase46b-character-ryu",
+      "sourceRef": "phase46b-bunkacho-joyo-character-form",
+      "sourceLocator": "常用漢字表の字体説明: 竜(龍)",
+      "sourceRecordKind": "mapping",
+      "responsibility": "character_form",
+      "disposition": "admitted",
+      "modernSurface": "竜",
+      "historicalSurface": "龍",
+      "evidenceRefs": [
+        "phase46b-bunkacho-joyo-character-form:竜(龍)",
+        "phase46b-kkh-kanji-jisyo:竜 /龍"
+      ]
+    }
+  ]
+}

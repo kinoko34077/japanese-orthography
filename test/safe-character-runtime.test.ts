@@ -12,6 +12,18 @@ async function loadRuntime() {
   return sandbox;
 }
 
+function mapping(modern = '学', historical = '學') {
+  return {
+    modern,
+    historical,
+    responsibility: 'character_form',
+    admission: 'unconditional',
+    intakeRecordRef: `test-intake-${modern}`,
+    evidenceRefs: ['ev-gaku'],
+    regressionEvidenceRefs: []
+  };
+}
+
 function minimalSlice() {
   return {
     schemaVersion: '1',
@@ -29,9 +41,7 @@ function minimalSlice() {
       { modern: '台', reason: 'guarded', evidenceRefs: ['ev-tai'] }
     ],
     mappings: [{
-      modern: '学',
-      historical: '學',
-      evidenceRefs: ['ev-gaku'],
+      ...mapping(),
       regressionEvidenceRefs: ['ev-regression']
     }]
   };
@@ -95,12 +105,7 @@ test('safe-character runtime requires one-code-point mappings and unique modern 
   );
 
   const duplicate = structuredClone(minimalSlice());
-  duplicate.mappings.push({
-    modern: '学',
-    historical: '學',
-    evidenceRefs: ['ev-gaku'],
-    regressionEvidenceRefs: []
-  });
+  duplicate.mappings.push(mapping());
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(duplicate),
     /Duplicate safe-character modern source/
@@ -111,12 +116,7 @@ test('safe-character runtime rejects unconditional mappings for explicit context
   const sandbox = await loadRuntime();
   for (const [modern, historical] of [['弁', '辨'], ['台', '臺']] as const) {
     const unsafe = structuredClone(minimalSlice());
-    unsafe.mappings.push({
-      modern,
-      historical,
-      evidenceRefs: ['ev-gaku'],
-      regressionEvidenceRefs: []
-    });
+    unsafe.mappings.push(mapping(modern, historical));
     assert.throws(
       () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(unsafe),
       /excluded from unconditional safe-character mapping/

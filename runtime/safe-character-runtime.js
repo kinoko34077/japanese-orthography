@@ -20,6 +20,12 @@
     }
   };
 
+  const requireNfcStable = (value, label) => {
+    if (value.normalize("NFC") !== value) {
+      throw new TypeError(`${label} must be NFC normalization stable`);
+    }
+  };
+
   const createSafeCharacterRuntime = (slice) => {
     if (slice?.schemaVersion !== "1" || slice?.kind !== "japanese-orthography-safe-character-slice") {
       throw new TypeError("Unsupported safe-character slice");
@@ -84,6 +90,15 @@
     for (const mapping of Array.isArray(slice.mappings) ? slice.mappings : []) {
       requireOneCodePoint(mapping?.modern, "safe-character modern source");
       requireOneCodePoint(mapping?.historical, "safe-character historical target");
+      if (mapping?.responsibility !== "character_form") {
+        throw new TypeError("Safe-character mapping responsibility must be character_form");
+      }
+      if (mapping?.admission !== "unconditional") {
+        throw new TypeError("Safe-character mapping admission must be unconditional");
+      }
+      requireNonEmptyString(mapping?.intakeRecordRef, "safe-character intake record ref");
+      requireNfcStable(mapping.modern, "Safe-character modern source");
+      requireNfcStable(mapping.historical, "Safe-character historical target");
       if (excluded.has(mapping.modern)) {
         throw new Error(`Modern character ${mapping.modern} is excluded from unconditional safe-character mapping`);
       }

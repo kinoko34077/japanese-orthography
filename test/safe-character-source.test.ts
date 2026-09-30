@@ -23,25 +23,30 @@ async function loadRuntime(globals: Record<string, unknown> = {}) {
   return sandbox;
 }
 
-test('source-backed safe-character slice admits only 学 -> 學 in the bounded first slice', async () => {
+test('source-backed safe-character slice admits the bounded Phase 4.6B same-character set', async () => {
   const slice = await loadSlice();
   assert.equal(slice?.schemaVersion, '1');
   assert.equal(slice?.kind, 'japanese-orthography-safe-character-slice');
-  assert.deepEqual(slice?.mappings?.map((entry: any) => [entry.modern, entry.historical]), [['学', '學']]);
+  assert.deepEqual(
+    slice?.mappings?.map((entry: any) => [entry.modern, entry.historical]),
+    [['円', '圓'], ['応', '應'], ['学', '學'], ['宝', '寶'], ['竜', '龍']]
+  );
   assert.deepEqual(slice?.excludedModernCharacters, ['弁', '台']);
 
   const official = slice?.sources?.find((entry: any) => entry.id === 'bunkacho-joyo-character-form');
   assert.equal(official?.kind, 'primary_official');
   assert.match(official?.url ?? '', /^https:\/\/www\.bunka\.go\.jp\//);
-  assert.match(official?.locator ?? '', /学\(學\)/);
+  for (const relation of ['円(圓)', '応(應)', '学(學)', '宝(寶)', '竜(龍)']) {
+    assert.ok((official?.locator ?? '').includes(relation), relation);
+  }
 
   const project = slice?.sources?.find((entry: any) => entry.id === 'project-deterministic-layer-ruling');
   assert.equal(project?.issue, 2);
   assert.equal(project?.commentId, 5881690205);
 
-  const mapping = slice?.mappings?.[0];
-  assert.deepEqual(mapping?.evidenceRefs, ['ev-gaku-official', 'ev-gaku-project-layer']);
-  assert.deepEqual(mapping?.regressionEvidenceRefs, ['ev-gaku-compat-profile']);
+  const gaku = slice?.mappings?.find((entry: any) => entry.modern === '学');
+  assert.deepEqual(gaku?.evidenceRefs, ['ev-gaku-official', 'ev-gaku-project-layer']);
+  assert.deepEqual(gaku?.regressionEvidenceRefs, ['ev-gaku-compat-profile']);
 });
 
 test('compatibility profile confirms behavior but explicitly does not confer generic safety', async () => {
@@ -59,7 +64,7 @@ test('compatibility profile confirms behavior but explicitly does not confer gen
   assert.equal(compat?.sourceRef, 'kinotch-legacy-compat-profile');
 });
 
-test('contextual negative controls retain their own project rulings instead of borrowing 学 evidence', async () => {
+test('contextual negative controls retain their own project rulings instead of borrowing deterministic evidence', async () => {
   const slice = await loadSlice();
   const benSource = slice?.sources?.find((entry: any) => entry.id === 'project-ben-contextual-ruling');
   const taiSource = slice?.sources?.find((entry: any) => entry.id === 'project-tai-guarded-ruling');
@@ -85,6 +90,7 @@ test('accepted safe-character slice loads in browser-class and Worker-class sand
   for (const globals of [{ window: {} }, { self: {} }]) {
     const sandbox = await loadRuntime(globals);
     const runtime: { apply(value: string): string } = sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(slice);
+    assert.equal(runtime.apply('円応学宝竜'), '圓應學寶龍');
     assert.equal(runtime.apply('学校'), '學校');
   }
 });

@@ -77,6 +77,8 @@ test('source-backed safe map composes with real lexical, Sino, contextual, and l
     safeKanjiMap: safe.characterMap
   });
 
+  assert.equal(safe.apply('円応学宝竜'), '圓應學寶龍');
+
   const school = resolver.resolveUnit('学校');
   assert.equal(school.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
   assert.equal(school.historical.surface, '學校');
