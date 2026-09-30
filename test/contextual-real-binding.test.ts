@@ -73,3 +73,38 @@ test('contextual binding validation fails closed on namespace and source-record 
     /source evidence record not found/
   );
 });
+
+test('real contextual bindings overlay only the admitted anchor and preserve unproven fixture bindings', async () => {
+  const [tool, slice, lexicalSource] = await Promise.all([
+    loadBindingTool(),
+    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
+  ]);
+  assert.equal(typeof tool?.overlayContextualCompilationBindings, 'function');
+
+  const base = {
+    lexicalNamespaceId: 'pmin-current',
+    lexicalBindings: new Map([
+      ['constraint-taifu', ['fixture-local-0006']],
+      ['constraint-taito', ['fixture-local-0008']]
+    ])
+  };
+  const real = tool!.createContextualCompilationBindings(slice, lexicalSource);
+  const merged = tool!.overlayContextualCompilationBindings(base, real);
+
+  assert.deepEqual(merged.lexicalBindings.get('constraint-taifu'), [taifuIdentity]);
+  assert.deepEqual(merged.lexicalBindings.get('constraint-taito'), ['fixture-local-0008']);
+  assert.deepEqual(base.lexicalBindings.get('constraint-taifu'), ['fixture-local-0006']);
+});
+
+test('contextual binding overlay rejects a binding namespace mismatch', async () => {
+  const tool = await loadBindingTool();
+  assert.equal(typeof tool?.overlayContextualCompilationBindings, 'function');
+  assert.throws(
+    () => tool!.overlayContextualCompilationBindings(
+      { lexicalNamespaceId: 'pmin-current', lexicalBindings: new Map() },
+      { lexicalNamespaceId: 'other-namespace', lexicalBindings: new Map() }
+    ),
+    /binding namespace mismatch/
+  );
+});
