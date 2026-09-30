@@ -144,8 +144,13 @@
       lemmas: artifact.lemmas,
       morphologies: artifact.morphologies,
       candidates: artifact.candidates,
-      surfaceIndex: artifact.surfaceIndex
+      surfaceIndex: artifact.surfaceIndex,
+      readingIndex: artifact.readingIndex
     };
+    const declared = new Set(artifact.sections.map((section) => section?.id));
+    for (const id of Object.keys(lexicalSectionValues)) {
+      if (!declared.has(id)) throw new Error(`Missing resolver bundle lexical artifact section: ${id}`);
+    }
     for (const section of artifact.sections) {
       const value = lexicalSectionValues[section.id];
       if (value === undefined) throw new Error(`Unknown resolver bundle lexical artifact section: ${section.id}`);
@@ -278,6 +283,7 @@
 
     const resolver = OrthographyResolver.createResolver({
       lexicalLookup(surface) { return lexical.lookup(surface); },
+      readingLookup(reading) { return lexical.lookupReading(reading); },
       historicalLookup,
       contextualRelations: artifact.contextual.relations,
       contextualSafety: artifact.contextual.safety,
@@ -290,6 +296,7 @@
       lexicalNamespaceId,
       capabilities,
       resolveUnit(input, options) { return resolver.resolveUnit(input, options); },
+      resolveReading(input, options) { return resolver.resolveReading(input, options); },
       render(unit, options) { return resolver.render(unit, options); }
     });
   };
