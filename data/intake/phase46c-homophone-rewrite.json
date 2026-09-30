@@ -19,7 +19,7 @@
       "disposition": "admitted",
       "modernSurface": "溶接",
       "historicalSurface": "熔接",
-      "evidenceRefs": ["ev-douon-yosetsu"]
+      "evidenceRefs": ["ev-douon-yosetsu", "ev-kotobank-phase46c-yosetsu"]
     },
     {
       "id": "phase46c-homophone-kanketsu",
@@ -30,7 +30,7 @@
       "disposition": "admitted",
       "modernSurface": "間欠",
       "historicalSurface": "間歇",
-      "evidenceRefs": ["ev-douon-kanketsu"]
+      "evidenceRefs": ["ev-douon-kanketsu", "ev-kotobank-phase46c-kanketsu"]
     },
     {
       "id": "phase46c-homophone-santan",
@@ -41,7 +41,7 @@
       "disposition": "admitted",
       "modernSurface": "賛嘆",
       "historicalSurface": "讃嘆",
-      "evidenceRefs": ["ev-douon-santan"]
+      "evidenceRefs": ["ev-douon-santan", "ev-kotobank-phase46c-santan"]
     },
     {
       "id": "phase46c-homophone-sotei",
@@ -52,7 +52,12 @@
       "disposition": "candidate_ambiguous",
       "modernSurface": "装丁",
       "alternatives": ["装幀", "装釘"],
-      "evidenceRefs": ["ev-douon-sotei-kugi", "ev-douon-sotei-tei"]
+      "evidenceRefs": [
+        "ev-douon-sotei-kugi",
+        "ev-douon-sotei-tei",
+        "ev-kotobank-phase46c-sotei-kugi",
+        "ev-kotobank-phase46c-sotei-tei"
+      ]
     }
   ]
 }
