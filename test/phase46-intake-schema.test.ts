@@ -64,3 +64,29 @@ test('source snapshots reject unknown coverage roles', () => {
   document.snapshots[0].coverageRole = 'ignored';
   assert.ok(validate(document, 'orthography-intake-bundle-v1').length > 0);
 });
+
+test('repository-backed snapshots require immutable Git object identities', () => {
+  const missingCoordinates = validBundle() as unknown as Record<string, any>;
+  delete missingCoordinates.snapshots[0].repository;
+  delete missingCoordinates.snapshots[0].commit;
+  delete missingCoordinates.snapshots[0].blobSha;
+  assert.ok(validate(missingCoordinates, 'orthography-intake-bundle-v1').length > 0);
+
+  const movingRevision = validBundle() as unknown as Record<string, any>;
+  movingRevision.snapshots[0].commit = 'main';
+  assert.ok(validate(movingRevision, 'orthography-intake-bundle-v1').length > 0);
+
+  const movingBlob = validBundle() as unknown as Record<string, any>;
+  movingBlob.snapshots[0].blobSha = 'latest';
+  assert.ok(validate(movingBlob, 'orthography-intake-bundle-v1').length > 0);
+});
+
+test('external repository snapshots require repository and immutable commit even when blob SHA is unavailable', () => {
+  const document = validBundle() as unknown as Record<string, any>;
+  document.snapshots[0].sourceClass = 'external-repository';
+  delete document.snapshots[0].blobSha;
+  assert.deepEqual(validate(document, 'orthography-intake-bundle-v1'), []);
+
+  delete document.snapshots[0].repository;
+  assert.ok(validate(document, 'orthography-intake-bundle-v1').length > 0);
+});
