@@ -124,7 +124,7 @@ test('4.6B pins KKH kanji-jisyo and closes new relations to official plus pinned
   const slice = await json('data/deterministic/safe-character-first-slice.json');
   const kkh = slice.sources.find((entry: any) => entry.id === 'kkh-kanji-jisyo-2.0.1');
   assert.ok(kkh);
-  assert.equal(kkh.repository, 'okika/kkh'.replace('okika/', 'okikae/'));
+  assert.equal(kkh.repository, 'okikae/kkh');
   assert.equal(kkh.commit, '19b24f88ab55809a186d88c465959548495b26a2');
   assert.equal(kkh.path, 'kanji-jisyo');
   assert.equal(kkh.blobSha, '95c5db9b5bacb82ab2a685f24f74fef3b32f9992');
