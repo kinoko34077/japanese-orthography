@@ -148,9 +148,10 @@ test('native guide parser reports mapping-like table drift instead of silently d
   assert.ok(parser, 'native kana parser module must exist');
 
   const original = await sourceText('仮名遣等資料/歴史的仮名遣いで書きたい.html');
+  const boundary = '<hr>\n        <p align="left"><font size="5"><strong>以上和語について</strong></font></p>';
   const guide = original.replace(
-    '以上和語について',
-    '<table data-phase46d-drift><tr><td>現代→歴史</td></tr></table>以上和語について'
+    boundary,
+    `<table data-phase46d-drift><tr><td>現代→歴史</td></tr></table>\n        ${boundary}`
   );
   assert.notEqual(guide, original);
 
