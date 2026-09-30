@@ -61,7 +61,7 @@ function result(records: NativeKanaExtractedRecord[], remainders: NativeKanaPars
 }
 
 function splitFullwidthSourceNote(rawHistorical: string, asciiNote?: string): { historicalSurface: string; note?: string } {
-  const [surface, ...fullwidthNote] = rawHistorical.split(/\s*；\s*/);
+  const [surface = '', ...fullwidthNote] = rawHistorical.split(/\s*；\s*/);
   const notes = [
     fullwidthNote.join('；').trim(),
     `${asciiNote ?? ''}`.trim()
