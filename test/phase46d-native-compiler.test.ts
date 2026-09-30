@@ -52,10 +52,14 @@ test('surface and reading evidence compile into separate native authority channe
   const ue = artifact.surfaceRelations.find((entry: any) => entry.surface === '植え');
   assert.equal(ue?.historicalSurface, '植ゑ');
 
-  const aiSurface = artifact.surfaceRelations.find((entry: any) => entry.surface === '藍');
-  assert.equal(aiSurface, undefined);
-  const aiReading = artifact.readingRelations.find((entry: any) => entry.surface === '藍');
-  assert.equal(aiReading?.historicalReading, 'あゐ');
+  const aisatsuSurface = artifact.surfaceRelations.find((entry: any) => entry.surface === '挨拶');
+  assert.equal(aisatsuSurface, undefined);
+  const aisatsuReading = artifact.readingRelations.find((entry: any) => entry.surface === '挨拶');
+  assert.equal(aisatsuReading?.historicalReading, 'あいさつ');
+
+  assert.equal(artifact.readingRelations.some((entry: any) => entry.surface === '藍'), false);
+  const aiCandidate = artifact.ambiguousReadingCandidates.find((entry: any) => entry.surface === '藍');
+  assert.deepEqual(Array.from(aiCandidate.alternatives), ['あゐ', 'アヰ']);
 
   const aigoSurface = artifact.surfaceRelations.find((entry: any) => entry.surface === 'アイゴ');
   const aigoReading = artifact.readingRelations.find((entry: any) => entry.surface === 'アイゴ');
