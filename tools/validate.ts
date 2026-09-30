@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadCanonicalWorkspace } from './load-workspace.ts';
+import { loadIntakeWorkspace } from './load-intake.ts';
+import { validatePhase46AuthorityClosure } from './phase46-authority-closure.ts';
 import { validatePackLocal } from './semantic-validator.ts';
 import {
   validateIntegration,
@@ -80,7 +82,10 @@ export async function validateRoot(rootDir: string): Promise<{
   diagnostics: Diagnostic[];
   integrationFixture: FirstSliceIntegrationFixture;
 }> {
-  const workspace = await loadCanonicalWorkspace(rootDir);
+  const [workspace, intake] = await Promise.all([
+    loadCanonicalWorkspace(rootDir),
+    loadIntakeWorkspace(rootDir)
+  ]);
   const integrationFixture = loadFirstSliceIntegrationFixture();
   const diagnostics = [
     ...validatePackLocal(workspace),
@@ -88,7 +93,8 @@ export async function validateRoot(rootDir: string): Promise<{
       workspace,
       externalPackIndexes(integrationFixture),
       lexicalNamespaceDescriptor(integrationFixture)
-    )
+    ),
+    ...validatePhase46AuthorityClosure(workspace, intake)
   ];
   return { workspace, diagnostics, integrationFixture };
 }
