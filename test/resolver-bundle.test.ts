@@ -57,10 +57,11 @@ async function runtimeGlobals() {
   };
 }
 
-async function activatedBundle(artifact = await acceptedArtifact(), extraGlobals: Record<string, unknown> = {}) {
+async function activatedBundle(artifact?: any, extraGlobals: Record<string, unknown> = {}) {
+  const selectedArtifact = artifact ?? await acceptedArtifact();
   const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', { ...(await runtimeGlobals()), ...extraGlobals });
   assert.equal(typeof sandbox.ResolverBundleRuntime?.createResolverBundle, 'function');
-  return sandbox.ResolverBundleRuntime.createResolverBundle(artifact);
+  return sandbox.ResolverBundleRuntime.createResolverBundle(selectedArtifact);
 }
 
 test('Phase 3 builder deterministically packages the accepted resolver inputs', async () => {
