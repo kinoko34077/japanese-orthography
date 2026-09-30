@@ -35,11 +35,57 @@ function minimalSlice() {
       historical: '學',
       responsibility: 'character_form',
       admission: 'unconditional',
+      intakeRecordRef: 'phase46b-character-gaku',
       evidenceRefs: ['ev-positive'],
       regressionEvidenceRefs: []
     }]
   };
 }
+
+test('4.6B character-form authority is represented by the cross-domain intake model', async () => {
+  const intake = await json('data/intake/phase46b-character-form.json');
+  assert.equal(intake.schemaVersion, '1');
+  assert.equal(intake.kind, 'orthography_intake_bundle');
+
+  const official = intake.snapshots.find((entry: any) => entry.sourceId === 'phase46b-bunkacho-joyo-character-form');
+  assert.ok(official);
+  assert.equal(official.sourceClass, 'official');
+  assert.equal(official.coverageRole, 'supplemental');
+
+  const kkh = intake.snapshots.find((entry: any) => entry.sourceId === 'phase46b-kkh-kanji-jisyo');
+  assert.ok(kkh);
+  assert.equal(kkh.sourceClass, 'external-repository');
+  assert.equal(kkh.repository, 'okikae/kkh');
+  assert.equal(kkh.commit, '19b24f88ab55809a186d88c465959548495b26a2');
+  assert.equal(kkh.path, 'kanji-jisyo');
+  assert.equal(kkh.blobSha, '95c5db9b5bacb82ab2a685f24f74fef3b32f9992');
+  assert.equal(kkh.license, 'BSD-2-Clause');
+  assert.equal(kkh.coverageRole, 'candidate-only');
+
+  assert.deepEqual(
+    intake.records.map((record: any) => [record.id, record.modernSurface, record.historicalSurface]),
+    [
+      ['phase46b-character-en', '円', '圓'],
+      ['phase46b-character-ou', '応', '應'],
+      ['phase46b-character-gaku', '学', '學'],
+      ['phase46b-character-takara', '宝', '寶'],
+      ['phase46b-character-ryu', '竜', '龍']
+    ]
+  );
+  for (const record of intake.records) {
+    assert.equal(record.sourceRecordKind, 'mapping', record.id);
+    assert.equal(record.responsibility, 'character_form', record.id);
+    assert.equal(record.disposition, 'admitted', record.id);
+    assert.equal(record.sourceRef, 'phase46b-bunkacho-joyo-character-form', record.id);
+    assert.ok(record.evidenceRefs.some((ref: string) => ref.startsWith('phase46b-bunkacho-joyo-character-form:')), record.id);
+  }
+  for (const modern of ['円', '応', '宝', '竜']) {
+    const record = intake.records.find((entry: any) => entry.modernSurface === modern);
+    assert.ok(record?.evidenceRefs.some((ref: string) => ref.startsWith('phase46b-kkh-kanji-jisyo:')), modern);
+  }
+  assert.equal(intake.records.some((entry: any) => ['弁', '台', '穗', '舖'].includes(entry.modernSurface)), false);
+  assert.equal(intake.records.some((entry: any) => entry.historicalSurface === '寳'), false);
+});
 
 test('4.6B canonical deterministic authority is exactly the five bounded same-character pairs', async () => {
   const slice = await json('data/deterministic/safe-character-first-slice.json');
@@ -50,6 +96,7 @@ test('4.6B canonical deterministic authority is exactly the five bounded same-ch
   for (const mapping of slice.mappings) {
     assert.equal(mapping.responsibility, 'character_form', mapping.modern);
     assert.equal(mapping.admission, 'unconditional', mapping.modern);
+    assert.equal(typeof mapping.intakeRecordRef, 'string', mapping.modern);
     assert.equal(mapping.modern.normalize('NFC'), mapping.modern, mapping.modern);
     assert.equal(mapping.historical.normalize('NFC'), mapping.historical, mapping.modern);
   }
@@ -57,11 +104,27 @@ test('4.6B canonical deterministic authority is exactly the five bounded same-ch
   assert.equal(slice.mappings.some((entry: any) => entry.modern === '宝' && entry.historical === '寳'), false);
 });
 
+test('4.6B safe mappings close to matching admitted character_form intake records', async () => {
+  const [slice, intake] = await Promise.all([
+    json('data/deterministic/safe-character-first-slice.json'),
+    json('data/intake/phase46b-character-form.json')
+  ]);
+  const records = new Map(intake.records.map((record: any) => [record.id, record]));
+  for (const mapping of slice.mappings) {
+    const record: any = records.get(mapping.intakeRecordRef);
+    assert.ok(record, mapping.modern);
+    assert.equal(record.responsibility, 'character_form', mapping.modern);
+    assert.equal(record.disposition, 'admitted', mapping.modern);
+    assert.equal(record.modernSurface, mapping.modern, mapping.modern);
+    assert.equal(record.historicalSurface, mapping.historical, mapping.modern);
+  }
+});
+
 test('4.6B pins KKH kanji-jisyo and closes new relations to official plus pinned evidence', async () => {
   const slice = await json('data/deterministic/safe-character-first-slice.json');
   const kkh = slice.sources.find((entry: any) => entry.id === 'kkh-kanji-jisyo-2.0.1');
   assert.ok(kkh);
-  assert.equal(kkh.repository, 'okikae/kkh');
+  assert.equal(kkh.repository, 'okika/kkh'.replace('okika/', 'okikae/'));
   assert.equal(kkh.commit, '19b24f88ab55809a186d88c465959548495b26a2');
   assert.equal(kkh.path, 'kanji-jisyo');
   assert.equal(kkh.blobSha, '95c5db9b5bacb82ab2a685f24f74fef3b32f9992');
