@@ -174,10 +174,11 @@ export function parseExceptionVerbHtml(html: string, sourceId: string): NativeKa
   return result(records, []);
 }
 
-function paragraphRecords(html: string): Array<{ ordinal: number; raw: string; text: string }> {
+function paragraphRecords(html: string): Array<{ ordinal: number; start: number; raw: string; text: string }> {
   return [...html.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
     .map((match, index) => ({
       ordinal: index + 1,
+      start: match.index ?? 0,
       raw: match[0],
       text: stripHtml(match[1]!)
     }))
@@ -186,7 +187,7 @@ function paragraphRecords(html: string): Array<{ ordinal: number; raw: string; t
 
 export function parseNativeGuideHtml(html: string, sourceId: string): NativeKanaParseResult {
   const paragraphs = paragraphRecords(html);
-  const startIndex = paragraphs.findIndex(record => /^A１\b|^A1\b/.test(record.text));
+  const startIndex = paragraphs.findIndex(record => /^A[１1](?:\s|$)/.test(record.text));
   const stopIndex = paragraphs.findIndex((record, index) => (
     index > startIndex && record.text.startsWith('以上和語について')
   ));
@@ -214,11 +215,9 @@ export function parseNativeGuideHtml(html: string, sourceId: string): NativeKana
     };
   });
 
-  const firstText = paragraphs[startIndex]!.text;
-  const stopText = paragraphs[stopIndex]!.text;
-  const rawStart = html.indexOf(firstText.slice(0, Math.min(firstText.length, 12)));
-  const rawStop = html.indexOf(stopText.slice(0, Math.min(stopText.length, 12)), Math.max(rawStart, 0));
-  const claimedRaw = rawStart >= 0 && rawStop > rawStart ? html.slice(rawStart, rawStop) : '';
+  const rawStart = paragraphs[startIndex]!.start;
+  const rawStop = html.indexOf('以上和語について', paragraphs[stopIndex]!.start);
+  const claimedRaw = rawStop > rawStart ? html.slice(rawStart, rawStop) : '';
   const remainders: NativeKanaParserRemainder[] = [];
 
   for (const [index, match] of [...claimedRaw.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)].entries()) {
