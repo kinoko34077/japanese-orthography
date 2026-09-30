@@ -19,16 +19,14 @@
     }
   };
 
-  const uniqueStrings = (value, label) => {
+  const canonicalStrings = (values) => [...new Set(values ?? [])].sort();
+
+  const requireEvidenceRefs = (value) => {
     if (!Array.isArray(value) || value.length === 0) {
-      throw new TypeError(`Invalid ${label}`);
+      throw new TypeError("Historical native relation requires evidence refs");
     }
-    const output = [];
-    for (const item of value) {
-      requireNonEmptyString(item, label);
-      if (!output.includes(item)) output.push(item);
-    }
-    return output;
+    value.forEach(ref => requireNonEmptyString(ref, "historical native evidence ref"));
+    return canonicalStrings(value);
   };
 
   const morphologyMatches = (required, actual) => {
@@ -39,7 +37,7 @@
     return true;
   };
 
-  const validateV1Source = (source) => {
+  const validateLegacySource = (source) => {
     requireNonEmptyString(source?.repository, "historical native source repository");
     requireGitSha(source?.commit, "historical native source commit SHA");
     requireNonEmptyString(source?.license, "historical native source license");
@@ -53,7 +51,7 @@
     }
   };
 
-  const buildV1EvidenceIndex = (slice) => {
+  const buildLegacyEvidenceIndex = (slice) => {
     const sourceFiles = new Set(slice.source.files.map((file) => file.path));
     if (!Array.isArray(slice.sourceRecords) || slice.sourceRecords.length === 0) {
       throw new TypeError("Historical native slice requires source records");
@@ -73,8 +71,8 @@
     return evidenceIds;
   };
 
-  const normalizeV1EvidenceRefs = (value, evidenceIds) => {
-    const refs = uniqueStrings(value, "historical native evidence ref");
+  const normalizeLegacyEvidenceRefs = (value, evidenceIds) => {
+    const refs = requireEvidenceRefs(value);
     for (const ref of refs) {
       if (!evidenceIds.has(ref)) {
         throw new Error(`Unknown historical native evidence ref: ${ref}`);
@@ -83,7 +81,7 @@
     return refs;
   };
 
-  const buildIdentityIndex = (relations, normalizeEvidenceRefs) => {
+  const buildIdentityIndex = (relations, normalizeEvidence) => {
     const relationByIdentity = new Map();
     for (const relation of Array.isArray(relations) ? relations : []) {
       requireNonEmptyString(relation?.lexicalIdentity, "historical native lexical identity");
@@ -98,7 +96,8 @@
         surface: relation.historicalSurface,
         requiresMorphology: Boolean(relation.requiredMorphology),
         requiredMorphology: relation.requiredMorphology ?? null,
-        evidenceRefs: normalizeEvidenceRefs(relation.evidenceRefs)
+        evidenceRefs: normalizeEvidence(relation.evidenceRefs),
+        sourceRefs: canonicalStrings(relation.sourceRefs ?? [])
       });
     }
     return relationByIdentity;
@@ -106,17 +105,19 @@
 
   const createIdentityLookup = (relationByIdentity) => (candidate) => {
     if (candidate?.lexicalOrigin !== "native") return null;
-    requireNonEmptyString(candidate?.lexicalIdentity, "candidate lexical identity");
+    if (typeof candidate?.lexicalIdentity !== "string" || candidate.lexicalIdentity.trim() === "") {
+      return null;
+    }
     const relation = relationByIdentity.get(candidate.lexicalIdentity) ?? null;
     if (!relation) return null;
     if (!morphologyMatches(relation.requiredMorphology, candidate.morphology)) return null;
     return relation;
   };
 
-  const createV1Runtime = (slice, options) => {
+  const createLegacyRuntime = (slice, options) => {
     requireNonEmptyString(slice.lexicalNamespaceId, "historical native lexical namespace");
-    validateV1Source(slice.source);
-    const evidenceIds = buildV1EvidenceIndex(slice);
+    validateLegacySource(slice.source);
+    const evidenceIds = buildLegacyEvidenceIndex(slice);
     const expectedNamespace = options.lexicalNamespaceId ?? slice.lexicalNamespaceId;
     if (slice.lexicalNamespaceId !== expectedNamespace) {
       throw new Error("Historical native lexical namespace mismatch");
@@ -124,116 +125,87 @@
 
     const relationByIdentity = buildIdentityIndex(
       slice.relations,
-      (refs) => normalizeV1EvidenceRefs(refs, evidenceIds)
+      refs => normalizeLegacyEvidenceRefs(refs, evidenceIds)
     );
 
     return {
       lexicalNamespaceId: slice.lexicalNamespaceId,
       source: slice.source,
+      sources: [slice.source],
       lookup: createIdentityLookup(relationByIdentity),
-      lookupSurface() { return null; }
+      lookupSurface() {
+        return null;
+      }
     };
   };
 
-  const validateV2Sources = (artifact) => {
-    if (!Array.isArray(artifact.sources) || artifact.sources.length === 0) {
-      throw new TypeError("Historical native artifact requires sources");
+  const validateV2Sources = (sources) => {
+    if (!Array.isArray(sources) || sources.length === 0) {
+      throw new TypeError("Historical native v2 artifact requires sources");
     }
-    const sourceIds = new Set();
-    for (const source of artifact.sources) {
+    const ids = new Set();
+    for (const source of sources) {
       requireNonEmptyString(source?.sourceId, "historical native source id");
-      if (sourceIds.has(source.sourceId)) {
+      requireNonEmptyString(source?.path, "historical native source path");
+      if (ids.has(source.sourceId)) {
         throw new Error(`Duplicate historical native source id: ${source.sourceId}`);
       }
-      sourceIds.add(source.sourceId);
-      requireNonEmptyString(source?.sourceClass, "historical native source class");
-      requireNonEmptyString(source?.path, "historical native source path");
-      requireNonEmptyString(source?.coverageRole, "historical native coverage role");
-      if (source.repository !== undefined) requireNonEmptyString(source.repository, "historical native source repository");
+      ids.add(source.sourceId);
       if (source.commit !== undefined) requireGitSha(source.commit, "historical native source commit SHA");
       if (source.blobSha !== undefined) requireGitSha(source.blobSha, "historical native source blob SHA");
-      if (source.license !== undefined) requireNonEmptyString(source.license, "historical native source license");
     }
-    return sourceIds;
+    return ids;
   };
 
-  const normalizeV2RelationRefs = (relation, sourceIds) => {
-    const sourceRefs = uniqueStrings(relation?.sourceRefs, "historical native source refs");
-    for (const sourceRef of sourceRefs) {
-      if (!sourceIds.has(sourceRef)) {
-        throw new Error(`Unknown historical native source ref: ${sourceRef}`);
+  const validateSourceRefs = (value, sourceIds) => {
+    if (!Array.isArray(value)) return [];
+    const refs = canonicalStrings(value);
+    for (const ref of refs) {
+      requireNonEmptyString(ref, "historical native source ref");
+      if (!sourceIds.has(ref)) {
+        throw new Error(`Unknown historical native source ref: ${ref}`);
       }
     }
-    const evidenceRefs = uniqueStrings(relation?.evidenceRefs, "historical native evidence refs");
-    return { sourceRefs, evidenceRefs };
+    return refs;
   };
 
-  const buildExactSurfaceIndex = (relations, sourceIds) => {
+  const buildExactIndex = (relations, targetKey, sourceIds) => {
     const index = new Map();
     for (const relation of Array.isArray(relations) ? relations : []) {
       requireNonEmptyString(relation?.surface, "historical native exact surface");
-      requireNonEmptyString(relation?.historicalSurface, "historical native exact historical surface");
+      requireNonEmptyString(relation?.[targetKey], `historical native ${targetKey}`);
       if (index.has(relation.surface)) {
-        throw new Error(`Duplicate historical native exact surface: ${relation.surface}`);
+        throw new Error(`Duplicate historical native exact relation: ${relation.surface}`);
       }
-      const refs = normalizeV2RelationRefs(relation, sourceIds);
       index.set(relation.surface, {
-        historicalSurface: relation.historicalSurface,
-        ...refs
+        target: relation[targetKey],
+        evidenceRefs: requireEvidenceRefs(relation.evidenceRefs),
+        sourceRefs: validateSourceRefs(relation.sourceRefs, sourceIds)
       });
     }
     return index;
   };
 
-  const buildExactReadingIndex = (relations, sourceIds) => {
+  const buildCandidateIndex = (relations, sourceIds) => {
     const index = new Map();
     for (const relation of Array.isArray(relations) ? relations : []) {
-      requireNonEmptyString(relation?.surface, "historical native reading surface");
-      requireNonEmptyString(relation?.historicalReading, "historical native historical reading");
-      if (index.has(relation.surface)) {
-        throw new Error(`Duplicate historical native reading surface: ${relation.surface}`);
+      requireNonEmptyString(relation?.surface, "historical native candidate surface");
+      if (!Array.isArray(relation?.alternatives) || relation.alternatives.length < 2) {
+        throw new TypeError("Historical native candidate requires at least two alternatives");
       }
-      const refs = normalizeV2RelationRefs(relation, sourceIds);
+      if (index.has(relation.surface)) {
+        throw new Error(`Duplicate historical native candidate relation: ${relation.surface}`);
+      }
       index.set(relation.surface, {
-        historicalReading: relation.historicalReading,
-        ...refs
+        alternatives: canonicalStrings(relation.alternatives),
+        evidenceRefs: requireEvidenceRefs(relation.evidenceRefs),
+        sourceRefs: validateSourceRefs(relation.sourceRefs, sourceIds)
       });
     }
     return index;
   };
 
-  const buildCandidateIndex = (relations, sourceIds, label) => {
-    const index = new Map();
-    for (const relation of Array.isArray(relations) ? relations : []) {
-      requireNonEmptyString(relation?.surface, `historical native ${label} candidate surface`);
-      if (index.has(relation.surface)) {
-        throw new Error(`Duplicate historical native ${label} candidate: ${relation.surface}`);
-      }
-      const alternatives = uniqueStrings(
-        relation?.alternatives,
-        `historical native ${label} candidate alternatives`
-      );
-      if (alternatives.length < 2) {
-        throw new TypeError(`Historical native ${label} candidate requires multiple alternatives`);
-      }
-      const refs = normalizeV2RelationRefs(relation, sourceIds);
-      index.set(relation.surface, { alternatives, ...refs });
-    }
-    return index;
-  };
-
-  const mergeRefs = (...entries) => {
-    const sourceRefs = [];
-    const evidenceRefs = [];
-    for (const entry of entries) {
-      if (!entry) continue;
-      for (const ref of entry.sourceRefs ?? []) if (!sourceRefs.includes(ref)) sourceRefs.push(ref);
-      for (const ref of entry.evidenceRefs ?? []) if (!evidenceRefs.includes(ref)) evidenceRefs.push(ref);
-    }
-    sourceRefs.sort();
-    evidenceRefs.sort();
-    return { sourceRefs, evidenceRefs };
-  };
+  const mergeRefs = (...collections) => canonicalStrings(collections.flatMap(value => value ?? []));
 
   const createV2Runtime = (artifact, options) => {
     requireNonEmptyString(artifact.lexicalNamespaceId, "historical native lexical namespace");
@@ -242,74 +214,80 @@
       throw new Error("Historical native lexical namespace mismatch");
     }
 
-    const sourceIds = validateV2Sources(artifact);
-    const identityByIdentity = buildIdentityIndex(
+    const sourceIds = validateV2Sources(artifact.sources);
+    const relationByIdentity = buildIdentityIndex(
       artifact.identityRelations,
-      (refs) => uniqueStrings(refs, "historical native identity evidence refs")
+      refs => requireEvidenceRefs(refs)
     );
-    const surfaceIndex = buildExactSurfaceIndex(artifact.surfaceRelations, sourceIds);
-    const readingIndex = buildExactReadingIndex(artifact.readingRelations, sourceIds);
-    const surfaceCandidateIndex = buildCandidateIndex(
-      artifact.ambiguousSurfaceCandidates,
-      sourceIds,
-      "surface"
-    );
-    const readingCandidateIndex = buildCandidateIndex(
-      artifact.ambiguousReadingCandidates,
-      sourceIds,
-      "reading"
-    );
+    const surfaceIndex = buildExactIndex(artifact.surfaceRelations, "historicalSurface", sourceIds);
+    const readingIndex = buildExactIndex(artifact.readingRelations, "historicalReading", sourceIds);
+    const surfaceCandidates = buildCandidateIndex(artifact.ambiguousSurfaceCandidates, sourceIds);
+    const readingCandidates = buildCandidateIndex(artifact.ambiguousReadingCandidates, sourceIds);
 
     const lookupSurface = (surface) => {
-      requireNonEmptyString(surface, "historical native lookup surface");
+      if (typeof surface !== "string" || surface === "") return null;
       const exactSurface = surfaceIndex.get(surface) ?? null;
       const exactReading = readingIndex.get(surface) ?? null;
-      const surfaceCandidates = surfaceCandidateIndex.get(surface) ?? null;
-      const readingCandidates = readingCandidateIndex.get(surface) ?? null;
+      const surfaceCandidate = surfaceCandidates.get(surface) ?? null;
+      const readingCandidate = readingCandidates.get(surface) ?? null;
 
-      if (!exactSurface && !exactReading && !surfaceCandidates && !readingCandidates) {
-        return null;
-      }
-
-      const refs = mergeRefs(exactSurface, exactReading, surfaceCandidates, readingCandidates);
-      if (surfaceCandidates || readingCandidates) {
+      if (surfaceCandidate || readingCandidate) {
         return {
           status: "candidates",
           route: "native",
           surface,
-          reading: null,
-          surfaceCandidates: [...(surfaceCandidates?.alternatives ?? [])],
-          readingCandidates: [...(readingCandidates?.alternatives ?? [])],
-          ...refs
+          reading: exactReading?.target ?? null,
+          surfaceCandidates: surfaceCandidate?.alternatives ?? [],
+          readingCandidates: readingCandidate?.alternatives ?? [],
+          evidenceRefs: mergeRefs(
+            exactSurface?.evidenceRefs,
+            exactReading?.evidenceRefs,
+            surfaceCandidate?.evidenceRefs,
+            readingCandidate?.evidenceRefs
+          ),
+          sourceRefs: mergeRefs(
+            exactSurface?.sourceRefs,
+            exactReading?.sourceRefs,
+            surfaceCandidate?.sourceRefs,
+            readingCandidate?.sourceRefs
+          )
         };
       }
 
+      if (!exactSurface && !exactReading) return null;
       return {
         status: "resolved",
         route: "native",
-        surface: exactSurface?.historicalSurface ?? surface,
-        reading: exactReading?.historicalReading ?? null,
-        surfaceCandidates: [],
-        readingCandidates: [],
-        ...refs
+        surface: exactSurface?.target ?? surface,
+        reading: exactReading?.target ?? null,
+        requiresMorphology: false,
+        requiredMorphology: null,
+        evidenceRefs: mergeRefs(exactSurface?.evidenceRefs, exactReading?.evidenceRefs),
+        sourceRefs: mergeRefs(exactSurface?.sourceRefs, exactReading?.sourceRefs)
       };
     };
 
     return {
       lexicalNamespaceId: artifact.lexicalNamespaceId,
-      source: artifact.sources,
+      source: null,
       sources: artifact.sources,
-      lookup: createIdentityLookup(identityByIdentity),
+      lookup: createIdentityLookup(relationByIdentity),
       lookupSurface
     };
   };
 
-  const createHistoricalNativeRuntime = (artifact, options = {}) => {
-    if (artifact?.schemaVersion === "1" && artifact?.kind === "japanese-orthography-historical-native-slice") {
-      return createV1Runtime(artifact, options);
+  const createHistoricalNativeRuntime = (document, options = {}) => {
+    if (
+      document?.schemaVersion === "1" &&
+      document?.kind === "japanese-orthography-historical-native-slice"
+    ) {
+      return createLegacyRuntime(document, options);
     }
-    if (artifact?.schemaVersion === "2" && artifact?.kind === "japanese-orthography-historical-native-artifact") {
-      return createV2Runtime(artifact, options);
+    if (
+      document?.schemaVersion === "2" &&
+      document?.kind === "japanese-orthography-historical-native-artifact"
+    ) {
+      return createV2Runtime(document, options);
     }
     throw new TypeError("Unsupported historical native slice");
   };
