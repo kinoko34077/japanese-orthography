@@ -59,6 +59,26 @@ test('compatibility profile confirms behavior but explicitly does not confer gen
   assert.equal(compat?.sourceRef, 'kinotch-legacy-compat-profile');
 });
 
+test('contextual negative controls retain their own project rulings instead of borrowing 学 evidence', async () => {
+  const slice = await loadSlice();
+  const benSource = slice?.sources?.find((entry: any) => entry.id === 'project-ben-contextual-ruling');
+  const taiSource = slice?.sources?.find((entry: any) => entry.id === 'project-tai-guarded-ruling');
+  assert.equal(benSource?.issue, 2);
+  assert.equal(benSource?.commentId, 5881995193);
+  assert.equal(taiSource?.issue, 2);
+  assert.equal(taiSource?.commentId, 5882033932);
+
+  const benEvidence = slice?.evidenceRecords?.find((entry: any) => entry.id === 'ev-ben-contextual-negative');
+  const taiEvidence = slice?.evidenceRecords?.find((entry: any) => entry.id === 'ev-tai-guarded-negative');
+  assert.equal(benEvidence?.sourceRef, 'project-ben-contextual-ruling');
+  assert.equal(taiEvidence?.sourceRef, 'project-tai-guarded-ruling');
+
+  const benExclusion = slice?.exclusionRecords?.find((entry: any) => entry.modern === '弁');
+  const taiExclusion = slice?.exclusionRecords?.find((entry: any) => entry.modern === '台');
+  assert.deepEqual(benExclusion?.evidenceRefs, ['ev-ben-contextual-negative']);
+  assert.deepEqual(taiExclusion?.evidenceRefs, ['ev-tai-guarded-negative']);
+});
+
 test('accepted safe-character slice loads in browser-class and Worker-class sandboxes', async () => {
   const slice = await loadSlice();
   assert.ok(slice);
