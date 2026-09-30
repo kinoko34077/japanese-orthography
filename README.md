@@ -248,11 +248,11 @@ Phase 3 is complete at the bounded production-resolver-bundle acceptance-slice l
 - the fixed compatibility/runtime foundation;
 - a real-source UniDic lexical artifact/lookup acceptance path;
 - Phase 2B source-backed Sino-Japanese historical-reading resolution;
-- Phase 2A morphology-qualified native historical-kana resolution;
+- Phase 4.6D selected-source-complete native historical-kana classification, exact whole-surface/reading authority, and morphology-qualified resolution;
 - Phase 2C real lexical binding for canonical contextual restoration;
 - Phase 2D source-backed unconditional deterministic safe-character rendering;
 - Phase 3 deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
 
-These accepted slices prove responsibility boundaries, cross-layer composition and one production-shaped activation contract. They do **not** claim broad/full-corpus production coverage or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
+These accepted layers prove responsibility boundaries, cross-layer composition and one production-shaped activation contract. Phase 4.6D claims completeness only for its five pinned selected native-kana snapshots; it does **not** claim universal historical-kana coverage or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
 
-Phase 4 `txt-auto-replace` integration, Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader corpus expansion remain explicitly unselected. Consumers remain unchanged/pinned by this repository work. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by Phase 3 completion.
+Phase 4.6D changes repository-owned native-kana authority only; consumer repositories remain unchanged/pinned. Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader corpus expansion remain explicitly unselected. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by this work.
