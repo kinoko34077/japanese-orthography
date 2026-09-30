@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography_intake_bundle",
+  "snapshots": [
+    {
+      "sourceId": "legacy-stage40-compatibility",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "test/fixtures/pinned/txt-auto-replace/40-legacy-kanji.json5",
+      "blobSha": "57177fb8fba471f9c169283dcbae5830d5bac64f",
+      "coverageRole": "candidate-only"
+    },
+    {
+      "sourceId": "contextual-merged-ben",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "data/packs/contextual-kanji/merged-ben.json",
+      "blobSha": "96836263a659459ea41d226ee6b37668d840fb76",
+      "coverageRole": "candidate-only"
+    },
+    {
+      "sourceId": "contextual-merged-tai",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "data/packs/contextual-kanji/merged-tai.json",
+      "blobSha": "880fda7034e03448b9415d46a437760838ae5b87",
+      "coverageRole": "candidate-only"
+    }
+  ],
+  "records": [
+    {
+      "id": "legacy-stage40-ben-single-target",
+      "sourceRef": "legacy-stage40-compatibility",
+      "sourceLocator": "/character_map/弁",
+      "sourceRecordKind": "alternative",
+      "responsibility": "merged_character",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "弁",
+      "historicalSurface": "辨",
+      "alternatives": ["辨", "瓣", "辯", "辦"],
+      "evidenceRefs": ["stage40:弁->辨", "contextual-merged-ben:lexical-boundaries"]
+    },
+    {
+      "id": "contextual-tai-boundary",
+      "sourceRef": "contextual-merged-tai",
+      "sourceLocator": "/restorationUnits",
+      "sourceRecordKind": "alternative",
+      "responsibility": "lexical_historical_kanji",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "台",
+      "alternatives": ["颱", "擡", "臺"],
+      "evidenceRefs": ["rel-taifu", "rel-taito", "safe-taimitsu"]
+    },
+    {
+      "id": "legacy-stage40-ho-to-ben-corruption",
+      "sourceRef": "legacy-stage40-compatibility",
+      "sourceLocator": "/character_map/穗",
+      "sourceRecordKind": "mapping",
+      "responsibility": "preserve_unresolved",
+      "disposition": "excluded_unresolved",
+      "modernSurface": "穗",
+      "historicalSurface": "瓣",
+      "exclusionReason": "different_character_relation_not_same_character_old_form",
+      "evidenceRefs": ["stage40:穗->瓣"]
+    },
+    {
+      "id": "legacy-stage40-ho-to-ben-speech-corruption",
+      "sourceRef": "legacy-stage40-compatibility",
+      "sourceLocator": "/character_map/舖",
+      "sourceRecordKind": "mapping",
+      "responsibility": "preserve_unresolved",
+      "disposition": "excluded_unresolved",
+      "modernSurface": "舖",
+      "historicalSurface": "辯",
+      "exclusionReason": "different_character_relation_not_same_character_old_form",
+      "evidenceRefs": ["stage40:舖->辯"]
+    }
+  ]
+}
