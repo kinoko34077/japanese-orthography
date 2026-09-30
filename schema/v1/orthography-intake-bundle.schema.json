@@ -107,6 +107,9 @@
             "required": ["disposition"]
           },
           "then": {
+            "properties": {
+              "exclusionReason": { "$ref": "#/$defs/nonEmptyString" }
+            },
             "required": ["exclusionReason"]
           }
         }
