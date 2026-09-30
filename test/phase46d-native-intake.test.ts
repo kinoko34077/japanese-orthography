@@ -124,6 +124,22 @@ test('committed dictionaries admit unique readings, preserve alternatives, and e
   ));
   assert.equal(animal?.disposition, 'admitted');
   assert.equal(animal?.historicalReading, 'アヰゴ');
+
+  const saburau = dictionary.find((record: any) => record.modernSurface === '候');
+  assert.equal(saburau?.disposition, 'candidate_ambiguous');
+  assert.deepEqual(
+    [...saburau.alternatives].sort(),
+    ['さうらふ', 'さふらふ', 'そろ'].sort()
+  );
+
+  const iou = dictionary.find((record: any) => record.modernSurface === '硫黄');
+  assert.equal(iou?.disposition, 'candidate_ambiguous');
+  assert.deepEqual([...iou.alternatives].sort(), ['いわう', 'ゆわう'].sort());
+
+  const aho = dictionary.find((record: any) => record.modernSurface === '阿呆');
+  assert.equal(aho?.disposition, 'candidate_ambiguous');
+  assert.deepEqual([...aho.alternatives].sort(), ['あはう', 'アホ'].sort());
+  assert.equal(aho.alternatives.includes('ほう'), false);
 });
 
 test('exception-verb and native-guide records consume coverage without manufacturing unsupported modern mappings', async () => {
