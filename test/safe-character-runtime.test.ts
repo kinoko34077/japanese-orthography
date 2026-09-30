@@ -53,14 +53,14 @@ test('safe-character runtime exposes a copy-safe deterministic map and applies i
 test('safe-character runtime rejects dangling source/evidence references', async () => {
   const sandbox = await loadRuntime();
   const danglingSource = structuredClone(minimalSlice());
-  danglingSource.evidenceRecords[0].sourceRef = 'missing-source';
+  danglingSource.evidenceRecords[0]!.sourceRef = 'missing-source';
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingSource),
     /Unknown safe-character source ref/
   );
 
   const danglingEvidence = structuredClone(minimalSlice());
-  danglingEvidence.mappings[0].evidenceRefs = ['missing-evidence'];
+  danglingEvidence.mappings[0]!.evidenceRefs = ['missing-evidence'];
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingEvidence),
     /Unknown safe-character evidence ref/
@@ -71,14 +71,14 @@ test('safe-character runtime closes regression and exclusion evidence refs', asy
   const sandbox = await loadRuntime();
 
   const danglingRegression = structuredClone(minimalSlice());
-  danglingRegression.mappings[0].regressionEvidenceRefs = ['missing-regression-evidence'];
+  danglingRegression.mappings[0]!.regressionEvidenceRefs = ['missing-regression-evidence'];
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingRegression),
     /Unknown safe-character evidence ref/
   );
 
   const danglingExclusion = structuredClone(minimalSlice());
-  danglingExclusion.exclusionRecords[0].evidenceRefs = ['missing-exclusion-evidence'];
+  danglingExclusion.exclusionRecords[0]!.evidenceRefs = ['missing-exclusion-evidence'];
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingExclusion),
     /Unknown safe-character evidence ref/
@@ -88,7 +88,7 @@ test('safe-character runtime closes regression and exclusion evidence refs', asy
 test('safe-character runtime requires one-code-point mappings and unique modern sources', async () => {
   const sandbox = await loadRuntime();
   const multiCodePoint = structuredClone(minimalSlice());
-  multiCodePoint.mappings[0].modern = '学校';
+  multiCodePoint.mappings[0]!.modern = '学校';
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(multiCodePoint),
     /one code point/
@@ -104,7 +104,7 @@ test('safe-character runtime requires one-code-point mappings and unique modern 
 
 test('safe-character runtime rejects unconditional mappings for explicit contextual negative controls', async () => {
   const sandbox = await loadRuntime();
-  for (const [modern, historical] of [['弁', '辨'], ['台', '臺']]) {
+  for (const [modern, historical] of [['弁', '辨'], ['台', '臺']] as const) {
     const unsafe = structuredClone(minimalSlice());
     unsafe.mappings.push({ modern, historical, evidenceRefs: ['ev-gaku'] });
     assert.throws(
