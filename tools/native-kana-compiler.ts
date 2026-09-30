@@ -142,7 +142,7 @@ function compileClaimIndex<TExact extends NativeExactSurfaceRelation | NativeExa
         [exactTargetKey]: target,
         sourceRefs: canonicalStrings(evidence.sourceRefs),
         evidenceRefs: canonicalStrings(evidence.evidenceRefs)
-      } as TExact);
+      } as unknown as TExact);
       continue;
     }
 
