@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { access, readFile } from 'node:fs/promises';
+import { TextDecoder } from 'node:util';
 import test from 'node:test';
 
 const KKH_SOURCE = 'data/sources/kkh/19b24f88ab55809a186d88c465959548495b26a2/kana-jisyo';
@@ -19,8 +20,13 @@ function gitBlobSha(bytes: Buffer): string {
   return createHash('sha1').update(header).update(bytes).digest('hex');
 }
 
-async function utf8(path: string): Promise<string> {
-  return readFile(path, 'utf8');
+async function sourceText(path: string): Promise<string> {
+  const bytes = await readFile(path);
+  const header = bytes.subarray(0, 2048).toString('latin1').toLowerCase();
+  if (header.includes('charset=x-sjis') || header.includes('charset=shift_jis')) {
+    return new TextDecoder('shift_jis').decode(bytes);
+  }
+  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
 }
 
 test('Phase 4.6D native source parser exposes all four deterministic extractors', async () => {
@@ -40,7 +46,7 @@ test('vendored KKH kana-jisyo is the exact pinned upstream blob with its BSD-2-C
   }
   assert.equal(exists, true, 'pinned KKH source and license must be vendored');
 
-  const [bytes, license] = await Promise.all([readFile(KKH_SOURCE), utf8(KKH_LICENSE)]);
+  const [bytes, license] = await Promise.all([readFile(KKH_SOURCE), sourceText(KKH_LICENSE)]);
   assert.equal(gitBlobSha(bytes), '6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be');
   assert.match(license, /Redistribution and use in source and binary forms/);
 });
@@ -49,7 +55,7 @@ test('KKH parser discovers every mapping-shaped active and disabled source recor
   const parser = await loadParser();
   assert.ok(parser, 'native kana parser module must exist');
 
-  const result = parser.parseKkhKanaJisyo(await utf8(KKH_SOURCE), 'phase46d-kkh-kana');
+  const result = parser.parseKkhKanaJisyo(await sourceText(KKH_SOURCE), 'phase46d-kkh-kana');
   assert.equal(result.records.length, 7408);
   assert.equal(result.discoveredRecordIds.length, 7408);
   assert.equal(result.records.filter((record: any) => record.enabled === true).length, 7151);
@@ -76,8 +82,8 @@ test('committed colon dictionaries expose the accepted deterministic record coun
   assert.ok(parser, 'native kana parser module must exist');
 
   const [dictionary, animalPlant] = await Promise.all([
-    utf8('仮名遣等資料/仮名遣い辞典本文.html'),
-    utf8('仮名遣等資料/動物名・植物名歴史的仮名遣い辞典.html')
+    sourceText('仮名遣等資料/仮名遣い辞典本文.html'),
+    sourceText('仮名遣等資料/動物名・植物名歴史的仮名遣い辞典.html')
   ]);
   const dictionaryResult = parser.parseColonDictionaryHtml(dictionary, 'phase46d-native-dictionary');
   const animalResult = parser.parseColonDictionaryHtml(animalPlant, 'phase46d-animal-plant');
@@ -98,7 +104,7 @@ test('exception-verb parser discovers exactly the 111 table-entry blocks', async
   assert.ok(parser, 'native kana parser module must exist');
 
   const result = parser.parseExceptionVerbHtml(
-    await utf8('仮名遣等資料/例外動詞一覧：歴史的仮名遣い教室.html'),
+    await sourceText('仮名遣等資料/例外動詞一覧：歴史的仮名遣い教室.html'),
     'phase46d-exception-verbs'
   );
   assert.equal(result.records.length, 111);
@@ -112,7 +118,7 @@ test('native guide parser claims the complete A1-C2 section as 255 records with 
   assert.ok(parser, 'native kana parser module must exist');
 
   const result = parser.parseNativeGuideHtml(
-    await utf8('仮名遣等資料/歴史的仮名遣いで書きたい.html'),
+    await sourceText('仮名遣等資料/歴史的仮名遣いで書きたい.html'),
     'phase46d-native-guide'
   );
   assert.equal(result.records.length, 255);
@@ -126,11 +132,11 @@ test('source format drift produces mapping remainders instead of silent drops', 
   const parser = await loadParser();
   assert.ok(parser, 'native kana parser module must exist');
 
-  const kkh = (await utf8(KKH_SOURCE)).replace('植え /植ゑ ;ワ行下二段', '植え => 植ゑ ;ワ行下二段');
+  const kkh = (await sourceText(KKH_SOURCE)).replace('植え /植ゑ ;ワ行下二段', '植え => 植ゑ ;ワ行下二段');
   const kkhResult = parser.parseKkhKanaJisyo(kkh, 'phase46d-kkh-kana');
   assert.ok(kkhResult.remainders.some((item: any) => item.kind === 'mapping' && item.sourceRecordId === 'kana-jisyo:L17'));
 
-  const guide = (await utf8('仮名遣等資料/歴史的仮名遣いで書きたい.html'))
+  const guide = (await sourceText('仮名遣等資料/歴史的仮名遣いで書きたい.html'))
     .replace('以上和語について', '<ul><li>現代→歴史</li></ul>以上和語について');
   const guideResult = parser.parseNativeGuideHtml(guide, 'phase46d-native-guide');
   assert.ok(guideResult.remainders.some((item: any) => item.kind === 'mapping'));
