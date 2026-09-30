@@ -55,7 +55,15 @@ test('4.6C intake represents three exact admissions and one complete ambiguous �
   assert.equal(ambiguous[0].modernSurface, '装丁');
   assert.equal(ambiguous[0].responsibility, 'lexical_historical_kanji');
   assert.deepEqual([...ambiguous[0].alternatives].sort(), ['装幀', '装釘'].sort());
-  assert.deepEqual([...ambiguous[0].evidenceRefs].sort(), ['ev-douon-sotei-kugi', 'ev-douon-sotei-tei'].sort());
+  assert.deepEqual(
+    [...ambiguous[0].evidenceRefs].sort(),
+    [
+      'ev-douon-sotei-kugi',
+      'ev-douon-sotei-tei',
+      'ev-kotobank-phase46c-sotei-kugi',
+      'ev-kotobank-phase46c-sotei-tei'
+    ].sort()
+  );
   assert.equal('lexicalIdentity' in ambiguous[0], false);
 });
 
