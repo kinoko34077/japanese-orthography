@@ -133,7 +133,7 @@ test('4.6B pins KKH kanji-jisyo and closes new relations to official plus pinned
   const evidenceById = new Map<string, any>(
     slice.evidenceRecords.map((entry: any) => [entry.id, entry] as [string, any])
   );
-  const expected = new Map([
+  const expected = new Map<string, readonly [string, string]>([
     ['円', ['ev-en-official', 'ev-en-kkh']],
     ['応', ['ev-ou-official', 'ev-ou-kkh']],
     ['宝', ['ev-hou-official', 'ev-hou-kkh']],
