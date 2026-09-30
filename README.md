@@ -241,7 +241,7 @@ Node/VM internal copies that the runtime does not expose are explicitly marked u
 
 ## Current boundary
 
-Phase 3 is complete at the bounded production-resolver-bundle acceptance-slice level. This repository now owns:
+Phase 3.5 is complete at the bounded generic-core acceptance-slice level. This repository now owns:
 
 - canonical contextual-kanji corpus/build-time behavior;
 - the fixed compatibility/runtime foundation;
@@ -250,8 +250,30 @@ Phase 3 is complete at the bounded production-resolver-bundle acceptance-slice l
 - Phase 2A morphology-qualified native historical-kana resolution;
 - Phase 2C real lexical binding for canonical contextual restoration;
 - Phase 2D source-backed unconditional deterministic safe-character rendering;
-- Phase 3 deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
+- Phase 3 deterministic build-time resolver bundle composition and atomic full-bundle runtime activation;
+- Phase 3.5 reading-index lexical reconstruction through the same resolver semantic path.
 
-These accepted slices prove responsibility boundaries, cross-layer composition and one production-shaped activation contract. They do **not** claim broad/full-corpus production coverage or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
+The accepted generic resolver/core baseline remains `21f4cb0d0fcf29a6327a7ac36a54bd41f524079c`. Later accepted project-profile work advances repository state without redefining that generic authority.
 
-Phase 4 `txt-auto-replace` integration, Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader corpus expansion remain explicitly unselected. Consumers remain unchanged/pinned by this repository work. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by Phase 3 completion.
+## Accepted KiNoTch project-profile style slice
+
+Phase 4.5B accepted one deliberately narrow project-profile/style rule under #64 / PR #67:
+
+```text
+profile:       kinotch-authoring
+authority:     project_profile
+responsibility: style_render
+matching:      exact_token
+rule:          こと -> ヿ
+genericSafety: not_implied
+```
+
+The canonical profile source is isolated under `data/profiles/kinotch/`, with typed fail-closed loading/validation and deterministic artifact generation. This is project style authority, not generic historical-restoration truth and not evidence that other profile candidates are safe to admit.
+
+The corresponding source-locked consumer path was accepted separately in `txt-auto-replace` Phase 4.5B. Consumer acceptance does not transfer browser/product ownership into this repository.
+
+These accepted slices prove responsibility boundaries, cross-layer composition, one production-shaped generic activation contract, and one bounded generic-core + project-style composition path. They do **not** claim broad/full-corpus production coverage, broad semantic/profile migration, or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
+
+The separate `txt-auto-replace#19` / PR #20 Phase-4.5C semantic-gap correction remains independent follow-on work and does not broaden the accepted upstream profile slice.
+
+Phase 5 `kinotch-api` full resolver integration, Phase 6 stable package/public API/distribution, broader corpus/profile expansion, and further #46/#47 work remain explicitly unselected unless separately bounded and accepted. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by these accepted slices.
