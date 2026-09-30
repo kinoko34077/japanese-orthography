@@ -17,9 +17,23 @@ function minimalSlice() {
     schemaVersion: '1',
     kind: 'japanese-orthography-safe-character-slice',
     sources: [{ id: 'official-source', kind: 'primary_official', locator: '学(學)' }],
-    evidenceRecords: [{ id: 'ev-gaku', sourceRef: 'official-source', role: 'same-character-form' }],
+    evidenceRecords: [
+      { id: 'ev-gaku', sourceRef: 'official-source', role: 'same-character-form' },
+      { id: 'ev-regression', sourceRef: 'official-source', role: 'regression-only' },
+      { id: 'ev-ben', sourceRef: 'official-source', role: 'contextual-negative-control' },
+      { id: 'ev-tai', sourceRef: 'official-source', role: 'guarded-negative-control' }
+    ],
     excludedModernCharacters: ['弁', '台'],
-    mappings: [{ modern: '学', historical: '學', evidenceRefs: ['ev-gaku'] }]
+    exclusionRecords: [
+      { modern: '弁', reason: 'contextual', evidenceRefs: ['ev-ben'] },
+      { modern: '台', reason: 'guarded', evidenceRefs: ['ev-tai'] }
+    ],
+    mappings: [{
+      modern: '学',
+      historical: '學',
+      evidenceRefs: ['ev-gaku'],
+      regressionEvidenceRefs: ['ev-regression']
+    }]
   };
 }
 
@@ -49,6 +63,24 @@ test('safe-character runtime rejects dangling source/evidence references', async
   danglingEvidence.mappings[0].evidenceRefs = ['missing-evidence'];
   assert.throws(
     () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingEvidence),
+    /Unknown safe-character evidence ref/
+  );
+});
+
+test('safe-character runtime closes regression and exclusion evidence refs', async () => {
+  const sandbox = await loadRuntime();
+
+  const danglingRegression = structuredClone(minimalSlice());
+  danglingRegression.mappings[0].regressionEvidenceRefs = ['missing-regression-evidence'];
+  assert.throws(
+    () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingRegression),
+    /Unknown safe-character evidence ref/
+  );
+
+  const danglingExclusion = structuredClone(minimalSlice());
+  danglingExclusion.exclusionRecords[0].evidenceRefs = ['missing-exclusion-evidence'];
+  assert.throws(
+    () => sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(danglingExclusion),
     /Unknown safe-character evidence ref/
   );
 });
