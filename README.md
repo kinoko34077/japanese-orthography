@@ -102,24 +102,25 @@ Plain input, compatible whole-word Ruby, and compatible component Ruby converge 
 
 This slice does **not** import the full KKH dictionaries, choose one timeless reading for every character, or itself expand native historical kana/contextual-kanji/safe-character coverage. Those domains have separate bounded accepted slices below; this Sino slice still does not freeze a production bundle/API, mutate consumers, or authorize release/publication.
 
-## Source-backed native historical-kana acceptance slice
+## Source-backed native historical-kana authority
 
-`data/historical/native/kkh-kana-first-slice.json` and `runtime/historical-native-runtime.js` prove one conservative native historical-kana boundary. The accepted anchor is:
+Phase 4.6D expands the earlier bounded native-kana proof into selected-source completeness while keeping the same fail-closed resolver architecture.
 
-```text
-思う / おもう
-  -> UniDic-CWJ 2025.12 identity unidic-cwj:2025.12:lemma:5255
-  -> lexical origin native
-  -> morphology 五段-ワア行 / 終止形-一般
-  -> pinned KKH relation 思う /思ふ ;ハ行四段
-  -> 思ふ
-```
+The canonical runtime artifact is `data/historical/native/phase46d-native-kana.json`. It is generated deterministically from the Phase-4.6D intake and covers the pinned KKH `kana-jisyo` plus the selected committed native historical-kana dictionary, exception, animal/plant, and guide snapshots. Coverage is relative to those pinned snapshots; it is not a claim of globally exhaustive or historically uncontested Japanese orthography.
 
-The relation is admitted only for the exact lexical identity, native origin, and terminal morphology proved by Phase 2A. Same-lemma non-terminal morphology fails closed, and surface-level lexical ambiguity remains candidates rather than being collapsed merely because candidates share a lemma. No global `う -> ふ` rule is created.
+The artifact keeps distinct authority channels:
 
-The pinned KKH source also contains both `味わおう /味はゝう` and `味わおう /味ははう`. Both remain recoverable source evidence; neither is promoted to an automatic runtime relation. Full KKH ingestion, broad native coverage, consumer integration, package/API stabilization, and release/deploy/publication remain outside this bounded slice.
+- lexical identity + morphology relations, retaining the accepted `思う -> 思ふ` anchor;
+- exact whole-surface relations such as `植え -> 植ゑ`;
+- historical-reading relations that preserve the lexical surface, such as `挨拶 -> あいさつ`;
+- explicit surface/reading candidate sets where source evidence conflicts or remains ambiguous;
+- excluded/disabled intake records, which never become executable authority.
 
-Detailed accepted boundary: `docs/phase2a-native-slice.md`.
+Source ordering does not select a winner. `味わおう` retains both `味はゝう` and `味ははう` as candidates, while cross-source `藍` reading evidence remains `あゐ / アヰ` rather than being collapsed. The runtime applies lexical identity+morphology first, then exact whole-surface fallback only when doing so does not erase an existing multi-candidate lexical analysis. Literal substring replacement is not used.
+
+`data/historical/native/kkh-kana-first-slice.json` remains as the bounded Phase-2A regression fixture for the original identity+morphology proof; it is no longer the current resolver bundle's complete native-kana authority input.
+
+Detailed original anchor boundary: `docs/phase2a-native-slice.md`. Phase-4.6D design and execution are tracked under #70 and the accepted Phase-4.6D plan.
 
 ## Real contextual-kanji lexical-binding acceptance slice
 
