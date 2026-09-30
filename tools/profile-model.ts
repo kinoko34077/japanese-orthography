@@ -59,4 +59,30 @@ export interface LoadedKinotchProfile {
   packs: KinotchProfilePack[];
 }
 
+export interface TokenStyleSourceSnapshot {
+  repository: string;
+  commit: string;
+  path: string;
+  blobSha: string;
+}
+
+export interface ProfileTokenStyleRule {
+  from: string;
+  to: string;
+  match: 'exact_token';
+  priority: number;
+}
+
+export interface KinotchTokenStyleOverlay {
+  schemaVersion: '1';
+  profileId: string;
+  authority: 'project_profile';
+  responsibility: 'style_render';
+  packId: 'token-style';
+  kind: 'token-rules';
+  genericSafety: 'not_implied';
+  sourceSnapshot: TokenStyleSourceSnapshot;
+  rules: ProfileTokenStyleRule[];
+}
+
 export type ProfileDiagnostic = Diagnostic;

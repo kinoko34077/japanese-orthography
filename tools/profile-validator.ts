@@ -2,11 +2,17 @@ import { readFileSync } from 'node:fs';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import type { ErrorObject } from 'ajv';
 import type { Diagnostic } from './model.ts';
-import type { KinotchProfileManifest, KinotchProfilePack, ProfilePhraseRule } from './profile-model.ts';
+import type {
+  KinotchProfileManifest,
+  KinotchProfilePack,
+  KinotchTokenStyleOverlay,
+  ProfilePhraseRule
+} from './profile-model.ts';
 
 const schemaFiles = [
   '../schema/v1/kinotch-profile-manifest.schema.json',
-  '../schema/v1/kinotch-profile-pack.schema.json'
+  '../schema/v1/kinotch-profile-pack.schema.json',
+  '../schema/v1/kinotch-token-style-overlay.schema.json'
 ] as const;
 
 function loadSchema(relativePath: string): object {
@@ -50,6 +56,30 @@ function duplicateDiagnostics(values: string[], code: string, label: string): Di
 
 function phraseMatches(rules: ProfilePhraseRule[] | undefined): string[] {
   return (rules ?? []).map((rule) => rule.match);
+}
+
+export function validateTokenStyleOverlayDocument(document: KinotchTokenStyleOverlay | unknown): Diagnostic[] {
+  const validateSchema = createProfileSchemaValidator();
+  const diagnostics = validateSchema(document, 'kinotch-token-style-overlay-v1');
+  if (diagnostics.length > 0) return diagnostics;
+
+  const overlay = document as KinotchTokenStyleOverlay;
+  diagnostics.push(...duplicateDiagnostics(
+    overlay.rules.map((rule) => rule.from),
+    'E_PROFILE_DUPLICATE_RULE',
+    'token source in token-style overlay'
+  ));
+  for (const [index, rule] of overlay.rules.entries()) {
+    if (rule.from === rule.to) {
+      diagnostics.push({
+        severity: 'ERROR',
+        code: 'E_PROFILE_NOOP_RULE',
+        path: `/rules/${index}`,
+        message: `Token-style rule ${rule.from} -> ${rule.to} is a no-op`
+      });
+    }
+  }
+  return diagnostics;
 }
 
 export function validateProfileDocuments(

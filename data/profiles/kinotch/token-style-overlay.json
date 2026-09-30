@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1",
+  "profileId": "kinotch-authoring",
+  "authority": "project_profile",
+  "responsibility": "style_render",
+  "packId": "token-style",
+  "kind": "token-rules",
+  "genericSafety": "not_implied",
+  "sourceSnapshot": {
+    "repository": "kinoko34077/txt-auto-replace",
+    "commit": "48ceade01db46af3fad7acfb8743c3d841885c33",
+    "path": "transforms/20-lexical-replacements.json5",
+    "blobSha": "32d4acff7532b5dd21d0bab1d1ba414298f27687"
+  },
+  "rules": [
+    {
+      "from": "こと",
+      "to": "ヿ",
+      "match": "exact_token",
+      "priority": 100
+    }
+  ]
+}
