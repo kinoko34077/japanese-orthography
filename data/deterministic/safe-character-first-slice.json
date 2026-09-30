@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1",
+  "kind": "japanese-orthography-safe-character-slice",
+  "purpose": "#40 bounded source-backed unconditional deterministic safe-character acceptance slice",
+  "sources": [
+    {
+      "id": "bunkacho-joyo-character-form",
+      "kind": "primary_official",
+      "title": "現代の国語をめぐる諸問題について（審議経過報告）",
+      "url": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kakuki/19/tosin01/04.html",
+      "locator": "常用漢字表の字体説明: 円(圓), 応(應), 学(學), 宝(寶), 竜(龍)",
+      "observedAt": "2026-09-30"
+    },
+    {
+      "id": "project-deterministic-layer-ruling",
+      "kind": "project_ruling",
+      "repository": "kinoko34077/japanese-orthography",
+      "issue": 2,
+      "commentId": 5881690205,
+      "locator": "学 -> 學 is a bare deterministic control excluded from contextual corpus ownership"
+    },
+    {
+      "id": "project-ben-contextual-ruling",
+      "kind": "project_ruling",
+      "repository": "kinoko34077/japanese-orthography",
+      "issue": 2,
+      "commentId": 5881995193,
+      "locator": "弁 requires lexical/sense restoration rather than broad character fallback"
+    },
+    {
+      "id": "project-tai-guarded-ruling",
+      "kind": "project_ruling",
+      "repository": "kinoko34077/japanese-orthography",
+      "issue": 2,
+      "commentId": 5882033932,
+      "locator": "台 base relation requires guarded fallback with lexical overrides/preserves"
+    },
+    {
+      "id": "kinotch-legacy-compat-profile",
+      "kind": "compatibility_snapshot",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "826903c9f01cb006d840ba42443f4118db288507",
+      "path": "data/profiles/kinotch/legacy-kanji.json",
+      "blobSha": "23239f87420d8b938250b932319a6f8422fdd45f",
+      "manifestPath": "data/profiles/kinotch/manifest.json",
+      "authority": "regression_only",
+      "genericSafety": "not_implied"
+    }
+  ],
+  "evidenceRecords": [
+    {
+      "id": "ev-gaku-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-gaku-project-layer",
+      "sourceRef": "project-deterministic-layer-ruling",
+      "role": "deterministic-layer-admission"
+    },
+    {
+      "id": "ev-gaku-compat-profile",
+      "sourceRef": "kinotch-legacy-compat-profile",
+      "role": "behavioral-regression",
+      "authority": "regression_only"
+    },
+    {
+      "id": "ev-ben-contextual-negative",
+      "sourceRef": "project-ben-contextual-ruling",
+      "role": "contextual-negative-control"
+    },
+    {
+      "id": "ev-tai-guarded-negative",
+      "sourceRef": "project-tai-guarded-ruling",
+      "role": "guarded-fallback-negative-control"
+    }
+  ],
+  "excludedModernCharacters": [
+    "弁",
+    "台"
+  ],
+  "exclusionRecords": [
+    {
+      "modern": "弁",
+      "reason": "merged historical targets require lexical/sense restoration",
+      "evidenceRefs": ["ev-ben-contextual-negative"]
+    },
+    {
+      "modern": "台",
+      "reason": "base 台(臺) relation requires contextual override/preserve guards before fallback",
+      "evidenceRefs": ["ev-tai-guarded-negative"]
+    }
+  ],
+  "mappings": [
+    {
+      "modern": "学",
+      "historical": "學",
+      "admission": "unconditional",
+      "evidenceRefs": [
+        "ev-gaku-official",
+        "ev-gaku-project-layer"
+      ],
+      "regressionEvidenceRefs": [
+        "ev-gaku-compat-profile"
+      ]
+    }
+  ]
+}
