@@ -141,3 +141,24 @@ test('source format drift produces mapping remainders instead of silent drops', 
   const guideResult = parser.parseNativeGuideHtml(guide, 'phase46d-native-guide');
   assert.ok(guideResult.remainders.some((item: any) => item.kind === 'mapping'));
 });
+
+
+test('native guide parser reports mapping-like table drift instead of silently dropping it', async () => {
+  const parser = await loadParser();
+  assert.ok(parser, 'native kana parser module must exist');
+
+  const original = await sourceText('仮名遣等資料/歴史的仮名遣いで書きたい.html');
+  const guide = original.replace(
+    '以上和語について',
+    '<table data-phase46d-drift><tr><td>現代→歴史</td></tr></table>以上和語について'
+  );
+  assert.notEqual(guide, original);
+
+  const result = parser.parseNativeGuideHtml(guide, 'phase46d-native-guide');
+  assert.ok(
+    result.remainders.some((item: any) => (
+      item.kind === 'mapping' && String(item.detail ?? '').includes('現代→歴史')
+    )),
+    'mapping-like table drift inside the claimed A1-C2 section must fail closed'
+  );
+});
