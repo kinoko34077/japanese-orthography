@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { compileWorkspace } from '../tools/compiler.ts';
 
 const lexicalNamespaceId = '6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144';
 const taifuIdentity = 'unidic-cwj:2025.12:lemma:21903';
@@ -23,6 +24,10 @@ async function loadBindingTool() {
   } catch {
     return null;
   }
+}
+
+function located(value: Record<string, any>, file: string, pointer: string) {
+  return { value, location: { file, pointer } };
 }
 
 test('real contextual binding slice binds constraint-taifu to the accepted UniDic identity', async () => {
@@ -107,4 +112,40 @@ test('contextual binding overlay rejects a binding namespace mismatch', async ()
     ),
     /binding namespace mismatch/
   );
+});
+
+test('canonical rel-taifu compiles with the real UniDic lexical binding', async () => {
+  const [tool, slice, lexicalSource, manifest, taiPack] = await Promise.all([
+    loadBindingTool(),
+    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
+    loadJson('data/packs/contextual-kanji/manifest.json'),
+    loadJson('data/packs/contextual-kanji/merged-tai.json')
+  ]);
+  assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
+  const relation = taiPack.positiveRelations.find((entry: any) => entry.id === 'rel-taifu');
+  const unit = taiPack.restorationUnits.find((entry: any) => entry.id === relation.unitId);
+  assert.ok(relation);
+  assert.ok(unit);
+
+  const workspace: any = {
+    sources: [],
+    evidence: [],
+    lexicalEvidence: [],
+    lexicalConstraintSets: [],
+    restorationUnits: [located(unit, 'data/packs/contextual-kanji/merged-tai.json', '/restorationUnits/0')],
+    positiveRelations: [located(relation, 'data/packs/contextual-kanji/merged-tai.json', '/positiveRelations/0')],
+    safetyConstraints: [],
+    reviewHints: [],
+    packMetadata: [located(manifest, 'data/packs/contextual-kanji/manifest.json', '')]
+  };
+  const bindings = tool!.createContextualCompilationBindings(slice, lexicalSource);
+  const compiled = compileWorkspace(workspace, bindings);
+  const hotRelations = JSON.parse(compiled['hot-relations.json']) as Array<Record<string, any>>;
+  const compiledTaifu = hotRelations.find((entry) => entry.id === 'rel-taifu');
+
+  assert.deepEqual(compiledTaifu?.lexicalBindingIds, [taifuIdentity]);
+  assert.equal(compiledTaifu?.match, '台風');
+  assert.equal(compiledTaifu?.target, '颱風');
+  assert.equal(compiled['hot-relations.json'].includes('fixture-local-0006'), false);
 });
