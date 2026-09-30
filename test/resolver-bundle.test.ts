@@ -135,7 +135,7 @@ test('Phase 3 bundle reproduces accepted cross-layer semantics through one entry
   assert.equal(bundle.resolveUnit('｜学校《がっこう》', { protected: true }).kind, 'protected');
 });
 
-test('Phase 3 runtime rejects partial, malformed, and cross-namespace bundle activation', async () => {
+test('Phase 3 runtime rejects partial, malformed, and stale bundle activation', async () => {
   const globals = await runtimeGlobals();
   const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', globals);
   const create = sandbox.ResolverBundleRuntime.createResolverBundle;
@@ -151,19 +151,19 @@ test('Phase 3 runtime rejects partial, malformed, and cross-namespace bundle act
 
   const wrongNamespace = structuredClone(artifact);
   wrongNamespace.historicalSinoSlice.lexicalNamespaceId = 'wrong-namespace';
-  assert.throws(() => create(wrongNamespace), /Sino lexical namespace mismatch/);
+  assert.throws(() => create(wrongNamespace), /historical-sino section identity mismatch/);
 
   const wrongContextualNamespace = structuredClone(artifact);
   wrongContextualNamespace.contextual.sourceLexicalNamespaceId = 'wrong-namespace';
-  assert.throws(() => create(wrongContextualNamespace), /contextual source lexical namespace mismatch/);
+  assert.throws(() => create(wrongContextualNamespace), /contextual-kanji section identity mismatch/);
 
   const wrongBindingNamespace = structuredClone(artifact);
   wrongBindingNamespace.contextual.bindingNamespaceId = 'other-binding-namespace';
-  assert.throws(() => create(wrongBindingNamespace), /contextual binding namespace mismatch/);
+  assert.throws(() => create(wrongBindingNamespace), /contextual-kanji section identity mismatch/);
 
   const invalidSafeSlice = structuredClone(artifact);
   invalidSafeSlice.safeCharacterSlice.schemaVersion = '999';
-  assert.throws(() => create(invalidSafeSlice), /Unsupported safe-character slice/);
+  assert.throws(() => create(invalidSafeSlice), /safe-character section identity mismatch/);
 });
 
 test('Phase 3 runtime requires every runtime dependency before activation', async () => {
