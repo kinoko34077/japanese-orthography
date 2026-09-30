@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography_intake_bundle",
+  "snapshots": [
+    {
+      "sourceId": "phase46d-kkh-kana-jisyo",
+      "sourceClass": "external-repository",
+      "repository": "okikae/kkh",
+      "commit": "19b24f88ab55809a186d88c465959548495b26a2",
+      "path": "kana-jisyo",
+      "blobSha": "6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be",
+      "license": "BSD-2-Clause",
+      "coverageRole": "coverage-contract"
+    },
+    {
+      "sourceId": "phase46d-committed-native-dictionary",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "8b1a9c207491d19a82a3cf1c09eb32cf6e7a94cb",
+      "path": "仮名遣等資料/仮名遣い辞典本文.html",
+      "blobSha": "45380ff7690e177afa7c980f3f4ffd873b38d928",
+      "coverageRole": "coverage-contract"
+    },
+    {
+      "sourceId": "phase46d-committed-exception-verbs",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "8b1a9c207491d19a82a3cf1c09eb32cf6e7a94cb",
+      "path": "仮名遣等資料/例外動詞一覧：歴史的仮名遣い教室.html",
+      "blobSha": "57a50297fb2454e702d6f7b3450cd3cdd7e9cb9a",
+      "coverageRole": "coverage-contract"
+    },
+    {
+      "sourceId": "phase46d-committed-animal-plant",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "8b1a9c207491d19a82a3cf1c09eb32cf6e7a94cb",
+      "path": "仮名遣等資料/動物名・植物名歴史的仮名遣い辞典.html",
+      "blobSha": "9eb26e76343526fe5cc8b17d1113f80414c4bf21",
+      "coverageRole": "coverage-contract"
+    },
+    {
+      "sourceId": "phase46d-committed-native-guide",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "8b1a9c207491d19a82a3cf1c09eb32cf6e7a94cb",
+      "path": "仮名遣等資料/歴史的仮名遣いで書きたい.html",
+      "blobSha": "232cb508e1fdae0c5ec2e17a57409f20cde28756",
+      "coverageRole": "coverage-contract"
+    }
+  ],
+  "records": []
+}

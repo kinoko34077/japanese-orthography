@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { validateCoverageAccounting } from '../tools/intake-accounting.ts';
-import { buildPhase46dNativeKanaDocuments } from '../tools/generate-native-kana.ts';
+import { buildPhase46dNativeKanaDocuments, buildPhase46dNativeKanaMaterialization } from '../tools/generate-native-kana.ts';
 
 async function json(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
@@ -124,12 +124,17 @@ test('all five native source contracts have zero unclassified/unexpected/remaind
     unparsedMappingRecords: 0
   });
 
-  assert.deepEqual(
-    await json('data/intake/phase46d-native-kana.json'),
-    generated.intake
-  );
-  assert.deepEqual(
-    await json('data/reports/phase46d-native-kana-coverage.json'),
-    generated.coverageReport
-  );
+  const materialization = buildPhase46dNativeKanaMaterialization(generated);
+  const root = materialization.find(item => item.path === 'data/intake/phase46d-native-kana.json');
+  assert.deepEqual((root?.value as any)?.snapshots, generated.intake.snapshots);
+  assert.deepEqual((root?.value as any)?.records, []);
+
+  const materializedRecords = materialization
+    .filter(item => item.path.startsWith('data/intake/phase46d-native-kana/records-'))
+    .flatMap(item => (item.value as any).records);
+  assert.deepEqual(materializedRecords, generated.intake.records);
+
+  for (const artifact of materialization) {
+    assert.deepEqual(await json(artifact.path), artifact.value, artifact.path);
+  }
 });

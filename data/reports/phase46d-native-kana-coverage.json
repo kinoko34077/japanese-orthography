@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1",
+  "kind": "phase46d_native_kana_coverage_report",
+  "sources": [
+    {
+      "sourceId": "phase46d-kkh-kana-jisyo",
+      "discovered": 7408,
+      "admitted": 6953,
+      "ambiguous": 198,
+      "excluded": 257,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0
+    },
+    {
+      "sourceId": "phase46d-committed-native-dictionary",
+      "discovered": 1195,
+      "admitted": 903,
+      "ambiguous": 19,
+      "excluded": 273,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0
+    },
+    {
+      "sourceId": "phase46d-committed-exception-verbs",
+      "discovered": 111,
+      "admitted": 0,
+      "ambiguous": 0,
+      "excluded": 111,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0
+    },
+    {
+      "sourceId": "phase46d-committed-animal-plant",
+      "discovered": 1369,
+      "admitted": 1237,
+      "ambiguous": 19,
+      "excluded": 113,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0
+    },
+    {
+      "sourceId": "phase46d-committed-native-guide",
+      "discovered": 255,
+      "admitted": 0,
+      "ambiguous": 0,
+      "excluded": 255,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0
+    }
+  ]
+}
