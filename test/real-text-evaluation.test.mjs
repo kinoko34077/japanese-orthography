@@ -36,7 +36,7 @@ function fakeBundle() {
   const map = new Map([
     ['学校', unit('resolved', '学校', 'AUTO', { lexicalIdentity: 'lemma:school', route: 'historical-sino', kana: 'がくかう', surface: '學校' })],
     ['台風', unit('resolved', '台風', 'AUTO', { lexicalIdentity: 'lemma:taifu', surface: '颱風', contextualKanji: { status: 'resolved', target: '颱風', candidates: ['颱風'], relationIds: ['rel-taifu'] } })],
-    ['今日', unit('candidates', '今日', 'CANDIDATES')],
+    ['今日', { ...unit('candidates', '今日', 'CANDIDATES'), lexicalCandidates: [{ lexicalIdentity: 'lemma:today-1' }, { lexicalIdentity: 'lemma:today-2' }] }],
     ['未知語', unit('unresolved', '未知語', 'UNRESOLVED')]
   ]);
   return {
@@ -72,6 +72,7 @@ test('evaluates ordered spans while preserving literal gaps and ambiguity', asyn
   assert.equal(result.trace[0].lexicalIdentity, 'lemma:school');
   assert.equal(result.trace[2].historical.contextualKanji.status, 'resolved');
   assert.equal(result.trace[4].kind, 'candidates');
+  assert.equal(result.trace[4].lexicalCandidates.length, 2);
   assert.equal(result.trace[6].kind, 'unresolved');
 });
 
