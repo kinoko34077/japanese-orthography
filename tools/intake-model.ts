@@ -47,16 +47,38 @@ export const COVERAGE_ROLES = [
 
 export type CoverageRole = typeof COVERAGE_ROLES[number];
 
-export interface SourceSnapshot {
+interface SourceSnapshotBase {
   sourceId: string;
-  sourceClass: IntakeSourceClass;
-  repository?: string;
-  commit?: string;
   path: string;
-  blobSha?: string;
   license?: string;
   coverageRole: CoverageRole;
 }
+
+export interface CommittedReferenceSnapshot extends SourceSnapshotBase {
+  sourceClass: 'committed-reference';
+  repository: string;
+  commit: string;
+  blobSha: string;
+}
+
+export interface ExternalRepositorySnapshot extends SourceSnapshotBase {
+  sourceClass: 'external-repository';
+  repository: string;
+  commit: string;
+  blobSha?: string;
+}
+
+export interface NonRepositorySnapshot extends SourceSnapshotBase {
+  sourceClass: 'official' | 'dictionary' | 'research';
+  repository?: string;
+  commit?: string;
+  blobSha?: string;
+}
+
+export type SourceSnapshot =
+  | CommittedReferenceSnapshot
+  | ExternalRepositorySnapshot
+  | NonRepositorySnapshot;
 
 export interface IntakeRecord {
   id: string;
