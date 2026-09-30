@@ -135,3 +135,21 @@ export function createContextualCompilationBindings(
 
   return { lexicalNamespaceId: slice.bindingNamespaceId, lexicalBindings };
 }
+
+export function overlayContextualCompilationBindings(
+  base: ContextualCompilationBindings,
+  overlay: ContextualCompilationBindings
+): ContextualCompilationBindings {
+  if (base.lexicalNamespaceId !== overlay.lexicalNamespaceId) {
+    throw new Error(
+      `contextual binding namespace mismatch: ${base.lexicalNamespaceId} != ${overlay.lexicalNamespaceId}`
+    );
+  }
+  const lexicalBindings = new Map<string, string[]>(
+    [...base.lexicalBindings.entries()].map(([constraintId, identities]) => [constraintId, [...identities]])
+  );
+  for (const [constraintId, identities] of overlay.lexicalBindings) {
+    lexicalBindings.set(constraintId, [...identities]);
+  }
+  return { lexicalNamespaceId: base.lexicalNamespaceId, lexicalBindings };
+}
