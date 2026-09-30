@@ -150,11 +150,11 @@ test('KKH malformed mapping syntax and unknown guide transformation structures b
     remainder.sourceRecordId === 'line:17' && remainder.kind === 'mapping'
   )));
 
-  const guideNeedle = 'A１ 現代仮名遣いの語頭の「ワ」と「ウ」は歴史的仮名遣いでもすべて「わ」と「う」。';
   const malformedGuide = guideHtml.replace(
-    guideNeedle,
-    `${guideNeedle}<table data-phase46d-test="unknown-transform"><tr><td>現代</td><td>歴史</td></tr></table>`
+    '以上和語について',
+    '<table data-phase46d-test="unknown-transform"><tr><td>現代</td><td>歴史</td></tr></table>以上和語について'
   );
+  assert.notEqual(malformedGuide, guideHtml);
   const guideResult = parseNativeGuideHtml(malformedGuide, GUIDE_SOURCE_ID);
   assert.ok(guideResult.remainders.some(remainder => remainder.kind === 'mapping'));
 });
