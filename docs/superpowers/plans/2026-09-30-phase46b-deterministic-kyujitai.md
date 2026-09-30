@@ -1,131 +1,119 @@
 # Phase 4.6B Deterministic Kyujitai Expansion Implementation Plan
 
-**Goal:** Expand generic deterministic shinjitai→kyujitai authority only for source-backed, normalization-stable same-character form relations, without admitting merged/contextual forms or bulk-reversing legacy/modernization tables.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Accepted baseline:** `japanese-orthography@8c9b35eb7c1f8d7ada8fe57567d33cb84b91f1f5` (Phase 4.6A accepted).
+**Goal:** Expand generic deterministic shinjitai→kyujitai authority only for source-backed, normalization-stable same-character form relations, while making every executable mapping traceable through the Phase-4.6 intake model.
 
-**Design authority:** `docs/superpowers/specs/2026-09-30-phase46-orthography-completeness-design.md`, especially §§11, 16.3, 17 (4.6B), 18.
+**Architecture:** Keep the existing `safe-character` runtime path as the only unconditional character-rendering layer. Phase 4.6B first records the bounded admitted relations in `orthography_intake_bundle`, then expands the existing safe-character slice with cross-file intake references and source-locked evidence; runtime validation is hardened only enough to reject wrong responsibility/admission and normalization-unstable mappings.
+
+**Tech Stack:** Node.js, TypeScript tests via `node:test`/`tsx`, browser/Worker-neutral UMD runtime JavaScript, JSON source/intake artifacts, GitHub Actions Verify.
+
+**Spec:** `docs/superpowers/specs/2026-09-30-phase46-orthography-completeness-design.md` §§11, 16.3, 16.5, 17 (4.6B), 18–19.
+
+## Global Constraints
+
+- Accepted base: `japanese-orthography@8c9b35eb7c1f8d7ada8fe57567d33cb84b91f1f5` / post-main Verify `36728827068` PASS.
+- Existing accepted relation `学 -> 學` remains; the only new admissions are `円 -> 圓`, `応 -> 應`, `宝 -> 寶`, `竜 -> 龍`.
+- Pinned corroborating source: `okikae/kkh@19b24f88ab55809a186d88c465959548495b26a2:kanji-jisyo`, blob `95c5db9b5bacb82ab2a685f24f74fef3b32f9992`, BSD-2-Clause.
+- KKH is evidence, not blanket authority. Do not admit `宝 -> 寳` or any other KKH row in this unit.
+- `弁` and `台` remain explicit negative controls; `穗 -> 瓣` and `舖 -> 辯` remain non-character-form/excluded relations.
+- Compatibility/profile data is regression evidence only and cannot confer generic safety.
+- No blind reverse import from Stage-40/60, the Cultural Affairs Agency homophone table, or KKH.
+- No consumer (`txt-auto-replace`) change, Phase 5/6, release/deploy/publication, credentials/permissions, destructive/shared-history operation, unpublished lyric fixtures, or RDC.
+
+## Review Focus
+
+- A safe mapping exists without a matching `character_form / admitted` intake record: fail cross-file traceability test.
+- A mapping uses a merged/contextual modern character (`弁`, `台`): runtime/data tests must reject or keep it excluded.
+- A modern or historical code point changes under NFC or NFKC: runtime must fail closed before creating the deterministic map.
+- A mapping cites moving/unpinned KKH coordinates: intake/source test must require exact repository+commit+blob SHA.
+- A secondary/compatibility source introduces an extra pair such as `宝 -> 寳`: exact bounded-set assertions must fail.
+
+---
 
 ## Bounded admission set
 
-The current deterministic slice already admits `学 -> 學`. 4.6B adds only the four additional pairs already named by the existing Cultural Affairs Agency character-form source descriptor and independently present in pinned KKH `kanji-jisyo`:
+The canonical deterministic map after this unit is exactly:
 
-- `円 -> 圓`
-- `応 -> 應`
-- `宝 -> 寶`
-- `竜 -> 龍`
+```text
+円 -> 圓
+応 -> 應
+学 -> 學
+宝 -> 寶
+竜 -> 龍
+```
 
-Pinned KKH evidence:
-- repository: `okikae/kkh`
-- commit: `19b24f88ab55809a186d88c465959548495b26a2`
-- path: `kanji-jisyo`
-- blob SHA: `95c5db9b5bacb82ab2a685f24f74fef3b32f9992`
-- license: BSD-2-Clause
+The order above is the canonical data/test order. The Cultural Affairs Agency character-form source remains the primary same-character-form authority; pinned KKH corroborates the four new relations. Existing `学 -> 學` keeps its accepted project-layer and regression evidence semantics.
 
-KKH is corroborating evidence, not a blanket admission source. In particular, `宝 /寳` is not admitted because the accepted official target is `寶`, and KKH itself labels `寳` as a俗字 alternative. No other KKH relation is admitted by this unit merely because it appears in `kanji-jisyo`.
+### Task 1: Phase-4.6 intake authority for deterministic character forms
 
-## Safety invariants
+**Files:**
+- Create: `test/phase46b-character-form.test.ts`
+- Create: `data/intake/phase46b-character-form.json`
 
-- Every executable mapping is explicitly `responsibility: "character_form"` and `admission: "unconditional"`.
-- Both modern and historical forms are exactly one Unicode code point and NFC-stable.
-- `弁` and `台` remain excluded from unconditional safe-character mapping.
-- Existing Phase-4.6A exclusions `穗 -> 瓣` and `舖 -> 辯` remain non-character-form relations.
-- Source/evidence references remain closed and reproducible; KKH is pinned by exact commit + blob SHA.
-- Compatibility/profile data may provide regression evidence but never creates generic safety.
-- No blind reverse of Stage-40/60, the Cultural Affairs Agency homophone table, or the whole KKH dictionary.
-- No consumer (`txt-auto-replace`) change in 4.6B.
+**Interfaces:**
+- Consumes: `orthography_intake_bundle` schema/model introduced by 4.6A; `loadIntakeWorkspace()`/`validate:intake` behavior remains unchanged.
+- Produces: five stable intake record IDs, one per canonical safe mapping, each `responsibility: "character_form"`, `disposition: "admitted"`, with the exact official source and pinned KKH snapshot represented.
 
-## Task 1 — RED: define the expanded source-backed character-form contract
+- [ ] **Step 1: write the failing intake tests.** Require `data/intake/phase46b-character-form.json` to load and assert: exact five modern/historical pairs; every record is `mapping / character_form / admitted`; official source is supplemental; KKH snapshot is `external-repository` with exact repository/commit/path/blob/license and `candidate-only`; the four new records carry relation-specific pinned-KKH evidence; no `弁`, `台`, `穗 -> 瓣`, `舖 -> 辯`, or `寳` admission appears.
+- [ ] **Step 2: run the focused test and observe RED.** Run `node --import tsx --test test/phase46b-character-form.test.ts`. Expected: FAIL because the new intake bundle is absent.
+- [ ] **Step 3: create the minimum intake bundle.** Use source IDs `phase46b-bunkacho-joyo-character-form` and `phase46b-kkh-kanji-jisyo`; use stable record IDs `phase46b-character-en`, `phase46b-character-ou`, `phase46b-character-gaku`, `phase46b-character-takara`, `phase46b-character-ryu`.
+- [ ] **Step 4: run focused intake test plus intake validation.** Run `node --import tsx --test test/phase46b-character-form.test.ts` and `npm run validate:intake`. Expected: PASS.
+- [ ] **Step 5: commit.** Commit only the new intake artifact and its test as the independently reviewable authority boundary.
 
-**Modify:**
-- `test/safe-character-source.test.ts`
-- `test/safe-character-runtime.test.ts`
+### Task 2: RED for safe-character execution and normalization safety
 
-Add tests that require:
-1. the canonical safe-character mapping set is exactly `円→圓, 応→應, 学→學, 宝→寶, 竜→龍` in deterministic order;
-2. each canonical mapping declares `responsibility: "character_form"` and `admission: "unconditional"`;
-3. the canonical slice contains the exact pinned KKH `kanji-jisyo` source descriptor and relation-specific KKH evidence for the four new mappings;
-4. source evidence for each new mapping includes both the existing official character-form source and the pinned KKH relation;
-5. `弁` / `台` remain negative controls;
-6. runtime rejects a mapping with any other responsibility/admission;
-7. runtime rejects an NFC-unstable modern or historical code point.
+**Files:**
+- Modify: `test/safe-character-source.test.ts`
+- Modify: `test/safe-character-runtime.test.ts`
+- Modify: `test/safe-character-integration.test.ts`
 
-**RED expectation:** current main fails because only `学 -> 學` is admitted and runtime does not yet enforce responsibility/NFC stability.
+**Interfaces:**
+- Consumes: Task-1 intake record IDs.
+- Produces: executable contract tests that the safe-character slice is exactly the five admitted intake-backed mappings and that invalid responsibility/admission/normalization fails closed.
 
-## Task 2 — GREEN: harden safe-character runtime contract
+- [ ] **Step 1: update source tests before production data.** Replace the old “only 学” expectation with exact canonical order `円/応/学/宝/竜`; require `responsibility: "character_form"`, `admission: "unconditional"`, and `intakeRecordRef` closure to Task-1 records. Require exact KKH commit/blob metadata and dual positive evidence for each new mapping; preserve `弁`/`台` exclusions.
+- [ ] **Step 2: add runtime negative tests.** Assert the runtime rejects: non-`character_form` responsibility, non-`unconditional` admission, NFC-unstable one-code-point input (for example `Å`), and NFKC-unstable compatibility target (for example a CJK compatibility ideograph). Keep existing one-code-point/reference/exclusion tests.
+- [ ] **Step 3: add integration assertions.** Require `safe.apply('円応学宝竜') === '圓應學寶龍'`; retain `学校 -> 學校` + `がくかう`, contextual `台風 -> 颱風`, and absence of `弁`/`台` from deterministic map.
+- [ ] **Step 4: run focused tests and observe RED.** Run `node --import tsx --test test/safe-character-source.test.ts test/safe-character-runtime.test.ts test/safe-character-integration.test.ts`. Expected: FAIL because current data contains only `学 -> 學` and current runtime does not enforce the new metadata/normalization contract.
+- [ ] **Step 5: commit RED tests.** Preserve the failing-test checkpoint before production changes.
 
-**Modify:**
-- `runtime/safe-character-runtime.js`
-- test fixtures in `test/safe-character-runtime.test.ts` as required
+### Task 3: GREEN safe-character data and runtime
 
-Implement the minimum fail-closed checks:
-- require `mapping.responsibility === "character_form"`;
-- require `mapping.admission === "unconditional"`;
-- require modern and historical strings to equal their NFC normalization;
-- preserve all existing one-code-point, uniqueness, evidence-closure, and exclusion checks.
+**Files:**
+- Modify: `runtime/safe-character-runtime.js`
+- Modify: `data/deterministic/safe-character-first-slice.json`
+- Test: Task-2 files plus `test/phase46b-character-form.test.ts`
 
-Do not add lexical/contextual fallback behavior.
+**Interfaces:**
+- Consumes: Task-1 intake record IDs and Task-2 contract.
+- Produces: frozen `characterMap` with exactly the five canonical mappings; no change to resolver precedence or consumer APIs.
 
-Require focused tests and full `npm run check` GREEN before proceeding.
+- [ ] **Step 1: harden runtime minimally.** For each mapping require `responsibility === 'character_form'`, `admission === 'unconditional'`, and exact NFC/NFKC stability on both modern and historical one-code-point strings before adding them to the map. Preserve source/evidence closure, uniqueness, exclusions, and code-point application behavior.
+- [ ] **Step 2: expand the canonical safe slice.** Add exact pinned KKH source metadata and relation-specific evidence for the four new pairs; keep the existing official source. Add explicit `responsibility`, `admission`, and `intakeRecordRef` to all five mappings. Existing `学` evidence semantics remain intact.
+- [ ] **Step 3: run focused tests.** Run `node --import tsx --test test/phase46b-character-form.test.ts test/safe-character-source.test.ts test/safe-character-runtime.test.ts test/safe-character-integration.test.ts`. Expected: PASS.
+- [ ] **Step 4: run complete local repository gate.** Run `npm run check`. Expected: PASS with no removed validation/test/typecheck/profile step.
+- [ ] **Step 5: commit GREEN implementation.** No unrelated resolver/profile/consumer files.
 
-## Task 3 — GREEN: admit the four bounded relations with source-locked evidence
+### Task 4: exact-head Verify, Formal Review, acceptance
 
-**Modify:**
-- `data/deterministic/safe-character-first-slice.json`
-- `test/safe-character-source.test.ts`
+**Files:**
+- No implementation file unless review finds a Critical/Important defect.
+- Owner record: `japanese-orthography#70`; roadmap/control updates only after acceptance.
 
-Add one exact KKH external-repository source descriptor to the safe-character slice and relation-specific evidence records. Keep the existing Cultural Affairs Agency descriptor as the primary same-character-form authority.
+**Interfaces:**
+- Consumes: complete 4.6B PR head.
+- Produces: accepted main state or a single TDD review-fix pass followed by re-verification.
 
-For each of `円/応/宝/竜`, add one unconditional `character_form` mapping whose positive evidence closes to:
-- the existing official source; and
-- the exact pinned KKH relation.
+- [ ] **Step 1: require GitHub Actions Verify on exact PR head.** Full repository gate must pass; record run ID and exact head on #70.
+- [ ] **Step 2: Formal Review against §§11, 16, 17, 18.** Check exact five-pair bound, KKH immutable pin, no `寳`, no weakening of `弁`/`台`, NFC+NFKC safety, intake closure, and no consumer/profile leakage.
+- [ ] **Step 3: if any Critical/Important finding exists, add a failing test first, apply one bounded fix pass, and obtain a fresh exact-head Verify.** Minor findings are recorded without scope expansion.
+- [ ] **Step 4: merge the independently revertible PR only when review is clean and exact-head Verify is green; then require post-main Verify.** Record accepted SHA/run on #70.
+- [ ] **Step 5: update #28 and `devflow#180` to the accepted 4.6B state, then re-evaluate the first unfinished Phase-4.6 acceptance condition.** If no blocker emerges, select 4.6C; do not start Phase 5/6.
 
-Update the existing `学 -> 學` mapping to declare the same explicit responsibility/admission metadata without changing its accepted evidence semantics.
+## Self-review result
 
-Do not admit `寳`, `弁`, `台`, or any additional KKH pair in this unit.
-
-Require exact-head Verify GREEN.
-
-## Task 4 — integration/regression proof
-
-**Modify:**
-- `test/safe-character-integration.test.ts`
-- other directly affected safe-character tests only if required by the explicit contract
-
-Prove through the actual safe-character runtime/resolver composition that:
-- deterministic application maps a representative combined input containing all five accepted forms to the exact historical forms;
-- existing `学校` lexical/字音 behavior remains intact;
-- contextual `台風 -> 颱風` remains contextual and `safe.apply("台風")` remains unchanged;
-- `弁` remains absent from the deterministic map;
-- no source-order or compatibility-profile behavior grants additional mappings.
-
-Run the full repository gate on exact head: `npm run check` via GitHub Actions Verify.
-
-## Task 5 — Formal Review and acceptance
-
-Review the whole PR against the accepted Phase-4.6 design, with specific checks for:
-- no relation beyond the five official bounded pairs in deterministic authority;
-- exact KKH pin (`19b24f...` / blob `95c5db...`);
-- no `寳` admission;
-- no weakening of `弁`/`台` controls;
-- NFC checks cover both sides;
-- no consumer/profile/runtime layer leakage beyond safe-character contract hardening.
-
-Any Critical/Important finding receives one TDD fix pass and fresh exact-head Verify.
-
-After clean review:
-- record final head + Verify + review outcome on #70;
-- merge via independently revertible PR;
-- verify post-main;
-- update #28 and `devflow#180` only for the accepted 4.6B transition;
-- re-evaluate Phase-4.6 acceptance conditions before selecting 4.6C.
-
-## Non-goals
-
-- bulk admission of the 229 audit candidates;
-- full KKH `kanji-jisyo` completeness contract;
-- homophone reverse restoration (4.6C);
-- native historical-kana completeness (4.6D);
-- 字音 completeness (4.6E);
-- KiNoTch semantic/style migration (4.6F);
-- consumer migration, Phase 5/6, package/API freeze, release/deploy/publication, credential/permission changes, destructive/shared-history operations, or RDC.
+- Spec coverage: §§11.1–11.3, 16.3, 16.5, 17/4.6B, and repository-level traceability/source-lock conditions are assigned to Tasks 1–4.
+- Shared interfaces: Task 1 produces stable intake record IDs consumed by Tasks 2–3; Task 2 defines runtime/data behavior implemented by Task 3.
+- Safety: merged/contextual characters and known bad legacy relations stay outside unconditional character authority.
+- Proportion: no parser/bulk-source work is pulled forward from 4.6C–E; this remains an independently revertible 4.6B unit.
