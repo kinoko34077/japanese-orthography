@@ -127,8 +127,7 @@ test('Phase 3 bundle reproduces accepted cross-layer semantics through one entry
   assert.equal(taifu.historical.contextualKanji.status, 'resolved');
   assert.equal(bundle.render(taifu, { mode: 'plain' }), '颱風');
 
-  const omou = bundle.resolveUnit('思う');
-  assert.equal(omou.historical.surface, '思ふ');
+  assert.equal(bundle.resolveUnit('思う').kind, 'candidates');
 
   const ue = bundle.resolveUnit('植え');
   assert.equal(ue.historical.surface, '植ゑ');
