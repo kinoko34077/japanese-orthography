@@ -38,6 +38,41 @@
         "form": "台密",
         "senseNote": "天台宗の密教を指す略称。original 台 lexical class; broad 台→臺 fallback must not apply."
       }
+    },
+    {
+      "id": "ev-kotobank-phase46c-yosetsu",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E6%BA%B6%E6%8E%A5-145769 / 溶接・熔接",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "溶接", "rawTo": "熔接" }
+    },
+    {
+      "id": "ev-kotobank-phase46c-kanketsu",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E9%96%93%E6%AC%A0-469625 / 間欠・間歇",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "間欠", "rawTo": "間歇" }
+    },
+    {
+      "id": "ev-kotobank-phase46c-santan",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E8%AE%83%E5%98%86-1170170 / 賛嘆・讃嘆",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "賛嘆", "rawTo": "讃嘆" }
+    },
+    {
+      "id": "ev-kotobank-phase46c-sotei-kugi",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E8%A3%85%E4%B8%81-89596 / 装丁・装釘",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "装丁", "rawTo": "装釘" }
+    },
+    {
+      "id": "ev-kotobank-phase46c-sotei-tei",
+      "sourceRef": "kotobank",
+      "locator": "https://kotobank.jp/word/%E8%A3%85%E4%B8%81-89596 / 装丁・装幀",
+      "sourceClass": "lexical",
+      "claim": { "type": "mapping", "direction": "modern_to_historical", "rawFrom": "装丁", "rawTo": "装幀" }
     }
   ]
 }
