@@ -1,0 +1,3240 @@
+{
+  "schemaVersion": "1",
+  "kind": "japanese-orthography-legacy-rule-classification",
+  "owner": "kinoko34077/japanese-orthography#57",
+  "source": {
+    "repository": "kinoko34077/txt-auto-replace",
+    "commit": "d2d55037db5883230e3e81288d4eef4473f4b1ba",
+    "path": "transforms/60-general-character-replacements.json5",
+    "blobSha": "5739a94e321d34e764e9faea7bfb3e0d743a94f1"
+  },
+  "authority": "compatibility_profile_evidence",
+  "genericSafetyImplication": "none",
+  "entries": [
+    {
+      "from": "亜",
+      "to": "亞",
+      "fromCodePoint": "U+4E9C",
+      "toCodePoint": "U+4E9E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "悪",
+      "to": "惡",
+      "fromCodePoint": "U+60AA",
+      "toCodePoint": "U+60E1",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "圧",
+      "to": "壓",
+      "fromCodePoint": "U+5727",
+      "toCodePoint": "U+58D3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "暗",
+      "to": "闇",
+      "fromCodePoint": "U+6697",
+      "toCodePoint": "U+95C7",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "囲",
+      "to": "圍",
+      "fromCodePoint": "U+56F2",
+      "toCodePoint": "U+570D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "為",
+      "to": "爲",
+      "fromCodePoint": "U+70BA",
+      "toCodePoint": "U+7232",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "壱",
+      "to": "壹",
+      "fromCodePoint": "U+58F1",
+      "toCodePoint": "U+58F9",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "逸",
+      "to": "逸",
+      "fromCodePoint": "U+9038",
+      "toCodePoint": "U+FA67",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "稲",
+      "to": "稻",
+      "fromCodePoint": "U+7A32",
+      "toCodePoint": "U+7A3B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "飲",
+      "to": "飮",
+      "fromCodePoint": "U+98F2",
+      "toCodePoint": "U+98EE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "隠",
+      "to": "隱",
+      "fromCodePoint": "U+96A0",
+      "toCodePoint": "U+96B1",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "羽",
+      "to": "羽",
+      "fromCodePoint": "U+7FBD",
+      "toCodePoint": "U+FA1E",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "営",
+      "to": "營",
+      "fromCodePoint": "U+55B6",
+      "toCodePoint": "U+71DF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "栄",
+      "to": "榮",
+      "fromCodePoint": "U+6804",
+      "toCodePoint": "U+69AE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "衛",
+      "to": "衞",
+      "fromCodePoint": "U+885B",
+      "toCodePoint": "U+885E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鋭",
+      "to": "銳",
+      "fromCodePoint": "U+92ED",
+      "toCodePoint": "U+92B3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "益",
+      "to": "益",
+      "fromCodePoint": "U+76CA",
+      "toCodePoint": "U+FA17",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "駅",
+      "to": "驛",
+      "fromCodePoint": "U+99C5",
+      "toCodePoint": "U+9A5B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "謁",
+      "to": "謁",
+      "fromCodePoint": "U+8B01",
+      "toCodePoint": "U+FA62",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "閲",
+      "to": "閱",
+      "fromCodePoint": "U+95B2",
+      "toCodePoint": "U+95B1",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "円",
+      "to": "圓",
+      "fromCodePoint": "U+5186",
+      "toCodePoint": "U+5713",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "note": "character form cited by the #40 official source locator; still not admitted",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "園",
+      "to": "薗",
+      "fromCodePoint": "U+5712",
+      "toCodePoint": "U+8597",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "炎",
+      "to": "焔",
+      "fromCodePoint": "U+708E",
+      "toCodePoint": "U+7114",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "焔",
+      "to": "焰",
+      "fromCodePoint": "U+7114",
+      "toCodePoint": "U+7130",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "縁",
+      "to": "緣",
+      "fromCodePoint": "U+7E01",
+      "toCodePoint": "U+7DE3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "艶",
+      "to": "艷",
+      "fromCodePoint": "U+8276",
+      "toCodePoint": "U+8277",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "塩",
+      "to": "鹽",
+      "fromCodePoint": "U+5869",
+      "toCodePoint": "U+9E7D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "応",
+      "to": "應",
+      "fromCodePoint": "U+5FDC",
+      "toCodePoint": "U+61C9",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "note": "character form cited by the #40 official source locator; still not admitted",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鴎",
+      "to": "鷗",
+      "fromCodePoint": "U+9D0E",
+      "toCodePoint": "U+9DD7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "穏",
+      "to": "穩",
+      "fromCodePoint": "U+7A4F",
+      "toCodePoint": "U+7A69",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "仮",
+      "to": "假",
+      "fromCodePoint": "U+4EEE",
+      "toCodePoint": "U+5047",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "価",
+      "to": "價",
+      "fromCodePoint": "U+4FA1",
+      "toCodePoint": "U+50F9",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "禍",
+      "to": "禍",
+      "fromCodePoint": "U+798D",
+      "toCodePoint": "U+FA52",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "画",
+      "to": "畫",
+      "fromCodePoint": "U+753B",
+      "toCodePoint": "U+756B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "回",
+      "to": "囘",
+      "fromCodePoint": "U+56DE",
+      "toCodePoint": "U+56D8",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "壊",
+      "to": "壞",
+      "fromCodePoint": "U+58CA",
+      "toCodePoint": "U+58DE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "悔",
+      "to": "悔",
+      "fromCodePoint": "U+6094",
+      "toCodePoint": "U+FA3D",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "懐",
+      "to": "懷",
+      "fromCodePoint": "U+61D0",
+      "toCodePoint": "U+61F7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "戒",
+      "to": "誡",
+      "fromCodePoint": "U+6212",
+      "toCodePoint": "U+8AA1",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "海",
+      "to": "海",
+      "fromCodePoint": "U+6D77",
+      "toCodePoint": "U+FA45",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "絵",
+      "to": "繪",
+      "fromCodePoint": "U+7D75",
+      "toCodePoint": "U+7E6A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "慨",
+      "to": "慨",
+      "fromCodePoint": "U+6168",
+      "toCodePoint": "U+FA3E",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "概",
+      "to": "槪",
+      "fromCodePoint": "U+6982",
+      "toCodePoint": "U+69EA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "拡",
+      "to": "擴",
+      "fromCodePoint": "U+62E1",
+      "toCodePoint": "U+64F4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "殻",
+      "to": "殼",
+      "fromCodePoint": "U+6BBB",
+      "toCodePoint": "U+6BBC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "覚",
+      "to": "覺",
+      "fromCodePoint": "U+899A",
+      "toCodePoint": "U+89BA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "郭",
+      "to": "廓",
+      "fromCodePoint": "U+90ED",
+      "toCodePoint": "U+5ED3",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "岳",
+      "to": "嶽",
+      "fromCodePoint": "U+5CB3",
+      "toCodePoint": "U+5DBD",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "楽",
+      "to": "樂",
+      "fromCodePoint": "U+697D",
+      "toCodePoint": "U+6A02",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "喝",
+      "to": "喝",
+      "fromCodePoint": "U+559D",
+      "toCodePoint": "U+FA36",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "渇",
+      "to": "渴",
+      "fromCodePoint": "U+6E07",
+      "toCodePoint": "U+6E34",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "褐",
+      "to": "褐",
+      "fromCodePoint": "U+8910",
+      "toCodePoint": "U+FA60",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鎌",
+      "to": "鐮",
+      "fromCodePoint": "U+938C",
+      "toCodePoint": "U+942E",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "勧",
+      "to": "勸",
+      "fromCodePoint": "U+52E7",
+      "toCodePoint": "U+52F8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "巻",
+      "to": "卷",
+      "fromCodePoint": "U+5DFB",
+      "toCodePoint": "U+5377",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "寛",
+      "to": "寬",
+      "fromCodePoint": "U+5BDB",
+      "toCodePoint": "U+5BEC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "歓",
+      "to": "歡",
+      "fromCodePoint": "U+6B53",
+      "toCodePoint": "U+6B61",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "漢",
+      "to": "漢",
+      "fromCodePoint": "U+6F22",
+      "toCodePoint": "U+FA47",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "缶",
+      "to": "罐",
+      "fromCodePoint": "U+7F36",
+      "toCodePoint": "U+7F50",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "観",
+      "to": "觀",
+      "fromCodePoint": "U+89B3",
+      "toCodePoint": "U+89C0",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "間",
+      "to": "閒",
+      "fromCodePoint": "U+9593",
+      "toCodePoint": "U+9592",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "関",
+      "to": "關",
+      "fromCodePoint": "U+95A2",
+      "toCodePoint": "U+95DC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "陥",
+      "to": "陷",
+      "fromCodePoint": "U+9665",
+      "toCodePoint": "U+9677",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "館",
+      "to": "館",
+      "fromCodePoint": "U+9928",
+      "toCodePoint": "U+FA2C",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "顔",
+      "to": "顏",
+      "fromCodePoint": "U+9854",
+      "toCodePoint": "U+984F",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "器",
+      "to": "器",
+      "fromCodePoint": "U+5668",
+      "toCodePoint": "U+FA38",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "奇",
+      "to": "畸",
+      "fromCodePoint": "U+5947",
+      "toCodePoint": "U+7578",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "既",
+      "to": "旣",
+      "fromCodePoint": "U+65E2",
+      "toCodePoint": "U+65E3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "帰",
+      "to": "歸",
+      "fromCodePoint": "U+5E30",
+      "toCodePoint": "U+6B78",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "気",
+      "to": "氣",
+      "fromCodePoint": "U+6C17",
+      "toCodePoint": "U+6C23",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祈",
+      "to": "祈",
+      "fromCodePoint": "U+7948",
+      "toCodePoint": "U+FA4E",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "亀",
+      "to": "龜",
+      "fromCodePoint": "U+4E80",
+      "toCodePoint": "U+9F9C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "偽",
+      "to": "僞",
+      "fromCodePoint": "U+507D",
+      "toCodePoint": "U+50DE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "戯",
+      "to": "戲",
+      "fromCodePoint": "U+622F",
+      "toCodePoint": "U+6232",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "犠",
+      "to": "犧",
+      "fromCodePoint": "U+72A0",
+      "toCodePoint": "U+72A7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "糾",
+      "to": "糺",
+      "fromCodePoint": "U+7CFE",
+      "toCodePoint": "U+7CFA",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "拠",
+      "to": "據",
+      "fromCodePoint": "U+62E0",
+      "toCodePoint": "U+64DA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "挙",
+      "to": "擧",
+      "fromCodePoint": "U+6319",
+      "toCodePoint": "U+64E7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "凶",
+      "to": "兇",
+      "fromCodePoint": "U+51F6",
+      "toCodePoint": "U+5147",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "教",
+      "to": "敎",
+      "fromCodePoint": "U+6559",
+      "toCodePoint": "U+654E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "郷",
+      "to": "鄕",
+      "fromCodePoint": "U+90F7",
+      "toCodePoint": "U+9115",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "響",
+      "to": "響",
+      "fromCodePoint": "U+97FF",
+      "toCodePoint": "U+FA69",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "尭",
+      "to": "堯",
+      "fromCodePoint": "U+5C2D",
+      "toCodePoint": "U+582F",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "暁",
+      "to": "曉",
+      "fromCodePoint": "U+6681",
+      "toCodePoint": "U+66C9",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "勤",
+      "to": "勤",
+      "fromCodePoint": "U+52E4",
+      "toCodePoint": "U+FA34",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "謹",
+      "to": "謹",
+      "fromCodePoint": "U+8B39",
+      "toCodePoint": "U+FA63",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "駆",
+      "to": "驅",
+      "fromCodePoint": "U+99C6",
+      "toCodePoint": "U+9A45",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "勲",
+      "to": "勳",
+      "fromCodePoint": "U+52F2",
+      "toCodePoint": "U+52F3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "薫",
+      "to": "薰",
+      "fromCodePoint": "U+85AB",
+      "toCodePoint": "U+85B0",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "契",
+      "to": "契",
+      "fromCodePoint": "U+5951",
+      "toCodePoint": "U+F909",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "恵",
+      "to": "惠",
+      "fromCodePoint": "U+6075",
+      "toCodePoint": "U+60E0",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "掲",
+      "to": "揭",
+      "fromCodePoint": "U+63B2",
+      "toCodePoint": "U+63ED",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "渓",
+      "to": "溪",
+      "fromCodePoint": "U+6E13",
+      "toCodePoint": "U+6EAA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "経",
+      "to": "經",
+      "fromCodePoint": "U+7D4C",
+      "toCodePoint": "U+7D93",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "継",
+      "to": "繼",
+      "fromCodePoint": "U+7D99",
+      "toCodePoint": "U+7E7C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "蛍",
+      "to": "螢",
+      "fromCodePoint": "U+86CD",
+      "toCodePoint": "U+87A2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "軽",
+      "to": "輕",
+      "fromCodePoint": "U+8EFD",
+      "toCodePoint": "U+8F15",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "芸",
+      "to": "藝",
+      "fromCodePoint": "U+82B8",
+      "toCodePoint": "U+85DD",
+      "bucket": "generic_lexical_contextual",
+      "reason": "芸 (うん) is a distinct character from 藝",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "撃",
+      "to": "擊",
+      "fromCodePoint": "U+6483",
+      "toCodePoint": "U+64CA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "欠",
+      "to": "缺",
+      "fromCodePoint": "U+6B20",
+      "toCodePoint": "U+7F3A",
+      "bucket": "generic_lexical_contextual",
+      "reason": "欠 (あくび) is a distinct character from 缺",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "倹",
+      "to": "儉",
+      "fromCodePoint": "U+5039",
+      "toCodePoint": "U+5109",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "券",
+      "to": "劵",
+      "fromCodePoint": "U+5238",
+      "toCodePoint": "U+52B5",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "剣",
+      "to": "劍",
+      "fromCodePoint": "U+5263",
+      "toCodePoint": "U+528D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "圏",
+      "to": "圈",
+      "fromCodePoint": "U+570F",
+      "toCodePoint": "U+5708",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "検",
+      "to": "檢",
+      "fromCodePoint": "U+691C",
+      "toCodePoint": "U+6AA2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "権",
+      "to": "權",
+      "fromCodePoint": "U+6A29",
+      "toCodePoint": "U+6B0A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "研",
+      "to": "硏",
+      "fromCodePoint": "U+7814",
+      "toCodePoint": "U+784F",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "県",
+      "to": "縣",
+      "fromCodePoint": "U+770C",
+      "toCodePoint": "U+7E23",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "険",
+      "to": "險",
+      "fromCodePoint": "U+967A",
+      "toCodePoint": "U+96AA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "顕",
+      "to": "顯",
+      "fromCodePoint": "U+9855",
+      "toCodePoint": "U+986F",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "験",
+      "to": "驗",
+      "fromCodePoint": "U+9A13",
+      "toCodePoint": "U+9A57",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "厳",
+      "to": "嚴",
+      "fromCodePoint": "U+53B3",
+      "toCodePoint": "U+56B4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "弦",
+      "to": "絃",
+      "fromCodePoint": "U+5F26",
+      "toCodePoint": "U+7D43",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "戸",
+      "to": "戶",
+      "fromCodePoint": "U+6238",
+      "toCodePoint": "U+6236",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "呉",
+      "to": "吳",
+      "fromCodePoint": "U+5449",
+      "toCodePoint": "U+5433",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "娯",
+      "to": "娛",
+      "fromCodePoint": "U+5A2F",
+      "toCodePoint": "U+5A1B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "効",
+      "to": "效",
+      "fromCodePoint": "U+52B9",
+      "toCodePoint": "U+6548",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "幸",
+      "to": "倖",
+      "fromCodePoint": "U+5E78",
+      "toCodePoint": "U+5016",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "広",
+      "to": "廣",
+      "fromCodePoint": "U+5E83",
+      "toCodePoint": "U+5EE3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鉱",
+      "to": "鑛",
+      "fromCodePoint": "U+9271",
+      "toCodePoint": "U+945B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "穀",
+      "to": "穀",
+      "fromCodePoint": "U+7A40",
+      "toCodePoint": "U+FA54",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "黒",
+      "to": "黑",
+      "fromCodePoint": "U+9ED2",
+      "toCodePoint": "U+9ED1",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "座",
+      "to": "坐",
+      "fromCodePoint": "U+5EA7",
+      "toCodePoint": "U+5750",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "歳",
+      "to": "歲",
+      "fromCodePoint": "U+6B73",
+      "toCodePoint": "U+6B72",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "済",
+      "to": "濟",
+      "fromCodePoint": "U+6E08",
+      "toCodePoint": "U+6FDF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "砕",
+      "to": "碎",
+      "fromCodePoint": "U+7815",
+      "toCodePoint": "U+788E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "斎",
+      "to": "齋",
+      "fromCodePoint": "U+658E",
+      "toCodePoint": "U+9F4B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "剤",
+      "to": "劑",
+      "fromCodePoint": "U+5264",
+      "toCodePoint": "U+5291",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "冴",
+      "to": "冱",
+      "fromCodePoint": "U+51B4",
+      "toCodePoint": "U+51B1",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "桜",
+      "to": "櫻",
+      "fromCodePoint": "U+685C",
+      "toCodePoint": "U+6AFB",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "冊",
+      "to": "册",
+      "fromCodePoint": "U+518A",
+      "toCodePoint": "U+518C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "殺",
+      "to": "殺",
+      "fromCodePoint": "U+6BBA",
+      "toCodePoint": "U+F970",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "雑",
+      "to": "雜",
+      "fromCodePoint": "U+96D1",
+      "toCodePoint": "U+96DC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "桟",
+      "to": "棧",
+      "fromCodePoint": "U+685F",
+      "toCodePoint": "U+68E7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "賛",
+      "to": "贊",
+      "fromCodePoint": "U+8CDB",
+      "toCodePoint": "U+8D0A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "四",
+      "to": "亖",
+      "fromCodePoint": "U+56DB",
+      "toCodePoint": "U+4E96",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "姉",
+      "to": "姊",
+      "fromCodePoint": "U+59C9",
+      "toCodePoint": "U+59CA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祉",
+      "to": "祉",
+      "fromCodePoint": "U+7949",
+      "toCodePoint": "U+FA4D",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "糸",
+      "to": "絲",
+      "fromCodePoint": "U+7CF8",
+      "toCodePoint": "U+7D72",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "視",
+      "to": "視",
+      "fromCodePoint": "U+8996",
+      "toCodePoint": "U+FA61",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "飼",
+      "to": "飼",
+      "fromCodePoint": "U+98FC",
+      "toCodePoint": "U+FA2B",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "歯",
+      "to": "齒",
+      "fromCodePoint": "U+6B6F",
+      "toCodePoint": "U+9F52",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "児",
+      "to": "兒",
+      "fromCodePoint": "U+5150",
+      "toCodePoint": "U+5152",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "実",
+      "to": "實",
+      "fromCodePoint": "U+5B9F",
+      "toCodePoint": "U+5BE6",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "舎",
+      "to": "舍",
+      "fromCodePoint": "U+820E",
+      "toCodePoint": "U+820D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "煮",
+      "to": "煮",
+      "fromCodePoint": "U+716E",
+      "toCodePoint": "U+FA48",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "社",
+      "to": "社",
+      "fromCodePoint": "U+793E",
+      "toCodePoint": "U+FA4C",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "者",
+      "to": "者",
+      "fromCodePoint": "U+8005",
+      "toCodePoint": "U+FA5B",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "釈",
+      "to": "釋",
+      "fromCodePoint": "U+91C8",
+      "toCodePoint": "U+91CB",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "収",
+      "to": "收",
+      "fromCodePoint": "U+53CE",
+      "toCodePoint": "U+6536",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "州",
+      "to": "洲",
+      "fromCodePoint": "U+5DDE",
+      "toCodePoint": "U+6D32",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "臭",
+      "to": "臭",
+      "fromCodePoint": "U+81ED",
+      "toCodePoint": "U+FA5C",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "集",
+      "to": "輯",
+      "fromCodePoint": "U+96C6",
+      "toCodePoint": "U+8F2F",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "従",
+      "to": "從",
+      "fromCodePoint": "U+5F93",
+      "toCodePoint": "U+5F9E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "渋",
+      "to": "澁",
+      "fromCodePoint": "U+6E0B",
+      "toCodePoint": "U+6F81",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "獣",
+      "to": "獸",
+      "fromCodePoint": "U+7363",
+      "toCodePoint": "U+7378",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "縦",
+      "to": "縱",
+      "fromCodePoint": "U+7E26",
+      "toCodePoint": "U+7E31",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祝",
+      "to": "祝",
+      "fromCodePoint": "U+795D",
+      "toCodePoint": "U+FA51",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "粛",
+      "to": "肅",
+      "fromCodePoint": "U+7C9B",
+      "toCodePoint": "U+8085",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "暑",
+      "to": "暑",
+      "fromCodePoint": "U+6691",
+      "toCodePoint": "U+FA43",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "緒",
+      "to": "緖",
+      "fromCodePoint": "U+7DD2",
+      "toCodePoint": "U+7DD6",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "署",
+      "to": "署",
+      "fromCodePoint": "U+7F72",
+      "toCodePoint": "U+FA5A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "諸",
+      "to": "諸",
+      "fromCodePoint": "U+8AF8",
+      "toCodePoint": "U+FA22",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "奨",
+      "to": "獎",
+      "fromCodePoint": "U+5968",
+      "toCodePoint": "U+734E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "尚",
+      "to": "尙",
+      "fromCodePoint": "U+5C1A",
+      "toCodePoint": "U+5C19",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "昇",
+      "to": "陞",
+      "fromCodePoint": "U+6607",
+      "toCodePoint": "U+965E",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "消",
+      "to": "銷",
+      "fromCodePoint": "U+6D88",
+      "toCodePoint": "U+92B7",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "渉",
+      "to": "涉",
+      "fromCodePoint": "U+6E09",
+      "toCodePoint": "U+6D89",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "焼",
+      "to": "燒",
+      "fromCodePoint": "U+713C",
+      "toCodePoint": "U+71D2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祥",
+      "to": "祥",
+      "fromCodePoint": "U+7965",
+      "toCodePoint": "U+FA1A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "醤",
+      "to": "醬",
+      "fromCodePoint": "U+91A4",
+      "toCodePoint": "U+91AC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "乗",
+      "to": "乘",
+      "fromCodePoint": "U+4E57",
+      "toCodePoint": "U+4E58",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "剰",
+      "to": "剩",
+      "fromCodePoint": "U+5270",
+      "toCodePoint": "U+5269",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "壌",
+      "to": "壤",
+      "fromCodePoint": "U+58CC",
+      "toCodePoint": "U+58E4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "嬢",
+      "to": "孃",
+      "fromCodePoint": "U+5B22",
+      "toCodePoint": "U+5B43",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "浄",
+      "to": "淨",
+      "fromCodePoint": "U+6D44",
+      "toCodePoint": "U+6DE8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "畳",
+      "to": "疊",
+      "fromCodePoint": "U+7573",
+      "toCodePoint": "U+758A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "穣",
+      "to": "穰",
+      "fromCodePoint": "U+7A63",
+      "toCodePoint": "U+7A70",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "譲",
+      "to": "讓",
+      "fromCodePoint": "U+8B72",
+      "toCodePoint": "U+8B93",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "醸",
+      "to": "釀",
+      "fromCodePoint": "U+91B8",
+      "toCodePoint": "U+91C0",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "慎",
+      "to": "愼",
+      "fromCodePoint": "U+614E",
+      "toCodePoint": "U+613C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "真",
+      "to": "眞",
+      "fromCodePoint": "U+771F",
+      "toCodePoint": "U+771E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "神",
+      "to": "神",
+      "fromCodePoint": "U+795E",
+      "toCodePoint": "U+FA19",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "刃",
+      "to": "刄",
+      "fromCodePoint": "U+5203",
+      "toCodePoint": "U+5204",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "図",
+      "to": "圖",
+      "fromCodePoint": "U+56F3",
+      "toCodePoint": "U+5716",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "粋",
+      "to": "粹",
+      "fromCodePoint": "U+7C8B",
+      "toCodePoint": "U+7CB9",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "酔",
+      "to": "醉",
+      "fromCodePoint": "U+9154",
+      "toCodePoint": "U+9189",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "髄",
+      "to": "髓",
+      "fromCodePoint": "U+9AC4",
+      "toCodePoint": "U+9AD3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "瀬",
+      "to": "瀨",
+      "fromCodePoint": "U+702C",
+      "toCodePoint": "U+7028",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "晴",
+      "to": "晴",
+      "fromCodePoint": "U+6674",
+      "toCodePoint": "U+FA12",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "清",
+      "to": "淸",
+      "fromCodePoint": "U+6E05",
+      "toCodePoint": "U+6DF8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "精",
+      "to": "精",
+      "fromCodePoint": "U+7CBE",
+      "toCodePoint": "U+FA1D",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "青",
+      "to": "靑",
+      "fromCodePoint": "U+9752",
+      "toCodePoint": "U+9751",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "斉",
+      "to": "齊",
+      "fromCodePoint": "U+6589",
+      "toCodePoint": "U+9F4A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "跡",
+      "to": "蹟",
+      "fromCodePoint": "U+8DE1",
+      "toCodePoint": "U+8E5F",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "摂",
+      "to": "攝",
+      "fromCodePoint": "U+6442",
+      "toCodePoint": "U+651D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "節",
+      "to": "節",
+      "fromCodePoint": "U+7BC0",
+      "toCodePoint": "U+FA56",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "説",
+      "to": "說",
+      "fromCodePoint": "U+8AAC",
+      "toCodePoint": "U+8AAA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "絶",
+      "to": "絕",
+      "fromCodePoint": "U+7D76",
+      "toCodePoint": "U+7D55",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "専",
+      "to": "專",
+      "fromCodePoint": "U+5C02",
+      "toCodePoint": "U+5C08",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "戦",
+      "to": "戰",
+      "fromCodePoint": "U+6226",
+      "toCodePoint": "U+6230",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "繊",
+      "to": "纖",
+      "fromCodePoint": "U+7E4A",
+      "toCodePoint": "U+7E96",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "銭",
+      "to": "錢",
+      "fromCodePoint": "U+92AD",
+      "toCodePoint": "U+9322",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "曽",
+      "to": "曾",
+      "fromCodePoint": "U+66FD",
+      "toCodePoint": "U+66FE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祖",
+      "to": "祖",
+      "fromCodePoint": "U+7956",
+      "toCodePoint": "U+FA50",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "阻",
+      "to": "沮",
+      "fromCodePoint": "U+963B",
+      "toCodePoint": "U+6CAE",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "僧",
+      "to": "僧",
+      "fromCodePoint": "U+50E7",
+      "toCodePoint": "U+FA31",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "層",
+      "to": "層",
+      "fromCodePoint": "U+5C64",
+      "toCodePoint": "U+FA3B",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "挿",
+      "to": "插",
+      "fromCodePoint": "U+633F",
+      "toCodePoint": "U+63D2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "巣",
+      "to": "巢",
+      "fromCodePoint": "U+5DE3",
+      "toCodePoint": "U+5DE2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "痩",
+      "to": "瘦",
+      "fromCodePoint": "U+75E9",
+      "toCodePoint": "U+7626",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "窓",
+      "to": "窗",
+      "fromCodePoint": "U+7A93",
+      "toCodePoint": "U+7A97",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "総",
+      "to": "總",
+      "fromCodePoint": "U+7DCF",
+      "toCodePoint": "U+7E3D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "聡",
+      "to": "聰",
+      "fromCodePoint": "U+8061",
+      "toCodePoint": "U+8070",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "荘",
+      "to": "莊",
+      "fromCodePoint": "U+8358",
+      "toCodePoint": "U+838A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "騒",
+      "to": "騷",
+      "fromCodePoint": "U+9A12",
+      "toCodePoint": "U+9A37",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "増",
+      "to": "增",
+      "fromCodePoint": "U+5897",
+      "toCodePoint": "U+589E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "憎",
+      "to": "憎",
+      "fromCodePoint": "U+618E",
+      "toCodePoint": "U+FA3F",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "臓",
+      "to": "臟",
+      "fromCodePoint": "U+81D3",
+      "toCodePoint": "U+81DF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "蔵",
+      "to": "藏",
+      "fromCodePoint": "U+8535",
+      "toCodePoint": "U+85CF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "贈",
+      "to": "贈",
+      "fromCodePoint": "U+8D08",
+      "toCodePoint": "U+FA65",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "即",
+      "to": "卽",
+      "fromCodePoint": "U+5373",
+      "toCodePoint": "U+537D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "続",
+      "to": "續",
+      "fromCodePoint": "U+7D9A",
+      "toCodePoint": "U+7E8C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "対",
+      "to": "對",
+      "fromCodePoint": "U+5BFE",
+      "toCodePoint": "U+5C0D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "帯",
+      "to": "帶",
+      "fromCodePoint": "U+5E2F",
+      "toCodePoint": "U+5E36",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "台",
+      "to": "臺",
+      "fromCodePoint": "U+53F0",
+      "toCodePoint": "U+81FA",
+      "bucket": "generic_lexical_contextual",
+      "reason": "#2 guarded-fallback ruling: 台 requires lexical overrides/preserves",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "滝",
+      "to": "瀧",
+      "fromCodePoint": "U+6EDD",
+      "toCodePoint": "U+7027",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "択",
+      "to": "擇",
+      "fromCodePoint": "U+629E",
+      "toCodePoint": "U+64C7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "沢",
+      "to": "澤",
+      "fromCodePoint": "U+6CA2",
+      "toCodePoint": "U+6FA4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "琢",
+      "to": "琢",
+      "fromCodePoint": "U+7422",
+      "toCodePoint": "U+FA4A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "単",
+      "to": "單",
+      "fromCodePoint": "U+5358",
+      "toCodePoint": "U+55AE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "嘆",
+      "to": "嘆",
+      "fromCodePoint": "U+5606",
+      "toCodePoint": "U+FA37",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "団",
+      "to": "團",
+      "fromCodePoint": "U+56E3",
+      "toCodePoint": "U+5718",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "弾",
+      "to": "彈",
+      "fromCodePoint": "U+5F3E",
+      "toCodePoint": "U+5F48",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "知",
+      "to": "智",
+      "fromCodePoint": "U+77E5",
+      "toCodePoint": "U+667A",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "遅",
+      "to": "遲",
+      "fromCodePoint": "U+9045",
+      "toCodePoint": "U+9072",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "注",
+      "to": "註",
+      "fromCodePoint": "U+6CE8",
+      "toCodePoint": "U+8A3B",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鋳",
+      "to": "鑄",
+      "fromCodePoint": "U+92F3",
+      "toCodePoint": "U+9444",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "著",
+      "to": "著",
+      "fromCodePoint": "U+8457",
+      "toCodePoint": "U+FA5F",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "庁",
+      "to": "廳",
+      "fromCodePoint": "U+5E81",
+      "toCodePoint": "U+5EF3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "徴",
+      "to": "徵",
+      "fromCodePoint": "U+5FB4",
+      "toCodePoint": "U+5FB5",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "懲",
+      "to": "懲",
+      "fromCodePoint": "U+61F2",
+      "toCodePoint": "U+FA40",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "聴",
+      "to": "聽",
+      "fromCodePoint": "U+8074",
+      "toCodePoint": "U+807D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "勅",
+      "to": "敕",
+      "fromCodePoint": "U+52C5",
+      "toCodePoint": "U+6555",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鎮",
+      "to": "鎭",
+      "fromCodePoint": "U+93AE",
+      "toCodePoint": "U+93AD",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "塚",
+      "to": "塚",
+      "fromCodePoint": "U+585A",
+      "toCodePoint": "U+FA10",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "禎",
+      "to": "禎",
+      "fromCodePoint": "U+798E",
+      "toCodePoint": "U+FA53",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "逓",
+      "to": "遞",
+      "fromCodePoint": "U+9013",
+      "toCodePoint": "U+905E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "鉄",
+      "to": "鐵",
+      "fromCodePoint": "U+9244",
+      "toCodePoint": "U+9435",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "転",
+      "to": "轉",
+      "fromCodePoint": "U+8EE2",
+      "toCodePoint": "U+8F49",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "伝",
+      "to": "傳",
+      "fromCodePoint": "U+4F1D",
+      "toCodePoint": "U+50B3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "都",
+      "to": "都",
+      "fromCodePoint": "U+90FD",
+      "toCodePoint": "U+FA26",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "踏",
+      "to": "蹈",
+      "fromCodePoint": "U+8E0F",
+      "toCodePoint": "U+8E48",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "闘",
+      "to": "鬭",
+      "fromCodePoint": "U+95D8",
+      "toCodePoint": "U+9B2D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "徳",
+      "to": "德",
+      "fromCodePoint": "U+5FB3",
+      "toCodePoint": "U+5FB7",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "読",
+      "to": "讀",
+      "fromCodePoint": "U+8AAD",
+      "toCodePoint": "U+8B80",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "突",
+      "to": "突",
+      "fromCodePoint": "U+7A81",
+      "toCodePoint": "U+FA55",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "縄",
+      "to": "繩",
+      "fromCodePoint": "U+7E04",
+      "toCodePoint": "U+7E69",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "難",
+      "to": "難",
+      "fromCodePoint": "U+96E3",
+      "toCodePoint": "U+FA68",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "弐",
+      "to": "貳",
+      "fromCodePoint": "U+5F10",
+      "toCodePoint": "U+8CB3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "妊",
+      "to": "姙",
+      "fromCodePoint": "U+598A",
+      "toCodePoint": "U+59D9",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "粘",
+      "to": "黏",
+      "fromCodePoint": "U+7C98",
+      "toCodePoint": "U+9ECF",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "悩",
+      "to": "惱",
+      "fromCodePoint": "U+60A9",
+      "toCodePoint": "U+60F1",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "脳",
+      "to": "腦",
+      "fromCodePoint": "U+8133",
+      "toCodePoint": "U+8166",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "覇",
+      "to": "霸",
+      "fromCodePoint": "U+8987",
+      "toCodePoint": "U+9738",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "廃",
+      "to": "廢",
+      "fromCodePoint": "U+5EC3",
+      "toCodePoint": "U+5EE2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "拝",
+      "to": "拜",
+      "fromCodePoint": "U+62DD",
+      "toCodePoint": "U+62DC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "杯",
+      "to": "盃",
+      "fromCodePoint": "U+676F",
+      "toCodePoint": "U+76C3",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "梅",
+      "to": "梅",
+      "fromCodePoint": "U+6885",
+      "toCodePoint": "U+FA44",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "売",
+      "to": "賣",
+      "fromCodePoint": "U+58F2",
+      "toCodePoint": "U+8CE3",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "拍",
+      "to": "搏",
+      "fromCodePoint": "U+62CD",
+      "toCodePoint": "U+640F",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "発",
+      "to": "發",
+      "fromCodePoint": "U+767A",
+      "toCodePoint": "U+767C",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "髪",
+      "to": "髮",
+      "fromCodePoint": "U+9AEA",
+      "toCodePoint": "U+9AEE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "抜",
+      "to": "拔",
+      "fromCodePoint": "U+629C",
+      "toCodePoint": "U+62D4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "繁",
+      "to": "繁",
+      "fromCodePoint": "U+7E41",
+      "toCodePoint": "U+FA59",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "飯",
+      "to": "飯",
+      "fromCodePoint": "U+98EF",
+      "toCodePoint": "U+FA2A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "晩",
+      "to": "晚",
+      "fromCodePoint": "U+6669",
+      "toCodePoint": "U+665A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "卑",
+      "to": "卑",
+      "fromCodePoint": "U+5351",
+      "toCodePoint": "U+FA35",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "碑",
+      "to": "碑",
+      "fromCodePoint": "U+7891",
+      "toCodePoint": "U+FA4B",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "秘",
+      "to": "祕",
+      "fromCodePoint": "U+79D8",
+      "toCodePoint": "U+7955",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "姫",
+      "to": "姬",
+      "fromCodePoint": "U+59EB",
+      "toCodePoint": "U+59EC",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "氷",
+      "to": "冰",
+      "fromCodePoint": "U+6C37",
+      "toCodePoint": "U+51B0",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "賓",
+      "to": "賓",
+      "fromCodePoint": "U+8CD3",
+      "toCodePoint": "U+FA64",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "頻",
+      "to": "頻",
+      "fromCodePoint": "U+983B",
+      "toCodePoint": "U+FA6A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "敏",
+      "to": "敏",
+      "fromCodePoint": "U+654F",
+      "toCodePoint": "U+FA41",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "瓶",
+      "to": "甁",
+      "fromCodePoint": "U+74F6",
+      "toCodePoint": "U+7501",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "侮",
+      "to": "侮",
+      "fromCodePoint": "U+4FAE",
+      "toCodePoint": "U+FA30",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "福",
+      "to": "福",
+      "fromCodePoint": "U+798F",
+      "toCodePoint": "U+FA1B",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "払",
+      "to": "拂",
+      "fromCodePoint": "U+6255",
+      "toCodePoint": "U+62C2",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "仏",
+      "to": "佛",
+      "fromCodePoint": "U+4ECF",
+      "toCodePoint": "U+4F5B",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "併",
+      "to": "倂",
+      "fromCodePoint": "U+4F75",
+      "toCodePoint": "U+5002",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "塀",
+      "to": "塀",
+      "fromCodePoint": "U+5840",
+      "toCodePoint": "U+FA39",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "並",
+      "to": "竝",
+      "fromCodePoint": "U+4E26",
+      "toCodePoint": "U+7ADD",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "変",
+      "to": "變",
+      "fromCodePoint": "U+5909",
+      "toCodePoint": "U+8B8A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "編",
+      "to": "篇",
+      "fromCodePoint": "U+7DE8",
+      "toCodePoint": "U+7BC7",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "辺",
+      "to": "邊",
+      "fromCodePoint": "U+8FBA",
+      "toCodePoint": "U+908A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "勉",
+      "to": "勉",
+      "fromCodePoint": "U+52C9",
+      "toCodePoint": "U+FA33",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "舗",
+      "to": "舖",
+      "fromCodePoint": "U+8217",
+      "toCodePoint": "U+8216",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "歩",
+      "to": "步",
+      "fromCodePoint": "U+6B69",
+      "toCodePoint": "U+6B65",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "補",
+      "to": "輔",
+      "fromCodePoint": "U+88DC",
+      "toCodePoint": "U+8F14",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "穂",
+      "to": "穗",
+      "fromCodePoint": "U+7A42",
+      "toCodePoint": "U+7A57",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "萌",
+      "to": "萠",
+      "fromCodePoint": "U+840C",
+      "toCodePoint": "U+8420",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "褒",
+      "to": "襃",
+      "fromCodePoint": "U+8912",
+      "toCodePoint": "U+8943",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "豊",
+      "to": "豐",
+      "fromCodePoint": "U+8C4A",
+      "toCodePoint": "U+8C50",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "墨",
+      "to": "墨",
+      "fromCodePoint": "U+58A8",
+      "toCodePoint": "U+FA3A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "没",
+      "to": "歿",
+      "fromCodePoint": "U+6CA1",
+      "toCodePoint": "U+6B7F",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "翻",
+      "to": "飜",
+      "fromCodePoint": "U+7FFB",
+      "toCodePoint": "U+98DC",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "毎",
+      "to": "每",
+      "fromCodePoint": "U+6BCE",
+      "toCodePoint": "U+6BCF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "槙",
+      "to": "槇",
+      "fromCodePoint": "U+69D9",
+      "toCodePoint": "U+69C7",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "満",
+      "to": "滿",
+      "fromCodePoint": "U+6E80",
+      "toCodePoint": "U+6EFF",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "免",
+      "to": "免",
+      "fromCodePoint": "U+514D",
+      "toCodePoint": "U+FA32",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "麺",
+      "to": "麵",
+      "fromCodePoint": "U+9EBA",
+      "toCodePoint": "U+9EB5",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "模",
+      "to": "摸",
+      "fromCodePoint": "U+6A21",
+      "toCodePoint": "U+6478",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "黙",
+      "to": "默",
+      "fromCodePoint": "U+9ED9",
+      "toCodePoint": "U+9ED8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "餅",
+      "to": "餠",
+      "fromCodePoint": "U+9905",
+      "toCodePoint": "U+9920",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "戻",
+      "to": "戾",
+      "fromCodePoint": "U+623B",
+      "toCodePoint": "U+623E",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "野",
+      "to": "埜",
+      "fromCodePoint": "U+91CE",
+      "toCodePoint": "U+57DC",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "薬",
+      "to": "藥",
+      "fromCodePoint": "U+85AC",
+      "toCodePoint": "U+85E5",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "訳",
+      "to": "譯",
+      "fromCodePoint": "U+8A33",
+      "toCodePoint": "U+8B6F",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "祐",
+      "to": "祐",
+      "fromCodePoint": "U+7950",
+      "toCodePoint": "U+FA4F",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "予",
+      "to": "豫",
+      "fromCodePoint": "U+4E88",
+      "toCodePoint": "U+8C6B",
+      "bucket": "generic_lexical_contextual",
+      "reason": "予 (first-person) vs 豫 is lexical",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "余",
+      "to": "餘",
+      "fromCodePoint": "U+4F59",
+      "toCodePoint": "U+9918",
+      "bucket": "generic_lexical_contextual",
+      "reason": "余 (first-person) vs 餘 (surplus) is lexical",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "揺",
+      "to": "搖",
+      "fromCodePoint": "U+63FA",
+      "toCodePoint": "U+6416",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "様",
+      "to": "樣",
+      "fromCodePoint": "U+69D8",
+      "toCodePoint": "U+6A23",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "溶",
+      "to": "熔",
+      "fromCodePoint": "U+6EB6",
+      "toCodePoint": "U+7194",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "謡",
+      "to": "謠",
+      "fromCodePoint": "U+8B21",
+      "toCodePoint": "U+8B20",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "欲",
+      "to": "慾",
+      "fromCodePoint": "U+6B32",
+      "toCodePoint": "U+617E",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "頼",
+      "to": "賴",
+      "fromCodePoint": "U+983C",
+      "toCodePoint": "U+8CF4",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "欄",
+      "to": "欄",
+      "fromCodePoint": "U+6B04",
+      "toCodePoint": "U+F91D",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "覧",
+      "to": "覽",
+      "fromCodePoint": "U+89A7",
+      "toCodePoint": "U+89BD",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "略",
+      "to": "掠",
+      "fromCodePoint": "U+7565",
+      "toCodePoint": "U+63A0",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "隆",
+      "to": "隆",
+      "fromCodePoint": "U+9686",
+      "toCodePoint": "U+F9DC",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "竜",
+      "to": "龍",
+      "fromCodePoint": "U+7ADC",
+      "toCodePoint": "U+9F8D",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "note": "character form cited by the #40 official source locator; still not admitted",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "旅",
+      "to": "旅",
+      "fromCodePoint": "U+65C5",
+      "toCodePoint": "U+F983",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "虜",
+      "to": "虜",
+      "fromCodePoint": "U+865C",
+      "toCodePoint": "U+F936",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "了",
+      "to": "諒",
+      "fromCodePoint": "U+4E86",
+      "toCodePoint": "U+8AD2",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "両",
+      "to": "兩",
+      "fromCodePoint": "U+4E21",
+      "toCodePoint": "U+5169",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "猟",
+      "to": "獵",
+      "fromCodePoint": "U+731F",
+      "toCodePoint": "U+7375",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "緑",
+      "to": "綠",
+      "fromCodePoint": "U+7DD1",
+      "toCodePoint": "U+7DA0",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "隣",
+      "to": "鄰",
+      "fromCodePoint": "U+96A3",
+      "toCodePoint": "U+9130",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "塁",
+      "to": "壘",
+      "fromCodePoint": "U+5841",
+      "toCodePoint": "U+58D8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "涙",
+      "to": "淚",
+      "fromCodePoint": "U+6D99",
+      "toCodePoint": "U+6DDA",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "類",
+      "to": "類",
+      "fromCodePoint": "U+985E",
+      "toCodePoint": "U+F9D0",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "隷",
+      "to": "隸",
+      "fromCodePoint": "U+96B7",
+      "toCodePoint": "U+96B8",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "霊",
+      "to": "靈",
+      "fromCodePoint": "U+970A",
+      "toCodePoint": "U+9748",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "齢",
+      "to": "齡",
+      "fromCodePoint": "U+9F62",
+      "toCodePoint": "U+9F61",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "暦",
+      "to": "曆",
+      "fromCodePoint": "U+66A6",
+      "toCodePoint": "U+66C6",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "歴",
+      "to": "歷",
+      "fromCodePoint": "U+6B74",
+      "toCodePoint": "U+6B77",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "廉",
+      "to": "廉",
+      "fromCodePoint": "U+5EC9",
+      "toCodePoint": "U+F9A2",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "練",
+      "to": "練",
+      "fromCodePoint": "U+7DF4",
+      "toCodePoint": "U+FA57",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "連",
+      "to": "連",
+      "fromCodePoint": "U+9023",
+      "toCodePoint": "U+F99A",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "錬",
+      "to": "鍊",
+      "fromCodePoint": "U+932C",
+      "toCodePoint": "U+934A",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "労",
+      "to": "勞",
+      "fromCodePoint": "U+52B4",
+      "toCodePoint": "U+52DE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "廊",
+      "to": "廊",
+      "fromCodePoint": "U+5ECA",
+      "toCodePoint": "U+F928",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "朗",
+      "to": "朗",
+      "fromCodePoint": "U+6717",
+      "toCodePoint": "U+F929",
+      "bucket": "unresolved",
+      "reason": "target is a CJK compatibility ideograph; Unicode NFC maps it back to the source character, so the replacement is normalization-unstable",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "郎",
+      "to": "郞",
+      "fromCodePoint": "U+90CE",
+      "toCodePoint": "U+90DE",
+      "bucket": "generic_deterministic_candidate",
+      "reason": "probable Joyo shinjitai→kyujitai pair; requires per-entry primary-source evidence and ambiguity review (#40 process) before admission",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "湾",
+      "to": "彎",
+      "fromCodePoint": "U+6E7E",
+      "toCodePoint": "U+5F4E",
+      "bucket": "kinotch_semantic_override",
+      "reason": "target is a different character/word with a meaning or usage distinction; a project choice, not a character-form relation",
+      "admittedToGenericAuthority": false
+    },
+    {
+      "from": "敘",
+      "to": "敍",
+      "fromCodePoint": "U+6558",
+      "toCodePoint": "U+654D",
+      "bucket": "kinotch_style_render",
+      "reason": "non-standard variant (異体字) preference for the same word; project style, not a Joyo old-form relation",
+      "admittedToGenericAuthority": false
+    }
+  ]
+}
