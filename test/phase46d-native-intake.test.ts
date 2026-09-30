@@ -136,10 +136,26 @@ test('committed dictionaries admit unique readings, preserve alternatives, and e
   assert.equal(iou?.disposition, 'candidate_ambiguous');
   assert.deepEqual([...iou.alternatives].sort(), ['いわう', 'ゆわう'].sort());
 
+  const eu = dictionary.find((record: any) => record.modernSurface === 'えう');
+  assert.equal(eu?.disposition, 'candidate_ambiguous');
+  assert.deepEqual([...eu.alternatives].sort(), ['ゑふ', 'よふ'].sort());
+
+  const maosu = dictionary.find((record: any) => record.modernSurface === 'まおす');
+  assert.equal(maosu?.disposition, 'candidate_ambiguous');
+  assert.deepEqual([...maosu.alternatives].sort(), ['まをす', 'まうす'].sort());
+
+  const mousu = dictionary.find((record: any) => record.modernSurface === '申す');
+  assert.equal(mousu?.disposition, 'candidate_ambiguous');
+  assert.deepEqual([...mousu.alternatives].sort(), ['まうす', 'まをす'].sort());
+
   const aho = dictionary.find((record: any) => record.modernSurface === '阿呆');
   assert.equal(aho?.disposition, 'candidate_ambiguous');
   assert.deepEqual([...aho.alternatives].sort(), ['あはう', 'アホ'].sort());
   assert.equal(aho.alternatives.includes('ほう'), false);
+
+  const muteppou = dictionary.find((record: any) => record.modernSurface === '無鉄砲');
+  assert.equal(muteppou?.disposition, 'admitted');
+  assert.equal(muteppou?.historicalReading, 'むてっぱう');
 });
 
 test('exception-verb and native-guide records consume coverage without manufacturing unsupported modern mappings', async () => {
