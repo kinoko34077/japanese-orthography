@@ -41,10 +41,42 @@
       evidenceIds.add(evidence.id);
     }
 
+    const validateEvidenceRefs = (refs, label, required) => {
+      if (refs == null && !required) return;
+      if (!Array.isArray(refs) || (required && refs.length === 0)) {
+        throw new TypeError(`${label} requires evidence refs`);
+      }
+      for (const evidenceRef of refs) {
+        requireNonEmptyString(evidenceRef, "safe-character evidence ref");
+        if (!evidenceIds.has(evidenceRef)) {
+          throw new Error(`Unknown safe-character evidence ref: ${evidenceRef}`);
+        }
+      }
+    };
+
     const excluded = new Set();
     for (const modern of Array.isArray(slice.excludedModernCharacters) ? slice.excludedModernCharacters : []) {
       requireOneCodePoint(modern, "safe-character excluded modern character");
       excluded.add(modern);
+    }
+
+    const exclusionRecordModern = new Set();
+    for (const exclusion of Array.isArray(slice.exclusionRecords) ? slice.exclusionRecords : []) {
+      requireOneCodePoint(exclusion?.modern, "safe-character exclusion modern character");
+      requireNonEmptyString(exclusion?.reason, "safe-character exclusion reason");
+      if (!excluded.has(exclusion.modern)) {
+        throw new Error(`Safe-character exclusion record is not declared excluded: ${exclusion.modern}`);
+      }
+      if (exclusionRecordModern.has(exclusion.modern)) {
+        throw new Error(`Duplicate safe-character exclusion record: ${exclusion.modern}`);
+      }
+      exclusionRecordModern.add(exclusion.modern);
+      validateEvidenceRefs(exclusion.evidenceRefs, "Safe-character exclusion", true);
+    }
+    for (const modern of excluded) {
+      if (!exclusionRecordModern.has(modern)) {
+        throw new Error(`Missing safe-character exclusion record: ${modern}`);
+      }
     }
 
     const map = {};
@@ -59,15 +91,8 @@
         throw new Error(`Duplicate safe-character modern source: ${mapping.modern}`);
       }
       seenModern.add(mapping.modern);
-      if (!Array.isArray(mapping.evidenceRefs) || mapping.evidenceRefs.length === 0) {
-        throw new TypeError("Safe-character mapping requires evidence refs");
-      }
-      for (const evidenceRef of mapping.evidenceRefs) {
-        requireNonEmptyString(evidenceRef, "safe-character evidence ref");
-        if (!evidenceIds.has(evidenceRef)) {
-          throw new Error(`Unknown safe-character evidence ref: ${evidenceRef}`);
-        }
-      }
+      validateEvidenceRefs(mapping.evidenceRefs, "Safe-character mapping", true);
+      validateEvidenceRefs(mapping.regressionEvidenceRefs, "Safe-character mapping regression", false);
       map[mapping.modern] = mapping.historical;
     }
 
