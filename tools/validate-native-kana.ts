@@ -11,7 +11,7 @@ import { createSchemaValidator } from './schema-validator.ts';
 
 function gitBlobSha(bytes: Uint8Array): string {
   return createHash('sha1')
-    .update(Buffer.from('blob ' + bytes.byteLength + '\\0', 'utf8'))
+    .update(Buffer.from('blob ' + bytes.byteLength + '\0', 'utf8'))
     .update(bytes)
     .digest('hex');
 }
