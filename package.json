@@ -12,11 +12,13 @@
     "typecheck": "tsc --noEmit",
     "bench:resolver": "node --import tsx tools/bench-orthography-resolution.ts --json",
     "check:profile": "node --import tsx tools/check-profile.ts",
-    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
+    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
     "generate:native-kana": "node --import tsx tools/generate-native-kana.ts",
     "validate:native-kana": "node --import tsx tools/validate-native-kana.ts",
     "generate:sino-kana": "node --import tsx tools/sino-kana.ts",
-    "validate:sino-kana": "node --import tsx tools/validate-sino-kana.ts"
+    "validate:sino-kana": "node --import tsx tools/validate-sino-kana.ts",
+    "generate:kinotch-profile-intake": "node --import tsx tools/kinotch-profile-intake.ts",
+    "validate:kinotch-profile-intake": "node --import tsx tools/validate-kinotch-profile-intake.ts"
   },
   "repository": {
     "type": "git",

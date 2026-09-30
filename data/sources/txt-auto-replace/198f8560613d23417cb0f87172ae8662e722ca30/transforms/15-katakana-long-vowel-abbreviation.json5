@@ -1,0 +1,19 @@
+{
+  id: "katakana-long-vowel-abbreviation",
+  label: "カタカナ長音省略",
+  kind: "token-rules",
+  runtime_mode: "katakana-long-vowel-abbreviation",
+  settings: {
+    min_length: 1,
+  },
+  rules: [
+    {
+      id: "exclude-batter",
+      from: "バッター",
+      to: "バッター",
+      enabled: true,
+      priority: 100
+    }
+  ],
+  children: []
+}

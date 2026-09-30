@@ -1,0 +1,70 @@
+// transforms/20-lexical-replacements.json5
+{
+  id: "lexical-replacements",
+  label: "語彙置換",
+  kind: "token-rules",
+  rules: [
+    {
+      // 動詞の連体形 + こと → ヿ ではなく、
+      // 現行仕様では単独トークン「こと」を一律変換する。
+      from: "こと",
+      to: "ヿ",
+      type: "literal",
+      priority: 100,
+    },
+    {
+      // 面倒ごと系
+      sequence: [
+        {
+          surface: "面倒",
+          pos: "名詞",
+        },
+        {
+          surface: "ごと",
+          pos: "名詞",
+        },
+      ],
+      to: "事",
+      priority: 90,
+    },
+    {
+      // 時ごと系
+      sequence: [
+        {
+          surface: "時",
+          pos: "名詞",
+        },
+        {
+          surface: "ごと",
+          pos: "名詞",
+        },
+      ],
+      to: "時毎",
+      priority: 80,
+    },
+    {
+      from: "それ",
+      to: "其",
+      type: "literal",
+      priority: 70,
+    },
+    {
+      from: "その",
+      to: "其",
+      type: "literal",
+      priority: 70,
+    },
+    {
+      from: "この",
+      to: "此",
+      type: "literal",
+      priority: 70,
+    },
+    {
+      from: "やっぱり",
+      to: "矢ッ張",
+      type: "literal",
+      priority: 60,
+    },
+  ],
+}

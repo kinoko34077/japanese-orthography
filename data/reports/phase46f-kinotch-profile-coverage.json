@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1",
+  "kind": "phase46f_kinotch_profile_coverage_report",
+  "sources": [
+    {
+      "sourceId": "phase46f-txt-auto-stage10",
+      "discovered": 2,
+      "admitted": 2,
+      "ambiguous": 0,
+      "excluded": 0,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "kinotch_style/admitted": 2
+      }
+    },
+    {
+      "sourceId": "phase46f-txt-auto-stage15",
+      "discovered": 2,
+      "admitted": 2,
+      "ambiguous": 0,
+      "excluded": 0,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "kinotch_style/admitted": 1,
+        "preserve_unresolved/admitted": 1
+      }
+    },
+    {
+      "sourceId": "phase46f-txt-auto-stage20",
+      "discovered": 7,
+      "admitted": 7,
+      "ambiguous": 0,
+      "excluded": 0,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "kinotch_style/admitted": 5,
+        "kinotch_semantic/admitted": 2
+      }
+    },
+    {
+      "sourceId": "phase46f-txt-auto-stage30",
+      "discovered": 4,
+      "admitted": 4,
+      "ambiguous": 0,
+      "excluded": 0,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "kinotch_style/admitted": 4
+      }
+    },
+    {
+      "sourceId": "phase46f-txt-auto-stage31",
+      "discovered": 1,
+      "admitted": 1,
+      "ambiguous": 0,
+      "excluded": 0,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "kinotch_style/admitted": 1
+      }
+    },
+    {
+      "sourceId": "phase46f-txt-auto-stage60",
+      "discovered": 357,
+      "admitted": 51,
+      "ambiguous": 0,
+      "excluded": 306,
+      "unclassified": 0,
+      "unexpected": 0,
+      "unparsedMappingRecords": 0,
+      "unclassifiedRecordIds": [],
+      "unexpectedRecordIds": [],
+      "byResponsibility": {
+        "character_form/excluded_unresolved": 226,
+        "kinotch_semantic/admitted": 30,
+        "preserve_unresolved/excluded_unresolved": 75,
+        "character_form/admitted": 3,
+        "kinotch_style/admitted": 18,
+        "merged_character/excluded_unresolved": 5
+      }
+    }
+  ]
+}
