@@ -1,7 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import type { KinotchProfileManifest, KinotchProfilePack, LoadedKinotchProfile } from './profile-model.ts';
-import { validateProfileDocuments } from './profile-validator.ts';
+import type {
+  KinotchProfileManifest,
+  KinotchProfilePack,
+  KinotchTokenStyleOverlay,
+  LoadedKinotchProfile
+} from './profile-model.ts';
+import { validateProfileDocuments, validateTokenStyleOverlayDocument } from './profile-validator.ts';
 
 async function readStrictJson(path: string): Promise<unknown> {
   const bytes = await readFile(path);
@@ -21,4 +26,15 @@ export async function loadKinotchProfile(rootDir: string): Promise<LoadedKinotch
     throw new Error(`Invalid KiNoTch. profile:\n${summary}`);
   }
   return { manifest, packs };
+}
+
+export async function loadKinotchTokenStyleOverlay(rootDir: string): Promise<KinotchTokenStyleOverlay> {
+  const path = resolve(rootDir, 'data', 'profiles', 'kinotch', 'token-style-overlay.json');
+  const document = await readStrictJson(path);
+  const diagnostics = validateTokenStyleOverlayDocument(document);
+  if (diagnostics.length > 0) {
+    const summary = diagnostics.map((diagnostic) => `${diagnostic.code}: ${diagnostic.message}`).join('\n');
+    throw new Error(`Invalid KiNoTch. token-style overlay:\n${summary}`);
+  }
+  return document as KinotchTokenStyleOverlay;
 }
