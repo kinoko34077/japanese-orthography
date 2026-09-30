@@ -45,7 +45,7 @@ export async function loadPhase46dNativeParseResults(rootDir: string): Promise<P
 }
 
 function canonicalJson(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+  return `${JSON.stringify(value)}\n`;
 }
 
 export async function buildPhase46dNativeArtifacts(rootDir: string) {
