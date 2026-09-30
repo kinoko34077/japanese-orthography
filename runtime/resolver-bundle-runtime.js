@@ -285,6 +285,11 @@
       lexicalLookup(surface) { return lexical.lookup(surface); },
       readingLookup(reading) { return lexical.lookupReading(reading); },
       historicalLookup,
+      historicalSurfaceLookup(surface) {
+        return typeof historicalNative.lookupSurface === "function"
+          ? historicalNative.lookupSurface(surface)
+          : null;
+      },
       contextualRelations: artifact.contextual.relations,
       contextualSafety: artifact.contextual.safety,
       safeKanjiMap: safeCharacter.characterMap

@@ -120,7 +120,7 @@
 - Exports `compileNativeKanaArtifact(intake, options)`.
 
 - [ ] **Step 1: Write RED compiler tests.** Require deterministic output, stable ordering independent of intake input order, merged evidence refs for cross-source duplicate claims, and no executable relation for a conflicting multi-target surface.
-- [ ] **Step 2: Pin surface-vs-reading semantics.** KKH `植え -> 植ゑ` compiles as rendered-surface authority. Dictionary `藍：あゐ` compiles as historical-reading authority while preserving surface `藍`. Animal/plant pure-kana or katakana entries may compile both surface and reading only when the source pair is unique.
+- [ ] **Step 2: Pin surface-vs-reading semantics.** KKH `植え -> 植ゑ` compiles as rendered-surface authority. Unique dictionary `挨拶：あいさつ` compiles as historical-reading authority while preserving surface `挨拶`; cross-source `藍：あゐ` / `藍：アヰ` remains a reading candidate set with no source-order winner. Unique animal/plant katakana `アイゴ：アヰゴ` compiles both surface and reading.
 - [ ] **Step 3: Preserve the accepted `思う` identity+morphology anchor.** Carry the current first-slice relation into the new artifact so identity+morphology precedence has a real regression case.
 - [ ] **Step 4: Run RED.** Run `node --import tsx --test test/phase46d-native-compiler.test.ts`.
 - [ ] **Step 5: Implement the compiler.** Group by semantic key, canonicalize target/evidence sets, and refuse to emit an exact relation when more than one target survives.
@@ -144,7 +144,7 @@
 - [ ] **Step 1: Write RED priority tests.** A matching lexical-identity+morphology relation wins before surface fallback; morphology mismatch does not authorize an identity relation.
 - [ ] **Step 2: Write RED exact-surface tests.** A source-complete unique KKH surface resolves exactly; an unknown lexical surface can still use a unique exact whole-surface relation; no substring search is performed.
 - [ ] **Step 3: Write RED ambiguity tests.** `味わおう` exposes an unresolved/candidate historical decision with both source targets and never selects the first source row.
-- [ ] **Step 4: Write RED historical-reading tests.** `藍` keeps rendered surface `藍` and exposes `あゐ` as historical kana; a pure-kana/katakana admitted entry may change rendered surface exactly.
+- [ ] **Step 4: Write RED historical-reading tests.** `挨拶` keeps rendered surface `挨拶` and exposes `あいさつ` as historical kana; `藍` remains an unresolved reading candidate (`あゐ` / `アヰ`); a unique pure-kana/katakana admitted entry such as `アイゴ` may change rendered surface exactly.
 - [ ] **Step 5: Implement backward-compatible native runtime indexes.** Identity/morphology index first, exact-surface index second, candidate index separate; validate evidence refs and source metadata fail closed.
 - [ ] **Step 6: Extend resolver exact-surface path.** Apply only to the full normalized unit; preserve protected input behavior, lexical candidate evidence, contextual/safe-kanji order, and current result fields. Add optional historical candidate metadata without removing existing fields.
 - [ ] **Step 7: Verify GREEN.** Run native runtime, native integration, and Phase-4.6D resolution tests.
