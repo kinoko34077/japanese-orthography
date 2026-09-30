@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   check:
@@ -18,22 +18,4 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Materialize regenerated Phase 4.6D artifacts on PR head
-        if: github.event_name == 'pull_request'
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          git fetch origin "$HEAD_REF"
-          git checkout -B "$HEAD_REF" "origin/$HEAD_REF"
-          npm run generate:native-kana
-          node --import tsx tools/native-kana-compiler.ts
-          git add             data/intake/phase46d-native-kana.json             data/reports/phase46d-native-kana-coverage.json             data/historical/native/phase46d-native-kana.json
-          if git diff --cached --quiet; then
-            echo "Generated artifacts already committed."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "data: preserve explicit native dictionary alternatives [skip ci]"
-            git push origin "HEAD:$HEAD_REF"
-          fi
       - run: npm run check
