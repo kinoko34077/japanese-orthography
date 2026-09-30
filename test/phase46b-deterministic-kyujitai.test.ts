@@ -130,7 +130,9 @@ test('4.6B pins KKH kanji-jisyo and closes new relations to official plus pinned
   assert.equal(kkh.blobSha, '95c5db9b5bacb82ab2a685f24f74fef3b32f9992');
   assert.equal(kkh.license, 'BSD-2-Clause');
 
-  const evidenceById = new Map(slice.evidenceRecords.map((entry: any) => [entry.id, entry]));
+  const evidenceById = new Map<string, any>(
+    slice.evidenceRecords.map((entry: any) => [entry.id, entry] as [string, any])
+  );
   const expected = new Map([
     ['円', ['ev-en-official', 'ev-en-kkh']],
     ['応', ['ev-ou-official', 'ev-ou-kkh']],
