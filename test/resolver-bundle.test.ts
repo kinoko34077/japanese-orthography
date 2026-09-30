@@ -23,7 +23,7 @@ async function loadUmd(path: string, globals: Record<string, unknown> = {}) {
 async function acceptedInputs() {
   const [lexicalSource, nativeSlice, sinoSlice, contextualBindingSlice, contextualManifest, contextualTaiPack, safeCharacterSlice] = await Promise.all([
     json('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
-    json('data/historical/native/kkh-kana-first-slice.json'),
+    json('data/historical/native/phase46d-native-kana.json'),
     json('data/historical/sino/kkh-jion-first-slice.json'),
     json('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
     json('data/packs/contextual-kanji/manifest.json'),
@@ -127,7 +127,28 @@ test('Phase 3 bundle reproduces accepted cross-layer semantics through one entry
   assert.equal(taifu.historical.contextualKanji.status, 'resolved');
   assert.equal(bundle.render(taifu, { mode: 'plain' }), '颱風');
 
-  assert.equal(bundle.resolveUnit('思う').kind, 'candidates');
+  const omou = bundle.resolveUnit('思う');
+  assert.equal(omou.historical.surface, '思ふ');
+
+  const ue = bundle.resolveUnit('植え');
+  assert.equal(ue.historical.surface, '植ゑ');
+
+  const aisatsu = bundle.resolveUnit('挨拶');
+  assert.equal(aisatsu.historical.surface, '挨拶');
+  assert.equal(aisatsu.historical.kana, 'あいさつ');
+
+  const aigo = bundle.resolveUnit('アイゴ');
+  assert.equal(aigo.historical.surface, 'アヰゴ');
+  assert.equal(aigo.historical.kana, 'アヰゴ');
+
+  const taste = bundle.resolveUnit('味わおう');
+  assert.equal(taste.historical.disposition, 'CANDIDATES');
+  assert.deepEqual(Array.from(taste.historical.nativeCandidates.surfaces), ['味ははう', '味はゝう']);
+
+  const ai = bundle.resolveUnit('藍');
+  assert.equal(ai.historical.disposition, 'CANDIDATES');
+  assert.deepEqual(Array.from(ai.historical.nativeCandidates.readings), ['あゐ', 'アヰ']);
+
   assert.equal(bundle.resolveUnit('今日').kind, 'candidates');
   assert.equal(bundle.resolveUnit('｜今日《きょう》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:9128');
   assert.equal(bundle.resolveUnit('｜今日《こんにち》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:13244');
