@@ -3546,16 +3546,6 @@
       ]
     },
     {
-      "surface": "えう",
-      "historicalSurface": "ゑふ",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0141"
-      ]
-    },
-    {
       "surface": "えええ",
       "historicalSurface": "えゝゝ",
       "sourceRefs": [
@@ -25774,16 +25764,6 @@
       ],
       "evidenceRefs": [
         "phase46d-kkh-kana:kana-jisyo:L4169"
-      ]
-    },
-    {
-      "surface": "まおす",
-      "historicalSurface": "まをす",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1012"
       ]
     },
     {
@@ -82023,16 +82003,6 @@
       ]
     },
     {
-      "surface": "えう",
-      "historicalReading": "ゑふ",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0141"
-      ]
-    },
-    {
       "surface": "ええ",
       "historicalReading": "ええ",
       "sourceRefs": [
@@ -83461,16 +83431,6 @@
       ],
       "evidenceRefs": [
         "phase46d-native-dictionary:phase46d-native-dictionary:entry:0969"
-      ]
-    },
-    {
-      "surface": "まおす",
-      "historicalReading": "まをす",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1012"
       ]
     },
     {
@@ -95406,16 +95366,6 @@
       ]
     },
     {
-      "surface": "候",
-      "historicalReading": "さうらふ",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0676"
-      ]
-    },
-    {
       "surface": "倦ずる",
       "historicalReading": "うんずる",
       "sourceRefs": [
@@ -99016,16 +98966,6 @@
       ]
     },
     {
-      "surface": "申す",
-      "historicalReading": "まうす",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1081"
-      ]
-    },
-    {
       "surface": "男",
       "historicalReading": "をとこ",
       "sourceRefs": [
@@ -99303,16 +99243,6 @@
       ],
       "evidenceRefs": [
         "phase46d-native-dictionary:phase46d-native-dictionary:entry:0658"
-      ]
-    },
-    {
-      "surface": "硫黄",
-      "historicalReading": "いわう",
-      "sourceRefs": [
-        "phase46d-native-dictionary"
-      ],
-      "evidenceRefs": [
-        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0064"
       ]
     },
     {
@@ -101881,6 +101811,19 @@
       ]
     },
     {
+      "surface": "えう",
+      "alternatives": [
+        "よふ",
+        "ゑふ"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0141"
+      ]
+    },
+    {
       "surface": "ええ",
       "alternatives": [
         "ええ",
@@ -102791,6 +102734,19 @@
       "evidenceRefs": [
         "phase46d-kkh-kana:kana-jisyo:L4152",
         "phase46d-kkh-kana:kana-jisyo:L4155"
+      ]
+    },
+    {
+      "surface": "まおす",
+      "alternatives": [
+        "まうす",
+        "まをす"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1012"
       ]
     },
     {
@@ -104238,6 +104194,19 @@
   ],
   "ambiguousReadingCandidates": [
     {
+      "surface": "えう",
+      "alternatives": [
+        "よふ",
+        "ゑふ"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0141"
+      ]
+    },
+    {
       "surface": "おじゃん",
       "alternatives": [
         "おじゃん",
@@ -104367,6 +104336,19 @@
       ],
       "evidenceRefs": [
         "phase46d-native-dictionary:phase46d-native-dictionary:entry:0967"
+      ]
+    },
+    {
+      "surface": "まおす",
+      "alternatives": [
+        "まうす",
+        "まをす"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1012"
       ]
     },
     {
@@ -105413,6 +105395,20 @@
       ]
     },
     {
+      "surface": "候",
+      "alternatives": [
+        "さうらふ",
+        "さふらふ",
+        "そろ"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0676"
+      ]
+    },
+    {
       "surface": "内輪",
       "alternatives": [
         "うちは",
@@ -106247,6 +106243,19 @@
       ]
     },
     {
+      "surface": "申す",
+      "alternatives": [
+        "まうす",
+        "まをす"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:1081"
+      ]
+    },
+    {
       "surface": "白菜",
       "alternatives": [
         "はくさい",
@@ -106287,6 +106296,19 @@
       ],
       "evidenceRefs": [
         "phase46d-native-dictionary:phase46d-native-dictionary:entry:0630"
+      ]
+    },
+    {
+      "surface": "硫黄",
+      "alternatives": [
+        "いわう",
+        "ゆわう"
+      ],
+      "sourceRefs": [
+        "phase46d-native-dictionary"
+      ],
+      "evidenceRefs": [
+        "phase46d-native-dictionary:phase46d-native-dictionary:entry:0064"
       ]
     },
     {
