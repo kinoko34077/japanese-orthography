@@ -35,12 +35,12 @@ node --import tsx tools/bench-lexical-runtime.ts --json
 
 ## First-slice integration fixture
 
-The repository author commands currently use `test/fixtures/integration/first-slice.json` to exercise the integration boundary before a real consumer lexical artifact and safe-character pack are adopted. The fixture explicitly supplies:
+The contextual-pack author commands still use `test/fixtures/integration/first-slice.json` to exercise the compiler/integration boundary with deliberately synthetic bindings. Separately accepted real lexical, historical, contextual-binding, and safe-character slices now prove production-shaped evidence paths; the fixture remains a deterministic build/validation surface rather than their replacement. It explicitly supplies:
 
 - a simulated `pmin-current` lexical namespace and opaque `fixture-local-*` binding IDs;
 - the external `safe-kanji/char-tai-to-dai` export required by the `台` fallback tests.
 
-These fixture bindings are **not** canonical lexical identities and are not production Pmin local IDs. They exist only to prove that source-qualified canonical evidence is bound through an explicit per-build input instead of being copied into hot runtime IDs. A future consumer build must supply its real namespace-local bindings and external-pack exports before using the generated sections.
+These fixture bindings are **not** canonical lexical identities and are not production Pmin local IDs. They exist only to prove that source-qualified canonical evidence is bound through an explicit per-build input instead of being copied into hot runtime IDs. Future production/consumer builds still need explicit real bindings and external-pack inputs for every admitted relation they activate; the bounded real acceptance slices below do not imply full-pack binding coverage.
 
 ## Real lexical evidence acceptance slice
 
@@ -98,7 +98,68 @@ When the lexical artifact has no component records, the accepted historical rela
 
 Plain input, compatible whole-word Ruby, and compatible component Ruby converge on the same lexical/historical semantic result. Rendering remains late and does not trigger a second lexical analysis.
 
-This slice does **not** import the full KKH dictionaries, choose one timeless reading for every character, expand native historical kana, expand contextual-kanji or safe-character coverage, freeze a production bundle/API, mutate consumers, or authorize release/publication.
+This slice does **not** import the full KKH dictionaries, choose one timeless reading for every character, or itself expand native historical kana/contextual-kanji/safe-character coverage. Those domains have separate bounded accepted slices below; this Sino slice still does not freeze a production bundle/API, mutate consumers, or authorize release/publication.
+
+## Source-backed native historical-kana acceptance slice
+
+`data/historical/native/kkh-kana-first-slice.json` and `runtime/historical-native-runtime.js` prove one conservative native historical-kana boundary. The accepted anchor is:
+
+```text
+思う / おもう
+  -> UniDic-CWJ 2025.12 identity unidic-cwj:2025.12:lemma:5255
+  -> lexical origin native
+  -> morphology 五段-ワア行 / 終止形-一般
+  -> pinned KKH relation 思う /思ふ ;ハ行四段
+  -> 思ふ
+```
+
+The relation is admitted only for the exact lexical identity, native origin, and terminal morphology proved by Phase 2A. Same-lemma non-terminal morphology fails closed, and surface-level lexical ambiguity remains candidates rather than being collapsed merely because candidates share a lemma. No global `う -> ふ` rule is created.
+
+The pinned KKH source also contains both `味わおう /味はゝう` and `味わおう /味ははう`. Both remain recoverable source evidence; neither is promoted to an automatic runtime relation. Full KKH ingestion, broad native coverage, consumer integration, package/API stabilization, and release/deploy/publication remain outside this bounded slice.
+
+Detailed accepted boundary: `docs/phase2a-native-slice.md`.
+
+## Real contextual-kanji lexical-binding acceptance slice
+
+`data/lexical/bindings/contextual-kanji-unidic-first-slice.json` connects one already-canonical contextual relation to the accepted real UniDic lexical path without duplicating the relation in a second corpus.
+
+Accepted anchor:
+
+```text
+台風 / たいふう
+  -> UniDic-CWJ 2025.12 identity unidic-cwj:2025.12:lemma:21903
+  -> canonical constraint-taifu / rel-taifu
+  -> 颱風
+```
+
+The contextual pack's project binding namespace `pmin-current` remains distinct from the source-qualified UniDic namespace. The binding loader validates source namespace, dictionary/version, archive-member SHA-256, lemma, surface, lexical origin, reading, and identity before producing the compiler binding.
+
+Only `constraint-taifu` is real-bound in this acceptance slice. Wrong/non-covering identity fails closed to the original `台風` with review-safe disposition. The slice creates no global `台 -> 颱` or `台 -> 臺` rule, does not fabricate real identities for unproven contextual constraints, and does not silently select unresolved candidate targets such as `合弁`.
+
+Detailed accepted boundary: `docs/phase2c-contextual-binding.md`.
+
+## Source-backed deterministic safe-character acceptance slice
+
+`data/deterministic/safe-character-first-slice.json` and `runtime/safe-character-runtime.js` establish one source-backed unconditional deterministic character-rendering relation:
+
+```text
+学 -> 學
+```
+
+The mapping is admitted from Culture Agency character-form evidence plus the repository ruling that `学 -> 學` belongs to the deterministic layer. The existing KiNoTch compatibility profile is retained only as regression evidence because its manifest explicitly says `genericSafety: not_implied`; compatibility-profile membership is not generic-safety authority.
+
+The bounded unconditional map explicitly excludes `弁` and `台`. `弁` requires lexical/sense restoration because the modern form merges multiple historical targets. `台` has a base `台(臺)` relation but also accepted contextual overrides/preserves, so any future `台 -> 臺` fallback requires guards rather than unconditional substitution.
+
+The safe-character runtime validates source/evidence closure, mapping/regression/exclusion evidence refs, one-code-point relations, duplicate modern sources, and exclusion records. Its frozen `characterMap` is injected through the existing resolver's `safeKanjiMap`; Phase 2D adds no parallel rendering pipeline.
+
+The accepted cross-layer behavior preserves contextual authority before deterministic rendering:
+
+```text
+学校 -> 學校 -> ｜學校《がくかう》
+台風 -> 颱風     # safe map contains no 台 entry
+```
+
+Detailed accepted boundary: `docs/phase2d-safe-character-slice.md`.
 
 ## Orthography resolver first slice
 
@@ -158,4 +219,17 @@ Node/VM internal copies that the runtime does not expose are explicitly marked u
 
 ## Current boundary
 
-This repository now owns canonical corpus/build-time behavior, the fixed compatibility/runtime foundation, a bounded resolver runtime proof, a bounded real-source lexical artifact/lookup acceptance path, and a bounded source-backed Sino-Japanese historical-reading acceptance path. It still does not migrate or change `txt-auto-replace`, `kinotch-api`, or any other consumer, and it does not release, deploy, or publish generated artifacts. The contextual `dist/` output, resolver semantic fixture, real lexical slice, and historical-reading slice remain development/verification surfaces rather than consumer-ready publication artifacts; broader Phase 2 coverage, full-corpus packaging, production bundle compatibility/loading and consumer integration remain later explicitly selected phases.
+Phase 2 is complete at the bounded acceptance-slice level. This repository now owns:
+
+- canonical contextual-kanji corpus/build-time behavior;
+- the fixed compatibility/runtime foundation;
+- the bounded resolver runtime proof;
+- a real-source UniDic lexical artifact/lookup acceptance path;
+- Phase 2B source-backed Sino-Japanese historical-reading resolution;
+- Phase 2A morphology-qualified native historical-kana resolution;
+- Phase 2C real lexical binding for canonical contextual restoration;
+- Phase 2D source-backed unconditional deterministic safe-character rendering.
+
+These accepted slices prove responsibility boundaries and cross-layer composition; they do **not** claim broad/full-corpus coverage or freeze the final production bundle, stable public API/package, binary format, or distribution mechanism.
+
+Phase 3 production resolver bundling, full consumer integration, stable package/API/distribution, and broader corpus expansion remain explicitly unselected. `txt-auto-replace`, `kinotch-api`, and other consumers remain unchanged/pinned by this repository work. No release, deploy, publication, credential/permission change, or generated-artifact publication is authorized by Phase 2 completion.
