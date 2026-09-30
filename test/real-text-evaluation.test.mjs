@@ -90,3 +90,24 @@ test('rejects overlapping span plans', async () => {
   const evaluator = runtime.createRealTextEvaluator(fakeBundle());
   assert.throws(() => evaluator.evaluate('学校台風', [{ start: 0, end: 2 }, { start: 1, end: 4 }]), /ordered and non-overlapping/);
 });
+
+test('does not invoke renderer for candidate or unresolved units', async () => {
+  const runtime = await loadRuntime();
+  let renderCalls = 0;
+  const bundle = {
+    resolveUnit(text) {
+      if (text === '今日') return { ...unit('candidates', text, 'CANDIDATES'), lexicalCandidates: [{ lexicalIdentity: 'a' }, { lexicalIdentity: 'b' }] };
+      return unit('unresolved', text, 'UNRESOLVED');
+    },
+    render() {
+      renderCalls += 1;
+      return 'WRONG';
+    }
+  };
+  const result = runtime.createRealTextEvaluator(bundle).evaluate('今日 未知語', [
+    { start: 0, end: 2 },
+    { start: 3, end: 6 }
+  ]);
+  assert.equal(result.renderedText, '今日 未知語');
+  assert.equal(renderCalls, 0);
+});
