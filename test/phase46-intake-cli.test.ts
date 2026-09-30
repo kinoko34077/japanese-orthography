@@ -34,7 +34,10 @@ test('intake validation CLI fails closed on undeclared source provenance', async
     snapshots: [{
       sourceId: 'declared-source',
       sourceClass: 'committed-reference',
+      repository: 'kinoko34077/japanese-orthography',
+      commit: '44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09',
       path: 'source.txt',
+      blobSha: '1111111111111111111111111111111111111111',
       coverageRole: 'candidate-only'
     }],
     records: [{
