@@ -205,7 +205,7 @@ export function parseNativeGuideHtml(html: string, sourceId: string): NativeKana
   }
 
   const records = paragraphs.slice(startIndex, stopIndex).map(record => {
-    const ruleHeading = /^(?:A|B|C)[０-９0-9]+/.test(record.text);
+    const ruleHeading = /^(?:A|B|C)[０-９0-9]+(?:\s|$)/.test(record.text);
     return {
       sourceRef: sourceId,
       sourceLocator: `${sourceId}:p${String(record.ordinal).padStart(4, '0')}`,
