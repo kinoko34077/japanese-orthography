@@ -274,9 +274,9 @@
     );
     const safeCharacter = SafeCharacterRuntime.createSafeCharacterRuntime(artifact.safeCharacterSlice);
 
-    const historicalLookup = (candidate) => {
+    const historicalLookup = (candidate, surface) => {
       const nativeRelation = historicalNative.lookup(candidate);
-      const sinoRelation = historicalSino.lookup(candidate);
+      const sinoRelation = historicalSino.lookup(candidate, surface);
       if (nativeRelation && sinoRelation) throw new Error("Resolver bundle historical route collision");
       return nativeRelation ?? sinoRelation ?? null;
     };
@@ -302,6 +302,9 @@
       capabilities,
       resolveUnit(input, options) { return resolver.resolveUnit(input, options); },
       resolveReading(input, options) { return resolver.resolveReading(input, options); },
+      resolveHistoricalSino(query) {
+        return typeof historicalSino.resolveHistoricalSino === "function" ? historicalSino.resolveHistoricalSino(query) : null;
+      },
       render(unit, options) { return resolver.render(unit, options); }
     });
   };

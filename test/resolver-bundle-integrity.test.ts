@@ -12,7 +12,7 @@ async function acceptedArtifact() {
   const [lexicalSource, nativeSlice, sinoSlice, contextualBindingSlice, contextualManifest, contextualTaiPack, safeCharacterSlice] = await Promise.all([
     json('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
     json('data/historical/native/phase46d-native-kana.json'),
-    json('data/historical/sino/kkh-jion-first-slice.json'),
+    json('data/historical/sino/phase46e-sino-kana.json'),
     json('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
     json('data/packs/contextual-kanji/manifest.json'),
     json('data/packs/contextual-kanji/merged-tai.json'),

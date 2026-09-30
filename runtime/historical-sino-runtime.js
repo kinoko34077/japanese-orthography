@@ -111,10 +111,7 @@
     };
   };
 
-  const createHistoricalSinoRuntime = (slice, options = {}) => {
-    if (slice?.schemaVersion !== "1" || slice?.kind !== "japanese-orthography-historical-sino-slice") {
-      throw new TypeError("Unsupported historical Sino slice");
-    }
+  const createLegacyRuntime = (slice, options = {}) => {
     requireNonEmptyString(slice.lexicalNamespaceId, "historical Sino lexical namespace");
     validateSource(slice.source);
     const evidenceIds = buildEvidenceIndex(slice);
@@ -144,6 +141,198 @@
       source: slice.source,
       lookup
     };
+  };
+
+
+  // --- Phase 4.6E: 字音 table component relations and word-level reconstruction ---
+
+  const VOICED = {
+    "か": "が", "き": "ぎ", "く": "ぐ", "け": "げ", "こ": "ご",
+    "さ": "ざ", "し": "じ", "す": "ず", "せ": "ぜ", "そ": "ぞ",
+    "た": "だ", "ち": "ぢ", "つ": "づ", "て": "で", "と": "ど",
+    "は": "ば", "ひ": "び", "ふ": "ぶ", "へ": "べ", "ほ": "ぼ"
+  };
+  const SEMI_VOICED = { "は": "ぱ", "ひ": "ぴ", "ふ": "ぷ", "へ": "ぺ", "ほ": "ぽ" };
+  // Modern spelling of the historical prefix left when a ふ-final reading is geminated.
+  const MODERNIZE = { "ゐ": "い", "ゑ": "え", "を": "お", "ぢ": "じ", "づ": "ず" };
+  const GEMINATING_CODAS = ["く", "き", "ち", "つ"];
+  // (C)(y/w)V plus an optional coda: the shape of one Sino-Japanese syllable.
+  const SINO_SYLLABLE = /^[ぁ-ゔ](?:[ゃゅょゎ])?(?:[いうくきちつんっ])?$/u;
+  const HAN = /^\p{Script=Han}$/u;
+  const MAX_RESULTS = 64;
+
+  const modernize = (value) => Array.from(value, (char) => MODERNIZE[char] ?? char).join("").replace(/^くゎ/u, "か").replace(/^ぐゎ/u, "が");
+
+  // Every modern surface form a table relation can take inside a word, with its historical spelling.
+  const relationForms = (modern, historical) => {
+    const base = [[modern, historical]];
+    if (GEMINATING_CODAS.includes(modern.slice(-1))) {
+      base.push([`${modern.slice(0, -1)}っ`, historical]);
+    }
+    if (historical.endsWith("ふ")) {
+      const stem = historical.slice(0, -1);
+      base.push([`${modernize(stem)}っ`, `${stem}っ`]);
+    }
+    const forms = [...base];
+    for (const [m, h] of base) {
+      for (const table of [VOICED, SEMI_VOICED]) {
+        const m0 = m[0];
+        const h0 = h[0];
+        if (table[m0] && table[h0]) forms.push([table[m0] + m.slice(1), table[h0] + h.slice(1)]);
+      }
+    }
+    return forms;
+  };
+
+  const createV2Runtime = (artifact, options = {}) => {
+    const identity = createLegacyRuntime(artifact.identitySlice, options);
+    if (artifact.lexicalNamespaceId !== identity.lexicalNamespaceId) {
+      throw new Error("Historical Sino lexical namespace mismatch");
+    }
+    if (!Array.isArray(artifact.componentRelations) || artifact.componentRelations.length === 0) {
+      throw new TypeError("Historical Sino artifact requires component relations");
+    }
+
+    const relationsByCharacter = new Map();
+    const formsByCharacter = new Map();
+    const tableForms = new Set();
+    for (const relation of artifact.componentRelations) {
+      requireNonEmptyString(relation?.character, "historical Sino component character");
+      requireNonEmptyString(relation?.modernReading, "historical Sino component modern reading");
+      if (!Array.isArray(relation?.historicalReadings) || relation.historicalReadings.length === 0) {
+        throw new TypeError("Historical Sino component requires historical readings");
+      }
+      if (!Array.isArray(relation?.evidenceRefs) || relation.evidenceRefs.length === 0) {
+        throw new TypeError("Historical Sino component requires evidence refs");
+      }
+      const list = relationsByCharacter.get(relation.character) ?? [];
+      list.push(relation);
+      relationsByCharacter.set(relation.character, list);
+      const forms = formsByCharacter.get(relation.character) ?? [];
+      for (const historical of relation.historicalReadings) {
+        for (const [modernForm, historicalForm] of relationForms(relation.modernReading, historical)) {
+          forms.push({ modernForm, historicalForm, evidenceRefs: relation.evidenceRefs });
+          tableForms.add(modernForm);
+        }
+      }
+      formsByCharacter.set(relation.character, forms);
+    }
+
+    const uniqueSorted = (values) => [...new Set(values)].sort();
+
+    // Direct component contract: (character, modern reading, optional context) -> table reading(s).
+    // `context` omitted: every usage; `context: null`: only the unqualified table entries.
+    const resolveHistoricalSino = (query = {}) => {
+      const { character, modernReading } = query;
+      const hasContext = Object.prototype.hasOwnProperty.call(query, "context") && query.context !== undefined;
+      const relations = (relationsByCharacter.get(`${character ?? ""}`.normalize("NFC")) ?? [])
+        .filter((relation) => relation.modernReading === modernReading)
+        .filter((relation) => !hasContext || (relation.context ?? null) === query.context);
+      const readings = uniqueSorted(relations.flatMap((relation) => relation.historicalReadings));
+      if (readings.length === 0) return null;
+      if (readings.length > 1) return { status: "candidates", historicalReadings: readings };
+      return {
+        status: "resolved",
+        historicalReading: readings[0],
+        evidenceRefs: uniqueSorted(relations.flatMap((relation) => relation.evidenceRefs))
+      };
+    };
+
+    // Options for one character covering one reading segment. Sounds the table does not list
+    // keep modern spelling (source rule), except geminated codas whose base reading is unknown.
+    const segmentOptions = (character, segment) => {
+      if (!SINO_SYLLABLE.test(segment)) return [];
+      const matches = (formsByCharacter.get(character) ?? []).filter((form) => form.modernForm === segment);
+      if (matches.length > 0) {
+        return matches.map((form) => ({ historical: form.historicalForm, evidenceRefs: form.evidenceRefs }));
+      }
+      if (tableForms.has(segment) || segment.endsWith("っ")) return [];
+      return [{ historical: segment, evidenceRefs: [] }];
+    };
+
+    const reconstructWord = (surface, modernReading) => {
+      const characters = Array.from(`${surface ?? ""}`.normalize("NFC"));
+      const reading = `${modernReading ?? ""}`;
+      if (characters.length === 0 || reading === "" || !characters.every((char) => HAN.test(char))) return null;
+
+      const results = new Map();
+      let overflow = false;
+      const walk = (charIndex, offset, parts, components) => {
+        if (overflow) return;
+        if (charIndex === characters.length) {
+          if (offset !== reading.length) return;
+          const historical = parts.join("");
+          if (!results.has(historical)) results.set(historical, components);
+          if (results.size > MAX_RESULTS) overflow = true;
+          return;
+        }
+        for (let end = offset + 1; end <= Math.min(reading.length, offset + 4); end += 1) {
+          const segment = reading.slice(offset, end);
+          for (const option of segmentOptions(characters[charIndex], segment)) {
+            walk(charIndex + 1, end, [...parts, option.historical], [...components, {
+              surface: characters[charIndex], modernReading: segment, historicalReading: option.historical,
+              evidenceRefs: option.evidenceRefs
+            }]);
+          }
+        }
+      };
+      walk(0, 0, [], []);
+
+      if (overflow || results.size === 0) return null;
+      const readings = [...results.keys()].sort();
+      if (readings.length > 1) return { status: "candidates", historicalReadings: readings };
+      const components = results.get(readings[0]);
+      return {
+        status: "resolved",
+        historicalReading: readings[0],
+        components,
+        evidenceRefs: uniqueSorted(components.flatMap((component) => component.evidenceRefs))
+      };
+    };
+
+    const lookup = (candidate, surface) => {
+      const relation = identity.lookup(candidate);
+      if (relation || candidate?.lexicalOrigin !== "sino" || typeof surface !== "string") return relation;
+      const reconstructed = reconstructWord(surface, candidate.reading);
+      if (!reconstructed) return null;
+      if (reconstructed.status === "candidates") {
+        return { status: "candidates", route: "sino", readings: reconstructed.historicalReadings, evidenceRefs: [] };
+      }
+      return {
+        route: "sino",
+        reading: reconstructed.historicalReading,
+        surface,
+        components: reconstructed.components.map((component) => ({
+          lexicalIdentity: null,
+          surface: component.surface,
+          lexicalReading: component.modernReading,
+          lexicalOrigin: "sino",
+          readingClass: "on",
+          historicalKana: component.historicalReading,
+          evidenceRefs: component.evidenceRefs
+        })),
+        evidenceRefs: reconstructed.evidenceRefs
+      };
+    };
+
+    return {
+      lexicalNamespaceId: identity.lexicalNamespaceId,
+      source: identity.source,
+      sources: artifact.sources,
+      lookup,
+      resolveHistoricalSino,
+      reconstructWord
+    };
+  };
+
+  const createHistoricalSinoRuntime = (document, options = {}) => {
+    if (document?.schemaVersion === "1" && document?.kind === "japanese-orthography-historical-sino-slice") {
+      return createLegacyRuntime(document, options);
+    }
+    if (document?.schemaVersion === "2" && document?.kind === "japanese-orthography-historical-sino-artifact") {
+      return createV2Runtime(document, options);
+    }
+    throw new TypeError("Unsupported historical Sino slice");
   };
 
   return { createHistoricalSinoRuntime };
