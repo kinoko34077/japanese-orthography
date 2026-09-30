@@ -68,7 +68,7 @@ function tokenStyleConsumer(overlay: KinotchTokenStyleOverlay): unknown {
     label: 'KiNoTch. token style',
     kind: 'token-rules',
     rules: [...overlay.rules]
-      .sort((a, b) => b.priority - a.priority || a.from.localeCompare(b.from, 'ja'))
+      .sort((a, b) => b.priority - a.priority || a.from.localeCompare(b.from, 'en'))
       .map((rule) => ({
         from: rule.from,
         to: rule.to,
