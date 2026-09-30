@@ -32,6 +32,7 @@
     "contextual-kanji",
     "safe-character"
   ];
+  const CONTEXTUAL_BINDING_NAMESPACE = "pmin-current";
 
   const requireNonEmptyString = (value, label) => {
     if (typeof value !== "string" || value.trim() === "") throw new TypeError(`Invalid ${label}`);
@@ -85,6 +86,9 @@
       throw new Error("Resolver bundle contextual source lexical namespace mismatch");
     }
     requireNonEmptyString(artifact.contextual?.bindingNamespaceId, "resolver bundle contextual binding namespace");
+    if (artifact.contextual.bindingNamespaceId !== CONTEXTUAL_BINDING_NAMESPACE) {
+      throw new Error("Resolver bundle contextual binding namespace mismatch");
+    }
     if (!Array.isArray(artifact.contextual?.relations) || artifact.contextual.relations.length === 0) {
       throw new Error("Resolver bundle requires contextual relations");
     }
