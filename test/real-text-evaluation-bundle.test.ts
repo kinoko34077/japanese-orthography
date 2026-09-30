@@ -78,6 +78,7 @@ test('Phase 3.5 prose fixture exposes accepted Phase 3 coverage in one trace', a
 
   const today = result.trace.find((record: any) => record.sourceText === '今日');
   assert.equal(today.kind, 'candidates');
+  assert.ok(today.lexicalCandidates.length > 1);
   assert.equal(today.renderedText, '今日');
 
   const unknown = result.trace.find((record: any) => record.sourceText === '未知語');
