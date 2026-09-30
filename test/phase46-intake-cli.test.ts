@@ -55,6 +55,33 @@ test('intake validation CLI fails closed on an unknown sourceRef', async () => {
   }
 });
 
+test('intake validation CLI rejects moving branch names as repository snapshot pins', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'phase46-intake-pin-'));
+  try {
+    await mkdir(join(root, 'data', 'intake'), { recursive: true });
+    await writeFile(join(root, 'data', 'intake', 'moving.json'), JSON.stringify({
+      schemaVersion: '1',
+      kind: 'orthography_intake_bundle',
+      snapshots: [{
+        sourceId: 'moving-source',
+        sourceClass: 'external-repository',
+        repository: 'example/source',
+        commit: 'main',
+        path: 'dictionary.txt',
+        blobSha: '0123456789abcdef0123456789abcdef01234567',
+        coverageRole: 'coverage-contract'
+      }],
+      records: []
+    }, null, 2));
+
+    const result = runValidator(root);
+    assert.notEqual(result.status, 0);
+    assert.match(`${result.stdout}\n${result.stderr}`, /E_INTAKE_UNPINNED_SOURCE/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test('package scripts put intake validation on the repository check path', async () => {
   const pkg = JSON.parse(await readFile(resolve(repositoryRoot, 'package.json'), 'utf8')) as {
     scripts: Record<string, string>;
