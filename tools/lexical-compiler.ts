@@ -69,6 +69,7 @@ export interface LexicalArtifact {
     modernReadings: string[];
   }>;
   surfaceIndex: Array<{ surface: string; candidateOffset: number; candidateCount: number }>;
+  readingIndex: Array<{ reading: string; candidateIndexes: number[] }>;
 }
 
 type CanonicalJson = null | boolean | number | string | CanonicalJson[] | { [key: string]: CanonicalJson };
@@ -241,6 +242,19 @@ export function compileLexicalSourceSlice(sourceSlice: UniDicSourceSlice): Lexic
     offset = end;
   }
 
+  // Secondary index over the same candidate records; it owns no lexical data of its own.
+  const candidateIndexesByReading = new Map<string, number[]>();
+  candidates.forEach((candidate, candidateIndex) => {
+    for (const reading of candidate.modernReadings) {
+      const indexes = candidateIndexesByReading.get(reading) ?? [];
+      indexes.push(candidateIndex);
+      candidateIndexesByReading.set(reading, indexes);
+    }
+  });
+  const readingIndex: LexicalArtifact['readingIndex'] = [...candidateIndexesByReading.entries()]
+    .sort(([a], [b]) => compareText(a, b))
+    .map(([reading, candidateIndexes]) => ({ reading, candidateIndexes }));
+
   const lexicalNamespaceId = sourceSlice.source.lexicalNamespaceId;
   const source = {
     dictionary: sourceSlice.source.dictionary,
@@ -252,7 +266,8 @@ export function compileLexicalSourceSlice(sourceSlice: UniDicSourceSlice): Lexic
     section('lemmas', lemmas),
     section('morphologies', morphologies),
     section('candidates', candidates),
-    section('surfaceIndex', surfaceIndex)
+    section('surfaceIndex', surfaceIndex),
+    section('readingIndex', readingIndex)
   ];
   const artifactContentId = sha256(orderedSerialize({
     compilerSemantics: 'unidic-cwj-pmin-slice-v1', source, lexicalNamespaceId, sections
@@ -269,7 +284,8 @@ export function compileLexicalSourceSlice(sourceSlice: UniDicSourceSlice): Lexic
     lemmas,
     morphologies,
     candidates,
-    surfaceIndex
+    surfaceIndex,
+    readingIndex
   };
 }
 

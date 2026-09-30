@@ -289,44 +289,29 @@
     };
   };
 
+  const protectedUnit = (sourceText) => ({
+    kind: "protected",
+    sourceText,
+    sourceSurface: sourceText,
+    lexicalIdentity: null,
+    reading: { modernSurface: null, source: "protected" },
+    lexicalOrigin: "unknown",
+    morphology: null,
+    components: [],
+    historical: emptyHistorical(sourceText, "PRESERVE"),
+    evidenceRefs: []
+  });
+
   const createResolver = (config = {}) => {
     if (typeof config.lexicalLookup !== "function") {
       throw new TypeError("createResolver requires lexicalLookup(surface)");
     }
 
-    const resolveUnit = (input, options = {}) => {
-      const evidence = normalizeInputEvidence(input);
-
-      if (options.protected === true) {
-        return {
-          kind: "protected",
-          sourceText: evidence.sourceText,
-          sourceSurface: evidence.sourceText,
-          lexicalIdentity: null,
-          reading: { modernSurface: null, source: "protected" },
-          lexicalOrigin: "unknown",
-          morphology: null,
-          components: [],
-          historical: emptyHistorical(evidence.sourceText, "PRESERVE"),
-          evidenceRefs: []
-        };
-      }
-
-      const lookupResult = config.lexicalLookup(evidence.baseSurface) ?? [];
-      const candidates = Array.isArray(lookupResult) && evidence.wholeRuby?.reading
-        ? lookupResult.filter((candidate) => (candidate?.reading === evidence.wholeRuby.reading || (Array.isArray(candidate?.modernReadings) && candidate.modernReadings.includes(evidence.wholeRuby.reading))))
-        : lookupResult;
-      if (!Array.isArray(candidates) || candidates.length !== 1) {
-        return unresolvedUnit(evidence, Array.isArray(candidates) ? candidates : []);
-      }
-
-      const candidate = candidates[0];
-      const reading = evidence.wholeRuby
-        ? { modernSurface: evidence.wholeRuby.reading, source: "ruby-word" }
-        : { modernSurface: candidate.reading ?? null, source: candidate.reading ? "lexical" : "unknown" };
+    // The single semantic path shared by every analysis route (surface, reading).
+    const resolveCandidate = (evidence, candidate, lexicalSurface, reading) => {
       const historicalResolution = resolveHistorical(
         candidate,
-        evidence.baseSurface,
+        lexicalSurface,
         candidate.components ?? [],
         config
       );
@@ -348,6 +333,52 @@
           ...(candidate.evidenceRefs ?? []),
           ...(historicalResolution.historical.evidenceRefs ?? [])
         ]
+      };
+    };
+
+    const resolveUnit = (input, options = {}) => {
+      const evidence = normalizeInputEvidence(input);
+
+      if (options.protected === true) {
+        return protectedUnit(evidence.sourceText);
+      }
+
+      const lookupResult = config.lexicalLookup(evidence.baseSurface) ?? [];
+      const candidates = Array.isArray(lookupResult) && evidence.wholeRuby?.reading
+        ? lookupResult.filter((candidate) => (candidate?.reading === evidence.wholeRuby.reading || (Array.isArray(candidate?.modernReadings) && candidate.modernReadings.includes(evidence.wholeRuby.reading))))
+        : lookupResult;
+      if (!Array.isArray(candidates) || candidates.length !== 1) {
+        return unresolvedUnit(evidence, Array.isArray(candidates) ? candidates : []);
+      }
+
+      const candidate = candidates[0];
+      const reading = evidence.wholeRuby
+        ? { modernSurface: evidence.wholeRuby.reading, source: "ruby-word" }
+        : { modernSurface: candidate.reading ?? null, source: candidate.reading ? "lexical" : "unknown" };
+      return resolveCandidate(evidence, candidate, evidence.baseSurface, reading);
+    };
+
+    // Reading input: candidates come from the reading index and enter the same
+    // semantic path directly; no reconstructed string is re-looked-up.
+    const resolveReading = (input, options = {}) => {
+      const sourceText = `${input ?? ""}`;
+      if (options.protected === true) {
+        return protectedUnit(sourceText);
+      }
+      if (typeof config.readingLookup !== "function") {
+        throw new TypeError("resolveReading requires readingLookup(reading)");
+      }
+      const evidence = { sourceText, baseSurface: sourceText, wholeRuby: null, componentRuby: [] };
+      const lookupResult = config.readingLookup(sourceText) ?? [];
+      const candidates = Array.isArray(lookupResult) ? lookupResult : [];
+      if (candidates.length !== 1 || typeof candidates[0]?.surface !== "string") {
+        return unresolvedUnit(evidence, candidates);
+      }
+
+      const candidate = candidates[0];
+      return {
+        ...resolveCandidate(evidence, candidate, candidate.surface, { modernSurface: sourceText, source: "reading-input" }),
+        reconstructedSurface: candidate.surface
       };
     };
 
@@ -392,6 +423,7 @@
 
     return {
       resolveUnit,
+      resolveReading,
       render
     };
   };

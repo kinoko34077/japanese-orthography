@@ -9,13 +9,13 @@
 
   const compareText = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 
-  const findSurface = (surfaceIndex, surface) => {
+  const findEntry = (index, key, value) => {
     let low = 0;
-    let high = surfaceIndex.length - 1;
+    let high = index.length - 1;
     while (low <= high) {
       const mid = (low + high) >> 1;
-      const entry = surfaceIndex[mid];
-      const cmp = compareText(entry.surface, surface);
+      const entry = index[mid];
+      const cmp = compareText(entry[key], value);
       if (cmp === 0) return entry;
       if (cmp < 0) low = mid + 1;
       else high = mid - 1;
@@ -38,6 +38,7 @@
     const morphologies = Array.isArray(artifact.morphologies) ? artifact.morphologies : [];
     const candidates = Array.isArray(artifact.candidates) ? artifact.candidates : [];
     const surfaceIndex = Array.isArray(artifact.surfaceIndex) ? artifact.surfaceIndex : [];
+    const readingIndex = Array.isArray(artifact.readingIndex) ? artifact.readingIndex : [];
 
     const decodeCandidate = (record) => {
       const lemma = lemmas[record.lemmaIndex];
@@ -65,7 +66,7 @@
     };
 
     const lookup = (surface) => {
-      const entry = findSurface(surfaceIndex, `${surface ?? ""}`);
+      const entry = findEntry(surfaceIndex, "surface", `${surface ?? ""}`);
       if (!entry) return [];
       const start = entry.candidateOffset;
       const end = start + entry.candidateCount;
@@ -75,10 +76,38 @@
       return candidates.slice(start, end).map(decodeCandidate);
     };
 
+    let surfaceByCandidate = null;
+    const candidateSurface = (candidateIndex) => {
+      if (surfaceByCandidate === null) {
+        surfaceByCandidate = new Array(candidates.length).fill(null);
+        for (const entry of surfaceIndex) {
+          for (let offset = 0; offset < entry.candidateCount; offset += 1) {
+            surfaceByCandidate[entry.candidateOffset + offset] = entry.surface;
+          }
+        }
+      }
+      return surfaceByCandidate[candidateIndex] ?? null;
+    };
+
+    // Reading evidence resolves to the same candidate records as surface lookup;
+    // every match is returned so callers never pick a winner by storage order.
+    const lookupReading = (reading) => {
+      const entry = findEntry(readingIndex, "reading", `${reading ?? ""}`);
+      if (!entry) return [];
+      const indexes = Array.isArray(entry.candidateIndexes) ? entry.candidateIndexes : [];
+      return indexes.map((candidateIndex) => {
+        if (!Number.isInteger(candidateIndex) || candidateIndex < 0 || candidateIndex >= candidates.length) {
+          throw new Error("Lexical artifact reading index is out of bounds");
+        }
+        return { ...decodeCandidate(candidates[candidateIndex]), surface: candidateSurface(candidateIndex) };
+      });
+    };
+
     return {
       lexicalNamespaceId: artifact.lexicalNamespaceId,
       artifactContentId: artifact.artifactContentId,
-      lookup
+      lookup,
+      lookupReading
     };
   };
 
