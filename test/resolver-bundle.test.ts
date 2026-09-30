@@ -145,7 +145,7 @@ test('Phase 3 runtime rejects partial, malformed, and cross-namespace bundle act
   missingSection.sections = missingSection.sections.filter((section: any) => section.id !== 'safe-character');
   assert.throws(() => create(missingSection), /Missing resolver bundle section: safe-character/);
 
-  const missingCapability = structuredClone(artifact);
+  const missingCapability: any = structuredClone(artifact);
   missingCapability.capabilities = missingCapability.capabilities.filter((value: string) => value !== 'safe-character');
   assert.throws(() => create(missingCapability), /capability declaration mismatch/);
 
@@ -156,6 +156,10 @@ test('Phase 3 runtime rejects partial, malformed, and cross-namespace bundle act
   const wrongContextualNamespace = structuredClone(artifact);
   wrongContextualNamespace.contextual.sourceLexicalNamespaceId = 'wrong-namespace';
   assert.throws(() => create(wrongContextualNamespace), /contextual source lexical namespace mismatch/);
+
+  const wrongBindingNamespace = structuredClone(artifact);
+  wrongBindingNamespace.contextual.bindingNamespaceId = 'other-binding-namespace';
+  assert.throws(() => create(wrongBindingNamespace), /contextual binding namespace mismatch/);
 
   const invalidSafeSlice = structuredClone(artifact);
   invalidSafeSlice.safeCharacterSlice.schemaVersion = '999';
