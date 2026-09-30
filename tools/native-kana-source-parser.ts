@@ -220,15 +220,14 @@ export function parseNativeGuideHtml(html: string, sourceId: string): NativeKana
   const claimedRaw = rawStop > rawStart ? html.slice(rawStart, rawStop) : '';
   const remainders: NativeKanaParserRemainder[] = [];
 
-  for (const [index, match] of [...claimedRaw.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi)].entries()) {
-    const item = stripHtml(match[1]!);
-    if (/=>|→|⇒|⇔/.test(item)) {
-      remainders.push({
-        sourceRecordId: `${sourceId}:unknown-list:${String(index + 1).padStart(4, '0')}`,
-        kind: 'mapping',
-        detail: item
-      });
-    }
+  const unclaimedRaw = claimedRaw.replace(/<p\b[^>]*>[\s\S]*?<\/p>/gi, '');
+  const unclaimedText = stripHtml(unclaimedRaw);
+  if (/=>|→|⇒|⇔/.test(unclaimedText)) {
+    remainders.push({
+      sourceRecordId: `${sourceId}:unknown-structure:0001`,
+      kind: 'mapping',
+      detail: unclaimedText
+    });
   }
 
   return result(records, remainders);
