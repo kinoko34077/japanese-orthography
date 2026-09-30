@@ -1,5 +1,10 @@
 import { createHash } from 'node:crypto';
-import type { KinotchProfilePack, LoadedKinotchProfile, ProfilePhraseRule } from './profile-model.ts';
+import type {
+  KinotchProfilePack,
+  KinotchTokenStyleOverlay,
+  LoadedKinotchProfile,
+  ProfilePhraseRule
+} from './profile-model.ts';
 import { computeProfileSourceDigest, sha256Text, stableProfileSerialize } from './profile-normalize.ts';
 
 export type ProfileArtifactFileName =
@@ -9,6 +14,12 @@ export type ProfileArtifactFileName =
   | '55-homophone-kanji.json5';
 
 export type CompiledProfileArtifact = Record<ProfileArtifactFileName, string>;
+
+export type TokenStyleOverlayArtifactFileName =
+  | 'manifest.json'
+  | '20-kinotch-token-style.json5';
+
+export type CompiledTokenStyleOverlayArtifact = Record<TokenStyleOverlayArtifactFileName, string>;
 
 const bridgeFiles = [
   ['legacy-kanji', '40-legacy-kanji.json5'],
@@ -51,6 +62,22 @@ function consumerPack(pack: KinotchProfilePack): unknown {
   };
 }
 
+function tokenStyleConsumer(overlay: KinotchTokenStyleOverlay): unknown {
+  return {
+    id: 'kinotch-token-style',
+    label: 'KiNoTch. token style',
+    kind: 'token-rules',
+    rules: [...overlay.rules]
+      .sort((a, b) => b.priority - a.priority || a.from.localeCompare(b.from, 'ja'))
+      .map((rule) => ({
+        from: rule.from,
+        to: rule.to,
+        type: 'literal',
+        priority: rule.priority
+      }))
+  };
+}
+
 function serializeConsumer(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
@@ -90,5 +117,37 @@ export function compileKinotchProfile(profile: LoadedKinotchProfile): CompiledPr
   return {
     'manifest.json': serializeConsumer(manifest),
     ...payloads
+  };
+}
+
+export function compileKinotchTokenStyleOverlay(
+  overlay: KinotchTokenStyleOverlay
+): CompiledTokenStyleOverlayArtifact {
+  const payload = serializeConsumer(tokenStyleConsumer(overlay));
+  const canonicalSourceDigest = sha256Text(stableProfileSerialize(overlay));
+  const artifactGeneration = createHash('sha256')
+    .update(`kinotch-token-style-overlay-v1:${canonicalSourceDigest}`, 'utf8')
+    .digest('hex');
+  const files = [{
+    path: '20-kinotch-token-style.json5' as const,
+    payloadDigest: sha256Text(payload),
+    byteLength: Buffer.byteLength(payload, 'utf8')
+  }];
+  const manifest = {
+    artifactSchemaVersion: '1',
+    profileId: overlay.profileId,
+    authority: overlay.authority,
+    responsibility: overlay.responsibility,
+    genericSafety: overlay.genericSafety,
+    packId: overlay.packId,
+    buildSourceIdentity: 'canonical-content-addressed',
+    artifactGeneration,
+    canonicalSourceDigest,
+    adoptedSource: overlay.sourceSnapshot,
+    files
+  };
+  return {
+    'manifest.json': serializeConsumer(manifest),
+    '20-kinotch-token-style.json5': payload
   };
 }
