@@ -84,7 +84,7 @@ test('accepted safe-character slice loads in browser-class and Worker-class sand
   assert.ok(slice);
   for (const globals of [{ window: {} }, { self: {} }]) {
     const sandbox = await loadRuntime(globals);
-    const runtime = sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(slice);
+    const runtime: { apply(value: string): string } = sandbox.SafeCharacterRuntime.createSafeCharacterRuntime(slice);
     assert.equal(runtime.apply('学校'), '學校');
   }
 });
