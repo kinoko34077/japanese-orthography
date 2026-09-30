@@ -34,6 +34,10 @@ export interface NativeKanaParseResult {
   remainders: NativeKanaParserRemainder[];
 }
 
+export function decodeNativeKanaHtml(bytes: Uint8Array): string {
+  return new TextDecoder('shift_jis', { fatal: true }).decode(bytes);
+}
+
 function requireSourceId(sourceId: string): void {
   if (typeof sourceId !== 'string' || sourceId.trim() === '') {
     throw new TypeError('Native kana parser requires a non-empty source id');

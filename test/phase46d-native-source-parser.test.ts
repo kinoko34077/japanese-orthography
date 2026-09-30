@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
+  decodeNativeKanaHtml,
   parseColonDictionaryHtml,
   parseExceptionVerbHtml,
   parseKkhKanaJisyo,
@@ -20,6 +21,10 @@ const KKH_LICENSE_PATH = 'data/sources/kkh/19b24f88ab55809a186d88c465959548495b2
 
 async function text(path: string) {
   return readFile(path, 'utf8');
+}
+
+async function nativeHtml(path: string) {
+  return decodeNativeKanaHtml(await readFile(path));
 }
 
 function gitBlobSha(content: string): string {
@@ -64,14 +69,21 @@ test('pinned KKH kana-jisyo extraction accounts for every mapping-shaped record'
 
 test('vendored KKH source carries the pinned BSD-2-Clause license', async () => {
   const license = await text(KKH_LICENSE_PATH);
-  assert.match(license, /BSD 2-Clause License/i);
+  assert.equal(
+    createHash('sha1')
+      .update(Buffer.from(`blob ${Buffer.byteLength(license, 'utf8')}\0`, 'utf8'))
+      .update(Buffer.from(license, 'utf8'))
+      .digest('hex'),
+    '57c61c968c2a7bf4ce6752e30b64da04df9c66f4'
+  );
   assert.match(license, /Redistribution and use in source and binary forms/);
+  assert.equal((license.match(/Redistributions?/g) ?? []).length >= 2, true);
 });
 
 test('committed colon dictionaries expose stable source ordinals and exact inventory counts', async () => {
   const [dictionaryHtml, animalHtml] = await Promise.all([
-    text('仮名遣等資料/仮名遣い辞典本文.html'),
-    text('仮名遣等資料/動物名・植物名歴史的仮名遣い辞典.html')
+    nativeHtml('仮名遣等資料/仮名遣い辞典本文.html'),
+    nativeHtml('仮名遣等資料/動物名・植物名歴史的仮名遣い辞典.html')
   ]);
 
   const dictionary = parseColonDictionaryHtml(dictionaryHtml, DICTIONARY_SOURCE_ID);
@@ -101,8 +113,8 @@ test('committed colon dictionaries expose stable source ordinals and exact inven
 
 test('exception verbs and native guide are fully countable without inventing mappings', async () => {
   const [exceptionHtml, guideHtml] = await Promise.all([
-    text('仮名遣等資料/例外動詞一覧：歴史的仮名遣い教室.html'),
-    text('仮名遣等資料/歴史的仮名遣いで書きたい.html')
+    nativeHtml('仮名遣等資料/例外動詞一覧：歴史的仮名遣い教室.html'),
+    nativeHtml('仮名遣等資料/歴史的仮名遣いで書きたい.html')
   ]);
 
   const exceptions = parseExceptionVerbHtml(exceptionHtml, EXCEPTION_SOURCE_ID);
@@ -128,7 +140,7 @@ test('exception verbs and native guide are fully countable without inventing map
 test('KKH malformed mapping syntax and unknown guide transformation structures become mapping remainders', async () => {
   const [kkh, guideHtml] = await Promise.all([
     text(KKH_PATH),
-    text('仮名遣等資料/歴史的仮名遣いで書きたい.html')
+    nativeHtml('仮名遣等資料/歴史的仮名遣いで書きたい.html')
   ]);
 
   const malformedKkh = kkh.replace('植え /植ゑ ;ワ行下二段', '植え / ;ワ行下二段');
