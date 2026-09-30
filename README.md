@@ -161,6 +161,26 @@ The accepted cross-layer behavior preserves contextual authority before determin
 
 Detailed accepted boundary: `docs/phase2d-safe-character-slice.md`.
 
+## Production resolver bundle acceptance slice
+
+`tools/resolver-bundle.ts` and `runtime/resolver-bundle-runtime.js` form the bounded Phase 3 production resolver bundle path. The build-time artifact selects the accepted lexical, native historical, Sino historical, real-bound contextual and safe-character sections and records deterministic section/content identities plus a bundle content ID.
+
+Activation is atomic at the full-bundle capability level: supported schema/semantics, required capabilities/sections, lexical section identity, native/Sino lexical namespace agreement, Phase 2C source lexical namespace and `pmin-current` binding namespace, required runtime modules, contextual sections and the safe-character slice must all validate before one resolver is returned. Missing or incompatible required sections fail closed rather than silently producing a partial object that still claims the full bundle.
+
+The activated bundle keeps the existing analysis-first / late-rendering pipeline and reproduces the accepted cross-layer behavior through one entry point:
+
+```text
+学校 -> 學校 / ｜學校《がくかう》
+台風 -> 颱風
+今日 -> candidates unless Ruby reading evidence narrows it
+未知語 -> unresolved
+protected input -> preserved
+```
+
+Plain `思う` remains ambiguous in the bounded UniDic slice; Phase 3 does not weaken the Phase 2A morphology/ambiguity boundary merely to force an automatic `思ふ` result. The bundle runtime is exercised in browser-class and Worker-class sandboxes.
+
+Detailed accepted boundary: `docs/phase3-resolver-bundle.md`.
+
 ## Orthography resolver first slice
 
 `runtime/orthography-resolver.js` is the first bounded proof of the repository's analysis-first / late-rendering architecture. It accepts lexical and historical evidence through injected adapters/data and reuses `TransformShared` for Ruby parsing; it does not adopt a production tokenizer or dictionary.
@@ -219,17 +239,17 @@ Node/VM internal copies that the runtime does not expose are explicitly marked u
 
 ## Current boundary
 
-Phase 2 is complete at the bounded acceptance-slice level. This repository now owns:
+Phase 3 is complete at the bounded production-resolver-bundle acceptance-slice level. This repository now owns:
 
 - canonical contextual-kanji corpus/build-time behavior;
 - the fixed compatibility/runtime foundation;
-- the bounded resolver runtime proof;
 - a real-source UniDic lexical artifact/lookup acceptance path;
 - Phase 2B source-backed Sino-Japanese historical-reading resolution;
 - Phase 2A morphology-qualified native historical-kana resolution;
 - Phase 2C real lexical binding for canonical contextual restoration;
-- Phase 2D source-backed unconditional deterministic safe-character rendering.
+- Phase 2D source-backed unconditional deterministic safe-character rendering;
+- Phase 3 deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
 
-These accepted slices prove responsibility boundaries and cross-layer composition; they do **not** claim broad/full-corpus coverage or freeze the final production bundle, stable public API/package, binary format, or distribution mechanism.
+These accepted slices prove responsibility boundaries, cross-layer composition and one production-shaped activation contract. They do **not** claim broad/full-corpus production coverage or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
 
-Phase 3 production resolver bundling, full consumer integration, stable package/API/distribution, and broader corpus expansion remain explicitly unselected. `txt-auto-replace`, `kinotch-api`, and other consumers remain unchanged/pinned by this repository work. No release, deploy, publication, credential/permission change, or generated-artifact publication is authorized by Phase 2 completion.
+Phase 4 `txt-auto-replace` integration, Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader corpus expansion remain explicitly unselected. Consumers remain unchanged/pinned by this repository work. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by Phase 3 completion.
