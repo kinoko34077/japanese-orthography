@@ -231,3 +231,33 @@ test('mixed native channels preserve an exact reading while exposing surface can
   assert.equal(resolved.historical.kana, 'うぢうぢ');
   assert.deepEqual(Array.from(resolved.historical.nativeCandidates.surfaces), ['うじ〳〵', 'うぢうぢ']);
 });
+
+
+test('mixed native exact data also survives the unique lexical-candidate path', async () => {
+  const [{ runtime }, resolverSandbox] = await Promise.all([
+    phase46dRuntime(),
+    loadRuntime('runtime/orthography-resolver.js')
+  ]);
+  const lexicalCandidate = {
+    lexicalIdentity: 'test:native:mixed-channel',
+    lexicalOrigin: 'native',
+    morphology: null,
+    components: [],
+    evidenceRefs: ['test:lexical:mixed-channel']
+  };
+  const resolver = resolverSandbox.OrthographyResolver.createResolver({
+    lexicalLookup() { return [lexicalCandidate]; },
+    historicalLookup() { return null; },
+    historicalSurfaceLookup(surface: string) { return runtime.lookupSurface(surface); }
+  });
+
+  const surfaceExact = resolver.resolveUnit('向こう');
+  assert.equal(surfaceExact.historical.disposition, 'CANDIDATES');
+  assert.equal(surfaceExact.historical.surface, '向かう');
+  assert.deepEqual(Array.from(surfaceExact.historical.nativeCandidates.readings), ['むかう', 'むかふ']);
+
+  const readingExact = resolver.resolveUnit('うじうじ');
+  assert.equal(readingExact.historical.disposition, 'CANDIDATES');
+  assert.equal(readingExact.historical.kana, 'うぢうぢ');
+  assert.deepEqual(Array.from(readingExact.historical.nativeCandidates.surfaces), ['うじ〳〵', 'うぢうぢ']);
+});
