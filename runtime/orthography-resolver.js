@@ -453,12 +453,14 @@
       const candidates = Array.isArray(lookupResult) && evidence.wholeRuby?.reading
         ? lookupResult.filter((candidate) => (candidate?.reading === evidence.wholeRuby.reading || (Array.isArray(candidate?.modernReadings) && candidate.modernReadings.includes(evidence.wholeRuby.reading))))
         : lookupResult;
-      if (!Array.isArray(candidates) || candidates.length !== 1) {
-        return resolveSurfaceFallbackUnit(
-          evidence,
-          Array.isArray(candidates) ? candidates : [],
-          config
-        );
+      if (!Array.isArray(candidates)) {
+        return unresolvedUnit(evidence, []);
+      }
+      if (candidates.length === 0) {
+        return resolveSurfaceFallbackUnit(evidence, [], config);
+      }
+      if (candidates.length !== 1) {
+        return unresolvedUnit(evidence, candidates);
       }
 
       const candidate = candidates[0];
