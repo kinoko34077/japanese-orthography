@@ -71,7 +71,7 @@ test('authority closure rejects candidate collapse and excluded hot authority', 
 test('authority closure rejects incomplete Phase 4.6 metadata pairs', async () => {
   const [workspace, intake] = await canonicalPair();
   const relation = firstLinkedRelation(workspace);
-  relation.value.responsibility = undefined;
+  delete relation.value.responsibility;
 
   const diagnostics = validatePhase46AuthorityClosure(workspace, intake);
   assert.ok(diagnostics.some((item) => item.code === 'E_PHASE46_AUTHORITY_LINK_INCOMPLETE'));
