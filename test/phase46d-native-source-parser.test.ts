@@ -163,3 +163,25 @@ test('native guide parser reports mapping-like table drift instead of silently d
     'mapping-like table drift inside the claimed A1-C2 section must fail closed'
   );
 });
+
+
+test('native guide parser reports mapping-like div drift instead of silently dropping it', async () => {
+  const parser = await loadParser();
+  assert.ok(parser, 'native kana parser module must exist');
+
+  const original = await sourceText('仮名遣等資料/歴史的仮名遣いで書きたい.html');
+  const boundary = '<hr>\n        <p align="left"><font size="5"><strong>以上和語について</strong></font></p>';
+  const guide = original.replace(
+    boundary,
+    `<div data-phase46d-drift>現代⇒歴史</div>\n        ${boundary}`
+  );
+  assert.notEqual(guide, original);
+
+  const result = parser.parseNativeGuideHtml(guide, 'phase46d-native-guide');
+  assert.ok(
+    result.remainders.some((item: any) => (
+      item.kind === 'mapping' && String(item.detail ?? '').includes('現代⇒歴史')
+    )),
+    'mapping-like unclaimed structural drift inside the claimed A1-C2 section must fail closed'
+  );
+});
