@@ -47,6 +47,7 @@
     kind: result?.kind ?? "unresolved",
     disposition: result?.historical?.disposition ?? null,
     lexicalIdentity: result?.lexicalIdentity ?? null,
+    lexicalCandidates: Array.isArray(result?.lexicalCandidates) ? result.lexicalCandidates : [],
     reading: result?.reading ?? { modernSurface: null, source: "unknown" },
     historical: {
       route: result?.historical?.route ?? null,
@@ -67,6 +68,7 @@
     kind: "literal",
     disposition: "PRESERVE",
     lexicalIdentity: null,
+    lexicalCandidates: [],
     reading: null,
     historical: null,
     evidenceRefs: []
