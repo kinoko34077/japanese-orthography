@@ -134,6 +134,10 @@ Detailed original anchor boundary: `docs/phase2a-native-slice.md`. Phase-4.6D de
 
 The companion `字音仮名_まとめ.xlsx` and KKH `jion-jisyo` are not used as inputs.
 
+## KiNoTch consumer rule responsibilities (Phase 4.6F)
+
+`data/intake/phase46f-kinotch-profile.json` assigns a Phase-4.6 responsibility to each of the 373 active KiNoTch-local relations in `txt-auto-replace@198f856` stages 10/15/20/30/31/60 (vendored under `data/sources/txt-auto-replace/`, blob-verified by `validate:kinotch-profile-intake`). Project style and semantic rules stay `kinotch_style` / `kinotch_semantic`; Stage-60 kyujitai candidates stay `character_form` / excluded until individually admitted, and only relations already in the deterministic safe map are admitted. This is classification only: no consumer or resolver behavior changes.
+
 ## Real contextual-kanji lexical-binding acceptance slice
 
 `data/lexical/bindings/contextual-kanji-unidic-first-slice.json` connects one already-canonical contextual relation to the accepted real UniDic lexical path without duplicating the relation in a second corpus.
