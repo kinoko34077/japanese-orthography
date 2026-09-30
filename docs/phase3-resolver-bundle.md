@@ -9,7 +9,7 @@ Phase 3 packages the already-accepted Phase 1/2 evidence paths behind one atomic
 `tools/resolver-bundle.ts` builds one JSON-serializable artifact from the accepted inputs:
 
 - compiled UniDic lexical artifact;
-- Phase 2A native historical-kana slice;
+- Phase 4.6D native historical-kana artifact (retaining the Phase 2A identity+morphology anchor);
 - Phase 2B Sino-Japanese historical-reading slice;
 - Phase 2C real-bound canonical `rel-taifu` contextual relation;
 - Phase 2D safe-character slice.
@@ -39,7 +39,7 @@ Required checks include:
 - complete capability declaration;
 - all required section identities present and non-duplicated;
 - lexical artifact identity matches the lexical section identity;
-- Phase 2A and Phase 2B lexical namespaces match the lexical artifact;
+- Phase 4.6D native artifact and Phase 2B Sino slice lexical namespaces match the lexical artifact;
 - Phase 2C source lexical namespace matches the lexical artifact;
 - Phase 2C binding namespace remains the accepted `pmin-current` contract;
 - contextual relations/safety sections are present;
@@ -54,7 +54,8 @@ After validation the runtime constructs the accepted component runtimes and inje
 
 ```text
 lexical lookup
-  -> native/Sino historical router
+  -> native identity+morphology / exact whole-surface resolution
+  -> Sino historical router
   -> contextual relation resolution
   -> deterministic safe-character rendering
   -> existing late serializers
@@ -68,6 +69,11 @@ The historical router preserves the existing lexical-origin separation. A candid
 学校 -> 學校
 学校 -> ｜學校《がくかう》
 台風 -> 颱風
+植え -> 植ゑ
+挨拶 -> ｜挨拶《あいさつ》
+アイゴ -> ｜アヰゴ《アヰゴ》
+味わおう -> native surface candidates
+藍 -> native reading candidates
 今日 -> candidates
 ｜今日《きょう》 -> accepted きょう lexical identity
 ｜今日《こんにち》 -> accepted こんにち lexical identity
@@ -75,7 +81,7 @@ The historical router preserves the existing lexical-origin separation. A candid
 protected input -> preserved without semantic transformation
 ```
 
-Plain `思う` remains ambiguous in the accepted UniDic slice. Phase 3 does not weaken the Phase 2A rule merely to force `思ふ`; the native relation remains available only at the already-proved lexical/morphology boundary.
+Plain `思う` remains ambiguous in the accepted UniDic slice because multiple lexical candidates are not collapsed by exact-surface fallback. The original Phase-2A identity+morphology relation remains available for a uniquely identified compatible candidate, while Phase 4.6D adds source-complete exact-surface/reading authority and explicit candidate indexes for the selected pinned native-kana snapshots.
 
 The same bundle runtime is exercised in browser-class and Worker-class VM sandboxes.
 
@@ -83,7 +89,7 @@ The same bundle runtime is exercised in browser-class and Worker-class VM sandbo
 
 Phase 3 does not:
 
-- broaden any lexical, historical, contextual or character corpus;
+- broaden lexical, Sino, contextual or character authority beyond their accepted scopes, or claim native coverage beyond the selected Phase-4.6D snapshots;
 - claim full-corpus production coverage;
 - change `txt-auto-replace`, `kinotch-api`, or another consumer;
 - freeze a stable public package/API, binary format or distribution mechanism;
