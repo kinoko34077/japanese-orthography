@@ -9,9 +9,12 @@ import { compileLexicalSourceSlice, type UniDicSourceSlice } from '../tools/lexi
 const lexicalNamespaceId = '6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144';
 const taifuIdentity = 'unidic-cwj:2025.12:lemma:21903';
 const bindingSlicePath = 'data/lexical/bindings/contextual-kanji-unidic-first-slice.json';
+const lexicalSourcePath = 'data/lexical/sources/unidic-cwj-202512-first-slice.json';
 
-async function loadJson(path: string) {
-  return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
+function loadJson(path: typeof lexicalSourcePath): Promise<UniDicSourceSlice>;
+function loadJson(path: string): Promise<Record<string, any>>;
+async function loadJson(path: string): Promise<Record<string, any> | UniDicSourceSlice> {
+  return JSON.parse(await readFile(path, 'utf8')) as Record<string, any> | UniDicSourceSlice;
 }
 
 async function loadBindingSliceFile(): Promise<ContextualLexicalBindingSlice> {
@@ -50,7 +53,7 @@ async function compileCanonicalTaifuRelations() {
   const [tool, slice, lexicalSource, manifest, taiPack] = await Promise.all([
     loadBindingTool(),
     loadBindingSliceFile(),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
+    loadJson(lexicalSourcePath),
     loadJson('data/packs/contextual-kanji/manifest.json'),
     loadJson('data/packs/contextual-kanji/merged-tai.json')
   ]);
@@ -91,7 +94,7 @@ test('validated contextual bindings are derived only from the accepted UniDic so
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
     loadBindingSliceFile(),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
+    loadJson(lexicalSourcePath)
   ]);
   assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
 
@@ -104,7 +107,7 @@ test('contextual binding validation fails closed on namespace and source-record 
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
     loadBindingSliceFile(),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
+    loadJson(lexicalSourcePath)
   ]);
   assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
 
@@ -129,7 +132,7 @@ test('real contextual bindings overlay only the admitted anchor and preserve unp
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
     loadBindingSliceFile(),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
+    loadJson(lexicalSourcePath)
   ]);
   assert.equal(typeof tool?.overlayContextualCompilationBindings, 'function');
 
@@ -175,10 +178,10 @@ test('compiled canonical rel-taifu resolves only the matching real lexical candi
   const [lexicalSandbox, resolverSandbox, lexicalSource, contextualRelations] = await Promise.all([
     loadRuntime('runtime/lexical-runtime.js'),
     loadRuntime('runtime/orthography-resolver.js'),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
+    loadJson(lexicalSourcePath),
     compileCanonicalTaifuRelations()
   ]);
-  const lexicalArtifact = compileLexicalSourceSlice(lexicalSource as UniDicSourceSlice);
+  const lexicalArtifact = compileLexicalSourceSlice(lexicalSource);
   const lexical = lexicalSandbox.LexicalRuntime.createLexicalRuntime(lexicalArtifact);
   const resolver = resolverSandbox.OrthographyResolver.createResolver({
     lexicalLookup(surface: string) { return lexical.lookup(surface); },
