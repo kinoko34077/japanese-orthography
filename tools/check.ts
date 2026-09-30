@@ -23,8 +23,6 @@ const repositoryRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
 function assertArtifactsEqual(first: CompiledArtifact, second: CompiledArtifact, label: string): void {
   for (const name of artifactFiles) {
     if (first[name] !== second[name]) {
-      console.error(`GENERATED ${name}: ${first[name]}`);
-      console.error(`GOLDEN ${name}: ${second[name]}`);
       throw new Error(`${label}: ${name} differs`);
     }
   }
