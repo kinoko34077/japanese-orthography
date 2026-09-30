@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1",
   "kind": "japanese-orthography-safe-character-slice",
-  "purpose": "#40 bounded source-backed unconditional deterministic safe-character acceptance slice",
+  "purpose": "Phase 4.6B bounded source-backed unconditional deterministic safe-character acceptance slice",
   "sources": [
     {
       "id": "bunkacho-joyo-character-form",
@@ -10,6 +10,17 @@
       "url": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kakuki/19/tosin01/04.html",
       "locator": "常用漢字表の字体説明: 円(圓), 応(應), 学(學), 宝(寶), 竜(龍)",
       "observedAt": "2026-09-30"
+    },
+    {
+      "id": "kkh-kanji-jisyo-2.0.1",
+      "kind": "external_repository",
+      "title": "okikae/kkh kanji-jisyo",
+      "repository": "okikae/kkh",
+      "commit": "19b24f88ab55809a186d88c465959548495b26a2",
+      "path": "kanji-jisyo",
+      "blobSha": "95c5db9b5bacb82ab2a685f24f74fef3b32f9992",
+      "license": "BSD-2-Clause",
+      "authority": "corroborating_candidate_evidence"
     },
     {
       "id": "project-deterministic-layer-ruling",
@@ -49,6 +60,28 @@
   ],
   "evidenceRecords": [
     {
+      "id": "ev-en-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-en-kkh",
+      "sourceRef": "kkh-kanji-jisyo-2.0.1",
+      "role": "same-character-form-corroboration",
+      "locator": "円 /圓"
+    },
+    {
+      "id": "ev-ou-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-ou-kkh",
+      "sourceRef": "kkh-kanji-jisyo-2.0.1",
+      "role": "same-character-form-corroboration",
+      "locator": "応 /應"
+    },
+    {
       "id": "ev-gaku-official",
       "sourceRef": "bunkacho-joyo-character-form",
       "role": "same-character-form-authority"
@@ -63,6 +96,28 @@
       "sourceRef": "kinotch-legacy-compat-profile",
       "role": "behavioral-regression",
       "authority": "regression_only"
+    },
+    {
+      "id": "ev-hou-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-hou-kkh",
+      "sourceRef": "kkh-kanji-jisyo-2.0.1",
+      "role": "same-character-form-corroboration",
+      "locator": "宝 /寶"
+    },
+    {
+      "id": "ev-ryu-official",
+      "sourceRef": "bunkacho-joyo-character-form",
+      "role": "same-character-form-authority"
+    },
+    {
+      "id": "ev-ryu-kkh",
+      "sourceRef": "kkh-kanji-jisyo-2.0.1",
+      "role": "same-character-form-corroboration",
+      "locator": "竜 /龍"
     },
     {
       "id": "ev-ben-contextual-negative",
@@ -93,15 +148,61 @@
   ],
   "mappings": [
     {
+      "modern": "円",
+      "historical": "圓",
+      "responsibility": "character_form",
+      "admission": "unconditional",
+      "intakeRecordRef": "phase46b-character-en",
+      "evidenceRefs": [
+        "ev-en-official",
+        "ev-en-kkh"
+      ]
+    },
+    {
+      "modern": "応",
+      "historical": "應",
+      "responsibility": "character_form",
+      "admission": "unconditional",
+      "intakeRecordRef": "phase46b-character-ou",
+      "evidenceRefs": [
+        "ev-ou-official",
+        "ev-ou-kkh"
+      ]
+    },
+    {
       "modern": "学",
       "historical": "學",
+      "responsibility": "character_form",
       "admission": "unconditional",
+      "intakeRecordRef": "phase46b-character-gaku",
       "evidenceRefs": [
         "ev-gaku-official",
         "ev-gaku-project-layer"
       ],
       "regressionEvidenceRefs": [
         "ev-gaku-compat-profile"
+      ]
+    },
+    {
+      "modern": "宝",
+      "historical": "寶",
+      "responsibility": "character_form",
+      "admission": "unconditional",
+      "intakeRecordRef": "phase46b-character-takara",
+      "evidenceRefs": [
+        "ev-hou-official",
+        "ev-hou-kkh"
+      ]
+    },
+    {
+      "modern": "竜",
+      "historical": "龍",
+      "responsibility": "character_form",
+      "admission": "unconditional",
+      "intakeRecordRef": "phase46b-character-ryu",
+      "evidenceRefs": [
+        "ev-ryu-official",
+        "ev-ryu-kkh"
       ]
     }
   ]
