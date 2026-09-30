@@ -201,11 +201,31 @@
   };
 
   const resolveHistorical = (candidate, sourceSurface, components, config) => {
-    const relation = typeof config.historicalLookup === "function"
+    const identityRelation = candidate && typeof config.historicalLookup === "function"
       ? config.historicalLookup(candidate)
       : null;
-    const relationAllowed = !relation?.requiresMorphology || candidate?.morphology != null;
-    const acceptedRelation = relationAllowed ? relation : null;
+    const identityAllowed = !identityRelation?.requiresMorphology || candidate?.morphology != null;
+    const acceptedIdentityRelation = identityAllowed ? identityRelation : null;
+    const surfaceDecision = !acceptedIdentityRelation && typeof config.historicalSurfaceLookup === "function"
+      ? config.historicalSurfaceLookup(sourceSurface)
+      : null;
+    const surfaceRelation = surfaceDecision?.status === "resolved"
+      ? {
+          route: surfaceDecision.route ?? "native",
+          reading: surfaceDecision.reading ?? null,
+          surface: surfaceDecision.surface ?? sourceSurface,
+          requiresMorphology: false,
+          requiredMorphology: null,
+          evidenceRefs: [...(surfaceDecision.evidenceRefs ?? [])]
+        }
+      : null;
+    const acceptedRelation = acceptedIdentityRelation ?? surfaceRelation;
+    const nativeCandidates = !acceptedIdentityRelation && surfaceDecision?.status === "candidates"
+      ? {
+          surfaces: [...(surfaceDecision.surfaceCandidates ?? [])],
+          readings: [...(surfaceDecision.readingCandidates ?? [])]
+        }
+      : null;
     const contextualKanji = resolveContextualKanji(
       sourceSurface,
       candidate,
@@ -265,6 +285,22 @@
       };
     }
 
+    if (nativeCandidates) {
+      return {
+        components: resolvedComponents,
+        historical: {
+          route: surfaceDecision?.route ?? "native",
+          kana: null,
+          contextualKanji,
+          deterministicKanji: null,
+          surface: sourceSurface,
+          disposition: "CANDIDATES",
+          evidenceRefs: [...(surfaceDecision?.evidenceRefs ?? [])],
+          nativeCandidates
+        }
+      };
+    }
+
     const relationSurface = acceptedRelation?.surface ?? sourceSurface;
     const renderedSurface = applySafeKanjiMap(relationSurface, config.safeKanjiMap ?? {});
     const deterministicKanji = renderedSurface === relationSurface
@@ -286,6 +322,76 @@
         disposition: acceptedRelation || deterministicKanji ? "AUTO" : "SOURCE_REVIEW",
         evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
       }
+    };
+  };
+
+  const resolveSurfaceFallbackUnit = (evidence, lexicalCandidates, config) => {
+    if (typeof config.historicalSurfaceLookup !== "function") {
+      return unresolvedUnit(evidence, lexicalCandidates);
+    }
+    const decision = config.historicalSurfaceLookup(evidence.baseSurface);
+    if (!decision) {
+      return unresolvedUnit(evidence, lexicalCandidates);
+    }
+
+    if (decision.status === "candidates") {
+      const unit = unresolvedUnit(evidence, lexicalCandidates);
+      return {
+        ...unit,
+        historical: {
+          route: decision.route ?? "native",
+          kana: null,
+          contextualKanji: emptyContextualDecision(),
+          deterministicKanji: null,
+          surface: evidence.baseSurface,
+          disposition: "CANDIDATES",
+          evidenceRefs: [...(decision.evidenceRefs ?? [])],
+          nativeCandidates: {
+            surfaces: [...(decision.surfaceCandidates ?? [])],
+            readings: [...(decision.readingCandidates ?? [])]
+          }
+        },
+        evidenceRefs: [...(decision.evidenceRefs ?? [])]
+      };
+    }
+
+    if (decision.status !== "resolved") {
+      return unresolvedUnit(evidence, lexicalCandidates);
+    }
+
+    const relationSurface = decision.surface ?? evidence.baseSurface;
+    const renderedSurface = applySafeKanjiMap(relationSurface, config.safeKanjiMap ?? {});
+    const deterministicKanji = renderedSurface === relationSurface
+      ? null
+      : {
+          status: "resolved",
+          source: relationSurface,
+          target: renderedSurface
+        };
+
+    return {
+      kind: "resolved",
+      sourceText: evidence.sourceText,
+      sourceSurface: evidence.baseSurface,
+      lexicalIdentity: null,
+      reading: {
+        modernSurface: evidence.wholeRuby?.reading ?? null,
+        source: evidence.wholeRuby ? "ruby-word" : "unknown"
+      },
+      lexicalOrigin: "unknown",
+      morphology: null,
+      components: [],
+      lexicalCandidates,
+      historical: {
+        route: decision.route ?? "native",
+        kana: decision.reading ?? null,
+        contextualKanji: emptyContextualDecision(),
+        deterministicKanji,
+        surface: renderedSurface,
+        disposition: "AUTO",
+        evidenceRefs: [...(decision.evidenceRefs ?? [])]
+      },
+      evidenceRefs: [...(decision.evidenceRefs ?? [])]
     };
   };
 
@@ -348,7 +454,11 @@
         ? lookupResult.filter((candidate) => (candidate?.reading === evidence.wholeRuby.reading || (Array.isArray(candidate?.modernReadings) && candidate.modernReadings.includes(evidence.wholeRuby.reading))))
         : lookupResult;
       if (!Array.isArray(candidates) || candidates.length !== 1) {
-        return unresolvedUnit(evidence, Array.isArray(candidates) ? candidates : []);
+        return resolveSurfaceFallbackUnit(
+          evidence,
+          Array.isArray(candidates) ? candidates : [],
+          config
+        );
       }
 
       const candidate = candidates[0];
