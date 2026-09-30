@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
+import type { UniDicSourceSlice } from '../tools/lexical-compiler.ts';
 
 async function json(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
@@ -27,7 +28,7 @@ async function acceptedArtifact() {
     json('data/deterministic/safe-character-first-slice.json')
   ]);
   return builder.buildResolverBundleArtifact({
-    lexicalSource,
+    lexicalSource: lexicalSource as UniDicSourceSlice,
     nativeSlice,
     sinoSlice,
     contextualBindingSlice: contextualBindingSlice as any,
