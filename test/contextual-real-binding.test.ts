@@ -3,18 +3,24 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
 import { compileWorkspace } from '../tools/compiler.ts';
+import type { ContextualLexicalBindingSlice } from '../tools/contextual-lexical-bindings.ts';
 import { compileLexicalSourceSlice, type UniDicSourceSlice } from '../tools/lexical-compiler.ts';
 
 const lexicalNamespaceId = '6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144';
 const taifuIdentity = 'unidic-cwj:2025.12:lemma:21903';
+const bindingSlicePath = 'data/lexical/bindings/contextual-kanji-unidic-first-slice.json';
 
 async function loadJson(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
 }
 
-async function loadBindingSlice() {
+async function loadBindingSliceFile(): Promise<ContextualLexicalBindingSlice> {
+  return JSON.parse(await readFile(bindingSlicePath, 'utf8')) as ContextualLexicalBindingSlice;
+}
+
+async function loadBindingSlice(): Promise<ContextualLexicalBindingSlice | null> {
   try {
-    return await loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json');
+    return await loadBindingSliceFile();
   } catch {
     return null;
   }
@@ -43,7 +49,7 @@ function located(value: Record<string, any>, file: string, pointer: string) {
 async function compileCanonicalTaifuRelations() {
   const [tool, slice, lexicalSource, manifest, taiPack] = await Promise.all([
     loadBindingTool(),
-    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadBindingSliceFile(),
     loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
     loadJson('data/packs/contextual-kanji/manifest.json'),
     loadJson('data/packs/contextual-kanji/merged-tai.json')
@@ -84,7 +90,7 @@ test('real contextual binding slice binds constraint-taifu to the accepted UniDi
 test('validated contextual bindings are derived only from the accepted UniDic source record', async () => {
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
-    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadBindingSliceFile(),
     loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
   ]);
   assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
@@ -97,7 +103,7 @@ test('validated contextual bindings are derived only from the accepted UniDic so
 test('contextual binding validation fails closed on namespace and source-record drift', async () => {
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
-    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadBindingSliceFile(),
     loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
   ]);
   assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
@@ -122,7 +128,7 @@ test('contextual binding validation fails closed on namespace and source-record 
 test('real contextual bindings overlay only the admitted anchor and preserve unproven fixture bindings', async () => {
   const [tool, slice, lexicalSource] = await Promise.all([
     loadBindingTool(),
-    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadBindingSliceFile(),
     loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json')
   ]);
   assert.equal(typeof tool?.overlayContextualCompilationBindings, 'function');
