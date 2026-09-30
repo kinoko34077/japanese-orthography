@@ -57,6 +57,12 @@ async function runtimeGlobals() {
   };
 }
 
+async function activatedBundle(artifact = await acceptedArtifact(), extraGlobals: Record<string, unknown> = {}) {
+  const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', { ...(await runtimeGlobals()), ...extraGlobals });
+  assert.equal(typeof sandbox.ResolverBundleRuntime?.createResolverBundle, 'function');
+  return sandbox.ResolverBundleRuntime.createResolverBundle(artifact);
+}
+
 test('Phase 3 builder deterministically packages the accepted resolver inputs', async () => {
   const inputs = await acceptedInputs();
   const builder = await loadBuilder();
@@ -73,17 +79,105 @@ test('Phase 3 builder deterministically packages the accepted resolver inputs', 
     'lexical', 'historical-native', 'historical-sino',
     'contextual-kanji', 'safe-character', 'late-rendering'
   ]);
+
+  const changed = structuredClone(inputs);
+  changed.safeCharacterSlice.purpose = `${changed.safeCharacterSlice.purpose}-changed`;
+  const changedArtifact = builder!.buildResolverBundleArtifact(changed as any);
+  assert.notEqual(changedArtifact.bundleContentId, first.bundleContentId);
+});
+
+test('Phase 3 builder fails closed on accepted namespace drift', async () => {
+  const builder = await loadBuilder();
+  const inputs = await acceptedInputs();
+  const wrongNative = structuredClone(inputs);
+  wrongNative.nativeSlice.lexicalNamespaceId = 'wrong-namespace';
+  assert.throws(() => builder!.buildResolverBundleArtifact(wrongNative as any), /native lexical namespace mismatch/);
+
+  const wrongSino = structuredClone(inputs);
+  wrongSino.sinoSlice.lexicalNamespaceId = 'wrong-namespace';
+  assert.throws(() => builder!.buildResolverBundleArtifact(wrongSino as any), /Sino lexical namespace mismatch/);
+
+  const wrongContextual = structuredClone(inputs);
+  wrongContextual.contextualBindingSlice.sourceLexicalNamespaceId = 'wrong-namespace';
+  assert.throws(() => builder!.buildResolverBundleArtifact(wrongContextual as any), /source lexical namespace mismatch/);
 });
 
 test('Phase 3 runtime atomically activates the accepted full bundle', async () => {
-  const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', await runtimeGlobals());
-  assert.equal(typeof sandbox.ResolverBundleRuntime?.createResolverBundle, 'function');
   const artifact = await acceptedArtifact();
-  const bundle = sandbox.ResolverBundleRuntime.createResolverBundle(artifact);
-
+  const bundle = await activatedBundle(artifact);
   assert.equal(bundle.bundleContentId, artifact.bundleContentId);
   assert.equal(bundle.lexicalNamespaceId, artifact.lexicalArtifact.lexicalNamespaceId);
   assert.deepEqual(Array.from(bundle.capabilities), artifact.capabilities);
   assert.equal(typeof bundle.resolveUnit, 'function');
   assert.equal(typeof bundle.render, 'function');
+});
+
+test('Phase 3 bundle reproduces accepted cross-layer semantics through one entry point', async () => {
+  const bundle = await activatedBundle();
+
+  const school = bundle.resolveUnit('学校');
+  assert.equal(school.lexicalIdentity, 'unidic-cwj:2025.12:lemma:8098');
+  assert.equal(school.historical.surface, '學校');
+  assert.equal(school.historical.kana, 'がくかう');
+  assert.equal(bundle.render(school, { mode: 'ruby-whole-explicit' }), '｜學校《がくかう》');
+
+  const taifu = bundle.resolveUnit('台風');
+  assert.equal(taifu.lexicalIdentity, 'unidic-cwj:2025.12:lemma:21903');
+  assert.equal(taifu.historical.contextualKanji.status, 'resolved');
+  assert.equal(bundle.render(taifu, { mode: 'plain' }), '颱風');
+
+  assert.equal(bundle.resolveUnit('思う').kind, 'candidates');
+  assert.equal(bundle.resolveUnit('今日').kind, 'candidates');
+  assert.equal(bundle.resolveUnit('｜今日《きょう》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:9128');
+  assert.equal(bundle.resolveUnit('｜今日《こんにち》').lexicalIdentity, 'unidic-cwj:2025.12:lemma:13244');
+  assert.equal(bundle.resolveUnit('未知語').kind, 'unresolved');
+  assert.equal(bundle.resolveUnit('｜学校《がっこう》', { protected: true }).kind, 'protected');
+});
+
+test('Phase 3 runtime rejects partial, malformed, and cross-namespace bundle activation', async () => {
+  const globals = await runtimeGlobals();
+  const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', globals);
+  const create = sandbox.ResolverBundleRuntime.createResolverBundle;
+  const artifact = await acceptedArtifact();
+
+  const missingSection = structuredClone(artifact);
+  missingSection.sections = missingSection.sections.filter((section: any) => section.id !== 'safe-character');
+  assert.throws(() => create(missingSection), /Missing resolver bundle section: safe-character/);
+
+  const missingCapability = structuredClone(artifact);
+  missingCapability.capabilities = missingCapability.capabilities.filter((value: string) => value !== 'safe-character');
+  assert.throws(() => create(missingCapability), /capability declaration mismatch/);
+
+  const wrongNamespace = structuredClone(artifact);
+  wrongNamespace.historicalSinoSlice.lexicalNamespaceId = 'wrong-namespace';
+  assert.throws(() => create(wrongNamespace), /Sino lexical namespace mismatch/);
+
+  const wrongContextualNamespace = structuredClone(artifact);
+  wrongContextualNamespace.contextual.sourceLexicalNamespaceId = 'wrong-namespace';
+  assert.throws(() => create(wrongContextualNamespace), /contextual source lexical namespace mismatch/);
+
+  const invalidSafeSlice = structuredClone(artifact);
+  invalidSafeSlice.safeCharacterSlice.schemaVersion = '999';
+  assert.throws(() => create(invalidSafeSlice), /Unsupported safe-character slice/);
+});
+
+test('Phase 3 runtime requires every runtime dependency before activation', async () => {
+  const globals = await runtimeGlobals();
+  const artifact = await acceptedArtifact();
+  const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', { ...globals, HistoricalSinoRuntime: undefined });
+  assert.throws(
+    () => sandbox.ResolverBundleRuntime.createResolverBundle(artifact),
+    /Missing resolver bundle runtime dependency: HistoricalSinoRuntime.createHistoricalSinoRuntime/
+  );
+});
+
+test('same Phase 3 bundle runtime loads in browser-class and Worker-class sandboxes', async () => {
+  const artifact = await acceptedArtifact();
+  const globals = await runtimeGlobals();
+  for (const host of [{ window: {} }, { self: {} }]) {
+    const sandbox = await loadUmd('runtime/resolver-bundle-runtime.js', { ...globals, ...host });
+    const bundle = sandbox.ResolverBundleRuntime.createResolverBundle(artifact);
+    assert.equal(bundle.render(bundle.resolveUnit('学校'), { mode: 'plain' }), '學校');
+    assert.equal(bundle.render(bundle.resolveUnit('台風'), { mode: 'plain' }), '颱風');
+  }
 });
