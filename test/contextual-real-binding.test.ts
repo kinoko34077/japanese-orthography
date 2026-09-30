@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import vm from 'node:vm';
 import { compileWorkspace } from '../tools/compiler.ts';
+import { compileLexicalSourceSlice, type UniDicSourceSlice } from '../tools/lexical-compiler.ts';
 
 const lexicalNamespaceId = '6aba6e8a20610ece73a028ed4dd9e64aefaaff3eec3f9a8bb56fd33c3bdfb144';
 const taifuIdentity = 'unidic-cwj:2025.12:lemma:21903';
@@ -26,8 +28,46 @@ async function loadBindingTool() {
   }
 }
 
+async function loadRuntime(path: string) {
+  const source = await readFile(path, 'utf8');
+  const sandbox: Record<string, any> = {};
+  sandbox.globalThis = sandbox;
+  vm.runInNewContext(source, sandbox, { filename: path });
+  return sandbox;
+}
+
 function located(value: Record<string, any>, file: string, pointer: string) {
   return { value, location: { file, pointer } };
+}
+
+async function compileCanonicalTaifuRelations() {
+  const [tool, slice, lexicalSource, manifest, taiPack] = await Promise.all([
+    loadBindingTool(),
+    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
+    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
+    loadJson('data/packs/contextual-kanji/manifest.json'),
+    loadJson('data/packs/contextual-kanji/merged-tai.json')
+  ]);
+  assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
+  const relation = taiPack.positiveRelations.find((entry: any) => entry.id === 'rel-taifu');
+  const unit = taiPack.restorationUnits.find((entry: any) => entry.id === relation.unitId);
+  assert.ok(relation);
+  assert.ok(unit);
+
+  const workspace: any = {
+    sources: [],
+    evidence: [],
+    lexicalEvidence: [],
+    lexicalConstraintSets: [],
+    restorationUnits: [located(unit, 'data/packs/contextual-kanji/merged-tai.json', '/restorationUnits/0')],
+    positiveRelations: [located(relation, 'data/packs/contextual-kanji/merged-tai.json', '/positiveRelations/0')],
+    safetyConstraints: [],
+    reviewHints: [],
+    packMetadata: [located(manifest, 'data/packs/contextual-kanji/manifest.json', '')]
+  };
+  const bindings = tool!.createContextualCompilationBindings(slice, lexicalSource);
+  const compiled = compileWorkspace(workspace, bindings);
+  return JSON.parse(compiled['hot-relations.json']) as Array<Record<string, any>>;
 }
 
 test('real contextual binding slice binds constraint-taifu to the accepted UniDic identity', async () => {
@@ -115,37 +155,48 @@ test('contextual binding overlay rejects a binding namespace mismatch', async ()
 });
 
 test('canonical rel-taifu compiles with the real UniDic lexical binding', async () => {
-  const [tool, slice, lexicalSource, manifest, taiPack] = await Promise.all([
-    loadBindingTool(),
-    loadJson('data/lexical/bindings/contextual-kanji-unidic-first-slice.json'),
-    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
-    loadJson('data/packs/contextual-kanji/manifest.json'),
-    loadJson('data/packs/contextual-kanji/merged-tai.json')
-  ]);
-  assert.equal(typeof tool?.createContextualCompilationBindings, 'function');
-  const relation = taiPack.positiveRelations.find((entry: any) => entry.id === 'rel-taifu');
-  const unit = taiPack.restorationUnits.find((entry: any) => entry.id === relation.unitId);
-  assert.ok(relation);
-  assert.ok(unit);
-
-  const workspace: any = {
-    sources: [],
-    evidence: [],
-    lexicalEvidence: [],
-    lexicalConstraintSets: [],
-    restorationUnits: [located(unit, 'data/packs/contextual-kanji/merged-tai.json', '/restorationUnits/0')],
-    positiveRelations: [located(relation, 'data/packs/contextual-kanji/merged-tai.json', '/positiveRelations/0')],
-    safetyConstraints: [],
-    reviewHints: [],
-    packMetadata: [located(manifest, 'data/packs/contextual-kanji/manifest.json', '')]
-  };
-  const bindings = tool!.createContextualCompilationBindings(slice, lexicalSource);
-  const compiled = compileWorkspace(workspace, bindings);
-  const hotRelations = JSON.parse(compiled['hot-relations.json']) as Array<Record<string, any>>;
+  const hotRelations = await compileCanonicalTaifuRelations();
   const compiledTaifu = hotRelations.find((entry) => entry.id === 'rel-taifu');
 
   assert.deepEqual(compiledTaifu?.lexicalBindingIds, [taifuIdentity]);
   assert.equal(compiledTaifu?.match, '台風');
   assert.equal(compiledTaifu?.target, '颱風');
-  assert.equal(compiled['hot-relations.json'].includes('fixture-local-0006'), false);
+  assert.equal(JSON.stringify(hotRelations).includes('fixture-local-0006'), false);
+  assert.equal(hotRelations.some((entry) => entry.match === '台'), false);
+});
+
+test('compiled canonical rel-taifu resolves only the matching real lexical candidate', async () => {
+  const [lexicalSandbox, resolverSandbox, lexicalSource, contextualRelations] = await Promise.all([
+    loadRuntime('runtime/lexical-runtime.js'),
+    loadRuntime('runtime/orthography-resolver.js'),
+    loadJson('data/lexical/sources/unidic-cwj-202512-first-slice.json'),
+    compileCanonicalTaifuRelations()
+  ]);
+  const lexicalArtifact = compileLexicalSourceSlice(lexicalSource as UniDicSourceSlice);
+  const lexical = lexicalSandbox.LexicalRuntime.createLexicalRuntime(lexicalArtifact);
+  const resolver = resolverSandbox.OrthographyResolver.createResolver({
+    lexicalLookup(surface: string) { return lexical.lookup(surface); },
+    contextualRelations
+  });
+
+  const unit = resolver.resolveUnit('台風');
+  assert.equal(unit.lexicalIdentity, taifuIdentity);
+  assert.equal(unit.historical.contextualKanji.status, 'resolved');
+  assert.equal(unit.historical.surface, '颱風');
+  assert.deepEqual(Array.from(unit.historical.contextualKanji.relationIds), ['rel-taifu']);
+  assert.equal(resolver.render(unit, { mode: 'plain' }), '颱風');
+
+  const wrongBindingRelations = contextualRelations.map((entry) => ({
+    ...entry,
+    lexicalBindingIds: ['unidic-cwj:2025.12:lemma:999999']
+  }));
+  const wrongBindingResolver = resolverSandbox.OrthographyResolver.createResolver({
+    lexicalLookup(surface: string) { return lexical.lookup(surface); },
+    contextualRelations: wrongBindingRelations
+  });
+  const wrong = wrongBindingResolver.resolveUnit('台風');
+  assert.equal(wrong.lexicalIdentity, taifuIdentity);
+  assert.equal(wrong.historical.contextualKanji.status, 'none');
+  assert.equal(wrong.historical.surface, '台風');
+  assert.equal(wrong.historical.disposition, 'SOURCE_REVIEW');
 });
