@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography_intake_bundle",
+  "snapshots": [
+    {
+      "sourceId": "phase46-stage40-compat",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "test/fixtures/pinned/txt-auto-replace/40-legacy-kanji.json5",
+      "blobSha": "57177fb8fba471f9c169283dcbae5830d5bac64f",
+      "coverageRole": "candidate-only"
+    },
+    {
+      "sourceId": "phase46-merged-ben",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "data/packs/contextual-kanji/merged-ben.json",
+      "blobSha": "96836263a659459ea41d226ee6b37668d840fb76",
+      "coverageRole": "candidate-only"
+    },
+    {
+      "sourceId": "phase46-merged-tai",
+      "sourceClass": "committed-reference",
+      "repository": "kinoko34077/japanese-orthography",
+      "commit": "44417ecfa6628e4ccc9fd9fe2b3502bcc05bae09",
+      "path": "data/packs/contextual-kanji/merged-tai.json",
+      "blobSha": "880fda7034e03448b9415d46a437760838ae5b87",
+      "coverageRole": "candidate-only"
+    }
+  ],
+  "records": [
+    {
+      "id": "phase46-legacy-stage40-ben",
+      "sourceRef": "phase46-stage40-compat",
+      "sourceLocator": "content.character_map.弁",
+      "sourceRecordKind": "mapping",
+      "responsibility": "merged_character",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "弁",
+      "historicalSurface": "辨",
+      "evidenceRefs": [
+        "phase46-stage40-compat:character_map.弁"
+      ]
+    },
+    {
+      "id": "phase46-legacy-contextual-ben",
+      "sourceRef": "phase46-merged-ben",
+      "sourceLocator": "/positiveRelations",
+      "sourceRecordKind": "explanatory",
+      "responsibility": "merged_character",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "弁",
+      "alternatives": [
+        "辦",
+        "瓣",
+        "辯"
+      ],
+      "evidenceRefs": [
+        "rel-goben-business",
+        "rel-goben-botanical",
+        "review-bengo-oracle",
+        "safe-buben-original"
+      ]
+    },
+    {
+      "id": "phase46-legacy-contextual-tai",
+      "sourceRef": "phase46-merged-tai",
+      "sourceLocator": "/positiveRelations",
+      "sourceRecordKind": "explanatory",
+      "responsibility": "merged_character",
+      "disposition": "candidate_ambiguous",
+      "modernSurface": "台",
+      "alternatives": [
+        "颱",
+        "擡"
+      ],
+      "evidenceRefs": [
+        "rel-taifu",
+        "rel-taito",
+        "safe-taimitsu"
+      ]
+    },
+    {
+      "id": "phase46-legacy-stage40-u7a57-u74e3",
+      "sourceRef": "phase46-stage40-compat",
+      "sourceLocator": "content.character_map.穗",
+      "sourceRecordKind": "mapping",
+      "responsibility": "preserve_unresolved",
+      "disposition": "excluded_unresolved",
+      "modernSurface": "穗",
+      "historicalSurface": "瓣",
+      "exclusionReason": "legacy_relation_not_same_character_form",
+      "evidenceRefs": [
+        "phase46-stage40-compat:character_map.穗"
+      ]
+    },
+    {
+      "id": "phase46-legacy-stage40-u8216-u8faf",
+      "sourceRef": "phase46-stage40-compat",
+      "sourceLocator": "content.character_map.舖",
+      "sourceRecordKind": "mapping",
+      "responsibility": "preserve_unresolved",
+      "disposition": "excluded_unresolved",
+      "modernSurface": "舖",
+      "historicalSurface": "辯",
+      "exclusionReason": "legacy_relation_not_same_character_form",
+      "evidenceRefs": [
+        "phase46-stage40-compat:character_map.舖"
+      ]
+    }
+  ]
+}

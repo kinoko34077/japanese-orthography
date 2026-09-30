@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "orthography-intake-bundle-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "snapshots", "records"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "kind": { "const": "orthography_intake_bundle" },
+    "snapshots": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sourceSnapshot" }
+    },
+    "records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/intakeRecord" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gitObjectId": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
+    },
+    "sourceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "sourceClass", "path", "coverageRole"],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceClass": {
+          "enum": ["committed-reference", "external-repository", "official", "dictionary", "research"]
+        },
+        "repository": { "$ref": "#/$defs/nonEmptyString" },
+        "commit": { "$ref": "#/$defs/gitObjectId" },
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "blobSha": { "$ref": "#/$defs/gitObjectId" },
+        "license": { "$ref": "#/$defs/nonEmptyString" },
+        "coverageRole": {
+          "enum": ["coverage-contract", "supplemental", "candidate-only"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sourceClass": { "const": "committed-reference" }
+            },
+            "required": ["sourceClass"]
+          },
+          "then": {
+            "properties": {
+              "repository": { "$ref": "#/$defs/nonEmptyString" },
+              "commit": { "$ref": "#/$defs/gitObjectId" },
+              "blobSha": { "$ref": "#/$defs/gitObjectId" }
+            },
+            "required": ["repository", "commit", "blobSha"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "sourceClass": { "const": "external-repository" }
+            },
+            "required": ["sourceClass"]
+          },
+          "then": {
+            "properties": {
+              "repository": { "$ref": "#/$defs/nonEmptyString" },
+              "commit": { "$ref": "#/$defs/gitObjectId" }
+            },
+            "required": ["repository", "commit"]
+          }
+        }
+      ]
+    },
+    "intakeRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceRef",
+        "sourceLocator",
+        "sourceRecordKind",
+        "responsibility",
+        "disposition",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceRef": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceLocator": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceRecordKind": {
+          "enum": ["mapping", "alternative", "disabled", "identity", "explanatory"]
+        },
+        "responsibility": {
+          "enum": [
+            "character_form",
+            "lexical_historical_kanji",
+            "merged_character",
+            "historical_kana_native",
+            "historical_kana_sino",
+            "kinotch_semantic",
+            "kinotch_style",
+            "preserve_unresolved"
+          ]
+        },
+        "disposition": {
+          "enum": ["admitted", "candidate_ambiguous", "excluded_unresolved"]
+        },
+        "modernSurface": { "type": "string" },
+        "historicalSurface": { "type": "string" },
+        "modernReading": { "type": "string" },
+        "historicalReading": { "type": "string" },
+        "lexicalIdentity": { "$ref": "#/$defs/nonEmptyString" },
+        "morphology": {
+          "type": "object",
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "type": "string" }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "exclusionReason": { "$ref": "#/$defs/nonEmptyString" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": { "const": "excluded_unresolved" }
+            },
+            "required": ["disposition"]
+          },
+          "then": {
+            "properties": {
+              "exclusionReason": { "$ref": "#/$defs/nonEmptyString" }
+            },
+            "required": ["exclusionReason"]
+          }
+        }
+      ]
+    }
+  }
+}
