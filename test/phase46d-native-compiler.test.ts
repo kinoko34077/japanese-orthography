@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { buildPhase46dNativeKanaDocuments } from '../tools/generate-native-kana.ts';
-import { compileNativeKanaArtifact } from '../tools/native-kana-compiler.ts';
+import { compileNativeKanaArtifact, serializeNativeKanaArtifact } from '../tools/native-kana-compiler.ts';
 
 async function json(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
@@ -115,11 +115,13 @@ test('compiler carries the accepted 思う lexical identity+morphology anchor in
   });
 });
 
-test('canonical Phase 4.6D native artifact is exactly reproducible from intake plus accepted anchor', async () => {
-  const [generated, anchor, committed] = await Promise.all([
+test('canonical Phase 4.6D native artifact is exactly reproducible byte-for-byte from intake plus accepted anchor', async () => {
+  const [generated, anchor, committedText] = await Promise.all([
     buildPhase46dNativeKanaDocuments(process.cwd()),
     json('data/historical/native/kkh-kana-first-slice.json'),
-    json('data/historical/native/phase46d-native-kana.json')
+    readFile('data/historical/native/phase46d-native-kana.json', 'utf8')
   ]);
-  assert.deepEqual(committed, compileNativeKanaArtifact(generated.intake, { legacyAnchorSlice: anchor }));
+  const compiled = compileNativeKanaArtifact(generated.intake, { legacyAnchorSlice: anchor });
+  assert.equal(committedText, serializeNativeKanaArtifact(compiled));
+  assert.deepEqual(JSON.parse(committedText), compiled);
 });
