@@ -348,6 +348,32 @@
       }
     };
 
+    const recordPreserveBlocks = (
+      inputPoints,
+      start,
+      end,
+      blockedRules,
+      blockedSeen
+    ) => {
+      for (let index = start; index < end; index += 1) {
+        for (const rule of matchingProductive(inputPoints, index)) {
+          const ruleEnd = index + codePoints(rule.source).length;
+          if (ruleEnd <= end) {
+            for (const ruleRef of rule.ruleRefs) {
+              addBlocked(
+                blockedRules,
+                blockedSeen,
+                ruleRef,
+                index,
+                ruleEnd,
+                "preserve_block"
+              );
+            }
+          }
+        }
+      }
+    };
+
     const transform = (value, options = {}) => {
       const input = `${value ?? ""}`;
       const inputPoints = codePoints(input);
@@ -382,18 +408,13 @@
           const selected = preserveMatches[0];
           const selectedEnd = index + codePoints(selected.source).length;
 
-          for (const rule of matchingProductive(inputPoints, index)) {
-            for (const ruleRef of rule.ruleRefs) {
-              addBlocked(
-                blockedRules,
-                blockedSeen,
-                ruleRef,
-                index,
-                index + codePoints(rule.source).length,
-                "preserve_block"
-              );
-            }
-          }
+          recordPreserveBlocks(
+            inputPoints,
+            index,
+            selectedEnd,
+            blockedRules,
+            blockedSeen
+          );
           recordPassiveAt(inputPoints, index, blockedRules, blockedSeen);
 
           appendSegment(segments, {
