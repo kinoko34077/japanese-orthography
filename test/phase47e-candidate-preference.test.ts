@@ -189,7 +189,7 @@ test('manual-priority overlay is machine-validatable and candidate-set bounded',
   assert.deepEqual(validate(document, 'orthography-manual-priority-overlay-v1'), []);
 
   const invalid = structuredClone(document);
-  invalid.entries[0].preferred = 'ます';
+  invalid.entries[0]!.preferred = 'ます';
   assert.ok(validate(invalid, 'orthography-manual-priority-overlay-v1').length > 0);
 });
 
