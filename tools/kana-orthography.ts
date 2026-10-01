@@ -8,6 +8,10 @@ export interface FullSizeSokuonOptions {
   sameHistoricalRepresentation: boolean;
 }
 
+export interface IterationBoundaryOptions {
+  boundaryOffsets?: number[];
+}
+
 export interface PresentationCandidateGroup {
   canonical: string;
   attestations: string[];
@@ -102,21 +106,36 @@ export function renderKanaScript(
   return mapCodePoints(value, hiraganaToKatakana);
 }
 
-export function expandIterationMarks(value: string): string {
+export function expandIterationMarks(
+  value: string,
+  options: IterationBoundaryOptions = {}
+): string {
   const expanded: string[] = [];
+  const boundaries = new Set(options.boundaryOffsets ?? []);
+  let index = 0;
 
   for (const character of value) {
+    const atBoundary = boundaries.has(index);
     if (character === 'ゝ' || character === 'ヽ') {
+      if (atBoundary) {
+        throw new RangeError(`Iteration mark ${character} cannot appear at render-unit start`);
+      }
       expanded.push(requirePrevious(expanded, character));
       continue;
     }
 
     if (character === 'ゞ' || character === 'ヾ') {
+      if (atBoundary) {
+        throw new RangeError(`Iteration mark ${character} cannot appear at render-unit start`);
+      }
       expanded.push(voiceKana(requirePrevious(expanded, character)));
       continue;
     }
 
     if (character === '々') {
+      if (atBoundary) {
+        throw new RangeError(`Iteration mark ${character} cannot appear at render-unit start`);
+      }
       expanded.push(requirePrevious(expanded, character));
       continue;
     }
@@ -128,20 +147,29 @@ export function expandIterationMarks(value: string): string {
     }
 
     expanded.push(character);
+    index += 1;
   }
 
   return expanded.join('');
 }
 
-export function renderIterationMarks(value: string): string {
+export function renderIterationMarks(
+  value: string,
+  options: IterationBoundaryOptions = {}
+): string {
   const source = [...value];
   if (source.length < 2) return value;
 
   const rendered: string[] = [source[0]!];
+  const boundaries = new Set(options.boundaryOffsets ?? []);
 
   for (let index = 1; index < source.length; index += 1) {
     const previous = source[index - 1]!;
     const current = source[index]!;
+    if (boundaries.has(index)) {
+      rendered.push(current);
+      continue;
+    }
 
     if (isHan(previous) && current === previous) {
       rendered.push('々');
