@@ -150,3 +150,50 @@ test('normalized projection is deterministic and source-order independent', asyn
     canonicalStringifyNormalizedGraph(projectPhase46dNativeArtifact(reversed))
   );
 });
+
+
+test('identity semantics distinguish implicit, source-attested, and explicit preserve states', () => {
+  const graph = minimalGraph();
+
+  graph.relations = [{
+    id: 'identity:implicit',
+    relationKind: 'identity',
+    channel: 'surface',
+    applicationMode: 'generated_pattern',
+    fromForms: ['士'],
+    toForms: ['士'],
+    basis: 'implicit_identity',
+    identitySemantics: 'implicit',
+    evidenceRefs: []
+  }, {
+    id: 'identity:attested',
+    relationKind: 'identity',
+    channel: 'surface',
+    applicationMode: 'exact_lexeme',
+    fromForms: ['候補'],
+    toForms: ['候補'],
+    basis: 'attested_identity',
+    identitySemantics: 'attested',
+    evidenceRefs: ['source:attested-identity']
+  }, {
+    id: 'identity:preserve',
+    relationKind: 'preserve',
+    channel: 'surface',
+    applicationMode: 'preserve_block',
+    fromForms: ['武弁'],
+    toForms: ['武弁'],
+    basis: 'preserve_exact',
+    identitySemantics: 'preserve',
+    evidenceRefs: ['source:preserve']
+  }];
+
+  assert.deepEqual(validate(graph, 'normalized-orthography-graph-v1'), []);
+
+  const invalid = structuredClone(graph);
+  delete invalid.relations[0].identitySemantics;
+  assert.ok(validate(invalid, 'normalized-orthography-graph-v1').length > 0);
+
+  invalid.relations[0].identitySemantics = 'implicit';
+  invalid.relations[2].applicationMode = 'exact_lexeme';
+  assert.ok(validate(invalid, 'normalized-orthography-graph-v1').length > 0);
+});
