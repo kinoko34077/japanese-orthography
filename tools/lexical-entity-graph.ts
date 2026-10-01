@@ -48,11 +48,13 @@ export interface EntityGraph {
   forms: { id: Id<'form'>; text: string; symbols: Id<'symbol'>[] }[];
   readingAtoms: { id: Id<'reading-atom'>; kana: string }[];
   readingPaths: { id: Id<'reading-path'>; atoms: Id<'reading-atom'>[] }[];
-  convergencePatterns: { id: Id<'pattern'>; from: Id<'reading-path'>; to: Id<'reading-path'>; environment?: PatternEnvironment }[];
+  convergencePatterns: { id: Id<'pattern'>; from: Id<'reading-path'>; to: Id<'reading-path'>; environment?: PatternEnvironment; base?: Id<'pattern'>; mechanism?: string; derivations?: Id<'pattern'>[] }[];
   bindings: { symbol: Id<'symbol'>; modern: Id<'reading-path'>; context: Id<'context'> | null; patterns: Id<'pattern'>[]; evidence: Id<'evidence'>[] }[];
   lexemes: { id: Id<'lexeme'>; forms: Id<'form'>[]; readings: Id<'reading-path'>[]; categories: Id<'category'>[]; sourceRefs: string[]; composition?: (Id<'lexeme'> | Id<'morpheme'>)[] }[];
   morphemes: { id: Id<'morpheme'>; form: Id<'form'>; reading: Id<'reading-path'> }[];
   relations: { id: Id<'relation'>; lexeme: Id<'lexeme'> }[];
+  // Reading restricted to a subset of the lexeme's forms (JMdict re_restr; empty = re_nokanji).
+  restrictions: { lexeme: Id<'lexeme'>; reading: Id<'reading-path'>; forms: Id<'form'>[] }[];
 }
 
 export type Collection = Exclude<keyof EntityGraph, 'schemaVersion' | 'kind'>;
@@ -68,11 +70,12 @@ export const ENTITY_SCHEMA: Record<Collection, { namespace: Namespace | null; fi
   forms: { namespace: 'form', fields: { text: 'value', symbols: 'symbol[]' } },
   readingAtoms: { namespace: 'reading-atom', fields: { kana: 'value' } },
   readingPaths: { namespace: 'reading-path', fields: { atoms: 'reading-atom[]' } },
-  convergencePatterns: { namespace: 'pattern', fields: { from: 'reading-path', to: 'reading-path', environment: 'value?' } },
+  convergencePatterns: { namespace: 'pattern', fields: { from: 'reading-path', to: 'reading-path', environment: 'value?', base: 'pattern?', mechanism: 'value?', derivations: 'pattern[]?' } },
   bindings: { namespace: null, fields: { symbol: 'symbol', modern: 'reading-path', context: 'context|null', patterns: 'pattern[]', evidence: 'evidence[]' } },
   lexemes: { namespace: 'lexeme', fields: { forms: 'form[]', readings: 'reading-path[]', categories: 'category[]', sourceRefs: 'value', composition: 'lexeme/morpheme[]?' } },
   morphemes: { namespace: 'morpheme', fields: { form: 'form', reading: 'reading-path' } },
-  relations: { namespace: 'relation', fields: { lexeme: 'lexeme' } }
+  relations: { namespace: 'relation', fields: { lexeme: 'lexeme' } },
+  restrictions: { namespace: null, fields: { lexeme: 'lexeme', reading: 'reading-path', forms: 'form[]' } }
 };
 export const COLLECTIONS = Object.keys(ENTITY_SCHEMA) as Collection[];
 
@@ -93,11 +96,12 @@ export interface RawEntityGraph {
   sources: { key: string; sourceClass: string }[];
   evidence: { key: string; source: string }[];
   contexts: string[];
-  patterns: { key: string; from: string[]; to: string[]; environment?: PatternEnvironment }[];
+  patterns: { key: string; from: string[]; to: string[]; environment?: PatternEnvironment; base?: string; mechanism?: string; derivations?: string[] }[];
   bindings: { symbol: string; modern: string[]; context: string | null; patterns: string[]; evidence: string[] }[];
   lexemes: { key: string; forms: string[]; readings: { path: string[] }[]; categories: string[]; sourceRefs: string[]; composition?: string[] }[];
   morphemes: { key: string; form: string; reading: string[] }[];
   relations: { key: string; lexeme: string }[];
+  restrictions?: { lexeme: string; reading: string[]; forms: string[] }[];
 }
 
 export function buildEntityGraph(raw: RawEntityGraph): EntityGraph {
@@ -121,7 +125,13 @@ export function buildEntityGraph(raw: RawEntityGraph): EntityGraph {
   for (const e of raw.evidence) put('evidence', { id: makeId('evidence', e.key), source: ref('source', e.source) });
   for (const c of raw.contexts) put('contexts', { id: makeId('context', c) });
   for (const p of raw.patterns) {
-    put('convergencePatterns', { id: makeId('pattern', p.key), from: path(p.from), to: path(p.to), ...(p.environment ? { environment: p.environment } : {}) });
+    put('convergencePatterns', {
+      id: makeId('pattern', p.key), from: path(p.from), to: path(p.to),
+      ...(p.environment ? { environment: p.environment } : {}),
+      ...(p.base ? { base: ref('pattern', p.base) } : {}),
+      ...(p.mechanism ? { mechanism: p.mechanism } : {}),
+      ...(p.derivations?.length ? { derivations: p.derivations.map((d) => ref('pattern', d)) } : {})
+    });
   }
   const bindingKeys = new Set<string>();
   const bindings: EntityGraph['bindings'] = [];
@@ -150,11 +160,13 @@ export function buildEntityGraph(raw: RawEntityGraph): EntityGraph {
     });
   }
   for (const r of raw.relations) put('relations', { id: makeId('relation', r.key), lexeme: ref('lexeme', r.lexeme) });
+  const restrictions = (raw.restrictions ?? []).map((r) => ({ lexeme: ref('lexeme', r.lexeme), reading: path(r.reading), forms: r.forms.map(form) }));
 
   const graph = {
     schemaVersion: '1', kind: 'japanese-orthography-lexical-entity-graph',
     ...Object.fromEntries(COLLECTIONS.map((c) => [c, [...maps[c].values()]])),
-    bindings
+    bindings,
+    restrictions
   } as EntityGraph;
   const diagnostics = validateEntityGraph(graph);
   if (diagnostics.length) throw new Error(`entity graph invalid:\n${diagnostics.join('\n')}`);
@@ -221,7 +233,7 @@ export function validateEntityGraph(graph: EntityGraph): string[] {
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 export function canonicalizeEntityGraph(graph: EntityGraph): EntityGraph {
-  const sortedRefs = new Set(['patterns', 'evidence', 'categories']);
+  const sortedRefs = new Set(['patterns', 'evidence', 'categories', 'derivations']);
   const result: Record<string, unknown> = { schemaVersion: graph.schemaVersion, kind: graph.kind };
   for (const collection of COLLECTIONS) {
     const { fields } = ENTITY_SCHEMA[collection];
@@ -234,7 +246,8 @@ export function canonicalizeEntityGraph(graph: EntityGraph): EntityGraph {
       }
       return out;
     });
-    entities.sort((a, b) => cmp(String(a.id ?? JSON.stringify([a.symbol, a.modern, a.context ?? ''])), String(b.id ?? JSON.stringify([b.symbol, b.modern, b.context ?? '']))));
+    const sortKey = (e: Record<string, unknown>) => String(e.id ?? JSON.stringify(e));
+    entities.sort((a, b) => cmp(sortKey(a), sortKey(b)));
     result[collection] = entities;
   }
   return structuredClone(result) as unknown as EntityGraph;
@@ -250,7 +263,7 @@ export interface CompactEntityGraph {
   tables: Record<string, Record<string, unknown[]> & { key: string[] }> & Record<string, any>;
 }
 
-const tableName = (collection: Collection) => ENTITY_SCHEMA[collection].namespace ?? 'binding';
+const tableName = (collection: Collection) => ENTITY_SCHEMA[collection].namespace ?? collection;
 const expectedSchema = () => Object.fromEntries(COLLECTIONS.map((c) => [tableName(c), { ...ENTITY_SCHEMA[c].fields }]));
 
 export function compactEntityGraph(input: EntityGraph): CompactEntityGraph {
@@ -282,7 +295,7 @@ export function compactEntityGraph(input: EntityGraph): CompactEntityGraph {
         return encode(spec, value as string);
       }).map((v) => (v === undefined ? null : v)); // optional fields are never null, so null marks absence
     }
-    tables[namespace ?? 'binding'] = table;
+    tables[tableName(collection)] = table;
   }
   return { schemaVersion: '1', kind: 'japanese-orthography-lexical-entity-graph-compact', schema: expectedSchema(), tables };
 }
@@ -312,7 +325,7 @@ export function inflateEntityGraph(compact: CompactEntityGraph): EntityGraph {
   const graph: Record<string, unknown> = { schemaVersion: '1', kind: 'japanese-orthography-lexical-entity-graph' };
   for (const collection of COLLECTIONS) {
     const { namespace, fields } = ENTITY_SCHEMA[collection];
-    const table = compact.tables[namespace ?? 'binding'] as Record<string, unknown[]>;
+    const table = compact.tables[tableName(collection)] as Record<string, unknown[]>;
     const size = namespace ? table.key!.length : (table[Object.keys(fields)[0]!] ?? []).length;
     const entities: Record<string, unknown>[] = [];
     for (let i = 0; i < size; i += 1) {
@@ -389,6 +402,8 @@ export function createEntityGraphRuntime(input: EntityGraph) {
           && (!p.environment?.rightStartsWith || (right ?? '').startsWith(p.environment.rightStartsWith)));
       if (incoming.length === 0) { if (chain.length) out.push({ historical: pathText(current), chain }); return; }
       for (const p of incoming) {
+        // identity pattern: the source attests no spelling change for this reading
+        if (p.from === current) { out.push({ historical: pathText(current), chain: [...chain, p.id] }); continue; }
         if (visited.has(p.from)) continue;
         walk(p.from, [...chain, p.id], new Set([...visited, p.from]));
       }

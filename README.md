@@ -299,6 +299,8 @@ Generated, preferred, and unresolved results remain epistemically distinct from 
 
 `data/lexical/sources/jmdict/2026-10-01/` holds a field-selected, gloss-free extract of the JMdict 2026-10-01 snapshot (218,850 entries; CC BY-SA 4.0, see its `NOTICE.md`). It is lexical identity evidence only: JMdict entry grouping never selects a historical form, and `ent_seq` is source-local provenance (`jmdict:<date>:seq:<n>`), not a repository semantic ID. `npm run validate:jmdict-intake` enforces the extract hash, field contract and zero-loss accounting. Contract: `docs/phase48a-jmdict-intake-contract.md`.
 
+Phase 4.8B adds the typed lexical entity graph and shared historical→modern reading-convergence DAG (`tools/lexical-entity-graph.ts`, `docs/phase48b-entity-graph.md`). Phase 4.8C compiles the pinned JMdict extract into that graph (218,850 lexemes) and projects the accepted 4.6E 字音 authority onto 177 shared primary + 94 derived convergence patterns that reproduce the accepted direct and word-level results exactly (`docs/phase48c-lexical-graph-compiler.md`, measurements in `data/reports/phase48c-lexical-graph-measurements.json`).
+
 ## Current boundary
 
 Phase 4.7 is **complete / accepted**. The repository now owns the accepted Phase-3 resolver foundation, Phase-4.6 evidence-driven authority expansion, and the Phase-4.7 hybrid generation/audit layer.

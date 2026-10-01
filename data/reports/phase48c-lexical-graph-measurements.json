@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1",
+  "kind": "phase48c-lexical-graph-measurements",
+  "owner": "japanese-orthography#135",
+  "note": "Byte sizes are UTF-8 JSON (and gzip -9) of real compiled data. compileMsObserved is informational and machine-dependent.",
+  "jmdict": {
+    "rawExtractBytes": 28129587,
+    "rawExtractGzipBytes": 4729975
+  },
+  "canonicalGraph": {
+    "sha256": "088a3c579408322fa263aa12b52f7697b806f7626245877a22d9bdca231b8dd8",
+    "bytes": 115706438,
+    "gzipBytes": 12976628
+  },
+  "compactGraph": {
+    "bytes": 50967165,
+    "gzipBytes": 11007042
+  },
+  "hotProjection": {
+    "bytes": 12698911,
+    "gzipBytes": 3220874
+  },
+  "counts": {
+    "lexemes": 218850,
+    "forms": 229114,
+    "symbols": 6368,
+    "readingAtoms": 236621,
+    "readingPaths": 236621,
+    "categories": 243,
+    "restrictions": 11418
+  },
+  "sinoDag": {
+    "sourceRelations": 2000,
+    "sourceBytes": 296536,
+    "primaryPatterns": 177,
+    "derivedPatterns": 94,
+    "bindings": 2000,
+    "readingAtoms": 240,
+    "canonicalBytes": 644876,
+    "compactBytes": 174763
+  },
+  "compileMsObserved": 18020
+}
