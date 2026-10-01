@@ -167,3 +167,21 @@ test('mixed generated and unresolved segments retain per-span basis and source e
     { start: 3, end: 5, input: 'AI', output: 'AI', basis: 'unresolved', relationIds: [] }
   ]);
 });
+
+
+test('productive execution is channel-scoped and reading rules require explicit opt-in', () => {
+  const readingRule = relation('reading:kou', ['こう'], ['かう'], 'substring_productive');
+  readingRule.channel = 'reading';
+
+  const surface = resolveProductiveOrthography('こう', [readingRule]);
+  assert.equal(surface.output, 'こう');
+  assert.ok(surface.blockedRules.some(entry =>
+    entry.relationId === 'reading:kou' && entry.reason === 'unsupported_productive_channel'
+  ));
+
+  const reading = resolveProductiveOrthography('こう', [readingRule], {
+    allowedChannels: ['reading']
+  });
+  assert.equal(reading.output, 'かう');
+  assert.deepEqual(reading.appliedRules.map(entry => entry.relationId), ['reading:kou']);
+});
