@@ -227,6 +227,13 @@ test('canonical normalized graph rejects contradictory identity and preserve sem
     /identity relation must preserve the same form set/
   );
 
+  identity.relations[0].toForms = ['士'];
+  delete identity.relations[0].identitySemantics;
+  assert.throws(
+    () => canonicalizeNormalizedGraph(identity as any),
+    /identity relation requires identity semantics/
+  );
+
   const preserve = minimalGraph();
   preserve.relations = [{
     id: 'preserve:broken',
