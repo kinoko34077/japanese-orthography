@@ -53,7 +53,9 @@
       route: result?.historical?.route ?? null,
       kana: result?.historical?.kana ?? null,
       contextualKanji: result?.historical?.contextualKanji ?? null,
-      deterministicKanji: result?.historical?.deterministicKanji ?? null
+      deterministicKanji: result?.historical?.deterministicKanji ?? null,
+      // orthography-v2 bundles: basis / rule chain / provenance of the v2 restoration (#173)
+      ...(result?.historical?.v2 ? { v2: result.historical.v2 } : {})
     },
     evidenceRefs: Array.isArray(result?.evidenceRefs) ? result.evidenceRefs : []
   });
