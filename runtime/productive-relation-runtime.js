@@ -196,6 +196,31 @@
       compareText(left.relation.id, right.relation.id)
     ));
 
+    const bucketByFirstCodePoint = (entries, sourceOf) => {
+      const buckets = new Map();
+      for (const entry of entries) {
+        const first = codePoints(sourceOf(entry))[0];
+        if (!first) continue;
+        const bucket = buckets.get(first) ?? [];
+        bucket.push(entry);
+        buckets.set(first, bucket);
+      }
+      return buckets;
+    };
+
+    const productiveBuckets = bucketByFirstCodePoint(
+      productiveRules,
+      (rule) => rule.source
+    );
+    const preserveBuckets = bucketByFirstCodePoint(
+      preserveRules,
+      (rule) => rule.source
+    );
+    const passiveBuckets = bucketByFirstCodePoint(
+      passiveMatches,
+      (entry) => entry.source
+    );
+
     const matchesSource = (inputPoints, start, source) => {
       const sourcePoints = codePoints(source);
       if (start + sourcePoints.length > inputPoints.length) return false;
@@ -206,13 +231,16 @@
     };
 
     const matchingProductive = (inputPoints, start) => (
-      productiveRules.filter((rule) => matchesSource(inputPoints, start, rule.source))
+      (productiveBuckets.get(inputPoints[start]) ?? [])
+        .filter((rule) => matchesSource(inputPoints, start, rule.source))
     );
     const matchingPreserve = (inputPoints, start) => (
-      preserveRules.filter((rule) => matchesSource(inputPoints, start, rule.source))
+      (preserveBuckets.get(inputPoints[start]) ?? [])
+        .filter((rule) => matchesSource(inputPoints, start, rule.source))
     );
     const matchingPassive = (inputPoints, start) => (
-      passiveMatches.filter((entry) => matchesSource(inputPoints, start, entry.source))
+      (passiveBuckets.get(inputPoints[start]) ?? [])
+        .filter((entry) => matchesSource(inputPoints, start, entry.source))
     );
 
     const normalizeLockedSegments = (inputPoints, options) => {
