@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
 async function json(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
@@ -132,5 +133,5 @@ test('canonical Phase 4.6D native artifact is reproducible byte-for-byte', async
     { identitySlice: await json('data/historical/native/kkh-kana-first-slice.json') }
   );
   const canonical = await readFile('data/historical/native/phase46d-native-kana.json', 'utf8');
-  assert.equal(canonical, `${JSON.stringify(compiled, null, 2)}\n`);
+  assert.equal(normalizeCheckoutText(canonical), `${JSON.stringify(compiled, null, 2)}\n`);
 });
