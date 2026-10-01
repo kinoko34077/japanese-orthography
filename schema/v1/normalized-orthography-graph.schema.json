@@ -109,10 +109,30 @@
           "then": {
             "properties": {
               "identitySemantics": {
-                "enum": ["implicit", "attested", "preserve"]
+                "enum": ["implicit", "attested"]
               }
             },
-            "required": ["identitySemantics"]
+            "required": ["identitySemantics"],
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "identitySemantics": { "const": "implicit" } },
+                  "required": ["identitySemantics"]
+                },
+                "then": {
+                  "properties": { "basis": { "const": "implicit_identity" } }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "identitySemantics": { "const": "attested" } },
+                  "required": ["identitySemantics"]
+                },
+                "then": {
+                  "properties": { "basis": { "const": "attested_identity" } }
+                }
+              }
+            ]
           }
         },
         {
@@ -123,9 +143,44 @@
           "then": {
             "properties": {
               "applicationMode": { "const": "preserve_block" },
-              "identitySemantics": { "const": "preserve" }
+              "identitySemantics": { "const": "preserve" },
+              "basis": { "const": "preserve_exact" }
             },
             "required": ["identitySemantics"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "applicationMode": { "const": "preserve_block" } },
+            "required": ["applicationMode"]
+          },
+          "then": {
+            "properties": { "relationKind": { "const": "preserve" } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "relationKind": { "const": "mapping" } },
+            "required": ["relationKind"]
+          },
+          "then": {
+            "properties": { "toForms": { "type": "array", "maxItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "applicationMode": {
+                "enum": ["substring_productive", "character_productive"]
+              }
+            },
+            "required": ["applicationMode"]
+          },
+          "then": {
+            "properties": {
+              "relationKind": { "const": "mapping" },
+              "toForms": { "type": "array", "maxItems": 1 }
+            }
           }
         }
       ]

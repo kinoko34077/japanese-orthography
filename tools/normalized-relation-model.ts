@@ -118,6 +118,115 @@ function requireForms(values: unknown, label: string): string[] {
   return canonicalStrings(strings);
 }
 
+function sameCanonicalStrings(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+function codePointLength(value: string): number {
+  return Array.from(value).length;
+}
+
+function assertNormalizedRelationSemantics(
+  relation: NormalizedOrthographyRelation
+): void {
+  const { relationKind, applicationMode, fromForms, toForms, basis, identitySemantics } = relation;
+
+  if (applicationMode === 'preserve_block' && relationKind !== 'preserve') {
+    throw new TypeError(
+      `Normalized relation ${relation.id}: preserve_block requires preserve relation kind`
+    );
+  }
+
+  if (relationKind === 'identity') {
+    if (identitySemantics === undefined) {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: identity relation requires identity semantics`
+      );
+    }
+    if (!sameCanonicalStrings(fromForms, toForms)) {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: identity relation must preserve the same form set`
+      );
+    }
+    if (identitySemantics === 'implicit' && basis !== 'implicit_identity') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: implicit identity requires implicit_identity basis`
+      );
+    }
+    if (identitySemantics === 'attested' && basis !== 'attested_identity') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: attested identity requires attested_identity basis`
+      );
+    }
+    if (identitySemantics === 'preserve') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: preserve identity must use preserve relation kind`
+      );
+    }
+  }
+
+  if (relationKind === 'preserve') {
+    if (!sameCanonicalStrings(fromForms, toForms)) {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: preserve relation must preserve the same form set`
+      );
+    }
+    if (applicationMode !== 'preserve_block') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: preserve relation requires preserve_block application mode`
+      );
+    }
+    if (identitySemantics !== 'preserve') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: preserve relation requires preserve identity semantics`
+      );
+    }
+    if (basis !== 'preserve_exact') {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: preserve relation requires preserve_exact basis`
+      );
+    }
+  }
+
+  if (
+    (applicationMode === 'substring_productive' ||
+      applicationMode === 'character_productive') &&
+    (relationKind !== 'mapping' || toForms.length !== 1)
+  ) {
+    throw new TypeError(
+      `Normalized relation ${relation.id}: productive relation must be deterministic mapping`
+    );
+  }
+
+  if (
+    applicationMode === 'character_productive' &&
+    (
+      fromForms.some(form => codePointLength(form) !== 1) ||
+      codePointLength(toForms[0] ?? '') !== 1
+    )
+  ) {
+    throw new TypeError(
+      `Normalized relation ${relation.id}: character_productive relation must map single code points`
+    );
+  }
+
+  if (relationKind === 'mapping' && toForms.length !== 1) {
+    throw new TypeError(
+      `Normalized relation ${relation.id}: mapping relation requires exactly one target form`
+    );
+  }
+
+  if (
+    identitySemantics !== undefined &&
+    relationKind !== 'identity' &&
+    relationKind !== 'preserve'
+  ) {
+    throw new TypeError(
+      `Normalized relation ${relation.id}: identitySemantics requires identity or preserve relation kind`
+    );
+  }
+}
+
 export function relationCardinality(
   relation: Pick<NormalizedOrthographyRelation, 'fromForms' | 'toForms'>
 ): RelationCardinality {
@@ -154,12 +263,23 @@ export function canonicalizeNormalizedRelation(
   if (relation.identitySemantics !== undefined) {
     normalized.identitySemantics = relation.identitySemantics;
   }
+  assertNormalizedRelationSemantics(normalized);
   return normalized;
 }
 
 export function canonicalizeNormalizedGraph(
   graph: NormalizedOrthographyGraph
 ): NormalizedOrthographyGraph {
+  const relations = graph.relations
+    .map(canonicalizeNormalizedRelation)
+    .sort((a, b) => compareText(a.id, b.id));
+
+  for (let index = 1; index < relations.length; index += 1) {
+    if (relations[index - 1]!.id === relations[index]!.id) {
+      throw new TypeError(`Duplicate normalized relation id: ${relations[index]!.id}`);
+    }
+  }
+
   return {
     schemaVersion: '1',
     kind: 'normalized_orthography_graph',
@@ -170,9 +290,7 @@ export function canonicalizeNormalizedGraph(
         `${a.sourceId ?? JSON.stringify(a)}`,
         `${b.sourceId ?? JSON.stringify(b)}`
       )),
-    relations: graph.relations
-      .map(canonicalizeNormalizedRelation)
-      .sort((a, b) => compareText(a.id, b.id))
+    relations
   };
 }
 
