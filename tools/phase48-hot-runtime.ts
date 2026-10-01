@@ -168,6 +168,7 @@ export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: 
 
 export function createPhase48HotRuntime(hot: Phase48HotRuntime) {
   const strings = hot.strings;
+  const stringIndex = new Map(strings.map((value, index) => [value, index]));
   const pathText = hot.readingPaths.map((path) => path.map((atom) => strings[hot.readingAtoms[atom]!]!).join(''));
   const pathByText = new Map(pathText.map((text, index) => [text, index]));
   const formLexemes = new Map(hot.formIndex.map(([string, lexemes]) => [strings[string]!, lexemes]));
@@ -178,8 +179,8 @@ export function createPhase48HotRuntime(hot: Phase48HotRuntime) {
   const lexemesForFormReading = (form: string, reading: string): string[] => {
     const path = pathByText.get(reading);
     if (path === undefined) return [];
-    const formString = strings.indexOf(form);
-    if (formString < 0) return [];
+    const formString = stringIndex.get(form);
+    if (formString === undefined) return [];
     const a = new Set(formLexemes.get(form) ?? []);
     const b = new Set(readingLexemes.get(path) ?? []);
     const out: string[] = [];
