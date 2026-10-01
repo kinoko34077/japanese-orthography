@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography-v2-source-accounting",
+  "owner": "japanese-orthography#166",
+  "note": "Every record enumerated by a source adapter has exactly one disposition. Source files are provenance roots and are not modified.",
+  "totals": {
+    "inputRecords": 257616,
+    "disposedRecords": 257616,
+    "unaccounted": 0,
+    "byDisposition": {
+      "literal_fact": 228384,
+      "rule_definition": 10,
+      "rule_binding": 2011,
+      "profile_policy": 419,
+      "derived_only": 25312,
+      "excluded_with_reason": 1480
+    }
+  },
+  "graph": {
+    "sources": 26,
+    "facts": 555284,
+    "rules": 182,
+    "bindings": 2000,
+    "sha256": "0cff14a41b5725a890c2d919ee917826b507fcb37b5a905d852d510b4101e47b"
+  },
+  "bySource": {
+    "deterministic/safe-character-first-slice": {
+      "literal_fact": 0,
+      "rule_definition": 5,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 2
+    },
+    "historical/native/kkh-kana-first-slice": {
+      "literal_fact": 3,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 1,
+      "excluded_with_reason": 0
+    },
+    "historical/native/phase46d-native-kana": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 10544,
+      "excluded_with_reason": 0
+    },
+    "historical/phase48f-lexical-authority-join": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 12738,
+      "excluded_with_reason": 0
+    },
+    "historical/sino/kkh-jion-first-slice": {
+      "literal_fact": 5,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 1,
+      "excluded_with_reason": 0
+    },
+    "historical/sino/phase46e-sino-kana": {
+      "literal_fact": 5,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 2001,
+      "excluded_with_reason": 0
+    },
+    "intake/phase46-legacy-safety": {
+      "literal_fact": 3,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 2
+    },
+    "intake/phase46b-character-form": {
+      "literal_fact": 0,
+      "rule_definition": 5,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "intake/phase46c-homophone-rewrite": {
+      "literal_fact": 4,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "intake/phase46d-native-kana": {
+      "literal_fact": 9497,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 841
+    },
+    "intake/phase46e-sino-kana": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 2011,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 2
+    },
+    "intake/phase46f-kinotch-profile": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 67,
+      "derived_only": 0,
+      "excluded_with_reason": 306
+    },
+    "jmdict/2026-10-01": {
+      "literal_fact": 218850,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "lexical/bindings/contextual-kanji-unidic-first-slice": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 1,
+      "excluded_with_reason": 0
+    },
+    "lexical/constraints/contextual-kanji": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 16,
+      "excluded_with_reason": 0
+    },
+    "lexical/sources/unidic-cwj-202512-first-slice": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 17
+    },
+    "packs/contextual-kanji/fu-family": {
+      "literal_fact": 6,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 1,
+      "excluded_with_reason": 0
+    },
+    "packs/contextual-kanji/homophone-rewrite": {
+      "literal_fact": 5,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 4,
+      "excluded_with_reason": 0
+    },
+    "packs/contextual-kanji/merged-ben": {
+      "literal_fact": 3,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 2,
+      "excluded_with_reason": 1
+    },
+    "packs/contextual-kanji/merged-tai": {
+      "literal_fact": 3,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 3,
+      "excluded_with_reason": 0
+    },
+    "profiles/kinotch/homophone-kanji": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 1,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "profiles/kinotch/legacy-stage60-classification": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 49,
+      "derived_only": 0,
+      "excluded_with_reason": 309
+    },
+    "profiles/kinotch/official-homophone-restoration": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 301,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "profiles/kinotch/token-style-overlay": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 0,
+      "profile_policy": 1,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    }
+  }
+}
