@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "1",
+  "kind": "jmdict_lexical_intake_snapshot",
+  "owner": "japanese-orthography#133",
+  "historicalAuthority": false,
+  "source": {
+    "dictionary": "JMdict",
+    "publisher": "Electronic Dictionary Research and Development Group (EDRDG)",
+    "url": "http://ftp.edrdg.org/pub/Nihongo/JMdict.gz",
+    "projectPage": "https://www.edrdg.org/wiki/JMdict-EDICT_Dictionary_Project.html",
+    "createdDate": "2026-10-01",
+    "httpLastModified": "Thu, 01 Oct 2026 03:30:24 GMT",
+    "httpEtag": "\"152af2f-65cbf0940fb90\"",
+    "compressedSha256": "80fd072e541fb98a749d049ea3bd511a54d35445203cdeb414cb72efbecca6e0",
+    "compressedBytes": 22196015,
+    "xmlSha256": "d45019622d12f8ed22a655001a40f976fd966af8b012a97fc54dc9eb78b15a10",
+    "xmlBytes": 120538424,
+    "dtdRevision": "1.09",
+    "archival": "Upstream publishes a rolling daily file without archived snapshots; the committed extract is the reproducible pinned snapshot."
+  },
+  "license": {
+    "id": "CC-BY-SA-4.0",
+    "url": "https://www.edrdg.org/edrdg/licence.html",
+    "attribution": "This work uses the JMdict dictionary file. This file is the property of the Electronic Dictionary Research and Development Group, and is used in conformance with the Group's licence.",
+    "shareAlike": "Derived dictionary data files (this extract and any lexical artifact compiled from it) must be distributed under CC BY-SA 4.0 with this attribution. Code is unaffected."
+  },
+  "fieldContract": {
+    "version": 1,
+    "historicalAuthority": false,
+    "identity": {
+      "sourceLocalRef": "jmdict:<createdDate>:seq:<ent_seq>",
+      "projectSemanticId": false,
+      "note": "ent_seq is retained as source-local provenance only; repository semantic IDs require an explicit mapping (4.8B)."
+    },
+    "elements": {
+      "JMdict": "structural",
+      "entry": "structural",
+      "entry/ent_seq": "included",
+      "entry/k_ele": "included",
+      "entry/k_ele/keb": "included",
+      "entry/k_ele/ke_inf": "included",
+      "entry/k_ele/ke_pri": "included",
+      "entry/r_ele": "included",
+      "entry/r_ele/reb": "included",
+      "entry/r_ele/re_nokanji": "included",
+      "entry/r_ele/re_restr": "included",
+      "entry/r_ele/re_inf": "included",
+      "entry/r_ele/re_pri": "included",
+      "entry/sense": "included",
+      "entry/sense/stagk": "included",
+      "entry/sense/stagr": "included",
+      "entry/sense/pos": "included",
+      "entry/sense/field": "included",
+      "entry/sense/misc": "included",
+      "entry/sense/dial": "included",
+      "entry/sense/gloss": "excluded",
+      "entry/sense/xref": "excluded",
+      "entry/sense/ant": "excluded",
+      "entry/sense/s_inf": "excluded",
+      "entry/sense/lsource": "excluded",
+      "entry/sense/example": "excluded",
+      "entry/sense/example/ex_srce": "excluded",
+      "entry/sense/example/ex_text": "excluded",
+      "entry/sense/example/ex_sent": "excluded",
+      "entry/sense/gram": "excluded",
+      "entry/info": "excluded",
+      "entry/info/audit": "excluded",
+      "entry/info/audit/upd_date": "excluded",
+      "entry/info/audit/upd_detl": "excluded",
+      "entry/sense/pri": "excluded"
+    },
+    "attributes": {
+      "entry/sense/gloss@xml:lang": "excluded",
+      "entry/sense/gloss@g_type": "excluded",
+      "entry/sense/gloss@g_gend": "excluded",
+      "entry/sense/lsource@xml:lang": "excluded",
+      "entry/sense/lsource@ls_type": "excluded",
+      "entry/sense/lsource@ls_wasei": "excluded",
+      "entry/sense/example/ex_srce@exsrc_type": "excluded",
+      "entry/sense/example/ex_sent@xml:lang": "excluded",
+      "entry/sense/example/ex_sent@ex_srce": "excluded"
+    },
+    "exclusionRationale": "Glosses, cross-references, antonyms, sense notes, loanword sources, examples and grammar notes are not required for lexical identity/form/reading/category evidence and stay out of the hot lexical graph."
+  },
+  "extract": {
+    "file": "jmdict-lexical-intake.json.gz",
+    "sha256": "96a0e8874fe075ad61ee580f006aad6a5a4fcd3e6956fc2495c0d7e739fe8651",
+    "bytes": 28129587,
+    "entries": 218850
+  },
+  "accounting": {
+    "createdDate": "2026-10-01",
+    "entries": 218850,
+    "entityTableSha256": "fa5dc0331a491ce0b1985528751fceefae62e58c0933949721c94b910bb500c4",
+    "elements": {
+      "JMdict": {
+        "seen": 1,
+        "disposition": "structural"
+      },
+      "entry": {
+        "seen": 218850,
+        "disposition": "structural"
+      },
+      "entry/ent_seq": {
+        "seen": 218850,
+        "disposition": "included"
+      },
+      "entry/r_ele": {
+        "seen": 265747,
+        "disposition": "included"
+      },
+      "entry/r_ele/reb": {
+        "seen": 265747,
+        "disposition": "included"
+      },
+      "entry/sense": {
+        "seen": 678378,
+        "disposition": "included"
+      },
+      "entry/sense/pos": {
+        "seen": 322030,
+        "disposition": "included"
+      },
+      "entry/sense/xref": {
+        "seen": 36962,
+        "disposition": "excluded"
+      },
+      "entry/sense/gloss": {
+        "seen": 1458693,
+        "disposition": "excluded"
+      },
+      "entry/k_ele": {
+        "seen": 233560,
+        "disposition": "included"
+      },
+      "entry/k_ele/keb": {
+        "seen": 233560,
+        "disposition": "included"
+      },
+      "entry/r_ele/re_nokanji": {
+        "seen": 6645,
+        "disposition": "included"
+      },
+      "entry/sense/s_inf": {
+        "seen": 6871,
+        "disposition": "excluded"
+      },
+      "entry/k_ele/ke_pri": {
+        "seen": 56934,
+        "disposition": "included"
+      },
+      "entry/r_ele/re_restr": {
+        "seen": 6192,
+        "disposition": "included"
+      },
+      "entry/r_ele/re_pri": {
+        "seen": 62698,
+        "disposition": "included"
+      },
+      "entry/sense/misc": {
+        "seen": 50530,
+        "disposition": "included"
+      },
+      "entry/k_ele/ke_inf": {
+        "seen": 24308,
+        "disposition": "included"
+      },
+      "entry/r_ele/re_inf": {
+        "seen": 6945,
+        "disposition": "included"
+      },
+      "entry/sense/dial": {
+        "seen": 614,
+        "disposition": "included"
+      },
+      "entry/sense/stagr": {
+        "seen": 1177,
+        "disposition": "included"
+      },
+      "entry/sense/field": {
+        "seen": 34560,
+        "disposition": "included"
+      },
+      "entry/sense/lsource": {
+        "seen": 6335,
+        "disposition": "excluded"
+      },
+      "entry/sense/stagk": {
+        "seen": 747,
+        "disposition": "included"
+      },
+      "entry/sense/ant": {
+        "seen": 1122,
+        "disposition": "excluded"
+      }
+    },
+    "attributes": {
+      "entry/sense/gloss@xml:lang": {
+        "seen": 1015151,
+        "disposition": "excluded"
+      },
+      "entry/sense/gloss@g_type": {
+        "seen": 3693,
+        "disposition": "excluded"
+      },
+      "entry/sense/lsource@xml:lang": {
+        "seen": 4300,
+        "disposition": "excluded"
+      },
+      "entry/sense/lsource@ls_wasei": {
+        "seen": 2058,
+        "disposition": "excluded"
+      },
+      "entry/sense/lsource@ls_type": {
+        "seen": 81,
+        "disposition": "excluded"
+      }
+    },
+    "undispositioned": []
+  }
+}
