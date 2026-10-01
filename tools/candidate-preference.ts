@@ -198,10 +198,19 @@ export function selectHistoricalCandidate(
         cross.evidenceRefs
       );
     }
+
+    return {
+      ...base,
+      blockedRuleRefs: canonicalStrings([
+        cross.ruleRef,
+        ...downstreamRuleRefs(input)
+      ]),
+      sourceRefs: canonicalStrings(cross.sourceRefs ?? []),
+      evidenceRefs: canonicalStrings(cross.evidenceRefs ?? [])
+    };
   }
 
   const blocked: string[] = [];
-  if (cross) blocked.push(cross.ruleRef);
 
   const diachronic = [...(input.diachronicRules ?? [])]
     .sort((a, b) => compareText(a.id, b.id));
