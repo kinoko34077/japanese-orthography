@@ -106,7 +106,7 @@ test('exact/contextual relations do not leak into unknown-word productive fallba
   const api = await loadRuntime();
   const runtime = api.createProductiveRelationRuntime(graph([
     relation('test:ben-exact', '弁', '辨', 'exact_lexeme'),
-    relation('test:hou-context', '法', 'ほふ', 'contextual', { channel: 'reading' })
+    relation('test:hou-context', '法', 'ほふ', 'contextual')
   ]));
 
   const result = runtime.transform('弁当法');
