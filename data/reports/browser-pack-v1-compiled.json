@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-pack-v1-compiled",
+  "owner": "japanese-orthography#185 B",
+  "packDigest": "6764d4bdb2530dae2716cec86a3002a81a3536d4627e8a9b49ccedf1a049eeec",
+  "canonicalGraphSha256": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+  "totals": {
+    "sections": 1647,
+    "bytes": 82272029,
+    "gzipBytes": 26045672
+  },
+  "byLoading": {
+    "eager": {
+      "sections": 7,
+      "bytes": 350777,
+      "gzipBytes": 89167
+    },
+    "lazy": {
+      "sections": 328,
+      "bytes": 57711144,
+      "gzipBytes": 14158350
+    },
+    "on-demand": {
+      "sections": 1312,
+      "bytes": 24210108,
+      "gzipBytes": 11798155
+    }
+  },
+  "byKind": {
+    "bindings": {
+      "sections": 1,
+      "bytes": 234608,
+      "gzipBytes": 56979
+    },
+    "detail-shard": {
+      "sections": 328,
+      "bytes": 57711144,
+      "gzipBytes": 14158350
+    },
+    "facts": {
+      "sections": 328,
+      "bytes": 7903584,
+      "gzipBytes": 3212798
+    },
+    "lexical-index": {
+      "sections": 328,
+      "bytes": 3012268,
+      "gzipBytes": 2042636
+    },
+    "profile-policy": {
+      "sections": 3,
+      "bytes": 1114,
+      "gzipBytes": 609
+    },
+    "provenance-index": {
+      "sections": 328,
+      "bytes": 3398348,
+      "gzipBytes": 2526216
+    },
+    "rules": {
+      "sections": 1,
+      "bytes": 99648,
+      "gzipBytes": 22062
+    },
+    "shard-directory": {
+      "sections": 1,
+      "bytes": 15340,
+      "gzipBytes": 9432
+    },
+    "string-pool": {
+      "sections": 328,
+      "bytes": 9895908,
+      "gzipBytes": 4016505
+    },
+    "terminology": {
+      "sections": 1,
+      "bytes": 67,
+      "gzipBytes": 85
+    }
+  },
+  "shards": {
+    "count": 328,
+    "largestFactsBytes": 25392
+  },
+  "baseline": {
+    "aReport": "data/reports/browser-pack-v1-measurements.json",
+    "v2HotArtifactModernBytes": 60965586
+  }
+}
