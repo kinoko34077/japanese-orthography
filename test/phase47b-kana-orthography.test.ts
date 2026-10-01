@@ -83,7 +83,7 @@ test('presentation-only variants collapse while retaining all attestations', () 
 test('full-size sokuon preference requires an explicit same-historical-representation gate', () => {
   assert.equal(
     applyFullSizeSokuonPreference('しょっちう', { sameHistoricalRepresentation: true }),
-    'しよつちう'
+    'しょつちう'
   );
   assert.equal(
     applyFullSizeSokuonPreference('しょっちう', { sameHistoricalRepresentation: false }),
