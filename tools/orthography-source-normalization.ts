@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { loadJmdictIntake } from './jmdict-intake.ts';
 import { lexemeKeys } from './jmdict-lexical-graph.ts';
+import { SINO_MECHANISM_RULES } from './sino-rule-normalization.ts';
 import {
   accountSourceRecords,
   canonicalizeOrthographyKnowledge,
@@ -104,7 +105,8 @@ class GraphBuilder {
 
 const readJson = async (rootDir: string, path: string) => JSON.parse(await readFile(resolve(rootDir, path), 'utf8')) as Json;
 const sourceIdFor = (path: string) => path.replace(/^data\//, '').replace(/\.json$/, '');
-const evidenceOf = (record: Json, recordId: string) => [...(Array.isArray(record.evidenceRefs) ? record.evidenceRefs : []), recordId];
+// a record's own evidence refs; the record id is the fallback (the ledger already links id -> target)
+const evidenceOf = (record: Json, recordId: string) => (Array.isArray(record.evidenceRefs) && record.evidenceRefs.length ? [...record.evidenceRefs] : [recordId]);
 const HISTORICAL = ['period:historical-kana'];
 const MODERN = ['period:modern'];
 
@@ -174,6 +176,16 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       for (const alt of r.alternatives ?? []) targets.push(b.fact({ kind: 'form_relation', surface: alt, target: r.modernSurface, lexicalRefs, tags: [...tags, 'candidate'], periodRefs: HISTORICAL }, sourceId, evidence));
       if (targets.length === 0) throw new Error(`${recordId}: admitted record carries no orthographic payload`);
       b.dispose(recordId, 'literal_fact', targets);
+    }
+  }
+
+  // --- 字音 in-word derivation conventions (accepted Phase-4.6E runtime) as first-class rules ----
+  {
+    const sourceId = b.source('derivation/phase46e-sino-conventions', { path: 'runtime/historical-sino-runtime.js', role: 'derivation-convention', owner: 'japanese-orthography#168' });
+    for (const rule of SINO_MECHANISM_RULES) {
+      const recordId = b.record(sourceId, rule.id.slice('rule:sino-mech:'.length));
+      const { sourceRefs, evidenceRefs, ...spec } = rule;
+      b.dispose(recordId, 'rule_definition', [b.rule(spec, sourceId, evidenceRefs)]);
     }
   }
 
