@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "normalized-orthography-graph-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "lexicalNamespaceId", "sources", "relations"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "kind": { "const": "normalized_orthography_graph" },
+    "lexicalNamespaceId": { "$ref": "#/$defs/nonEmptyString" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "orthography-intake-bundle-v1#/$defs/sourceSnapshot" }
+    },
+    "relations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relation" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringSet": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "resultBasis": {
+      "enum": [
+        "source_exact",
+        "source_contextual",
+        "source_candidates",
+        "dictionary_selected",
+        "cross_channel_selected",
+        "generated_productive_span",
+        "generated_character",
+        "generated_diachronic",
+        "generated_rendering",
+        "manual_preference",
+        "implicit_identity",
+        "attested_identity",
+        "preserve_exact",
+        "unresolved"
+      ]
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "relationKind",
+        "channel",
+        "applicationMode",
+        "fromForms",
+        "toForms",
+        "basis",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "relationKind": {
+          "enum": ["mapping", "candidates", "identity", "preserve"]
+        },
+        "channel": {
+          "enum": ["surface", "reading", "character_form"]
+        },
+        "applicationMode": {
+          "enum": [
+            "exact_lexeme",
+            "substring_productive",
+            "character_productive",
+            "contextual",
+            "generated_pattern",
+            "preserve_block"
+          ]
+        },
+        "fromForms": { "$ref": "#/$defs/stringSet" },
+        "toForms": { "$ref": "#/$defs/stringSet" },
+        "basis": { "$ref": "#/$defs/resultBasis" },
+        "sourceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "lexicalIdentity": { "$ref": "#/$defs/nonEmptyString" },
+        "requiredMorphology": {
+          "type": "object",
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "type": "string" }
+        },
+        "identitySemantics": {
+          "enum": ["implicit", "attested", "preserve"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "relationKind": { "const": "identity" } },
+            "required": ["relationKind"]
+          },
+          "then": {
+            "properties": {
+              "identitySemantics": {
+                "enum": ["implicit", "attested", "preserve"]
+              }
+            },
+            "required": ["identitySemantics"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "relationKind": { "const": "preserve" } },
+            "required": ["relationKind"]
+          },
+          "then": {
+            "properties": {
+              "applicationMode": { "const": "preserve_block" },
+              "identitySemantics": { "const": "preserve" }
+            },
+            "required": ["identitySemantics"]
+          }
+        }
+      ]
+    }
+  }
+}
