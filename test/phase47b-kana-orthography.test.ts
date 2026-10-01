@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
   applyFullSizeSokuonPreference,
@@ -88,5 +89,24 @@ test('full-size sokuon preference requires an explicit same-historical-represent
   assert.equal(
     applyFullSizeSokuonPreference('しょっちう', { sameHistoricalRepresentation: false }),
     'しょっちう'
+  );
+});
+
+
+test('accepted Phase 4.6D iteration-only ambiguity collapses as presentation, not language', async () => {
+  const artifact = JSON.parse(
+    await readFile('data/historical/native/phase46d-native-kana.json', 'utf8')
+  ) as Record<string, any>;
+  const relation = artifact.ambiguousSurfaceCandidates.find(
+    (entry: any) => entry.surface === 'ああいう'
+  );
+
+  assert.deepEqual(relation.alternatives, ['ああいふ', 'あゝいふ']);
+  assert.deepEqual(
+    collapsePresentationCandidates(relation.alternatives, { scriptFoldable: false }),
+    [{
+      canonical: 'ああいふ',
+      attestations: ['ああいふ', 'あゝいふ']
+    }]
   );
 });
