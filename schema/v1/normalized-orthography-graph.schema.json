@@ -3,18 +3,34 @@
   "$id": "normalized-orthography-graph-v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "kind", "lexicalNamespaceId", "sources", "relations"],
+  "required": [
+    "schemaVersion",
+    "kind",
+    "lexicalNamespaceId",
+    "sources",
+    "relations"
+  ],
   "properties": {
-    "schemaVersion": { "const": "1" },
-    "kind": { "const": "normalized_orthography_graph" },
-    "lexicalNamespaceId": { "$ref": "#/$defs/nonEmptyString" },
+    "schemaVersion": {
+      "const": "1"
+    },
+    "kind": {
+      "const": "normalized_orthography_graph"
+    },
+    "lexicalNamespaceId": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
     "sources": {
       "type": "array",
-      "items": { "$ref": "orthography-intake-bundle-v1#/$defs/sourceSnapshot" }
+      "items": {
+        "$ref": "orthography-intake-bundle-v1#/$defs/sourceSnapshot"
+      }
     },
     "relations": {
       "type": "array",
-      "items": { "$ref": "#/$defs/relation" }
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
     }
   },
   "$defs": {
@@ -24,7 +40,9 @@
     },
     "stringSet": {
       "type": "array",
-      "items": { "$ref": "#/$defs/nonEmptyString" },
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      },
       "minItems": 1,
       "uniqueItems": true
     },
@@ -60,12 +78,23 @@
         "evidenceRefs"
       ],
       "properties": {
-        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
         "relationKind": {
-          "enum": ["mapping", "candidates", "identity", "preserve"]
+          "enum": [
+            "mapping",
+            "candidates",
+            "identity",
+            "preserve"
+          ]
         },
         "channel": {
-          "enum": ["surface", "reading", "character_form"]
+          "enum": [
+            "surface",
+            "reading",
+            "character_form"
+          ]
         },
         "applicationMode": {
           "enum": [
@@ -77,55 +106,204 @@
             "preserve_block"
           ]
         },
-        "fromForms": { "$ref": "#/$defs/stringSet" },
-        "toForms": { "$ref": "#/$defs/stringSet" },
-        "basis": { "$ref": "#/$defs/resultBasis" },
+        "fromForms": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "toForms": {
+          "$ref": "#/$defs/stringSet"
+        },
+        "basis": {
+          "$ref": "#/$defs/resultBasis"
+        },
         "sourceRefs": {
           "type": "array",
-          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
           "uniqueItems": true
         },
         "evidenceRefs": {
           "type": "array",
-          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          },
           "uniqueItems": true
         },
-        "lexicalIdentity": { "$ref": "#/$defs/nonEmptyString" },
+        "lexicalIdentity": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
         "requiredMorphology": {
           "type": "object",
-          "propertyNames": { "minLength": 1 },
-          "additionalProperties": { "type": "string" }
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "identitySemantics": {
-          "enum": ["implicit", "attested", "preserve"]
+          "enum": [
+            "implicit",
+            "attested",
+            "preserve"
+          ]
         }
       },
       "allOf": [
         {
           "if": {
-            "properties": { "relationKind": { "const": "identity" } },
-            "required": ["relationKind"]
+            "properties": {
+              "relationKind": {
+                "const": "identity"
+              }
+            },
+            "required": [
+              "relationKind"
+            ]
           },
           "then": {
             "properties": {
               "identitySemantics": {
-                "enum": ["implicit", "attested", "preserve"]
+                "enum": [
+                  "implicit",
+                  "attested"
+                ]
               }
             },
-            "required": ["identitySemantics"]
+            "required": [
+              "identitySemantics"
+            ],
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "identitySemantics": {
+                      "const": "implicit"
+                    }
+                  },
+                  "required": [
+                    "identitySemantics"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "basis": {
+                      "const": "implicit_identity"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "identitySemantics": {
+                      "const": "attested"
+                    }
+                  },
+                  "required": [
+                    "identitySemantics"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "basis": {
+                      "const": "attested_identity"
+                    }
+                  }
+                }
+              }
+            ]
           }
         },
         {
           "if": {
-            "properties": { "relationKind": { "const": "preserve" } },
-            "required": ["relationKind"]
+            "properties": {
+              "relationKind": {
+                "const": "preserve"
+              }
+            },
+            "required": [
+              "relationKind"
+            ]
           },
           "then": {
             "properties": {
-              "applicationMode": { "const": "preserve_block" },
-              "identitySemantics": { "const": "preserve" }
+              "applicationMode": {
+                "const": "preserve_block"
+              },
+              "identitySemantics": {
+                "const": "preserve"
+              },
+              "basis": {
+                "const": "preserve_exact"
+              }
             },
-            "required": ["identitySemantics"]
+            "required": [
+              "identitySemantics"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "applicationMode": {
+                "const": "preserve_block"
+              }
+            },
+            "required": [
+              "applicationMode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "relationKind": {
+                "const": "preserve"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "relationKind": {
+                "const": "mapping"
+              }
+            },
+            "required": [
+              "relationKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "toForms": {
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "applicationMode": {
+                "enum": [
+                  "substring_productive",
+                  "character_productive"
+                ]
+              }
+            },
+            "required": [
+              "applicationMode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "relationKind": {
+                "const": "mapping"
+              },
+              "toForms": {
+                "maxItems": 1
+              }
+            }
           }
         }
       ]
