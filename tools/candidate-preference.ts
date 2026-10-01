@@ -200,12 +200,18 @@ export function selectHistoricalCandidate(
     }
   }
 
+  const blocked: string[] = [];
+  if (cross) blocked.push(cross.ruleRef);
+
   const diachronic = [...(input.diachronicRules ?? [])]
     .sort((a, b) => compareText(a.id, b.id));
   const applicableDiachronic = diachronic.filter(rule =>
     sameStringSet(rule.admissibleCandidates, base.sourceCandidates) &&
     base.sourceCandidates.includes(rule.preferred)
   );
+  for (const rule of diachronic) {
+    if (!applicableDiachronic.includes(rule)) blocked.push(rule.id);
+  }
   if (applicableDiachronic.length > 0) {
     const preferred = canonicalStrings(applicableDiachronic.map(rule => rule.preferred));
     if (preferred.length === 1) {
@@ -215,6 +221,7 @@ export function selectHistoricalCandidate(
         'generated_diachronic',
         applicableDiachronic.map(rule => rule.id),
         [
+          ...blocked,
           ...(input.renderingPreference ? [input.renderingPreference.id] : []),
           ...(input.manualPriority ? [input.manualPriority.id] : [])
         ],
@@ -222,14 +229,7 @@ export function selectHistoricalCandidate(
         mergeRefs(...applicableDiachronic.map(rule => rule.evidenceRefs))
       );
     }
-    return {
-      ...base,
-      blockedRuleRefs: canonicalStrings([
-        ...applicableDiachronic.map(rule => rule.id),
-        ...(input.renderingPreference ? [input.renderingPreference.id] : []),
-        ...(input.manualPriority ? [input.manualPriority.id] : [])
-      ])
-    };
+    blocked.push(...applicableDiachronic.map(rule => rule.id));
   }
 
   const rendering = input.renderingPreference;
@@ -248,11 +248,15 @@ export function selectHistoricalCandidate(
           rendered[0]!,
           'generated_rendering',
           [rendering.id],
-          input.manualPriority ? [input.manualPriority.id] : []
+          [
+            ...blocked,
+            ...(input.manualPriority ? [input.manualPriority.id] : [])
+          ]
         );
       }
     }
   }
+  if (rendering) blocked.push(rendering.id);
 
   const manual = input.manualPriority;
   if (
@@ -265,19 +269,13 @@ export function selectHistoricalCandidate(
       manual.preferred,
       'manual_preference',
       [manual.id],
-      [],
+      blocked,
       manual.sourceRefs,
       manual.evidenceRefs
     );
   }
-
-  const blocked: string[] = [];
-  if (cross) blocked.push(cross.ruleRef);
-  for (const rule of diachronic) {
-    if (!applicableDiachronic.includes(rule)) blocked.push(rule.id);
-  }
-  if (rendering) blocked.push(rendering.id);
   if (manual) blocked.push(manual.id);
+
   return {
     ...base,
     blockedRuleRefs: canonicalStrings(blocked)
