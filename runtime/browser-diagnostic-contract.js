@@ -136,7 +136,7 @@
       lexicalIdentity: lexicalCandidates.length === 1 ? lexicalCandidates[0] : null,
       lexicalCandidates: lexicalCandidates.sort(),
       readings: { modern: readings.modern.sort(), historical: readings.historical.sort() },
-      morphologyContext: { available: false, note: "free text carries no morphology/context evidence; context-dependent relations stay unresolved" },
+      morphologyContext: { available: false, note: "貼り付けた文章には品詞・活用・文脈の情報がありません。文脈によって表記が変わる語は確定しません。" },
       basis: accepted[0]?.basis ?? null,
       ruleChain: accepted.flatMap((c) => c.ruleChain),
       acceptedCandidates: accepted,
@@ -146,7 +146,7 @@
         sourceRefs: [...new Set(accepted.flatMap((c) => c.provenance?.sourceRefs ?? []))].sort(),
         evidenceRefs: [...new Set(accepted.flatMap((c) => c.provenance?.evidenceRefs ?? []))].sort()
       },
-      compatibilityAgreement: { status: "not_involved", note: "the BrowserPack path uses v2 knowledge only; the retained UniDic-identity adapters (#173) are not consulted" },
+      compatibilityAgreement: { status: "not_involved", note: "このブラウザ版は新方式（v2）の知識だけを使います。互換用に残している旧方式（UniDic 語彙ID の対応表, #173）は使っていないため、比較対象はありません。" },
       profileEffects: { profileId: raw.profileId, period: policy.policy.period ?? null, candidatePolicy: policy.policy.candidatePolicy ?? null, disabledRuleIds: policy.policy.disabledRuleIds ?? [] }
     };
   };

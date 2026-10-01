@@ -32,7 +32,9 @@
     "validate:orthography-v2-bundle": "node --import tsx tools/orthography-v2-bundle.ts --check",
     "validate:orthography-accounting": "node --import tsx tools/orthography-migration-accounting.ts --check",
     "generate:browser-pack": "node --import tsx tools/generate-browser-pack.ts",
-    "validate:browser-pack": "node --import tsx tools/generate-browser-pack.ts --check"
+    "validate:browser-pack": "node --import tsx tools/generate-browser-pack.ts --check",
+    "build:site": "node --import tsx tools/build-site.ts",
+    "serve:site": "node --import tsx tools/serve-site.ts"
   },
   "repository": {
     "type": "git",

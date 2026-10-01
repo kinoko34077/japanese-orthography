@@ -52,7 +52,8 @@ function factFlags(fact: OrthographyFact): number {
   if (fact.periodRefs?.includes('period:modern')) flags |= FACT_FLAGS.modern;
   for (const tag of fact.tags ?? []) {
     if (tag === 'candidate') flags |= FACT_FLAGS.candidate;
-    if (tag.startsWith('context:') || tag === 'contextual_kanji') flags |= FACT_FLAGS.contextual;
+    // contextual only when a context constraint is attached; a pack tag alone is not a constraint
+    if (tag.startsWith('context:')) flags |= FACT_FLAGS.contextual;
     if (tag.startsWith('safety:')) flags |= FACT_FLAGS.safety;
     if (tag === 'ateji') flags |= FACT_FLAGS.ateji;
   }
