@@ -92,3 +92,18 @@ test('lexicalIdentity and morphology constraints are enforced at the matched occ
   assert.equal(result.output, '思う');
   assert.ok(result.blocked.some((b) => b.reason === 'morphology_constraint_mismatch'));
 });
+
+
+test('same-start equal-authority arbitration preserves longest-match semantics', () => {
+  const { artifact, entity } = fixtures([['AB','ab'], ['ABC','abc'], ['C','c']]);
+  const spans = buildLexicalSpanGraph('ABC', artifact, entity);
+  const result = resolveOccurrenceOrthography(
+    'ABC',
+    [relation('r-ab','AB','X'), relation('r-abc','ABC','Z'), relation('r-c','C','Q')],
+    spans,
+    { policies: { 'r-ab': 'anywhere', 'r-abc': 'anywhere', 'r-c': 'anywhere' } }
+  );
+  assert.equal(result.output, 'Z');
+  assert.deepEqual(result.applied.map((a) => a.relationId), ['r-abc']);
+  assert.ok(result.blocked.some((b) => b.relationId === 'r-ab' && b.reason === 'overlap_lost_arbitration'));
+});
