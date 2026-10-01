@@ -49,7 +49,8 @@ function fixtureGraph() {
     evidence: [], contexts: [], patterns: [], bindings: [],
     lexemes: rows.map(([form, reading]) => ({
       key: `${form}/${reading}`,
-      forms: [form!], readings: [{ path: [reading!] }], categories: [], sourceRefs: []
+      forms: [form!], readings: [{ path: [reading!] }],
+      categories: form === '弁護' ? ['jmdict-pos:noun'] : [], sourceRefs: []
     })),
     morphemes: [], relations: []
   });
@@ -59,7 +60,9 @@ test('span graph keeps whole-word and reusable component analyses without commit
   const graph = buildLexicalSpanGraph('国選弁護士', fixtureArtifact(), fixtureGraph());
   const lexical = graph.spans.filter((s) => s.kind === 'lexical');
   assert.ok(lexical.some((s) => s.text === '弁護士'));
-  assert.ok(lexical.some((s) => s.text === '弁護'));
+  const bengo = lexical.find((s) => s.text === '弁護')!;
+  assert.ok(bengo);
+  assert.deepEqual(bengo.candidates[0]!.categories, ['category:jmdict-pos:noun']);
   const whole = lexical.find((s) => s.text === '弁護士')!;
   const componentTexts = whole.componentPaths.map((ids) => ids.map((id) => graph.spans.find((s) => s.id === id)!.text));
   assert.ok(componentTexts.some((parts) => parts.join('|') === '弁護|士'));
