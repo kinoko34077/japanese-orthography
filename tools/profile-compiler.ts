@@ -1,3 +1,6 @@
+import type { OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
+import { KINOTCH_PROFILE, resolveProjectionPolicy } from './orthography-policy.ts';
+import type { ProjectionPolicy } from './orthography-projection.ts';
 import { createHash } from 'node:crypto';
 import type {
   KinotchProfilePack,
@@ -150,4 +153,9 @@ export function compileKinotchTokenStyleOverlay(
     'manifest.json': serializeConsumer(manifest),
     '20-kinotch-token-style.json5': payload
   };
+}
+
+// ARCH-V2 G (#171): the KiNoTch fixed profile as operational policy over the shared v2 knowledge graph.
+export function compileKinotchOrthographyPolicy(graph: OrthographyKnowledgeGraph): ProjectionPolicy {
+  return resolveProjectionPolicy(KINOTCH_PROFILE, graph);
 }

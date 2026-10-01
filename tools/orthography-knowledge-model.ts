@@ -27,9 +27,21 @@ export const FACT_KINDS: readonly OrthographyFactKind[] = ['literal_form', 'lite
 export const RULE_CLASSES: readonly RuleClass[] = ['diachronic', 'phonological', 'orthographic', 'render'];
 export const RULE_DIRECTIONALITIES: readonly RuleDirectionality[] = ['forward_only', 'reverse_traversable', 'forward_infer_reverse'];
 export const RULE_LOSSINESS: readonly RuleLossiness[] = ['lossless', 'many_to_one', 'one_to_many', 'contextual'];
+export type KnowledgeOrigin = 'historically_attested' | 'project_defined' | 'kinotch_derived';
+export type DerivationMechanism = 'inverse' | 'analogy' | 'composition' | 'other';
+export const KNOWLEDGE_ORIGINS: readonly KnowledgeOrigin[] = ['historically_attested', 'project_defined', 'kinotch_derived'];
+export const DERIVATION_MECHANISMS: readonly DerivationMechanism[] = ['inverse', 'analogy', 'composition', 'other'];
+
+/** #163 §11: absent origin means historically attested source knowledge. */
+export interface OriginMetadata {
+  origin?: KnowledgeOrigin;
+  derivedFrom?: string[];
+  derivationMechanism?: DerivationMechanism;
+}
+
 export const MIGRATION_DISPOSITIONS: readonly MigrationDisposition[] = ['literal_fact', 'rule_definition', 'rule_binding', 'profile_policy', 'derived_only', 'excluded_with_reason'];
 
-export interface OrthographyFact {
+export interface OrthographyFact extends OriginMetadata {
   id: string;
   kind: OrthographyFactKind;
   lexicalRefs: string[];
@@ -43,7 +55,7 @@ export interface OrthographyFact {
   tags?: string[];
 }
 
-export interface OrthographyRule {
+export interface OrthographyRule extends OriginMetadata {
   id: string;
   class: RuleClass;
   directionality: RuleDirectionality;
@@ -114,8 +126,8 @@ export function canonicalizeOrthographyKnowledge(graph: OrthographyKnowledgeGrap
     kind: graph.kind,
     lexicalNamespaceId: graph.lexicalNamespaceId,
     sources: [...graph.sources].map(sortKeys).sort((a, b) => cmp(sourceIdOf(a), sourceIdOf(b))),
-    facts: byId(graph.facts.map((f) => refs(f as unknown as Record<string, unknown>, ['lexicalRefs', 'sourceRefs', 'evidenceRefs', 'periodRefs', 'tags']) as unknown as OrthographyFact)),
-    rules: byId(graph.rules.map((r) => refs(r as unknown as Record<string, unknown>, ['dependencies', 'sourceRefs', 'evidenceRefs']) as unknown as OrthographyRule)),
+    facts: byId(graph.facts.map((f) => refs(f as unknown as Record<string, unknown>, ['lexicalRefs', 'sourceRefs', 'evidenceRefs', 'periodRefs', 'tags', 'derivedFrom']) as unknown as OrthographyFact)),
+    rules: byId(graph.rules.map((r) => refs(r as unknown as Record<string, unknown>, ['dependencies', 'sourceRefs', 'evidenceRefs', 'derivedFrom']) as unknown as OrthographyRule)),
     bindings: byId(graph.bindings.map((b) => refs(b as unknown as Record<string, unknown>, ['lexicalRefs', 'contextRefs', 'sourceRefs', 'evidenceRefs']) as unknown as OrthographyRuleBinding)),
     dispositions: [...graph.dispositions]
       .map((d) => refs(d as unknown as Record<string, unknown>, ['targetIds']) as unknown as SourceDisposition)
@@ -162,8 +174,19 @@ export function validateOrthographyKnowledge(graph: OrthographyKnowledgeGraph): 
     }
   }
 
+  const origin = (id: string, item: OriginMetadata) => {
+    if (item.origin !== undefined && !KNOWLEDGE_ORIGINS.includes(item.origin)) diagnostics.push(`${id} has unknown origin ${item.origin}`);
+    const derived = Boolean(item.derivedFrom?.length) || item.derivationMechanism !== undefined;
+    if (item.origin === 'kinotch_derived' && (!item.derivedFrom?.length || !item.derivationMechanism || !DERIVATION_MECHANISMS.includes(item.derivationMechanism))) {
+      diagnostics.push(`${id} kinotch_derived requires derivedFrom and derivationMechanism`);
+    }
+    if (derived && (item.origin ?? 'historically_attested') === 'historically_attested') diagnostics.push(`${id} is derived and cannot claim historically_attested`);
+  };
+  for (const fact of graph.facts) origin(fact.id, fact);
+
   const rules = new Map(graph.rules.map((r) => [r.id, r]));
   for (const rule of graph.rules) {
+    origin(rule.id, rule);
     provenance(rule.id, rule);
     if (!RULE_CLASSES.includes(rule.class)) diagnostics.push(`${rule.id} has unknown class ${rule.class}`);
     if (!RULE_DIRECTIONALITIES.includes(rule.directionality)) diagnostics.push(`${rule.id} has unknown directionality ${rule.directionality}`);
