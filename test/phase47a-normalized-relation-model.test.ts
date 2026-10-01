@@ -4,6 +4,7 @@ import test from 'node:test';
 import { createSchemaValidator } from '../tools/schema-validator.ts';
 import {
   canonicalStringifyNormalizedGraph,
+  canonicalizeNormalizedGraph,
   relationCardinality
 } from '../tools/normalized-relation-model.ts';
 import {
@@ -196,4 +197,148 @@ test('identity semantics distinguish implicit, source-attested, and explicit pre
   invalid.relations[0].identitySemantics = 'implicit';
   invalid.relations[2].applicationMode = 'exact_lexeme';
   assert.ok(validate(invalid, 'normalized-orthography-graph-v1').length > 0);
+});
+
+
+test('canonical normalized graph rejects duplicate relation IDs', () => {
+  const graph = minimalGraph();
+  graph.relations.push(structuredClone(graph.relations[0]));
+  assert.throws(
+    () => canonicalizeNormalizedGraph(graph as any),
+    /Duplicate normalized relation id/
+  );
+});
+
+test('canonical normalized graph rejects contradictory identity and preserve semantics', () => {
+  const identity = minimalGraph();
+  identity.relations = [{
+    id: 'identity:broken',
+    relationKind: 'identity',
+    channel: 'surface',
+    applicationMode: 'exact_lexeme',
+    fromForms: ['士'],
+    toForms: ['師'],
+    basis: 'implicit_identity',
+    identitySemantics: 'implicit',
+    evidenceRefs: []
+  }];
+  assert.throws(
+    () => canonicalizeNormalizedGraph(identity as any),
+    /identity relation must preserve the same form set/
+  );
+
+  const preserve = minimalGraph();
+  preserve.relations = [{
+    id: 'preserve:broken',
+    relationKind: 'preserve',
+    channel: 'surface',
+    applicationMode: 'preserve_block',
+    fromForms: ['弁'],
+    toForms: ['辯'],
+    basis: 'preserve_exact',
+    identitySemantics: 'preserve',
+    evidenceRefs: ['ev:preserve']
+  }];
+  assert.throws(
+    () => canonicalizeNormalizedGraph(preserve as any),
+    /preserve relation must preserve the same form set/
+  );
+
+  preserve.relations[0].toForms = ['弁'];
+  preserve.relations[0].basis = 'source_exact';
+  assert.throws(
+    () => canonicalizeNormalizedGraph(preserve as any),
+    /preserve relation requires preserve_exact basis/
+  );
+});
+
+test('canonical normalized graph rejects invalid productive and preserve application modes', () => {
+  const graph = minimalGraph();
+
+  graph.relations = [{
+    id: 'productive:ambiguous',
+    relationKind: 'candidates',
+    channel: 'surface',
+    applicationMode: 'substring_productive',
+    fromForms: ['装丁'],
+    toForms: ['装幀', '装釘'],
+    basis: 'source_candidates',
+    evidenceRefs: ['ev:productive']
+  }];
+  assert.throws(
+    () => canonicalizeNormalizedGraph(graph as any),
+    /productive relation must be deterministic mapping/
+  );
+
+  graph.relations = [{
+    id: 'productive:character-span',
+    relationKind: 'mapping',
+    channel: 'character_form',
+    applicationMode: 'character_productive',
+    fromForms: ['学校'],
+    toForms: ['學校'],
+    basis: 'source_exact',
+    evidenceRefs: ['ev:character']
+  }];
+  assert.throws(
+    () => canonicalizeNormalizedGraph(graph as any),
+    /character_productive relation must map single code points/
+  );
+
+  graph.relations = [{
+    id: 'preserve:wrong-kind',
+    relationKind: 'mapping',
+    channel: 'surface',
+    applicationMode: 'preserve_block',
+    fromForms: ['学校'],
+    toForms: ['学校'],
+    basis: 'source_exact',
+    evidenceRefs: ['ev:preserve']
+  }];
+  assert.throws(
+    () => canonicalizeNormalizedGraph(graph as any),
+    /preserve_block requires preserve relation kind/
+  );
+});
+
+test('normalized graph schema rejects expressible semantic contradictions', () => {
+  const preserveMode = minimalGraph();
+  preserveMode.relations = [{
+    id: 'preserve:wrong-kind',
+    relationKind: 'mapping',
+    channel: 'surface',
+    applicationMode: 'preserve_block',
+    fromForms: ['学校'],
+    toForms: ['学校'],
+    basis: 'source_exact',
+    evidenceRefs: ['ev:preserve']
+  }];
+  assert.ok(validate(preserveMode, 'normalized-orthography-graph-v1').length > 0);
+
+  const preserveBasis = minimalGraph();
+  preserveBasis.relations = [{
+    id: 'preserve:wrong-basis',
+    relationKind: 'preserve',
+    channel: 'surface',
+    applicationMode: 'preserve_block',
+    fromForms: ['学校'],
+    toForms: ['学校'],
+    basis: 'source_exact',
+    identitySemantics: 'preserve',
+    evidenceRefs: ['ev:preserve']
+  }];
+  assert.ok(validate(preserveBasis, 'normalized-orthography-graph-v1').length > 0);
+
+  const mappingCandidates = minimalGraph();
+  mappingCandidates.relations = [{
+    id: 'mapping:multi-target',
+    relationKind: 'mapping',
+    channel: 'surface',
+    applicationMode: 'exact_lexeme',
+    fromForms: ['弁'],
+    toForms: ['辨', '辯'],
+    basis: 'source_exact',
+    evidenceRefs: ['ev:mapping']
+  }];
+  assert.ok(validate(mappingCandidates, 'normalized-orthography-graph-v1').length > 0);
 });
