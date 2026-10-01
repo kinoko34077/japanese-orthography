@@ -1,4 +1,5 @@
 import { buildEntityGraph, type EntityGraph, type RawEntityGraph } from './lexical-entity-graph.ts';
+import { deriveSinoVariants } from './sino-rule-normalization.ts';
 
 // Phase 4.8C: project the accepted Phase-4.6E 字音 component authority into the shared
 // ReadingAtom / ReadingPath / ReadingConvergencePattern DAG and reproduce the accepted
@@ -13,37 +14,13 @@ import { buildEntityGraph, type EntityGraph, type RawEntityGraph } from './lexic
 //   patterns + evidence. Variants are reached through `derivations`, never bound directly, so a
 //   variant can never masquerade as a direct table reading.
 
-const VOICED: Record<string, string> = {
-  か: 'が', き: 'ぎ', く: 'ぐ', け: 'げ', こ: 'ご', さ: 'ざ', し: 'じ', す: 'ず', せ: 'ぜ', そ: 'ぞ',
-  た: 'だ', ち: 'ぢ', つ: 'づ', て: 'で', と: 'ど', は: 'ば', ひ: 'び', ふ: 'ぶ', へ: 'べ', ほ: 'ぼ'
-};
-const SEMI_VOICED: Record<string, string> = { は: 'ぱ', ひ: 'ぴ', ふ: 'ぷ', へ: 'ぺ', ほ: 'ぽ' };
-const MODERNIZE: Record<string, string> = { ゐ: 'い', ゑ: 'え', を: 'お', ぢ: 'じ', づ: 'ず' };
-const GEMINATING_CODAS = ['く', 'き', 'ち', 'つ'];
 const SINO_SYLLABLE = /^[ぁ-ゔ](?:[ゃゅょゎ])?(?:[いうくきちつんっ])?$/u;
 const HAN = /^\p{Script=Han}$/u;
 const MAX_RESULTS = 64;
 
-const modernize = (value: string) => Array.from(value, (c) => MODERNIZE[c] ?? c).join('').replace(/^くゎ/u, 'か').replace(/^ぐゎ/u, 'が');
-
-interface Variant { modern: string; historical: string; mechanism: string | null }
-// Mirrors runtime/historical-sino-runtime.js relationForms(), naming each mechanism.
-export function sinoVariants(modern: string, historical: string): Variant[] {
-  const base: Variant[] = [{ modern, historical, mechanism: null }];
-  if (GEMINATING_CODAS.includes(modern.slice(-1))) base.push({ modern: `${modern.slice(0, -1)}っ`, historical, mechanism: 'coda-gemination' });
-  if (historical.endsWith('ふ')) {
-    const stem = historical.slice(0, -1);
-    base.push({ modern: `${modernize(stem)}っ`, historical: `${stem}っ`, mechanism: 'fu-gemination' });
-  }
-  const out = [...base];
-  for (const v of base) {
-    for (const [table, name] of [[VOICED, 'voicing'], [SEMI_VOICED, 'semi-voicing']] as const) {
-      const m0 = table[v.modern[0]!];
-      const h0 = table[v.historical[0]!];
-      if (m0 && h0) out.push({ modern: m0 + v.modern.slice(1), historical: h0 + v.historical.slice(1), mechanism: v.mechanism ? `${v.mechanism}+${name}` : name });
-    }
-  }
-  return out;
+// In-word variants are derived from the first-class v2 mechanism rules (#168).
+export function sinoVariants(modern: string, historical: string) {
+  return deriveSinoVariants(modern, historical);
 }
 
 export interface SinoComponentRelation { character: string; modernReading: string; context: string | null; historicalReadings: string[]; evidenceRefs: string[] }

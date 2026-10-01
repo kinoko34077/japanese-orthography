@@ -4,12 +4,12 @@
   "owner": "japanese-orthography#166",
   "note": "Every record enumerated by a source adapter has exactly one disposition. Source files are provenance roots and are not modified.",
   "totals": {
-    "inputRecords": 257616,
-    "disposedRecords": 257616,
+    "inputRecords": 257621,
+    "disposedRecords": 257621,
     "unaccounted": 0,
     "byDisposition": {
       "literal_fact": 228384,
-      "rule_definition": 10,
+      "rule_definition": 15,
       "rule_binding": 2011,
       "profile_policy": 419,
       "derived_only": 25312,
@@ -17,13 +17,21 @@
     }
   },
   "graph": {
-    "sources": 26,
+    "sources": 27,
     "facts": 555284,
-    "rules": 182,
+    "rules": 187,
     "bindings": 2000,
-    "sha256": "0cff14a41b5725a890c2d919ee917826b507fcb37b5a905d852d510b4101e47b"
+    "sha256": "41d7e8c9268fdb6db94de65b516ed48a7255e5bf0d545b0b0612e995295ea656"
   },
   "bySource": {
+    "derivation/phase46e-sino-conventions": {
+      "literal_fact": 0,
+      "rule_definition": 5,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
     "deterministic/safe-character-first-slice": {
       "literal_fact": 0,
       "rule_definition": 5,
