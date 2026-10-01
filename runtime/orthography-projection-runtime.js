@@ -187,7 +187,22 @@
   });
 
   // Literal facts that attest the projected surface/reading directly.
-  const attestingFacts = (graph, state) => (graph.facts ?? [])
+  const factIndexCache = new WeakMap();
+  const factsBySurface = (graph) => {
+    let index = factIndexCache.get(graph);
+    if (!index) {
+      index = new Map();
+      for (const fact of graph.facts ?? []) {
+        if (fact.surface === undefined) continue;
+        const list = index.get(fact.surface) ?? [];
+        list.push(fact);
+        index.set(fact.surface, list);
+      }
+      factIndexCache.set(graph, index);
+    }
+    return index;
+  };
+  const attestingFacts = (graph, state) => (factsBySurface(graph).get(state.surface) ?? [])
     .filter((fact) => (fact.kind === "literal_reading" || fact.kind === "literal_form")
       && fact.surface === state.surface
       && (fact.kind === "literal_form" ? state.reading === null : fact.reading === state.reading)
@@ -219,13 +234,27 @@
     return true;
   };
 
+  // Compiled (rule map, binding index, execution order) per graph object and policy. Graphs are
+  // treated as immutable once projected; a changed graph must be a new object.
+  const compiledCache = new WeakMap();
+  const compiled = (graph, policy) => {
+    let byPolicy = compiledCache.get(graph);
+    if (!byPolicy) { byPolicy = new Map(); compiledCache.set(graph, byPolicy); }
+    const key = JSON.stringify([policy.enabledRuleIds ?? null, policy.disabledRuleIds ?? null]);
+    let entry = byPolicy.get(key);
+    if (!entry) {
+      entry = { rules: new Map((graph.rules ?? []).map((rule) => [rule.id, rule])), bound: bindingsByRule(graph), order: compileRuleOrder(graph, policy) };
+      byPolicy.set(key, entry);
+    }
+    return entry;
+  };
+
   const projectOrthography = (input, graph, policy = {}) => {
-    const rules = new Map((graph.rules ?? []).map((rule) => [rule.id, rule]));
-    const bound = bindingsByRule(graph);
+    const { rules, bound, order } = compiled(graph, policy);
     let state = cloneState(input);
     const steps = [];
     const blockedRules = [];
-    for (const id of compileRuleOrder(graph, policy)) {
+    for (const id of order) {
       const rule = rules.get(id);
       if (bound.has(id) && !bound.get(id).some((binding) => bindingCovers(binding, state))) continue;
       if (rule.predicate?.scope !== undefined && !(policy.scopes ?? []).includes(rule.predicate.scope)) continue;

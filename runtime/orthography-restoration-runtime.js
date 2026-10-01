@@ -56,12 +56,28 @@
     return bindings.filter((b) => (b.contextRefs ?? []).length === 0);
   };
 
+  // facts are looked up by surface or by form-relation target (the observed modern form)
+  const historicalIndexCache = new WeakMap();
+  const historicalFactsFor = (graph, observed) => {
+    let index = historicalIndexCache.get(graph);
+    if (!index) {
+      index = new Map();
+      const add = (key, fact) => { if (key === undefined) return; const list = index.get(key) ?? []; if (!list.includes(fact)) list.push(fact); index.set(key, list); };
+      for (const fact of graph.facts ?? []) {
+        if (!(fact.periodRefs ?? []).includes(HISTORICAL)) continue;
+        add(fact.surface, fact);
+        add(fact.target, fact);
+      }
+      historicalIndexCache.set(graph, index);
+    }
+    return index.get(observed) ?? [];
+  };
+
   const reverseTraversal = (query, graph) => {
     const policy = query.targetPolicy ?? {};
     const out = [];
     const rules = new Map((graph.rules ?? []).map((r) => [r.id, r]));
-    for (const fact of graph.facts ?? []) {
-      if (!(fact.periodRefs ?? []).includes(HISTORICAL)) continue;
+    for (const fact of historicalFactsFor(graph, query.observedSurface)) {
       if (fact.kind === "form_relation" && fact.target === query.observedSurface && fact.surface !== fact.target) {
         if ((query.lexicalCandidates ?? []).length > 0 && (fact.lexicalRefs ?? []).length > 0 && !lexicallyTied(fact.lexicalRefs, query)) continue;
         out.push({ state: baseState(query, { surface: fact.surface, factIds: [fact.id] }), basis: "reverse_traversal", ruleChain: [], sourceRefs: fact.sourceRefs, evidenceRefs: fact.evidenceRefs });
