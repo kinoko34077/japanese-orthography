@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "orthography-applicability-ledger-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "entries"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "kind": { "const": "orthography_applicability_ledger" },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" },
+      "uniqueItems": true
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input",
+        "sourceCandidates",
+        "generatedCandidates",
+        "selectedResult",
+        "basis",
+        "ruleRefs",
+        "sourceRefs",
+        "evidenceRefs",
+        "generationApplied",
+        "preferenceApplied",
+        "blockedRules"
+      ],
+      "properties": {
+        "input": { "$ref": "#/$defs/nonEmptyString" },
+        "lexicalIdentity": { "$ref": "#/$defs/nonEmptyString" },
+        "context": {
+          "type": "object",
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "type": "string" }
+        },
+        "sourceCandidates": { "$ref": "#/$defs/stringArray" },
+        "generatedCandidates": { "$ref": "#/$defs/stringArray" },
+        "selectedResult": {
+          "anyOf": [
+            { "$ref": "#/$defs/nonEmptyString" },
+            { "type": "null" }
+          ]
+        },
+        "basis": {
+          "$ref": "normalized-orthography-graph-v1#/$defs/resultBasis"
+        },
+        "ruleRefs": { "$ref": "#/$defs/stringArray" },
+        "sourceRefs": { "$ref": "#/$defs/stringArray" },
+        "evidenceRefs": { "$ref": "#/$defs/stringArray" },
+        "generationApplied": { "type": "boolean" },
+        "preferenceApplied": { "type": "boolean" },
+        "blockedRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ruleRef", "reason"],
+            "properties": {
+              "ruleRef": { "$ref": "#/$defs/nonEmptyString" },
+              "reason": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
