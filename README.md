@@ -295,6 +295,10 @@ unknown/new string
 
 Generated, preferred, and unresolved results remain epistemically distinct from source-attested exact authority. Phase 4.7 does not freeze a package/public API, binary format, consumer integration contract, or release/distribution mechanism.
 
+## Pinned JMdict lexical intake (Phase 4.8A)
+
+`data/lexical/sources/jmdict/2026-10-01/` holds a field-selected, gloss-free extract of the JMdict 2026-10-01 snapshot (218,850 entries; CC BY-SA 4.0, see its `NOTICE.md`). It is lexical identity evidence only: JMdict entry grouping never selects a historical form, and `ent_seq` is source-local provenance (`jmdict:<date>:seq:<n>`), not a repository semantic ID. `npm run validate:jmdict-intake` enforces the extract hash, field contract and zero-loss accounting. Contract: `docs/phase48a-jmdict-intake-contract.md`.
+
 ## Current boundary
 
 Phase 4.7 is **complete / accepted**. The repository now owns the accepted Phase-3 resolver foundation, Phase-4.6 evidence-driven authority expansion, and the Phase-4.7 hybrid generation/audit layer.
