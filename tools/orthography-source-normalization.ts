@@ -141,6 +141,16 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     b.dispose(recordId, 'literal_fact', targets);
   }
   const lexicalRefsFor = (form: string | undefined) => (form ? lexemesByForm.get(form) ?? [] : []);
+  // A historical reading names its written form, not its modern reading: it is tied to the form's
+  // lexemes only when JMdict gives that form exactly one modern reading (#154 A1, #170).
+  const modernReadingsByForm = new Map<string, Set<string>>();
+  for (const entry of extract) for (const k of entry.k ?? []) for (const r of entry.r) {
+    if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
+    const set = modernReadingsByForm.get(k.t) ?? new Set<string>();
+    set.add(r.t);
+    modernReadingsByForm.set(k.t, set);
+  }
+  const readingLexicalRefsFor = (form: string | undefined) => (form && modernReadingsByForm.get(form)?.size === 1 ? lexicalRefsFor(form) : []);
 
   // --- Phase-4.6 intake (record-level authority over the pinned raw sources) --------------------
   for (const file of INTAKE_FILES) {
@@ -156,12 +166,12 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
         continue;
       }
       if (file === 'phase46b-character-form') {
-        const ruleId = b.rule({ id: `rule:char:${r.historicalSurface}>${r.modernSurface}`, class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [r.historicalSurface], to: [r.modernSurface], dependencies: [] }, sourceId, evidence);
+        const ruleId = b.rule({ id: `rule:char:${r.historicalSurface}>${r.modernSurface}`, class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [r.historicalSurface], to: [r.modernSurface], dependencies: [], predicate: { channel: 'surface' } }, sourceId, evidence);
         b.dispose(recordId, 'rule_definition', [ruleId]);
         continue;
       }
       if (file === 'phase46e-sino-kana') {
-        const ruleId = b.rule({ id: `rule:sino:${r.historicalReading}>${r.modernReading}`, class: 'diachronic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [r.historicalReading], to: [r.modernReading], dependencies: [] }, sourceId, evidence);
+        const ruleId = b.rule({ id: `rule:sino:${r.historicalReading}>${r.modernReading}`, class: 'diachronic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [r.historicalReading], to: [r.modernReading], dependencies: [], predicate: { channel: 'reading' } }, sourceId, evidence);
         const usage = r.morphology?.usage as string | undefined;
         const bindingId = b.binding({ id: `binding:sino:${r.modernSurface}:${r.historicalReading}>${r.modernReading}@${usage ?? 'none'}`, ruleId, lexicalRefs: [`symbol:${r.modernSurface}`], ...(usage ? { contextRefs: [`context:usage:${usage}`] } : {}) }, sourceId, evidence);
         b.dispose(recordId, 'rule_binding', [bindingId]);
@@ -172,7 +182,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       const tags = [r.responsibility, ...(candidate ? ['candidate'] : [])];
       const lexicalRefs = lexicalRefsFor(r.modernSurface);
       const targets: string[] = [];
-      if (r.historicalReading) targets.push(b.fact({ kind: 'literal_reading', surface: r.modernSurface, reading: r.historicalReading, lexicalRefs, tags, periodRefs: HISTORICAL }, sourceId, evidence));
+      if (r.historicalReading) targets.push(b.fact({ kind: 'literal_reading', surface: r.modernSurface, reading: r.historicalReading, lexicalRefs: readingLexicalRefsFor(r.modernSurface), tags, periodRefs: HISTORICAL }, sourceId, evidence));
       if (r.historicalSurface) targets.push(b.fact({ kind: 'form_relation', surface: r.historicalSurface, target: r.modernSurface, lexicalRefs, tags, periodRefs: HISTORICAL }, sourceId, evidence));
       for (const alt of r.alternatives ?? []) targets.push(b.fact({ kind: 'form_relation', surface: alt, target: r.modernSurface, lexicalRefs, tags: [...tags, 'candidate'], periodRefs: HISTORICAL }, sourceId, evidence));
       if (targets.length === 0) throw new Error(`${recordId}: admitted record carries no orthographic payload`);
@@ -207,7 +217,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     const slice = await readJson(rootDir, path);
     for (const m of slice.mappings as Json[]) {
       const recordId = b.record(sourceId, m.modern);
-      const ruleId = b.rule({ id: `rule:char:${m.historical}>${m.modern}`, class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [m.historical], to: [m.modern], dependencies: [] }, sourceId, evidenceOf(m, recordId));
+      const ruleId = b.rule({ id: `rule:char:${m.historical}>${m.modern}`, class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: [m.historical], to: [m.modern], dependencies: [], predicate: { channel: 'surface' } }, sourceId, evidenceOf(m, recordId));
       b.dispose(recordId, 'rule_definition', [ruleId]);
     }
     for (const x of slice.exclusionRecords as Json[]) {
@@ -225,7 +235,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       if (r.historicalSurface) targets.push(b.fact({ kind: 'form_relation', surface: r.historicalSurface, target: r.surface, lexicalRefs: lexicalRefsFor(r.surface), tags: ['kkh'], periodRefs: HISTORICAL }, sourceId, evidence));
       if (r.historicalReading) {
         const wholeWord = Boolean(r.modernReading);
-        targets.push(b.fact({ kind: 'literal_reading', surface: r.surface, reading: r.historicalReading, lexicalRefs: lexicalRefsFor(r.surface), tags: [wholeWord ? 'whole-word' : 'component-jion'], periodRefs: HISTORICAL }, sourceId, evidence));
+        targets.push(b.fact({ kind: 'literal_reading', surface: r.surface, reading: r.historicalReading, lexicalRefs: wholeWord ? lexicalRefsFor(r.surface).filter((l) => l.endsWith(`/${r.modernReading}`) || l.includes(`/${r.modernReading}#`)) : [], tags: [wholeWord ? 'whole-word' : 'component-jion'], periodRefs: HISTORICAL }, sourceId, evidence));
       }
       b.dispose(recordId, 'literal_fact', targets);
     }
