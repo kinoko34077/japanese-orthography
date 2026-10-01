@@ -211,7 +211,12 @@
       const forms = formsByCharacter.get(relation.character) ?? [];
       for (const historical of relation.historicalReadings) {
         for (const [modernForm, historicalForm] of relationForms(relation.modernReading, historical)) {
-          forms.push({ modernForm, historicalForm, evidenceRefs: relation.evidenceRefs });
+          forms.push({
+            modernForm,
+            historicalForm,
+            context: relation.context ?? null,
+            evidenceRefs: relation.evidenceRefs
+          });
           tableForms.add(modernForm);
         }
       }
@@ -240,20 +245,41 @@
 
     // Options for one character covering one reading segment. Sounds the table does not list
     // keep modern spelling (source rule), except geminated codas whose base reading is unknown.
-    const segmentOptions = (character, segment) => {
+    const segmentOptions = (character, segment, contextOptions = {}) => {
       if (!SINO_SYLLABLE.test(segment)) return [];
-      const matches = (formsByCharacter.get(character) ?? []).filter((form) => form.modernForm === segment);
+      const allMatches = (formsByCharacter.get(character) ?? []).filter((form) => form.modernForm === segment);
+      let matches = allMatches;
+      const hasContext = Object.prototype.hasOwnProperty.call(contextOptions, "context")
+        && contextOptions.context !== undefined;
+      if (hasContext && allMatches.length > 0) {
+        const context = contextOptions.context ?? null;
+        const exactContext = allMatches.filter((form) => form.context === context);
+        if (exactContext.length > 0) {
+          matches = exactContext;
+        } else if (allMatches.some((form) => form.context !== null)) {
+          return [];
+        } else {
+          matches = allMatches.filter((form) => form.context === null);
+        }
+      }
       if (matches.length > 0) {
-        return matches.map((form) => ({ historical: form.historicalForm, evidenceRefs: form.evidenceRefs }));
+        return matches.map((form) => ({
+          historical: form.historicalForm,
+          context: form.context,
+          evidenceRefs: form.evidenceRefs
+        }));
       }
       if (tableForms.has(segment) || segment.endsWith("っ")) return [];
-      return [{ historical: segment, evidenceRefs: [] }];
+      return [{ historical: segment, context: null, evidenceRefs: [] }];
     };
 
-    const reconstructWord = (surface, modernReading) => {
+    const reconstructWord = (surface, modernReading, contextOptions = {}) => {
       const characters = Array.from(`${surface ?? ""}`.normalize("NFC"));
       const reading = `${modernReading ?? ""}`;
       if (characters.length === 0 || reading === "" || !characters.every((char) => HAN.test(char))) return null;
+      const hasContext = Object.prototype.hasOwnProperty.call(contextOptions, "context")
+        && contextOptions.context !== undefined;
+      const selectionContext = hasContext ? (contextOptions.context ?? null) : undefined;
 
       const results = new Map();
       let overflow = false;
@@ -268,9 +294,10 @@
         }
         for (let end = offset + 1; end <= Math.min(reading.length, offset + 4); end += 1) {
           const segment = reading.slice(offset, end);
-          for (const option of segmentOptions(characters[charIndex], segment)) {
+          for (const option of segmentOptions(characters[charIndex], segment, contextOptions)) {
             walk(charIndex + 1, end, [...parts, option.historical], [...components, {
               surface: characters[charIndex], modernReading: segment, historicalReading: option.historical,
+              context: option.context,
               evidenceRefs: option.evidenceRefs
             }]);
           }
@@ -282,23 +309,32 @@
       const readings = [...results.keys()].sort();
       if (readings.length > 1) return { status: "candidates", historicalReadings: readings };
       const components = results.get(readings[0]);
-      return {
+      const resolved = {
         status: "resolved",
         historicalReading: readings[0],
         components,
         evidenceRefs: uniqueSorted(components.flatMap((component) => component.evidenceRefs))
       };
+      if (hasContext) resolved.selectionContext = selectionContext;
+      return resolved;
     };
 
     const lookup = (candidate, surface) => {
       const relation = identity.lookup(candidate);
       if (relation || candidate?.lexicalOrigin !== "sino" || typeof surface !== "string") return relation;
-      const reconstructed = reconstructWord(surface, candidate.reading);
+      const usageContext = typeof candidate?.morphology?.usage === "string"
+        ? candidate.morphology.usage
+        : (typeof candidate?.context?.usage === "string" ? candidate.context.usage : undefined);
+      const reconstructed = reconstructWord(
+        surface,
+        candidate.reading,
+        usageContext === undefined ? {} : { context: usageContext }
+      );
       if (!reconstructed) return null;
       if (reconstructed.status === "candidates") {
         return { status: "candidates", route: "sino", readings: reconstructed.historicalReadings, evidenceRefs: [] };
       }
-      return {
+      const resolved = {
         route: "sino",
         reading: reconstructed.historicalReading,
         surface,
@@ -313,6 +349,10 @@
         })),
         evidenceRefs: reconstructed.evidenceRefs
       };
+      if (reconstructed.selectionContext !== undefined) {
+        resolved.selectionContext = reconstructed.selectionContext;
+      }
+      return resolved;
     };
 
     return {
