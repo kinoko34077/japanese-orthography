@@ -35,6 +35,14 @@ if (process.argv[1]?.endsWith('orthography-migration-accounting.ts')) {
   const result = await normalizeAcceptedOrthographySources(rootDir);
   assertNoSilentSourceDrop(result);
   const text = `${JSON.stringify(buildSourceAccountingReport(result), null, 2)}\n`;
-  await writeFile(resolve(rootDir, SOURCE_ACCOUNTING_REPORT), text);
-  console.log(text);
+  if (process.argv.includes('--check')) {
+    const { readFile } = await import('node:fs/promises');
+    const { normalizeCheckoutText } = await import('./verification-text.ts');
+    if (normalizeCheckoutText(await readFile(resolve(rootDir, SOURCE_ACCOUNTING_REPORT), 'utf8')) !== text) throw new Error(`stale ${SOURCE_ACCOUNTING_REPORT}`);
+    if (result.accounting.unaccounted.length) throw new Error('unaccounted source records');
+    console.log(`orthography-v2 source accounting OK: ${result.accounting.disposedRecords} records, 0 unaccounted`);
+  } else {
+    await writeFile(resolve(rootDir, SOURCE_ACCOUNTING_REPORT), text);
+    console.log(text);
+  }
 }

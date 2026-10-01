@@ -4,7 +4,9 @@
     root.HistoricalNativeRuntime,
     root.HistoricalSinoRuntime,
     root.SafeCharacterRuntime,
-    root.OrthographyResolver
+    root.OrthographyResolver,
+    root.OrthographyHotRuntime,
+    root.OrthographyRestorationRuntime
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.ResolverBundleRuntime = api;
@@ -13,7 +15,9 @@
   HistoricalNativeRuntime,
   HistoricalSinoRuntime,
   SafeCharacterRuntime,
-  OrthographyResolver
+  OrthographyResolver,
+  OrthographyHotRuntime,
+  OrthographyRestorationRuntime
 ) {
   "use strict";
 
@@ -174,13 +178,16 @@
     if (artifact?.schemaVersion !== "1" || artifact?.kind !== "japanese-orthography-resolver-bundle-artifact") {
       throw new TypeError("Unsupported resolver bundle artifact");
     }
-    if (artifact.bundleSemantics !== "phase3-first-slice-v1") {
+    if (artifact.bundleSemantics !== "phase3-first-slice-v1" && artifact.bundleSemantics !== "orthography-v2") {
       throw new TypeError("Unsupported resolver bundle semantics");
     }
+    const v2 = artifact.bundleSemantics === "orthography-v2";
+    const requiredCapabilities = v2 ? [...REQUIRED_CAPABILITIES, "orthography-v2"] : REQUIRED_CAPABILITIES;
+    const requiredSections = v2 ? [...REQUIRED_SECTIONS, "orthography-v2"] : REQUIRED_SECTIONS;
     requireSha256(artifact.bundleContentId, "resolver bundle content id");
 
-    if (!Array.isArray(artifact.capabilities) || artifact.capabilities.length !== REQUIRED_CAPABILITIES.length ||
-      !REQUIRED_CAPABILITIES.every((value, index) => artifact.capabilities[index] === value)) {
+    if (!Array.isArray(artifact.capabilities) || artifact.capabilities.length !== requiredCapabilities.length ||
+      !requiredCapabilities.every((value, index) => artifact.capabilities[index] === value)) {
       throw new Error("Resolver bundle capability declaration mismatch");
     }
 
@@ -192,11 +199,11 @@
       if (sectionIds.has(section.id)) throw new Error(`Duplicate resolver bundle section: ${section.id}`);
       sectionIds.add(section.id);
     }
-    for (const id of REQUIRED_SECTIONS) {
+    for (const id of requiredSections) {
       if (!sectionIds.has(id)) throw new Error(`Missing resolver bundle section: ${id}`);
     }
-    if (artifact.sections.length !== REQUIRED_SECTIONS.length ||
-      !REQUIRED_SECTIONS.every((id, index) => artifact.sections[index]?.id === id)) {
+    if (artifact.sections.length !== requiredSections.length ||
+      !requiredSections.every((id, index) => artifact.sections[index]?.id === id)) {
       throw new Error("Resolver bundle section declaration mismatch");
     }
 
@@ -219,6 +226,9 @@
     }
     if (sectionById.get("safe-character").contentId !== sha256(artifact.safeCharacterSlice)) {
       throw new Error("Resolver bundle safe-character section identity mismatch");
+    }
+    if (v2 && sectionById.get("orthography-v2").contentId !== sha256(artifact.orthographyV2)) {
+      throw new Error("Resolver bundle orthography-v2 section identity mismatch");
     }
 
     if (artifact.historicalNativeSlice?.lexicalNamespaceId !== lexicalNamespaceId) {
@@ -274,11 +284,73 @@
     );
     const safeCharacter = SafeCharacterRuntime.createSafeCharacterRuntime(artifact.safeCharacterSlice);
 
-    const historicalLookup = (candidate, surface) => {
+    const legacyHistoricalLookup = (candidate, surface) => {
       const nativeRelation = historicalNative.lookup(candidate);
       const sinoRelation = historicalSino.lookup(candidate, surface);
       if (nativeRelation && sinoRelation) throw new Error("Resolver bundle historical route collision");
       return nativeRelation ?? sinoRelation ?? null;
+    };
+
+    // ---- orthography-v2 (#173): v2 knowledge is consulted for every unit ------------------------
+    // The UniDic-identity-keyed slices stay as compatibility adapters (recorded retained exception:
+    // v2 has no UniDic->JMdict identity bridge beyond (surface, reading)); v2 supplies source-backed
+    // restoration where they have nothing, and every resolved unit carries a v2 trace.
+    let v2 = null;
+    if (artifact.bundleSemantics === "orthography-v2") {
+      requireApi(OrthographyHotRuntime, "inflateHotArtifact", "OrthographyHotRuntime.inflateHotArtifact");
+      requireApi(OrthographyRestorationRuntime, "restoreOrthography", "OrthographyRestorationRuntime.restoreOrthography");
+      const inflated = OrthographyHotRuntime.inflateHotArtifact(artifact.orthographyV2.hot);
+      v2 = { graph: inflated.graph, policy: inflated.policy, bridge: artifact.orthographyV2.lexemeBridge };
+    }
+    const v2Restore = (surface, reading, usage) => {
+      const query = {
+        observedSurface: surface,
+        observedReading: reading ?? null,
+        lexicalCandidates: (reading && v2.bridge[`${surface}\u0000${reading}`]) || [],
+        context: usage ? { usage } : null,
+        targetPolicy: v2.policy
+      };
+      const result = OrthographyRestorationRuntime.restoreOrthography(query, v2.graph);
+      return {
+        status: result.status,
+        candidates: result.candidates.map((c) => ({
+          surface: c.state.surface, reading: c.state.reading, basis: c.basis, ruleChain: c.ruleChain,
+          // literal source fact vs source-bound rule vs generated rule composition
+          authority: c.basis === "forward_agreement" ? "generated_rule" : c.ruleChain.length === 0 ? "literal_fact" : "source_rule_binding",
+          sourceRefs: c.sourceRefs, evidenceRefs: c.evidenceRefs
+        }))
+      };
+    };
+    const sourceBacked = (trace) => trace.status === "resolved" && trace.candidates[0].basis !== "forward_agreement";
+
+    const historicalLookup = (candidate, surface) => {
+      const legacy = legacyHistoricalLookup(candidate, surface);
+      if (legacy || !v2 || typeof candidate?.reading !== "string") return legacy;
+      const trace = v2Restore(surface, candidate.reading, candidate?.morphology?.usage);
+      if (!sourceBacked(trace) || trace.candidates[0].reading === candidate.reading) return null;
+      const winner = trace.candidates[0];
+      return {
+        route: "orthography-v2",
+        reading: winner.reading,
+        surface: winner.surface,
+        requiresMorphology: false,
+        requiredMorphology: null,
+        evidenceRefs: [...winner.sourceRefs, ...winner.evidenceRefs]
+      };
+    };
+
+    const attachTrace = (unit) => {
+      if (!v2 || unit?.kind !== "resolved") return unit;
+      const surface = unit.reconstructedSurface ?? unit.sourceSurface;
+      const reading = unit.reading?.modernSurface ?? null;
+      const trace = v2Restore(surface, reading, unit.morphology?.usage);
+      const v1Kana = unit.historical?.kana ?? null;
+      const v2Kana = sourceBacked(trace) ? trace.candidates[0].reading : null;
+      trace.agreement = v1Kana === null && v2Kana === null ? "none"
+        : v1Kana !== null && v2Kana === null ? "v1-only"
+          : v1Kana === null ? "v2-only"
+            : v1Kana === v2Kana ? "parity" : "conflict";
+      return { ...unit, historical: { ...unit.historical, v2: trace } };
     };
 
     const resolver = OrthographyResolver.createResolver({
@@ -298,10 +370,11 @@
     const capabilities = Object.freeze([...artifact.capabilities]);
     return Object.freeze({
       bundleContentId: artifact.bundleContentId,
+      bundleSemantics: artifact.bundleSemantics,
       lexicalNamespaceId,
       capabilities,
-      resolveUnit(input, options) { return resolver.resolveUnit(input, options); },
-      resolveReading(input, options) { return resolver.resolveReading(input, options); },
+      resolveUnit(input, options) { return attachTrace(resolver.resolveUnit(input, options)); },
+      resolveReading(input, options) { return attachTrace(resolver.resolveReading(input, options)); },
       resolveHistoricalSino(query) {
         return typeof historicalSino.resolveHistoricalSino === "function" ? historicalSino.resolveHistoricalSino(query) : null;
       },
