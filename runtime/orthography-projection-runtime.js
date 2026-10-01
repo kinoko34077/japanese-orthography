@@ -194,13 +194,40 @@
     .map((fact) => fact.id)
     .sort(compareText);
 
+  // A rule's existence does not make it globally applicable (#163 §1.2):
+  //  - a rule referenced by bindings fires only for states those bindings cover
+  //    (lexeme id, or the single symbol that is the whole surface) with matching context;
+  //  - a rule with predicate.scope fires only when the policy opts into that scope.
+  const bindingsByRule = (graph) => {
+    const map = new Map();
+    for (const binding of graph.bindings ?? []) {
+      const list = map.get(binding.ruleId) ?? [];
+      list.push(binding);
+      map.set(binding.ruleId, list);
+    }
+    return map;
+  };
+  const bindingCovers = (binding, state) => {
+    const refs = binding.lexicalRefs ?? [];
+    const covered = (state.lexicalIdentity !== null && refs.includes(state.lexicalIdentity)) || refs.includes(`symbol:${state.surface}`);
+    if (!covered) return false;
+    for (const ref of binding.contextRefs ?? []) {
+      const match = /^context:([^:]+):(.*)$/u.exec(ref);
+      if (!match || (state.morphology ?? {})[match[1]] !== match[2]) return false;
+    }
+    return true;
+  };
+
   const projectOrthography = (input, graph, policy = {}) => {
     const rules = new Map((graph.rules ?? []).map((rule) => [rule.id, rule]));
+    const bound = bindingsByRule(graph);
     let state = cloneState(input);
     const steps = [];
     const blockedRules = [];
     for (const id of compileRuleOrder(graph, policy)) {
       const rule = rules.get(id);
+      if (bound.has(id) && !bound.get(id).some((binding) => bindingCovers(binding, state))) continue;
+      if (rule.predicate?.scope !== undefined && !(policy.scopes ?? []).includes(rule.predicate.scope)) continue;
       const channel = channelOf(rule);
       const text = state[channel];
       const mechanism = rule.predicate?.mechanism;
@@ -231,5 +258,5 @@
     };
   };
 
-  return { compileRuleOrder, projectOrthography, MECHANISMS: Object.keys(MECHANISMS) };
+  return { compileRuleOrder, projectOrthography, bindingCovers, MECHANISMS: Object.keys(MECHANISMS) };
 });
