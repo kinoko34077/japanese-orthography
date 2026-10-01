@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { loadJmdictIntake } from './jmdict-intake.ts';
 import { lexemeKeys } from './jmdict-lexical-graph.ts';
 import { SINO_MECHANISM_RULES } from './sino-rule-normalization.ts';
+import { KANA_CONVENTION_RULES, KANA_CONVENTIONS_SOURCE } from './kana-rule-normalization.ts';
 import {
   accountSourceRecords,
   canonicalizeOrthographyKnowledge,
@@ -184,6 +185,16 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     const sourceId = b.source('derivation/phase46e-sino-conventions', { path: 'runtime/historical-sino-runtime.js', role: 'derivation-convention', owner: 'japanese-orthography#168' });
     for (const rule of SINO_MECHANISM_RULES) {
       const recordId = b.record(sourceId, rule.id.slice('rule:sino-mech:'.length));
+      const { sourceRefs, evidenceRefs, ...spec } = rule;
+      b.dispose(recordId, 'rule_definition', [b.rule(spec, sourceId, evidenceRefs)]);
+    }
+  }
+
+  // --- kana / presentation conventions (Phase 4.7B behaviour, modern kana orthography) ----------
+  {
+    const sourceId = b.source(KANA_CONVENTIONS_SOURCE, { path: 'tools/kana-rule-normalization.ts', role: 'derivation-convention', owner: 'japanese-orthography#169' });
+    for (const rule of KANA_CONVENTION_RULES) {
+      const recordId = b.record(sourceId, rule.id.slice(rule.id.indexOf(':') + 1));
       const { sourceRefs, evidenceRefs, ...spec } = rule;
       b.dispose(recordId, 'rule_definition', [b.rule(spec, sourceId, evidenceRefs)]);
     }

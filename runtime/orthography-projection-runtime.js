@@ -60,8 +60,95 @@
 
   const channelOf = (rule) => rule.predicate?.channel ?? "surface";
 
+  // ---- named mechanisms (#169): context-dependent conventions a substring table cannot express ----
+  const HIRAGANA_START = 0x3041, HIRAGANA_END = 0x3096, KATAKANA_START = 0x30a1, KATAKANA_END = 0x30f6, SCRIPT_OFFSET = 0x60;
+  const katakanaToHiragana = (c) => {
+    if (c === "ヽ") return "ゝ";
+    if (c === "ヾ") return "ゞ";
+    const cp = c.codePointAt(0);
+    return cp !== undefined && cp >= KATAKANA_START && cp <= KATAKANA_END ? String.fromCodePoint(cp - SCRIPT_OFFSET) : c;
+  };
+  const hiraganaToKatakana = (c) => {
+    if (c === "ゝ") return "ヽ";
+    if (c === "ゞ") return "ヾ";
+    const cp = c.codePointAt(0);
+    return cp !== undefined && cp >= HIRAGANA_START && cp <= HIRAGANA_END ? String.fromCodePoint(cp + SCRIPT_OFFSET) : c;
+  };
+  const isHiragana = (c) => /\p{Script=Hiragana}/u.test(c);
+  const isKatakana = (c) => /\p{Script=Katakana}/u.test(c);
+  const isHan = (c) => /\p{Script=Han}/u.test(c);
+  const voiceKana = (c) => (!isHiragana(c) && !isKatakana(c) ? c : `${c.normalize("NFD")}゙`.normalize("NFC"));
+  const iterationMarkFor = (c, voiced) => (isHiragana(c) ? (voiced ? "ゞ" : "ゝ") : isKatakana(c) ? (voiced ? "ヾ" : "ヽ") : null);
+  const requirePrevious = (expanded, mark) => {
+    const previous = expanded.at(-1);
+    if (!previous) throw new RangeError(`Iteration mark ${mark} cannot appear at render-unit start`);
+    return previous;
+  };
+
+  const MECHANISMS = {
+    "script-fold-hiragana": (text) => Array.from(text, katakanaToHiragana).join(""),
+    "script-render-katakana": (text) => Array.from(text, hiraganaToKatakana).join(""),
+    "iteration-expand": (text, params) => {
+      const source = [...text];
+      const expanded = [];
+      const boundaries = new Set(params.boundaryOffsets ?? []);
+      for (let index = 0; index < source.length; index += 1) {
+        const c = source[index];
+        const atBoundary = boundaries.has(index);
+        if (c === "ゝ" || c === "ヽ" || c === "々") {
+          if (atBoundary) throw new RangeError(`Iteration mark ${c} cannot appear at render-unit start`);
+          expanded.push(requirePrevious(expanded, c));
+          continue;
+        }
+        if (c === "ゞ" || c === "ヾ") {
+          if (atBoundary) throw new RangeError(`Iteration mark ${c} cannot appear at render-unit start`);
+          expanded.push(voiceKana(requirePrevious(expanded, c)));
+          continue;
+        }
+        if (c === "〳" || c === "〵") throw new RangeError("Span iteration marks require an explicit repeated span");
+        expanded.push(c);
+      }
+      return expanded.join("");
+    },
+    "iteration-render": (text, params) => {
+      const source = [...text];
+      if (source.length < 2) return text;
+      const rendered = [source[0]];
+      const boundaries = new Set(params.boundaryOffsets ?? []);
+      for (let index = 1; index < source.length; index += 1) {
+        const previous = source[index - 1];
+        const current = source[index];
+        if (boundaries.has(index)) { rendered.push(current); continue; }
+        if (isHan(previous) && current === previous) { rendered.push("々"); continue; }
+        const unvoiced = iterationMarkFor(previous, false);
+        if (unvoiced && current === previous) { rendered.push(unvoiced); continue; }
+        const voiced = iterationMarkFor(previous, true);
+        if (voiced && voiceKana(previous) !== previous && current === voiceKana(previous)) { rendered.push(voiced); continue; }
+        rendered.push(current);
+      }
+      return rendered.join("");
+    },
+    "span-iteration-render": (text, params) => {
+      const span = params.repeatedSpan ?? "";
+      if (span.length === 0) throw new TypeError("Repeated span must not be empty");
+      const doubled = `${span}${span}`;
+      if (!text.endsWith(doubled)) return text;
+      return `${text.slice(0, text.length - doubled.length)}${span}〳〵`;
+    },
+    "span-iteration-expand": (text, params) => {
+      const span = params.repeatedSpan ?? "";
+      if (span.length === 0) throw new TypeError("Repeated span must not be empty");
+      if (text.startsWith("〳") || text.startsWith("〵")) throw new RangeError("Span iteration mark cannot appear at render-unit start");
+      if (!text.endsWith("〳〵")) return text;
+      const prefix = text.slice(0, -2);
+      if (!prefix.endsWith(span)) throw new RangeError("Span iteration mark does not follow the declared repeated span");
+      return `${prefix}${span}`;
+    }
+  };
+
   const predicateFailure = (rule, state, policy) => {
     const predicate = rule.predicate ?? {};
+    if (predicate.policyFlags !== undefined && !predicate.policyFlags.every((flag) => policy.thresholds?.[flag] === true)) return "predicate_mismatch:policyFlag";
     if (predicate.period !== undefined && predicate.period !== (policy.period ?? null)) return "predicate_mismatch:period";
     if (predicate.lexicalIdentity !== undefined) {
       const allowed = Array.isArray(predicate.lexicalIdentity) ? predicate.lexicalIdentity : [predicate.lexicalIdentity];
@@ -116,10 +203,13 @@
       const rule = rules.get(id);
       const channel = channelOf(rule);
       const text = state[channel];
-      if (typeof text !== "string" || !rule.from.some((from) => text.includes(from))) continue;
+      const mechanism = rule.predicate?.mechanism;
+      if (mechanism !== undefined && !MECHANISMS[mechanism]) throw new Error(`Unknown projection mechanism ${mechanism} in ${id}`);
+      if (typeof text !== "string" || (!mechanism && !rule.from.some((from) => text.includes(from)))) continue;
       const failure = predicateFailure(rule, state, policy);
       if (failure) { blockedRules.push({ ruleId: id, reason: failure }); continue; }
-      const next = rewrite(text, rule);
+      const params = { ...(rule.predicate?.params ?? {}), ...(policy.ruleParams?.[id] ?? {}) };
+      const next = mechanism ? MECHANISMS[mechanism](text, params) : rewrite(text, rule);
       if (next === null) { blockedRules.push({ ruleId: id, reason: "one_to_many_requires_selection" }); continue; }
       if (next === text) continue;
       const after = cloneState(state);
@@ -141,5 +231,5 @@
     };
   };
 
-  return { compileRuleOrder, projectOrthography };
+  return { compileRuleOrder, projectOrthography, MECHANISMS: Object.keys(MECHANISMS) };
 });

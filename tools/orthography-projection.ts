@@ -10,6 +10,8 @@ export interface ProjectionPolicy {
   disabledRuleIds?: string[];
   period?: string | null;
   thresholds?: Record<string, string | number | boolean>;
+  /** per-rule parameters for named mechanisms (e.g. iteration boundary offsets) */
+  ruleParams?: Record<string, Record<string, unknown>>;
 }
 
 export interface CanonicalOrthographyState {
