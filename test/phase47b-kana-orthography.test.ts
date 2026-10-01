@@ -110,3 +110,15 @@ test('accepted Phase 4.6D iteration-only ambiguity collapses as presentation, no
     }]
   );
 });
+
+
+test('iteration policy can block rendering and expansion across declared lexical boundaries', () => {
+  assert.equal(
+    renderIterationMarks('ああ', { boundaryOffsets: [1] }),
+    'ああ'
+  );
+  assert.throws(
+    () => expandIterationMarks('あゝ', { boundaryOffsets: [1] }),
+    /render-unit start/
+  );
+});
