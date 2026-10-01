@@ -1,0 +1,433 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-pack-v1-measurements",
+  "owner": "japanese-orthography#185 A",
+  "spec": "japanese-orthography#184",
+  "note": "Baseline values are re-derived live from the accepted v2 sources and cross-checked against data/reports/orthography-v2-measurements.json; the full-v2 inflate heap/time are cited observations from that accepted report. Candidate section bytes are projections of the real v2 cardinalities through the browser-pack width model and are reproducible from the shapes recorded beside them. Timing and heap values are informational machine-dependent observations.",
+  "compilerVersion": "1",
+  "baseline": {
+    "source": "data/reports/orthography-v2-measurements.json",
+    "canonicalGraphSha256": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+    "canonicalGraphBytes": 160692862,
+    "hotArtifactBytes": 60965586,
+    "hotArtifactGzipBytes": 9690748,
+    "hotInflateMs": 10428,
+    "hotInflateHeapMb": 965
+  },
+  "counts": {
+    "facts": 555284,
+    "rules": 199,
+    "bindings": 2000,
+    "sources": 28,
+    "strings": 927783
+  },
+  "candidate": {
+    "sections": [
+      {
+        "sectionId": "string-pool",
+        "kind": "string-pool",
+        "loading": "on-demand",
+        "rowCount": 927783,
+        "bytes": 26235436,
+        "columns": [
+          {
+            "name": "utf8",
+            "width": 1,
+            "elements": 22524300
+          }
+        ],
+        "gzipBytes": 4837514
+      },
+      {
+        "sectionId": "facts",
+        "kind": "facts",
+        "loading": "on-demand",
+        "rowCount": 555284,
+        "bytes": 25685648,
+        "columns": [
+          {
+            "name": "id",
+            "width": 4
+          },
+          {
+            "name": "kind",
+            "width": 1
+          },
+          {
+            "name": "surface",
+            "width": 4
+          },
+          {
+            "name": "reading",
+            "width": 4
+          },
+          {
+            "name": "target",
+            "width": 4
+          },
+          {
+            "name": "origin",
+            "width": 1
+          },
+          {
+            "name": "derivationMechanism",
+            "width": 1
+          },
+          {
+            "name": "lexicalRefs",
+            "width": 4,
+            "elements": 552979
+          },
+          {
+            "name": "tags",
+            "width": 4,
+            "elements": 37661
+          },
+          {
+            "name": "tagsPresence",
+            "width": 1
+          },
+          {
+            "name": "periodRefs",
+            "width": 4,
+            "elements": 555570
+          },
+          {
+            "name": "periodRefsPresence",
+            "width": 1
+          },
+          {
+            "name": "derivedFrom",
+            "width": 4,
+            "elements": 0
+          },
+          {
+            "name": "derivedFromPresence",
+            "width": 1
+          }
+        ]
+      },
+      {
+        "sectionId": "rules",
+        "kind": "rules",
+        "loading": "eager",
+        "rowCount": 199,
+        "bytes": 7910,
+        "columns": [
+          {
+            "name": "id",
+            "width": 4
+          },
+          {
+            "name": "class",
+            "width": 1
+          },
+          {
+            "name": "directionality",
+            "width": 1
+          },
+          {
+            "name": "lossiness",
+            "width": 1
+          },
+          {
+            "name": "origin",
+            "width": 1
+          },
+          {
+            "name": "derivationMechanism",
+            "width": 1
+          },
+          {
+            "name": "predicate",
+            "width": 4
+          },
+          {
+            "name": "from",
+            "width": 4,
+            "elements": 241
+          },
+          {
+            "name": "to",
+            "width": 4,
+            "elements": 233
+          },
+          {
+            "name": "dependencies",
+            "width": 4,
+            "elements": 7
+          },
+          {
+            "name": "derivedFrom",
+            "width": 4,
+            "elements": 0
+          },
+          {
+            "name": "derivedFromPresence",
+            "width": 1
+          }
+        ]
+      },
+      {
+        "sectionId": "bindings",
+        "kind": "bindings",
+        "loading": "eager",
+        "rowCount": 2000,
+        "bytes": 36016,
+        "columns": [
+          {
+            "name": "id",
+            "width": 4
+          },
+          {
+            "name": "ruleId",
+            "width": 1
+          },
+          {
+            "name": "lexicalRefs",
+            "width": 4,
+            "elements": 2000
+          },
+          {
+            "name": "contextRefs",
+            "width": 4,
+            "elements": 2
+          },
+          {
+            "name": "contextRefsPresence",
+            "width": 1
+          }
+        ]
+      },
+      {
+        "sectionId": "lexical-index",
+        "kind": "lexical-index",
+        "loading": "on-demand",
+        "rowCount": 237734,
+        "bytes": 3852880,
+        "columns": [
+          {
+            "name": "surface",
+            "width": 4
+          },
+          {
+            "name": "facts",
+            "width": 4,
+            "elements": 487751
+          }
+        ],
+        "note": "ordered by surface string id so a shard is binary-searchable without an auxiliary trie; unit B fixes the shard split from these bytes"
+      },
+      {
+        "sectionId": "provenance-index",
+        "kind": "provenance-index",
+        "loading": "on-demand",
+        "rowCount": 557483,
+        "bytes": 2229932,
+        "columns": [
+          {
+            "name": "detailRef",
+            "width": 4
+          }
+        ],
+        "note": "one compact detailRef per knowledge row in fact/rule/binding order; it travels with the knowledge shards, while the evidence it points at stays in the lazy detail shard"
+      },
+      {
+        "sectionId": "detail-shard",
+        "kind": "detail-shard",
+        "loading": "lazy",
+        "rowCount": 233050,
+        "bytes": 3760040,
+        "columns": [
+          {
+            "name": "sourceRefs",
+            "width": 4,
+            "elements": 233357
+          },
+          {
+            "name": "evidenceRefs",
+            "width": 4,
+            "elements": 240551
+          }
+        ],
+        "note": "lazy: never fetched to render the UI shell or a compact diagnostic summary"
+      },
+      {
+        "sectionId": "shard-directory",
+        "kind": "shard-directory",
+        "loading": "eager",
+        "rowCount": 0,
+        "bytes": 0,
+        "pendingOwner": "#185 B",
+        "note": "one row per on-demand shard (covered key range plus the shard it names); its row count follows the shard split that unit B fixes from candidate.shardPlan, so no size is estimated here"
+      },
+      {
+        "sectionId": "profile-policy@modern",
+        "kind": "profile-policy",
+        "loading": "eager",
+        "rowCount": 1,
+        "bytes": 125,
+        "gzipBytes": 124,
+        "note": "resolved projection policy only; it carries no knowledge table, which is what keeps the three profiles on one pack"
+      },
+      {
+        "sectionId": "profile-policy@historical",
+        "kind": "profile-policy",
+        "loading": "eager",
+        "rowCount": 1,
+        "bytes": 156,
+        "gzipBytes": 142,
+        "note": "resolved projection policy only; it carries no knowledge table, which is what keeps the three profiles on one pack"
+      },
+      {
+        "sectionId": "profile-policy@kinotch",
+        "kind": "profile-policy",
+        "loading": "eager",
+        "rowCount": 1,
+        "bytes": 122,
+        "gzipBytes": 122,
+        "note": "resolved projection policy only; it carries no knowledge table, which is what keeps the three profiles on one pack"
+      },
+      {
+        "sectionId": "terminology",
+        "kind": "terminology",
+        "loading": "eager",
+        "rowCount": 0,
+        "bytes": 0,
+        "pendingOwner": "#185 F",
+        "note": "the Japanese-first label/help dictionary is authored by unit F; no size is estimated here"
+      }
+    ],
+    "eagerBytes": 44329,
+    "onDemandBytes": 58003896,
+    "lazyBytes": 3760040,
+    "shardPlan": {
+      "targetShardBytes": 262144,
+      "sections": [
+        {
+          "sectionId": "string-pool",
+          "kind": "string-pool",
+          "loading": "on-demand",
+          "bytes": 26235436,
+          "rowCount": 927783,
+          "shardCount": 101,
+          "rowsPerShard": 9186
+        },
+        {
+          "sectionId": "facts",
+          "kind": "facts",
+          "loading": "on-demand",
+          "bytes": 25685648,
+          "rowCount": 555284,
+          "shardCount": 98,
+          "rowsPerShard": 5667
+        },
+        {
+          "sectionId": "lexical-index",
+          "kind": "lexical-index",
+          "loading": "on-demand",
+          "bytes": 3852880,
+          "rowCount": 237734,
+          "shardCount": 15,
+          "rowsPerShard": 15849
+        },
+        {
+          "sectionId": "provenance-index",
+          "kind": "provenance-index",
+          "loading": "on-demand",
+          "bytes": 2229932,
+          "rowCount": 557483,
+          "shardCount": 9,
+          "rowsPerShard": 61943
+        },
+        {
+          "sectionId": "detail-shard",
+          "kind": "detail-shard",
+          "loading": "lazy",
+          "bytes": 3760040,
+          "rowCount": 233050,
+          "shardCount": 15,
+          "rowsPerShard": 15537
+        }
+      ],
+      "totalShards": 238,
+      "note": "shard counts are the arithmetic consequence of the measured section bytes at the target shard size; they are a budget for unit B, not an accepted physical layout"
+    },
+    "measuredOpen": {
+      "node": "v24.21.0",
+      "declaredBytes": 44329,
+      "sectionBytesResident": 44331,
+      "alignmentPaddingBytes": 2,
+      "views": 28,
+      "openMs": 0.363,
+      "viewObjectHeapMb": 0.1
+    },
+    "measuredFullyResident": {
+      "declaredBytes": 61808265,
+      "sectionBytesResident": 61808267,
+      "alignmentPaddingBytes": 2,
+      "views": 56,
+      "openMs": 0.166,
+      "viewObjectHeapMb": 0
+    }
+  },
+  "reduction": {
+    "totalVsHotArtifactBytes": 1.0138,
+    "eagerVsHotArtifactBytes": 0.000727,
+    "fullyResidentHeapVsHotInflateHeap": 0
+  },
+  "findings": [
+    {
+      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 61808265 bytes against the 60965586-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 61808267-byte ArrayBuffer, against the 965 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 44329 bytes — and never by the encoding choice.",
+      "evidence": "candidate.sections, candidate.measuredOpen, candidate.measuredFullyResident, baseline.hotInflateHeapMb",
+      "consequence": "unit B must compile sharded on-demand knowledge sections plus a small eager shard directory; a fully eager pack is not admissible"
+    },
+    {
+      "finding": "Two sections dominate: the string pool at 26235436 bytes (4837514 gzipped) and the facts table at 25685648 bytes, together 84% of the pack. Both scale with the 555284 normalized v2 facts, which are overwhelmingly JMdict forms and readings.",
+      "evidence": "candidate.sections[string-pool], candidate.sections[facts], counts.facts",
+      "consequence": "the shard key must partition these two together; sharding anything else first moves no meaningful bytes"
+    },
+    {
+      "finding": "String ids are global to the pool, so a facts shard can reference a string in any pool shard. Reference locality across the chosen shard split is not measured by this unit and is the main open risk to the per-conversion fetch volume.",
+      "evidence": "tools/orthography-hot-artifact.ts interns one pool for the whole artifact; candidate.sections[facts].columns reference it by id",
+      "consequence": "unit B must either renumber strings per shard or hold a small globally eager pool for high-frequency strings, and must measure the resulting fetch fan-out before the layout is accepted"
+    }
+  ],
+  "pendingMetrics": [
+    {
+      "metric": "transfer/compressed bytes of the binary column sections",
+      "owner": "#185 B",
+      "reason": "no section bytes exist until the compiler emits them; only the string pool and the policy JSON are measurable now"
+    },
+    {
+      "metric": "shard-directory size and per-conversion shard fetch fan-out",
+      "owner": "#185 B",
+      "reason": "both follow the shard split and the string-reference locality it produces; see findings[2]"
+    },
+    {
+      "metric": "lexical match throughput",
+      "owner": "#185 C",
+      "reason": "requires the browser runtime index"
+    },
+    {
+      "metric": "end-to-end arbitrary-text conversion throughput",
+      "owner": "#185 D",
+      "reason": "requires the span planner and Worker transform"
+    },
+    {
+      "metric": "diagnostic detail open latency",
+      "owner": "#185 E",
+      "reason": "requires the lazy detail expansion path"
+    },
+    {
+      "metric": "terminology section size",
+      "owner": "#185 F",
+      "reason": "the Japanese-first dictionary is authored there"
+    },
+    {
+      "metric": "cold versus cached second-use startup",
+      "owner": "#185 H",
+      "reason": "requires the cache/update layer"
+    }
+  ]
+}
