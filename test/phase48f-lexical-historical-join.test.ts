@@ -64,7 +64,7 @@ test('component authority is reused through reading-aligned composition', () => 
   const welder = resolver.resolveHistory({ form: '溶接工', reading: 'ようせつこう' });
   assert.deepEqual(plain(welder.writtenForm).candidates, ['熔接工']);
   assert.equal(welder.writtenForm!.basis, 'generated_productive_span');
-  assert.equal((welder.writtenForm as any).component, '溶接');
+  assert.deepEqual((welder.writtenForm as any).components, ['溶接']);
   assert.deepEqual(resolver.resolveHistory({ form: '溶接', reading: 'ようせつ' }).writtenForm!.basis, 'source_exact');
 });
 

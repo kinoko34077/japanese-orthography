@@ -51,7 +51,7 @@ test('UniDic slice morphology is attached as evidence, never as semantic identit
   const span = spansOf('学校').find((s) => s.surface === '学校')!;
   assert.ok(span.morphology.length >= 1);
   assert.ok(span.morphology.every((m) => m.sourceRef === 'unidic-cwj:2025.12:lemma:8098'));
-  assert.deepEqual(span.morphology[0]!.pos, ['名詞', '普通名詞', '一般', '*']);
+  assert.deepEqual(span.morphology[0]!.partOfSpeech, ['名詞', '普通名詞', '一般', '*']);
   assert.ok(span.candidates.every((c) => c.lexeme.startsWith('lexeme:') && !c.lexeme.includes('unidic')));
 });
 

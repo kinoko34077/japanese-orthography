@@ -23,7 +23,11 @@ export const HOT_SCHEMA = {
   'bindings.modern': 'string',
   'bindings.context': 'string|-1',
   'bindings.patterns': 'pattern[]',
-  'bindings.evidence': 'string[]'
+  'bindings.evidence': 'string[]',
+  // JMdict reading restrictions (re_restr / re_nokanji): reading usable only with the listed forms
+  'restrictions.lexeme': 'lexeme',
+  'restrictions.reading': 'string',
+  'restrictions.forms': 'string[]'
 } as const;
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -79,6 +83,14 @@ export function buildHotArtifact(lexical: EntityGraph, sino: EntityGraph, proven
     patterns: sino.bindings.map((b) => b.patterns.map((p) => patternIndex.get(p)!)),
     evidence: sino.bindings.map((b) => b.evidence.map((e) => intern(strip(e))))
   };
+  const restrictionRows = lexical.restrictions
+    .map((r) => [lexemeIndex.get(r.lexeme)!, intern(strip(r.reading)), r.forms.map((f) => intern(strip(f)))] as const)
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const restrictions = {
+    lexeme: restrictionRows.map((r) => r[0]),
+    reading: restrictionRows.map((r) => r[1]),
+    forms: restrictionRows.map((r) => [...r[2]].sort((a, b) => a - b))
+  };
   return {
     schemaVersion: '1',
     kind: 'japanese-orthography-lexical-hot-runtime',
@@ -89,6 +101,7 @@ export function buildHotArtifact(lexical: EntityGraph, sino: EntityGraph, proven
     forms,
     readings,
     patterns,
-    bindings
+    bindings,
+    restrictions
   };
 }

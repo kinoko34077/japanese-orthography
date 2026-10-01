@@ -125,13 +125,23 @@ export function createLexicalHistoryResolver(sources: JoinSources) {
   const dag = createSinoDagRuntime(sinoGraph);
   const patternIds = new Set<string>(sinoGraph.convergencePatterns.map((p) => p.id));
   const patternBase = new Map<string, string | null>(sinoGraph.convergencePatterns.map((p) => [p.id, p.base ?? null]));
+  // Written-form authority and reading authority are separate routes (#154 A1): a record carrying
+  // only historicalReading never becomes a written-form candidate.
   const written = new Map<string, IntakeRecord[]>();
+  const nativeReadings = new Map<string, IntakeRecord[]>();
   for (const file of ['phase46c-homophone-rewrite', 'phase46d-native-kana'] as const) {
-    for (const r of sources.intake[file]!) if (r.modernSurface) written.set(r.modernSurface, [...(written.get(r.modernSurface) ?? []), r]);
+    for (const r of sources.intake[file]!) {
+      if (!r.modernSurface || r.disposition === 'excluded_unresolved') continue;
+      if (r.historicalSurface || r.alternatives?.length) written.set(r.modernSurface, [...(written.get(r.modernSurface) ?? []), r]);
+      if (r.historicalReading) nativeReadings.set(r.modernSurface, [...(nativeReadings.get(r.modernSurface) ?? []), r]);
+    }
   }
+  // Modern readings JMdict permits on a written form, across every lexeme carrying that form.
+  const formReadings = (form: string) => uniq((index.byForm.get(form) ?? []).flatMap((l) =>
+    [...(index.readingsOf.get(l)?.entries() ?? [])].filter(([, forms]) => forms.includes(form) || !index.formsOf.get(l)!.length).map(([r]) => r)));
 
   const writtenFormAuthority = (form: string) => {
-    const records = (written.get(form) ?? []).filter((r) => r.disposition !== 'excluded_unresolved');
+    const records = written.get(form) ?? [];
     if (records.length === 0) return null;
     const candidates = uniq(records.flatMap((r) => (r.historicalSurface ? [r.historicalSurface] : r.alternatives ?? [])));
     const exact = records.every((r) => r.disposition === 'admitted') && candidates.length === 1;
@@ -147,26 +157,56 @@ export function createLexicalHistoryResolver(sources: JoinSources) {
   // Component reuse: a lexeme whose form starts/ends with an authority-bearing lexical form
   // (reading-aligned through JMdict) inherits that component's written-form authority.
   const composedWrittenForm = (form: string, reading: string) => {
+    // Every reading-aligned prefix/suffix component authority is collected; traversal order is never
+    // authority (#154 A7). Distinct results become explicit candidates.
     const chars = Array.from(form);
+    const found: { candidates: string[]; status: string; component: string; intakeRecords: string[]; evidenceRefs: string[] }[] = [];
     for (let k = chars.length - 1; k >= 1; k -= 1) {
       for (const [head, tail, headFirst] of [[chars.slice(0, k).join(''), chars.slice(k).join(''), true], [chars.slice(chars.length - k).join(''), chars.slice(0, chars.length - k).join(''), false]] as const) {
         const authority = writtenFormAuthority(head);
         if (!authority) continue;
-        const headReadings = (index.byForm.get(head) ?? []).flatMap((l) => [...(index.readingsOf.get(l)?.entries() ?? [])].filter(([, f]) => f.includes(head)).map(([r]) => r));
-        const tailReadings = (index.byForm.get(tail) ?? []).flatMap((l) => [...(index.readingsOf.get(l)?.entries() ?? [])].filter(([, f]) => f.includes(tail)).map(([r]) => r));
-        const aligned = headReadings.some((hr) => tailReadings.some((tr) => (headFirst ? hr + tr : tr + hr) === reading));
+        const aligned = formReadings(head).some((hr) => formReadings(tail).some((tr) => (headFirst ? hr + tr : tr + hr) === reading));
         if (!aligned) continue;
-        return {
-          status: authority.status,
-          basis: authority.status === 'resolved' ? 'generated_productive_span' : 'source_candidates',
+        found.push({
           candidates: authority.candidates.map((c) => (headFirst ? c + tail : tail + c)),
-          component: head,
-          intakeRecords: authority.intakeRecords,
-          evidenceRefs: authority.evidenceRefs
-        };
+          status: authority.status, component: head,
+          intakeRecords: authority.intakeRecords, evidenceRefs: authority.evidenceRefs
+        });
       }
     }
-    return null;
+    if (found.length === 0) return null;
+    const candidates = uniq(found.flatMap((f) => f.candidates));
+    const unique = candidates.length === 1 && found.every((f) => f.status === 'resolved');
+    return {
+      status: unique ? 'resolved' : 'candidates',
+      basis: unique ? 'generated_productive_span' : 'source_candidates',
+      candidates,
+      components: uniq(found.map((f) => f.component)),
+      intakeRecords: uniq(found.flatMap((f) => f.intakeRecords)),
+      evidenceRefs: uniq(found.flatMap((f) => f.evidenceRefs))
+    };
+  };
+
+  // Phase-4.6D whole-word historical readings. The source names the written form, not the modern
+  // reading, so the record is bound to the query reading only when JMdict gives that form exactly
+  // one modern reading; otherwise it stays an unassigned candidate (no invented lexeme authority).
+  const nativeReadingAuthority = (form: string, reading: string) => {
+    const records = nativeReadings.get(form) ?? [];
+    if (records.length === 0) return null;
+    const readings = formReadings(form);
+    const lexemeCount = (index.byForm.get(form) ?? []).length;
+    let lexicalBinding: string;
+    if (lexemeCount === 0) lexicalBinding = 'unbound';
+    else if (!readings.includes(reading)) return null;
+    else if (readings.length > 1) lexicalBinding = 'reading_unassigned';
+    else lexicalBinding = lexemeCount > 1 ? 'homograph' : 'unique';
+    const historical = uniq(records.map((r) => r.historicalReading!));
+    const exact = lexicalBinding !== 'reading_unassigned' && historical.length === 1 && records.every((r) => r.disposition === 'admitted');
+    return {
+      route: 'native-source', lexicalBinding,
+      status: exact ? 'resolved' : 'candidates', basis: exact ? 'source_exact' : 'source_candidates',
+      historical, sourceRecords: uniq(records.map((r) => r.id)), evidenceRefs: uniq(records.flatMap((r) => r.evidenceRefs ?? []))
+    };
   };
 
   const readingHistory = (form: string, reading: string, context: string | null | undefined) => {
@@ -174,9 +214,11 @@ export function createLexicalHistoryResolver(sources: JoinSources) {
     const query = context === undefined ? {} : { context };
     const reconstructed = dag.reconstructWord(form, reading, query);
     const crossCheck = reconstructed ? ('historicalReading' in reconstructed ? [reconstructed.historicalReading] : reconstructed.historicalReadings) : [];
+    const native = nativeReadingAuthority(form, reading);
+    if (native && whole.length === 0) return { ...native, dagCrossCheck: crossCheck };
     if (whole.length > 0) {
-      const historical = uniq(whole.map((w) => w.historicalReading));
-      return { route: 'whole-word-source', status: historical.length === 1 ? 'resolved' : 'candidates', basis: historical.length === 1 ? 'source_exact' : 'source_candidates', historical, sourceRecords: uniq(whole.map((w) => w.id)), dagCrossCheck: crossCheck };
+      const historical = uniq([...whole.map((w) => w.historicalReading), ...(native?.historical ?? [])]);
+      return { route: 'whole-word-source', status: historical.length === 1 ? 'resolved' : 'candidates', basis: historical.length === 1 ? 'source_exact' : 'source_candidates', historical, sourceRecords: uniq([...whole.map((w) => w.id), ...(native?.sourceRecords ?? [])]), dagCrossCheck: crossCheck };
     }
     if (!reconstructed) return { route: 'none', status: 'unresolved', basis: 'unresolved', historical: [] as string[] };
     if (reconstructed.status === 'candidates') {

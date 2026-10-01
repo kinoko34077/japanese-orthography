@@ -42,7 +42,7 @@ test('compact runtime artifact round-trips the accepted normalized native graph 
     canonicalStringifyNormalizedGraph(inflated),
     canonicalStringifyNormalizedGraph(graph)
   );
-  assert.equal(compact.schemaVersion, '1');
+  assert.equal(compact.schemaVersion, '2');
   assert.equal(compact.kind, 'compact_orthography_runtime');
   assert.ok(compact.strings.length > 0);
   assert.equal(compact.relations.length, graph.relations.length);

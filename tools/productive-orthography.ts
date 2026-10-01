@@ -26,9 +26,11 @@ const { arbitrate } = createRequire(import.meta.url)('../runtime/occurrence-arbi
 /** Lexical occurrence evidence: boundaries/units of each best analysis path (see lexicalOccurrenceContext). */
 export type { ApplicabilityPolicy };
 
-export interface LexicalOccurrenceContext {
-  paths: { boundaries: number[]; units: [number, number][]; lexemes?: Record<string, string[]> }[];
-}
+export interface LexicalOccurrenceUnit { start: number; end: number; lexemes: string[]; morphology: Record<string, unknown>[] | null }
+export interface LexicalOccurrenceEdge { start: number; end: number; internal: number[]; units: LexicalOccurrenceUnit[] }
+export type LexicalOccurrenceContext =
+  | { dag: { length: number; edges: LexicalOccurrenceEdge[] } }
+  | { paths: { boundaries: number[]; units: [number, number][]; lexemes?: Record<string, string[]>; morphology?: Record<string, Record<string, unknown>[]> }[] };
 
 interface OccurrenceCandidate {
   key: string;
@@ -37,6 +39,7 @@ interface OccurrenceCandidate {
   output: string;
   policy: ApplicabilityPolicy;
   lexicalIdentity?: string;
+  requiredMorphology?: Record<string, string>;
   match: Match;
 }
 
@@ -81,6 +84,11 @@ export interface BlockedProductiveRule {
     | 'ambiguous_lexical_boundary'
     | 'lexical_identity_mismatch'
     | 'lexical_analysis_unavailable'
+    | 'ambiguous_lexical_identity'
+    | 'ambiguous_morphology'
+    | 'morphology_mismatch'
+    | 'morphology_unavailable'
+    | 'morphology_unsupported'
     | 'outranked_by_overlap'
     | 'equivalent_overlap'
     | 'unresolved_shifted_overlap';
@@ -413,7 +421,9 @@ export function resolveProductiveOrthography(
         end: match.end,
         output: match.output!,
         policy,
-        ...(options.lexical && relation.lexicalIdentity ? { lexicalIdentity: relation.lexicalIdentity } : {}),
+        // identity/morphology constraints always travel with the occurrence (fail closed without evidence)
+        ...(relation.lexicalIdentity ? { lexicalIdentity: relation.lexicalIdentity } : {}),
+        ...(relation.requiredMorphology ? { requiredMorphology: relation.requiredMorphology } : {}),
         match
       };
     })

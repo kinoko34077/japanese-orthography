@@ -13,7 +13,7 @@ import { lexemeKeys } from './jmdict-lexical-graph.ts';
 // recorded only as source refs. Composition is offered only when the whole reading aligns with the
 // concatenated component readings (弁護士 べんごし = 弁護 べんご + 士 し).
 
-export interface UnidicRecord { surface: string; pos: string[]; lemma: string; goshu: string; kana: string; sourceLemmaId: number }
+export interface UnidicRecord { surface: string; pos: string[]; lemma: string; goshu: string; kana: string; sourceLemmaId: number; cType?: string; cForm?: string }
 export interface AnalyzerSources { createdDate: string; entries: JmdictEntry[]; unidic: UnidicRecord[]; unidicVersion: string }
 
 export interface ComponentPart { surface: string; reading: string; lexemes: string[] }
@@ -24,7 +24,8 @@ export interface LexemeCandidate {
   sourceRefs: string[];
   compositions: ComponentPart[][];
 }
-export interface Morphology { sourceRef: string; pos: string[]; lemma: string; goshu: string; kana: string }
+// Field names follow the accepted lexical-runtime morphology vocabulary (partOfSpeech/conjugationType/conjugationForm).
+export interface Morphology { sourceRef: string; partOfSpeech: string[]; conjugationType: string | null; conjugationForm: string | null; lemma: string; goshu: string; kana: string }
 export interface Span {
   start: number;
   end: number;
@@ -35,7 +36,6 @@ export interface Span {
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
-const MAX_SURFACE = 24;
 
 export function createLexicalSpanAnalyzer(sources: AnalyzerSources) {
   const keys = lexemeKeys(sources.entries);
@@ -52,7 +52,8 @@ export function createLexicalSpanAnalyzer(sources: AnalyzerSources) {
     raw.sourceRefs.add(jmdictSourceLocalRef(sources.createdDate, entry.seq));
     bySurface.set(lexeme, raw);
     index.set(surface, bySurface);
-    maxLength = Math.max(maxLength, Math.min(MAX_SURFACE, Array.from(surface).length));
+    // the scan window is derived from the indexed surfaces, so no selected surface can be truncated
+    maxLength = Math.max(maxLength, Array.from(surface).length);
   };
   for (const entry of sources.entries) {
     for (const k of entry.k ?? []) add(k.t, entry, entry.r.filter((r) => !r.nokanji && (!r.restr || r.restr.includes(k.t))).map((r) => r.t));
@@ -61,7 +62,11 @@ export function createLexicalSpanAnalyzer(sources: AnalyzerSources) {
   }
   const morphologyBySurface = new Map<string, Morphology[]>();
   for (const record of sources.unidic) {
-    const m: Morphology = { sourceRef: `unidic-cwj:${sources.unidicVersion}:lemma:${record.sourceLemmaId}`, pos: record.pos, lemma: record.lemma, goshu: record.goshu, kana: record.kana };
+    const star = (value: string | undefined) => (value === undefined || value === '*' ? null : value);
+    const m: Morphology = {
+      sourceRef: `unidic-cwj:${sources.unidicVersion}:lemma:${record.sourceLemmaId}`, partOfSpeech: record.pos,
+      conjugationType: star(record.cType), conjugationForm: star(record.cForm), lemma: record.lemma, goshu: record.goshu, kana: record.kana
+    };
     const list = morphologyBySurface.get(record.surface) ?? [];
     if (!list.some((x) => JSON.stringify(x) === JSON.stringify(m))) list.push(m);
     morphologyBySurface.set(record.surface, list);
@@ -137,8 +142,8 @@ export function createLexicalSpanAnalyzer(sources: AnalyzerSources) {
     }
     spans.sort((a, b) => a.start - b.start || a.end - b.end || cmp(a.kind, b.kind));
 
-    // Complete segmentations through the lattice; a position no lexical span starts at may be
-    // crossed as an unknown character (adjacent unknown characters are merged).
+    // Complete segmentations through the lattice; any position may be crossed as an unknown
+    // character (adjacent unknown characters are merged).
     const paths = (limit: number) => {
       const out: Pick<Span, 'start' | 'end' | 'surface' | 'kind'>[][] = [];
       const walk = (i: number, path: Pick<Span, 'start' | 'end' | 'surface' | 'kind'>[]) => {
@@ -146,7 +151,8 @@ export function createLexicalSpanAnalyzer(sources: AnalyzerSources) {
         if (i === chars.length) { out.push(path); return; }
         const lexical = startsAt.get(i) ?? [];
         for (const span of [...lexical].sort((a, b) => b.end - a.end)) walk(span.end, [...path, { start: span.start, end: span.end, surface: span.surface, kind: 'lexical' }]);
-        if (lexical.length === 0) {
+        // an unknown character edge is available at every offset (never suppressed by a lexical start)
+        {
           const last = path.at(-1);
           const step = last?.kind === 'unknown'
             ? [...path.slice(0, -1), { ...last, end: i + 1, surface: last.surface + chars[i]! }]
@@ -169,63 +175,69 @@ export async function loadLexicalSpanAnalyzer(rootDir: string) {
   return createLexicalSpanAnalyzer({ createdDate: accounting.createdDate, entries: extract, unidic: unidic.records, unidicVersion: unidic.source.version });
 }
 
-// Phase 4.8E: lexical occurrence context for the occurrence arbitration layer.
-// Best paths minimise unknown characters, then segment count; all tied best paths are kept
-// (a relation must be admissible on every one of them). Boundaries include the split points of
-// reading-aligned compositions, so a compound component (弁護 in 弁護士) is a lexical unit.
-export function lexicalOccurrenceContext(analysis: ReturnType<ReturnType<typeof createLexicalSpanAnalyzer>['analyze']>, maxPaths = 16) {
+// Phase 4.8E (reconciled in #154): lexical occurrence evidence as the DAG of all optimal analyses.
+// Edges: every lexical span plus an unknown-character edge at every offset. Cost = (unknown chars,
+// segments), minimised globally. Only edges on some optimal complete path are kept, so the DAG's
+// paths are exactly the optimal analyses -- no enumeration cap. Each lexical span is expanded into
+// its distinct (lexeme candidate, reading, composition) alternatives, so a component boundary that
+// only one viable candidate supports is never presented as universal evidence.
+export function lexicalOccurrenceContext(analysis: ReturnType<ReturnType<typeof createLexicalSpanAnalyzer>['analyze']>) {
   const length = Array.from(analysis.text).length;
-  const lexical = analysis.spans.filter((s) => s.kind === 'lexical');
-  const startsAt = new Map<number, Span[]>();
-  for (const span of lexical) startsAt.set(span.start, [...(startsAt.get(span.start) ?? []), span]);
   type Cost = [number, number];
-  const better = (a: Cost, b: Cost) => a[0] - b[0] || a[1] - b[1];
-  const best: (Cost | null)[] = new Array(length + 1).fill(null);
-  best[length] = [0, 0];
-  for (let i = length - 1; i >= 0; i -= 1) {
-    const options: Cost[] = [];
-    for (const span of startsAt.get(i) ?? []) if (best[span.end]) options.push([best[span.end]![0], best[span.end]![1] + 1]);
-    if (!startsAt.has(i) && best[i + 1]) options.push([best[i + 1]![0] + 1, best[i + 1]![1] + 1]);
-    best[i] = options.sort(better)[0] ?? null;
+  const add = (a: Cost, b: Cost): Cost => [a[0] + b[0], a[1] + b[1]];
+  const cmpCost = (a: Cost, b: Cost) => a[0] - b[0] || a[1] - b[1];
+  const raw: { start: number; end: number; cost: Cost; span?: Span }[] = [];
+  for (const span of analysis.spans) if (span.kind === 'lexical') raw.push({ start: span.start, end: span.end, cost: [0, 1], span });
+  for (let i = 0; i < length; i += 1) raw.push({ start: i, end: i + 1, cost: [1, 1] });
+  const forward: (Cost | null)[] = new Array(length + 1).fill(null);
+  const backward: (Cost | null)[] = new Array(length + 1).fill(null);
+  forward[0] = [0, 0];
+  backward[length] = [0, 0];
+  const byStart = [...raw].sort((a, b) => a.start - b.start);
+  for (const edge of byStart) {
+    if (!forward[edge.start]) continue;
+    const next = add(forward[edge.start]!, edge.cost);
+    if (!forward[edge.end] || cmpCost(next, forward[edge.end]!) < 0) forward[edge.end] = next;
   }
-  const paths: { boundaries: number[]; units: [number, number][]; lexemes: Record<string, string[]> }[] = [];
-  const walk = (i: number, segments: { span?: Span; start: number; end: number }[]) => {
-    if (paths.length >= maxPaths) return;
-    if (i === length) {
-      const boundaries = new Set<number>();
-      const units: [number, number][] = [];
-      const lexemes: Record<string, string[]> = {};
-      for (const seg of segments) {
-        boundaries.add(seg.start); boundaries.add(seg.end);
-        if (!seg.span) continue;
-        units.push([seg.start, seg.end]);
-        lexemes[`${seg.start}:${seg.end}`] = seg.span.candidates.map((c) => c.lexeme);
-        for (const candidate of seg.span.candidates) for (const composition of candidate.compositions) {
-          let at = seg.start;
-          for (const part of composition) {
-            const end = at + Array.from(part.surface).length;
-            boundaries.add(at); boundaries.add(end);
-            units.push([at, end]);
-            const key = `${at}:${end}`;
-            lexemes[key] = [...new Set([...(lexemes[key] ?? []), ...part.lexemes])].sort();
-            at = end;
+  for (const edge of [...raw].sort((a, b) => b.end - a.end)) {
+    if (!backward[edge.end]) continue;
+    const next = add(backward[edge.end]!, edge.cost);
+    if (!backward[edge.start] || cmpCost(next, backward[edge.start]!) < 0) backward[edge.start] = next;
+  }
+  const best = forward[length]!;
+  const optimal = raw.filter((e) => forward[e.start] && backward[e.end] && cmpCost(add(add(forward[e.start]!, e.cost), backward[e.end]!), best) === 0);
+
+  const edges: { start: number; end: number; internal: number[]; units: { start: number; end: number; lexemes: string[]; morphology: Morphology[] | null }[] }[] = [];
+  const seen = new Set<string>();
+  const push = (edge: (typeof edges)[number]) => {
+    const key = JSON.stringify(edge);
+    if (!seen.has(key)) { seen.add(key); edges.push(edge); }
+  };
+  for (const e of optimal) {
+    if (!e.span) { push({ start: e.start, end: e.end, internal: [], units: [] }); continue; }
+    const span = e.span;
+    const morphology = span.morphology.length ? span.morphology : null;
+    for (const candidate of span.candidates) {
+      for (const readingId of candidate.readings) {
+        const reading = readingId.slice('reading-path:'.length);
+        const compositions = candidate.compositions.filter((c) => c.map((p) => p.reading).join('') === reading);
+        for (const composition of compositions.length ? compositions : [null]) {
+          const units = [{ start: span.start, end: span.end, lexemes: [candidate.lexeme], morphology }];
+          const internal: number[] = [];
+          if (composition) {
+            let at = span.start;
+            for (const part of composition) {
+              const end = at + Array.from(part.surface).length;
+              if (at > span.start) internal.push(at);
+              units.push({ start: at, end, lexemes: part.lexemes, morphology: null });
+              at = end;
+            }
           }
+          push({ start: span.start, end: span.end, internal, units });
         }
       }
-      const uniqueUnits = [...new Map(units.map((u) => [`${u[0]}:${u[1]}`, u])).values()].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      paths.push({ boundaries: [...boundaries].sort((a, b) => a - b), units: uniqueUnits, lexemes });
-      return;
     }
-    const target = best[i]!;
-    for (const span of [...(startsAt.get(i) ?? [])].sort((a, b) => b.end - a.end)) {
-      const cost = best[span.end];
-      if (cost && cost[0] === target[0] && cost[1] + 1 === target[1]) walk(span.end, [...segments, { span, start: i, end: span.end }]);
-    }
-    if (!startsAt.has(i)) {
-      const cost = best[i + 1];
-      if (cost && cost[0] + 1 === target[0] && cost[1] + 1 === target[1]) walk(i + 1, [...segments, { start: i, end: i + 1 }]);
-    }
-  };
-  if (length > 0) walk(0, []);
-  return { paths: paths.length ? paths : [{ boundaries: [0, length], units: [], lexemes: {} }] };
+  }
+  edges.sort((a, b) => a.start - b.start || a.end - b.end || (JSON.stringify(a) < JSON.stringify(b) ? -1 : 1));
+  return { dag: { length, edges } };
 }

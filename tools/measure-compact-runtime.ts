@@ -50,6 +50,10 @@ async function main(): Promise<void> {
   let hits = 0;
   for (let round = 0; round < 3; round += 1) for (const f of forms) hits += runtime.lookupForm(f).length;
   const lookupMs = performance.now() - t;
+  const pairs = built.lexical.lexemes.flatMap((l) => l.forms.flatMap((f) => l.readings.map((r) => [f.slice(5), r.slice(13)] as const)));
+  t = performance.now();
+  for (const [f, r] of pairs) runtime.lookupFormReading(f, r);
+  const formReadingMs = performance.now() - t;
   const words = built.extract.flatMap((e) => (e.k ?? []).filter((k) => /^\p{Script=Han}{2,4}$/u.test(k.t)).map((k) => [k.t, e.r[0]!.t] as const)).slice(0, 20000);
   t = performance.now();
   for (const [w, r] of words) runtime.reconstructWord(w, r);
@@ -68,6 +72,8 @@ async function main(): Promise<void> {
       canonicalLexicalGraph: size(built.canonicalText),
       compactLexicalGraph: size(compactText),
       hotRuntimeArtifact: size(hotText),
+      hotRestrictionTables: { bytes: Buffer.byteLength(JSON.stringify(built.hot.restrictions)), rows: built.hot.restrictions.lexeme.length },
+      hotRuntimeArtifactBeforeRestrictions: { bytes: 21584213, gzipBytes: 6152082, recordedAt: 'japanese-orthography#139 / PR #152' },
       phase46eArtifact: { bytes: Buffer.byteLength(built.sinoArtifactText) },
       sinoDagHotTables: { bytes: Buffer.byteLength(dagText) }
     },
@@ -78,6 +84,7 @@ async function main(): Promise<void> {
       hotHeapDeltaMb: Math.round(heapDeltaMb),
       formLookupsPerSecond: Math.round((forms.length * 3) / (lookupMs / 1000)),
       formLookupHits: hits,
+      formReadingLookupsPerSecond: Math.round(pairs.length / (formReadingMs / 1000)),
       reconstructWordsPerSecond: Math.round(words.length / (reconstructMs / 1000)),
       compactInflateMs: Math.round(inflateMs)
     }
