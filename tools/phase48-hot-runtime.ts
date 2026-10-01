@@ -47,6 +47,7 @@ const SINO_SYLLABLE = /^[ぁ-ゔ](?:[ゃゅょゎ])?(?:[いうくきちつんっ
 const MAX_RESULTS = 64;
 
 const idKey = (id: string) => id.slice(id.indexOf(':') + 1);
+const contextText = (id: string) => idKey(idKey(id));
 
 export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: EntityGraph): Phase48RuntimeBundle {
   const stringSet = new Set<string>();
@@ -57,7 +58,7 @@ export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: 
   for (const form of lexicalGraph.forms) addString(form.text);
   for (const atom of [...lexicalGraph.readingAtoms, ...sinoGraph.readingAtoms]) addString(atom.kana);
   for (const symbol of sinoGraph.symbols) addString(symbol.text);
-  for (const context of sinoGraph.contexts) addString(idKey(context.id));
+  for (const context of sinoGraph.contexts) addString(contextText(context.id));
   for (const pattern of sinoGraph.convergencePatterns) addString(pattern.mechanism ?? null);
   for (const evidence of sinoGraph.evidence) addString(idKey(evidence.id));
   const strings = [...stringSet].sort(cmp);
@@ -136,7 +137,7 @@ export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: 
     .map((binding): [number, number, number, number[], number[]] => [
       stringId.get(symbolText.get(binding.symbol)!)!,
       pathIndex.get(binding.modern)!,
-      binding.context === null ? -1 : stringId.get(idKey(binding.context))!,
+      binding.context === null ? -1 : stringId.get(contextText(binding.context))!,
       binding.patterns.map((pattern) => patternIndex.get(pattern)!).sort((a,b) => a-b),
       binding.evidence.map((evidence) => stringId.get(evidenceText.get(evidence)!)!).sort((a,b) => a-b)
     ])
