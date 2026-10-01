@@ -232,6 +232,7 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
   if (!Array.isArray(candidate.profiles) || candidate.profiles.length === 0) throw new Error('manifest must declare at least one profile');
 
   const seen = new Set<string>();
+  const paths = new Set<string>();
   // `Array.isArray` above widens these to `any[]`, so re-state the element type we are checking
   const declared: readonly BrowserPackSectionDescriptor[] = candidate.sections;
   for (const section of declared) {
@@ -247,6 +248,10 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
     if (seen.has(section.sectionId)) throw new Error(`duplicate section ${section.sectionId}`);
     seen.add(section.sectionId);
     if (typeof section.path !== 'string' || section.path === '' || section.path.startsWith('/') || section.path.includes('..')) throw new Error(`section ${section.sectionId}: path must be a relative pack path`);
+    // two sections sharing one file would make a cache entry ambiguous and one of the two digests
+    // wrong; reject it here rather than discovering it as corruption at fetch time
+    if (paths.has(section.path)) throw new Error(`duplicate section path ${section.path}`);
+    paths.add(section.path);
     if (!Number.isInteger(section.byteLength) || section.byteLength < 0) throw new Error(`section ${section.sectionId}: byteLength must be a non-negative integer`);
     assertDigest(section.sha256, `section ${section.sectionId} sha256`);
     if (section.rowCount !== undefined && (!Number.isInteger(section.rowCount) || section.rowCount < 0)) throw new Error(`section ${section.sectionId}: rowCount must be a non-negative integer`);

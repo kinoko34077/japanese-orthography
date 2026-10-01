@@ -108,6 +108,10 @@ test('section identity is derived from kind, shard and profile, and a hand-edite
   const duplicated = clone(fixture());
   duplicated.sections.push({ ...find(duplicated, 'facts') });
   assert.throws(() => validateBrowserPackManifest(reseal(duplicated)), /duplicate section/);
+  // two sections may not share one file: a cache entry would be ambiguous and one digest wrong
+  const sharedPath = clone(fixture());
+  find(sharedPath, 'rules').path = find(sharedPath, 'facts').path;
+  assert.throws(() => validateBrowserPackManifest(reseal(sharedPath)), /duplicate section path/);
 });
 
 test('pack identity covers section digests, canonical identity and profile digests', () => {
@@ -307,8 +311,15 @@ test('the baseline report measures the accepted full-v2 artifact against a repro
   // the gate this unit exists for. Two separate claims, because the baseline showed they differ:
   // the eager shell must be small in *bytes* ...
   assert.ok(report.candidate.eagerBytes < 1_000_000, `eager shell is ${report.candidate.eagerBytes} bytes`);
-  // ... and opening the pack must not inflate a JS object graph the way full v2 does
-  assert.ok(report.candidate.measuredOpen.heapMb < v2.performanceObserved.hotHeapDeltaMb / 100);
+  // ... and opening the pack must not inflate a JS object graph the way full v2 does, even with
+  // every shard resident, which is the claim the view model actually makes
+  assert.equal(report.candidate.measuredOpen.declaredBytes, report.candidate.eagerBytes);
+  assert.equal(report.candidate.measuredFullyResident.declaredBytes, report.candidate.eagerBytes + report.candidate.onDemandBytes + report.candidate.lazyBytes);
+  assert.ok(report.candidate.measuredFullyResident.viewObjectHeapMb < v2.performanceObserved.hotHeapDeltaMb / 100);
+  for (const open of [report.candidate.measuredOpen, report.candidate.measuredFullyResident]) {
+    assert.ok(open.sectionBytesResident >= open.declaredBytes);
+    assert.ok(open.views > 0);
+  }
   // the knowledge that cannot be eager is demand-loaded, and its shard plan is recorded so unit B
   // does not have to guess a split; encoding alone does not reach the §10 mobile target
   assert.ok(report.candidate.onDemandBytes > report.candidate.eagerBytes);

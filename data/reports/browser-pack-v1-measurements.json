@@ -230,7 +230,7 @@
             "width": 4
           }
         ],
-        "note": "eager compact detailRef per knowledge row in fact/rule/binding order; the evidence itself stays in the lazy detail shard"
+        "note": "one compact detailRef per knowledge row in fact/rule/binding order; it travels with the knowledge shards, while the evidence it points at stays in the lazy detail shard"
       },
       {
         "sectionId": "detail-shard",
@@ -355,23 +355,31 @@
     },
     "measuredOpen": {
       "node": "v24.21.0",
-      "eagerBytes": 44329,
-      "allocatedBytes": 44331,
+      "declaredBytes": 44329,
+      "sectionBytesResident": 44331,
       "alignmentPaddingBytes": 2,
       "views": 28,
-      "openMs": 0.39,
-      "heapMb": 0.1
+      "openMs": 0.363,
+      "viewObjectHeapMb": 0.1
+    },
+    "measuredFullyResident": {
+      "declaredBytes": 61808265,
+      "sectionBytesResident": 61808267,
+      "alignmentPaddingBytes": 2,
+      "views": 56,
+      "openMs": 0.166,
+      "viewObjectHeapMb": 0
     }
   },
   "reduction": {
     "totalVsHotArtifactBytes": 1.0138,
     "eagerVsHotArtifactBytes": 0.000727,
-    "eagerHeapVsHotInflateHeap": 0.000104
+    "fullyResidentHeapVsHotInflateHeap": 0
   },
   "findings": [
     {
-      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 61808265 bytes against the 60965586-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: opening the eager set as TypedArray views cost 0.1 MB against the 965 MB that inflating full v2 into a JS object graph costs. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 44329 bytes — and never by the encoding choice.",
-      "evidence": "candidate.sections, candidate.measuredOpen, baseline.hotInflateHeapMb",
+      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 61808265 bytes against the 60965586-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 61808267-byte ArrayBuffer, against the 965 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 44329 bytes — and never by the encoding choice.",
+      "evidence": "candidate.sections, candidate.measuredOpen, candidate.measuredFullyResident, baseline.hotInflateHeapMb",
       "consequence": "unit B must compile sharded on-demand knowledge sections plus a small eager shard directory; a fully eager pack is not admissible"
     },
     {

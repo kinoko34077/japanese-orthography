@@ -147,7 +147,7 @@ function planCandidateSections(artifact: OrthographyHotArtifact, policies: reado
       requiredList('facts', surfaceRows, factRef)
     ], 'ordered by surface string id so a shard is binary-searchable without an auxiliary trie; unit B fixes the shard split from these bytes'),
     candidate('provenance-index', factRows + ruleRows + bindingRows, [{ name: 'detailRef', width: provRef }],
-      'eager compact detailRef per knowledge row in fact/rule/binding order; the evidence itself stays in the lazy detail shard'),
+      'one compact detailRef per knowledge row in fact/rule/binding order; it travels with the knowledge shards, while the evidence it points at stays in the lazy detail shard'),
     candidate('detail-shard', provenanceRows, [
       requiredList('sourceRefs', provenance.sourceRefs, strId),
       requiredList('evidenceRefs', provenance.evidenceRefs, strId)
@@ -216,8 +216,8 @@ interface LayoutEntry {
   readonly byteLength: number;
 }
 
-/** Sequential layout of the eager views, each aligned to its element width. */
-function planEagerLayout(sections: readonly CandidateSection[]): { entries: LayoutEntry[]; allocatedBytes: number } {
+/** Sequential layout of the selected views, each aligned to its element width. */
+function planLayout(sections: readonly CandidateSection[], include: (section: CandidateSection) => boolean): { entries: LayoutEntry[]; allocatedBytes: number } {
   const entries: LayoutEntry[] = [];
   let offset = 0;
   const place = (view: string, width: BrowserPackElementWidth, byteLength: number) => {
@@ -227,7 +227,7 @@ function planEagerLayout(sections: readonly CandidateSection[]): { entries: Layo
     offset += byteLength;
   };
   for (const section of sections) {
-    if (section.loading !== 'eager') continue;
+    if (!include(section)) continue;
     if (section.columns === undefined) {
       place(section.sectionId, 1, section.bytes);
       continue;
@@ -240,12 +240,30 @@ function planEagerLayout(sections: readonly CandidateSection[]): { entries: Layo
   return { entries, allocatedBytes: offset };
 }
 
-/** Open the projected eager footprint as real TypedArray views, the way the browser runtime will. */
-function measureOpen(sections: readonly CandidateSection[]): Record<string, unknown> {
-  const eagerBytes = sections.filter((section) => section.loading === 'eager').reduce((total, section) => total + section.bytes, 0);
-  const { entries, allocatedBytes } = planEagerLayout(sections);
+/**
+ * Open a projected footprint as real TypedArray views, the way the browser runtime will.
+ *
+ * V8 keeps ArrayBuffer storage off the JS heap, so a `heapUsed` delta alone would flatter this:
+ * what it measures here is only the per-view *object* overhead, and the section bytes themselves are
+ * the ArrayBuffer whose exact size we already know (`sectionBytesResident`). That is precisely the
+ * claim worth making against full v2 — there is no third term, no object graph proportional to the
+ * data. Process-level `arrayBuffers`/`external` deltas are not reported: at these window sizes they
+ * are dominated by unrelated GC churn and came out negative, which would be noise presented as fact.
+ */
+interface OpenMeasurement {
+  readonly declaredBytes: number;
+  readonly sectionBytesResident: number;
+  readonly alignmentPaddingBytes: number;
+  readonly views: number;
+  readonly openMs: number;
+  readonly viewObjectHeapMb: number;
+}
+
+function measureOpen(sections: readonly CandidateSection[], include: (section: CandidateSection) => boolean): OpenMeasurement {
+  const declaredBytes = sections.filter(include).reduce((total, section) => total + section.bytes, 0);
+  const { entries, allocatedBytes } = planLayout(sections, include);
   const planned = entries.reduce((total, entry) => total + entry.byteLength, 0);
-  if (planned !== eagerBytes) throw new Error(`eager layout covers ${planned} bytes but the sections declare ${eagerBytes}`);
+  if (planned !== declaredBytes) throw new Error(`layout covers ${planned} bytes but the sections declare ${declaredBytes}`);
   global.gc?.();
   const heapBefore = process.memoryUsage().heapUsed;
   const started = performance.now();
@@ -258,13 +276,12 @@ function measureOpen(sections: readonly CandidateSection[]): Record<string, unkn
   const heapMb = (process.memoryUsage().heapUsed - heapBefore) / 2 ** 20;
   if (views.length !== entries.length) throw new Error('view count mismatch');
   return {
-    node: process.version,
-    eagerBytes,
-    allocatedBytes,
-    alignmentPaddingBytes: allocatedBytes - eagerBytes,
+    declaredBytes,
+    sectionBytesResident: allocatedBytes,
+    alignmentPaddingBytes: allocatedBytes - declaredBytes,
     views: views.length,
     openMs: Number(openMs.toFixed(3)),
-    heapMb: Math.round(heapMb * 10) / 10
+    viewObjectHeapMb: Math.round(heapMb * 10) / 10
   };
 }
 
@@ -283,9 +300,11 @@ export async function buildBrowserPackMeasurements(rootDir: string): Promise<Rec
   const policies = ([['modern', MODERN_PROFILE], ['historical', HISTORICAL_PROFILE], ['kinotch', KINOTCH_PROFILE]] as const)
     .map(([name, profile]) => [name, JSON.stringify(resolveProjectionPolicy(profile, graph))] as [string, string]);
   const sections = planCandidateSections(artifact, policies);
-  const measuredOpen = measureOpen(sections);
+  // the shell open (what the user waits for) and the worst case of every shard resident at once
+  const measuredOpen = { node: process.version, ...measureOpen(sections, (section) => section.loading === 'eager') };
+  const measuredFullyResident = measureOpen(sections, () => true);
   const bytesOf = (loading: BrowserPackSectionLoading) => sections.filter((section) => section.loading === loading).reduce((total, section) => total + section.bytes, 0);
-  const eagerBytes = measuredOpen.eagerBytes as number;
+  const eagerBytes = measuredOpen.declaredBytes;
   const onDemandBytes = bytesOf('on-demand');
   const lazyBytes = bytesOf('lazy');
   const shardPlan = planShards(sections);
@@ -315,16 +334,18 @@ export async function buildBrowserPackMeasurements(rootDir: string): Promise<Rec
       sources: artifact.sources.length,
       strings: artifact.strings.length
     },
-    candidate: { sections, eagerBytes, onDemandBytes, lazyBytes, shardPlan, measuredOpen },
+    candidate: { sections, eagerBytes, onDemandBytes, lazyBytes, shardPlan, measuredOpen, measuredFullyResident },
     reduction: {
       totalVsHotArtifactBytes: Number(((eagerBytes + onDemandBytes + lazyBytes) / hotBytes).toFixed(4)),
       eagerVsHotArtifactBytes: Number((eagerBytes / hotBytes).toFixed(6)),
-      eagerHeapVsHotInflateHeap: Number(((measuredOpen.heapMb as number) / accepted.performanceObserved.hotHeapDeltaMb).toFixed(6))
+      // the decisive comparison: even with every shard resident, the JS heap carries only view
+      // objects, against the 965 MB object graph a full v2 inflate builds
+      fullyResidentHeapVsHotInflateHeap: Number(((measuredFullyResident.viewObjectHeapMb) / accepted.performanceObserved.hotHeapDeltaMb).toFixed(6))
     },
     findings: [
       {
-        finding: `Binary columnar encoding alone buys no bytes at all. The whole candidate pack is ${eagerBytes + onDemandBytes + lazyBytes} bytes against the ${hotBytes}-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: opening the eager set as TypedArray views cost ${measuredOpen.heapMb as number} MB against the ${accepted.performanceObserved.hotHeapDeltaMb} MB that inflating full v2 into a JS object graph costs. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 "practical on a contemporary mobile browser" requirement is met only by demand-loaded shards — the eager shell is ${eagerBytes} bytes — and never by the encoding choice.`,
-        evidence: 'candidate.sections, candidate.measuredOpen, baseline.hotInflateHeapMb',
+        finding: `Binary columnar encoding alone buys no bytes at all. The whole candidate pack is ${eagerBytes + onDemandBytes + lazyBytes} bytes against the ${hotBytes}-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only ${measuredFullyResident.viewObjectHeapMb} MB of view objects over a ${measuredFullyResident.sectionBytesResident}-byte ArrayBuffer, against the ${accepted.performanceObserved.hotHeapDeltaMb} MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 "practical on a contemporary mobile browser" requirement is met only by demand-loaded shards — the eager shell is ${eagerBytes} bytes — and never by the encoding choice.`,
+        evidence: 'candidate.sections, candidate.measuredOpen, candidate.measuredFullyResident, baseline.hotInflateHeapMb',
         consequence: 'unit B must compile sharded on-demand knowledge sections plus a small eager shard directory; a fully eager pack is not admissible'
       },
       {
