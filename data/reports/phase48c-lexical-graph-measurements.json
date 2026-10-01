@@ -13,8 +13,8 @@
     "gzipBytes": 12976628
   },
   "compactGraph": {
-    "bytes": 50967165,
-    "gzipBytes": 11007042
+    "bytes": 40398937,
+    "gzipBytes": 8414389
   },
   "hotProjection": {
     "bytes": 12698911,
@@ -37,7 +37,7 @@
     "bindings": 2000,
     "readingAtoms": 240,
     "canonicalBytes": 644876,
-    "compactBytes": 174763
+    "compactBytes": 160167
   },
-  "compileMsObserved": 18020
+  "compileMsObserved": 16874
 }
