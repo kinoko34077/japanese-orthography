@@ -14,6 +14,7 @@ export const SITE_RUNTIME_MODULES = [
   'occurrence-arbitration.js',
   'browser-span-planner.js',
   'browser-diagnostic-contract.js',
+  'browser-section-fetcher.js',
   'browser-transform-worker.js'
 ];
 

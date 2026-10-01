@@ -160,6 +160,7 @@
         const manifest = await (await win.fetch(manifestUrl, { cache: "no-cache" })).json();
         const profileSection = manifest.sections.find((s) => s.kind === "profile-policy" && s.profileId === profile());
         const policy = profileSection ? await (await win.fetch(new URL(profileSection.path, manifestUrl))).json() : null;
+        pruneCache(manifest);
         $("policy").innerHTML = renderPolicyHtml(terms, policy, profile());
         terms.bindHelp($("policy"));
         status(`準備完了（辞書 ${reply.packDigest.slice(0, 12)}…）。文章を入力して「変換」を押してください。`);
@@ -169,6 +170,26 @@
         return false;
       }
     };
+
+    // Service worker (#185 H): only site files and content-addressed pack sections are cached;
+    // text typed by the user is never stored.
+    const sw = win.navigator.serviceWorker;
+    const pruneCache = (manifest) => {
+      const base = new URL(manifestUrl, win.location.href);
+      const keep = manifest.sections.map((s) => { const u = new URL(s.path, base); u.searchParams.set("v", s.sha256); return u.href; });
+      sw?.controller?.postMessage({ type: "prune", keep });
+    };
+    const clearCache = async () => {
+      try {
+        if (win.caches) for (const name of await win.caches.keys()) await win.caches.delete(name);
+        status("キャッシュを消去しました。辞書データを再取得します。");
+        await recover();
+      } catch (error) {
+        status(`キャッシュを消去できませんでした: ${error.message}`, "error");
+      }
+    };
+    if (sw && win.location.protocol !== "file:") sw.register("sw.js").catch(() => { /* caching is optional */ });
+    $("clear-cache")?.addEventListener("click", clearCache);
 
     const recover = async () => {
       client.restart();

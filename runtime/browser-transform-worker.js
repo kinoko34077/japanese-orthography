@@ -2,11 +2,11 @@
   const isCommonJs = typeof module === "object" && module.exports;
   if (!isCommonJs && typeof importScripts === "function" && typeof root.BrowserSpanPlanner === "undefined") {
     // dedicated Worker: load the runtime modules next to this script
-    importScripts("browser-pack-binary.js", "browser-pack-runtime.js", "occurrence-arbitration.js", "browser-span-planner.js", "browser-diagnostic-contract.js");
+    importScripts("browser-pack-binary.js", "browser-pack-runtime.js", "occurrence-arbitration.js", "browser-span-planner.js", "browser-diagnostic-contract.js", "browser-section-fetcher.js");
   }
   const deps = isCommonJs
-    ? { runtime: require("./browser-pack-runtime.js"), planner: require("./browser-span-planner.js"), diagnostics: safeRequire("./browser-diagnostic-contract.js") }
-    : { runtime: root.BrowserPackRuntime, planner: root.BrowserSpanPlanner, diagnostics: root.BrowserDiagnosticContract };
+    ? { runtime: require("./browser-pack-runtime.js"), planner: require("./browser-span-planner.js"), diagnostics: safeRequire("./browser-diagnostic-contract.js"), fetcher: safeRequire("./browser-section-fetcher.js") }
+    : { runtime: root.BrowserPackRuntime, planner: root.BrowserSpanPlanner, diagnostics: root.BrowserDiagnosticContract, fetcher: root.BrowserSectionFetcher };
   function safeRequire(path) { try { return require(path); } catch { return null; } }
   const api = factory(deps);
   if (isCommonJs) module.exports = api;
@@ -14,7 +14,7 @@
   if (!isCommonJs && typeof root.addEventListener === "function" && typeof importScripts === "function") api.attachToWorkerScope(root);
 })(typeof globalThis !== "undefined" ? globalThis : this, function (deps) {
   "use strict";
-  const { runtime, planner, diagnostics } = deps;
+  const { runtime, planner, diagnostics, fetcher } = deps;
 
   // Worker-side transform service (#185 D/E). The pack is opened once per service and reused for every
   // request. Only plain, compact JSON crosses the worker boundary; the pack, its TypedArray views and
@@ -77,11 +77,11 @@
       openPack: async () => {
         if (!manifestUrl) throw new Error("pack location not configured");
         const manifest = await (await fetch(manifestUrl, { cache: "no-cache" })).json();
-        return runtime.openBrowserPack(manifest, async (section) => {
-          const response = await fetch(new URL(section.path, manifestUrl), { cache: "default" });
-          if (!response.ok) throw new Error(`fetch ${section.path}: HTTP ${response.status}`);
-          return response.arrayBuffer();
+        // content-addressed URLs (`?v=<sha256>`) + verify, evict and refetch once on mismatch (#185 H)
+        const sections = fetcher.createSectionFetcher({
+          manifestUrl, fetchImpl: fetch.bind(scope), cachesImpl: scope.caches ?? null, subtleImpl: scope.crypto.subtle
         });
+        return runtime.openBrowserPack(manifest, sections.fetchSection);
       }
     });
     scope.addEventListener("message", async (event) => {
