@@ -1,6 +1,7 @@
 import type {
   ApplicationMode,
   NormalizedOrthographyRelation,
+  RelationChannel,
   ResultBasis
 } from './normalized-relation-model.ts';
 
@@ -36,6 +37,7 @@ export interface BlockedProductiveRule {
   end: number;
   input: string;
   reason:
+    | 'unsupported_productive_channel'
     | 'non_productive_application_mode'
     | 'non_deterministic_productive_relation'
     | 'invalid_character_productive_relation'
@@ -50,6 +52,10 @@ export interface ProductiveResolution {
   segments: ProductiveSegment[];
   appliedRules: AppliedProductiveRule[];
   blockedRules: BlockedProductiveRule[];
+}
+
+export interface ProductiveResolutionOptions {
+  allowedChannels?: RelationChannel[];
 }
 
 interface Match {
@@ -136,7 +142,8 @@ function appliedSort(a: AppliedProductiveRule, b: AppliedProductiveRule): number
 
 function relationMatches(
   inputChars: string[],
-  relation: NormalizedOrthographyRelation
+  relation: NormalizedOrthographyRelation,
+  allowedChannels: Set<RelationChannel>
 ): Match[] {
   const fromForms = canonicalStrings(relation.fromForms ?? []);
   const toForms = canonicalStrings(relation.toForms ?? []);
@@ -150,7 +157,9 @@ function relationMatches(
     let output: string | null = null;
     let blockedReason: BlockedProductiveRule['reason'] | undefined;
 
-    if (relation.applicationMode === 'preserve_block' && relation.relationKind === 'preserve') {
+    if (!allowedChannels.has(relation.channel)) {
+      blockedReason = 'unsupported_productive_channel';
+    } else if (relation.applicationMode === 'preserve_block' && relation.relationKind === 'preserve') {
       kind = 'preserve';
       output = from;
     } else if (
@@ -315,12 +324,16 @@ function blockedTrace(
 
 export function resolveProductiveOrthography(
   input: string,
-  relations: NormalizedOrthographyRelation[] = []
+  relations: NormalizedOrthographyRelation[] = [],
+  options: ProductiveResolutionOptions = {}
 ): ProductiveResolution {
   const chars = codePoints(input);
+  const allowedChannels = new Set<RelationChannel>(
+    options.allowedChannels ?? ['surface', 'character_form']
+  );
   const canonicalRelations = [...relations].sort((a, b) => compareText(a.id, b.id));
   const matches = canonicalRelations
-    .flatMap(relation => relationMatches(chars, relation))
+    .flatMap(relation => relationMatches(chars, relation, allowedChannels))
     .sort(matchSort);
 
   const preserveIntervals = mergePreserveIntervals(matches);
