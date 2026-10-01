@@ -260,8 +260,19 @@ export interface CompactEntityGraph {
   schemaVersion: '1';
   kind: 'japanese-orthography-lexical-entity-graph-compact';
   schema: Record<string, Record<string, string>>;
+  /** Columns omitted because every row equals the declared derivation from its key (4.8G). */
+  derived?: Record<string, string[]>;
   tables: Record<string, Record<string, unknown[]> & { key: string[] }> & Record<string, any>;
 }
+
+// Content-derived columns: identical to a pure function of the entity key for graphs built by
+// buildEntityGraph. A column is only omitted when the derivation holds for every row.
+const DERIVATIONS: Partial<Record<Collection, Record<string, (key: string) => unknown>>> = {
+  symbols: { text: (key) => key },
+  forms: { text: (key) => key, symbols: (key) => Array.from(key).map((c) => `symbol:${c}`) },
+  readingAtoms: { kana: (key) => key },
+  readingPaths: { atoms: (key) => key.split(READING_PATH_SEPARATOR).map((a) => `reading-atom:${a}`) }
+};
 
 const tableName = (collection: Collection) => ENTITY_SCHEMA[collection].namespace ?? collection;
 const expectedSchema = () => Object.fromEntries(COLLECTIONS.map((c) => [tableName(c), { ...ENTITY_SCHEMA[c].fields }]));
@@ -279,6 +290,7 @@ export function compactEntityGraph(input: EntityGraph): CompactEntityGraph {
     return [spec.namespaces.indexOf(parseId(ref).namespace), at];
   };
   const tables: Record<string, any> = {};
+  const derived: Record<string, string[]> = {};
   for (const collection of COLLECTIONS) {
     const { namespace, fields } = ENTITY_SCHEMA[collection];
     const entities = graph[collection] as Record<string, any>[];
@@ -286,6 +298,11 @@ export function compactEntityGraph(input: EntityGraph): CompactEntityGraph {
     if (namespace) table.key = entities.map((e) => parseId(e.id).key);
     for (const [field, raw] of Object.entries(fields)) {
       const spec = fieldSpec(raw);
+      const derive = DERIVATIONS[collection]?.[field];
+      if (derive && entities.every((e, i) => JSON.stringify(derive(table.key![i] as string)) === JSON.stringify(e[field]))) {
+        (derived[tableName(collection)] ??= []).push(field);
+        continue;
+      }
       table[field] = entities.map((e) => {
         if (!(field in e)) return undefined;
         const value = e[field];
@@ -297,7 +314,7 @@ export function compactEntityGraph(input: EntityGraph): CompactEntityGraph {
     }
     tables[tableName(collection)] = table;
   }
-  return { schemaVersion: '1', kind: 'japanese-orthography-lexical-entity-graph-compact', schema: expectedSchema(), tables };
+  return { schemaVersion: '1', kind: 'japanese-orthography-lexical-entity-graph-compact', schema: expectedSchema(), derived, tables };
 }
 
 export function inflateEntityGraph(compact: CompactEntityGraph): EntityGraph {
@@ -332,6 +349,12 @@ export function inflateEntityGraph(compact: CompactEntityGraph): EntityGraph {
       const entity: Record<string, unknown> = namespace ? { id: makeId(namespace, table.key![i] as string) } : {};
       for (const [field, raw] of Object.entries(fields)) {
         const spec = fieldSpec(raw);
+        if (compact.derived?.[tableName(collection)]?.includes(field)) {
+          const derive = DERIVATIONS[collection]?.[field];
+          if (!derive || !namespace) throw new Error(`no derivation for ${tableName(collection)}.${field}`);
+          entity[field] = derive(table.key![i] as string);
+          continue;
+        }
         const value = table[field]?.[i];
         if (spec.optional && value === null) continue;
         if (value === undefined) throw new Error(`${tableName(collection)}.${field} missing at ${i}`);

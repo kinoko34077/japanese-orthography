@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1",
+  "kind": "phase48g-compact-runtime-measurements",
+  "owner": "japanese-orthography#139",
+  "note": "sizes/hashes are deterministic real compiled data; performance values are informational observations from the machine that ran npm run measure:compact-runtime.",
+  "sizes": {
+    "rawJmdictExtract": {
+      "bytes": 28129587,
+      "gzipBytes": 4729975
+    },
+    "canonicalLexicalGraph": {
+      "bytes": 115706438,
+      "gzipBytes": 12976628,
+      "sha256": "088a3c579408322fa263aa12b52f7697b806f7626245877a22d9bdca231b8dd8"
+    },
+    "compactLexicalGraph": {
+      "bytes": 40398937,
+      "gzipBytes": 8414389,
+      "sha256": "d3356dd8eb75e403ca6b2d8577e958dfff93ac1004cfa0f8cae4a46cb999c9a4"
+    },
+    "hotRuntimeArtifact": {
+      "bytes": 21584213,
+      "gzipBytes": 6152082,
+      "sha256": "e81134bdb7dff2a93d555948f6166dbb4c22832d64ad1ee395adcf1ea19a7229"
+    },
+    "phase46eArtifact": {
+      "bytes": 488640
+    },
+    "sinoDagHotTables": {
+      "bytes": 66990
+    }
+  },
+  "counts": {
+    "lexemes": 218850,
+    "hotStrings": 468628,
+    "hotForms": 229114,
+    "hotReadings": 236621,
+    "patterns": 271,
+    "bindings": 2000
+  },
+  "performanceObserved": {
+    "node": "v26.10.0",
+    "hotStartupMs": 665,
+    "hotHeapDeltaMb": 100,
+    "formLookupsPerSecond": 1180218,
+    "formLookupHits": 700680,
+    "reconstructWordsPerSecond": 138778,
+    "compactInflateMs": 14468
+  }
+}

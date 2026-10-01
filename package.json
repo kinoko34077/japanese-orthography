@@ -23,7 +23,8 @@
     "validate:jmdict-intake": "node --import tsx tools/validate-jmdict-intake.ts",
     "measure:lexical-graph": "node --import tsx tools/measure-lexical-graph.ts",
     "generate:lexical-join": "node --import tsx tools/generate-lexical-join.ts",
-    "validate:lexical-join": "node --import tsx tools/generate-lexical-join.ts --check"
+    "validate:lexical-join": "node --import tsx tools/generate-lexical-join.ts --check",
+    "measure:compact-runtime": "node --expose-gc --import tsx tools/measure-compact-runtime.ts"
   },
   "repository": {
     "type": "git",
