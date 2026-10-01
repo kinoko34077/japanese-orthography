@@ -60,7 +60,7 @@ class GraphBuilder {
   }
 
   // Identical normalized facts are stored once; every contributing source/evidence ref is kept.
-  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[] }, sourceId: string, evidence: string[]) {
+  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[]; origin?: 'project_defined' }, sourceId: string, evidence: string[]) {
     const id = `fact:${spec.kind}:${spec.surface ?? ''}|${spec.reading ?? ''}|${spec.target ?? ''}`;
     let fact = this.facts.get(id);
     if (!fact) {
@@ -75,6 +75,7 @@ class GraphBuilder {
     this.mergeRefs(fact, sourceId, evidence);
     fact.lexicalRefs = [...new Set([...fact.lexicalRefs, ...(spec.lexicalRefs ?? [])])];
     if (spec.tags?.length) fact.tags = [...new Set([...(fact.tags ?? []), ...spec.tags])];
+    if (spec.origin) fact.origin = spec.origin;
     if (spec.periodRefs?.length) fact.periodRefs = [...new Set([...(fact.periodRefs ?? []), ...spec.periodRefs])];
     return id;
   }
@@ -243,7 +244,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       const recordId = b.record(sourceId, r.id);
       const evidence = [`${r.repository}#${r.issueNumber}:comment-${r.commentId}`];
       const targets = Object.entries(r.modernComponentReadings ?? {}).map(([surface, reading]) =>
-        b.fact({ kind: 'literal_reading', surface, reading: reading as string, tags: ['project-canonical-component'], periodRefs: MODERN }, sourceId, evidence));
+        b.fact({ kind: 'literal_reading', surface, reading: reading as string, tags: ['project-canonical-component'], periodRefs: MODERN, origin: 'project_defined' }, sourceId, evidence));
       b.dispose(recordId, 'literal_fact', targets);
     }
     (slice.relations ?? []).forEach((rel: Json, i: number) => {

@@ -18,6 +18,8 @@ export interface ProfileManifestPackRef {
   genericSafety: 'not_implied';
 }
 
+// The fixed KiNoTch profile's operational v2 policy is `KINOTCH_PROFILE` in orthography-policy.ts
+// (profileId 'kinotch-fixed'); these pack types remain the accepted compatibility source format.
 export interface KinotchProfileManifest {
   schemaVersion: '1';
   profileId: string;

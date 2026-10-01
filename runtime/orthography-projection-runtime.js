@@ -148,6 +148,7 @@
 
   const predicateFailure = (rule, state, policy) => {
     const predicate = rule.predicate ?? {};
+    if (predicate.exactToken === true && !rule.from.includes(state[channelOf(rule)])) return "predicate_mismatch:exactToken";
     if (predicate.policyFlags !== undefined && !predicate.policyFlags.every((flag) => policy.thresholds?.[flag] === true)) return "predicate_mismatch:policyFlag";
     if (predicate.period !== undefined && predicate.period !== (policy.period ?? null)) return "predicate_mismatch:period";
     if (predicate.lexicalIdentity !== undefined) {
