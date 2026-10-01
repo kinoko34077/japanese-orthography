@@ -168,3 +168,64 @@ export async function loadLexicalSpanAnalyzer(rootDir: string) {
   const unidic = JSON.parse(await readFile(resolve(rootDir, 'data/lexical/sources/unidic-cwj-202512-first-slice.json'), 'utf8'));
   return createLexicalSpanAnalyzer({ createdDate: accounting.createdDate, entries: extract, unidic: unidic.records, unidicVersion: unidic.source.version });
 }
+
+// Phase 4.8E: lexical occurrence context for the occurrence arbitration layer.
+// Best paths minimise unknown characters, then segment count; all tied best paths are kept
+// (a relation must be admissible on every one of them). Boundaries include the split points of
+// reading-aligned compositions, so a compound component (弁護 in 弁護士) is a lexical unit.
+export function lexicalOccurrenceContext(analysis: ReturnType<ReturnType<typeof createLexicalSpanAnalyzer>['analyze']>, maxPaths = 16) {
+  const length = Array.from(analysis.text).length;
+  const lexical = analysis.spans.filter((s) => s.kind === 'lexical');
+  const startsAt = new Map<number, Span[]>();
+  for (const span of lexical) startsAt.set(span.start, [...(startsAt.get(span.start) ?? []), span]);
+  type Cost = [number, number];
+  const better = (a: Cost, b: Cost) => a[0] - b[0] || a[1] - b[1];
+  const best: (Cost | null)[] = new Array(length + 1).fill(null);
+  best[length] = [0, 0];
+  for (let i = length - 1; i >= 0; i -= 1) {
+    const options: Cost[] = [];
+    for (const span of startsAt.get(i) ?? []) if (best[span.end]) options.push([best[span.end]![0], best[span.end]![1] + 1]);
+    if (!startsAt.has(i) && best[i + 1]) options.push([best[i + 1]![0] + 1, best[i + 1]![1] + 1]);
+    best[i] = options.sort(better)[0] ?? null;
+  }
+  const paths: { boundaries: number[]; units: [number, number][]; lexemes: Record<string, string[]> }[] = [];
+  const walk = (i: number, segments: { span?: Span; start: number; end: number }[]) => {
+    if (paths.length >= maxPaths) return;
+    if (i === length) {
+      const boundaries = new Set<number>();
+      const units: [number, number][] = [];
+      const lexemes: Record<string, string[]> = {};
+      for (const seg of segments) {
+        boundaries.add(seg.start); boundaries.add(seg.end);
+        if (!seg.span) continue;
+        units.push([seg.start, seg.end]);
+        lexemes[`${seg.start}:${seg.end}`] = seg.span.candidates.map((c) => c.lexeme);
+        for (const candidate of seg.span.candidates) for (const composition of candidate.compositions) {
+          let at = seg.start;
+          for (const part of composition) {
+            const end = at + Array.from(part.surface).length;
+            boundaries.add(at); boundaries.add(end);
+            units.push([at, end]);
+            const key = `${at}:${end}`;
+            lexemes[key] = [...new Set([...(lexemes[key] ?? []), ...part.lexemes])].sort();
+            at = end;
+          }
+        }
+      }
+      const uniqueUnits = [...new Map(units.map((u) => [`${u[0]}:${u[1]}`, u])).values()].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      paths.push({ boundaries: [...boundaries].sort((a, b) => a - b), units: uniqueUnits, lexemes });
+      return;
+    }
+    const target = best[i]!;
+    for (const span of [...(startsAt.get(i) ?? [])].sort((a, b) => b.end - a.end)) {
+      const cost = best[span.end];
+      if (cost && cost[0] === target[0] && cost[1] + 1 === target[1]) walk(span.end, [...segments, { span, start: i, end: span.end }]);
+    }
+    if (!startsAt.has(i)) {
+      const cost = best[i + 1];
+      if (cost && cost[0] + 1 === target[0] && cost[1] + 1 === target[1]) walk(i + 1, [...segments, { start: i, end: i + 1 }]);
+    }
+  };
+  if (length > 0) walk(0, []);
+  return { paths: paths.length ? paths : [{ boundaries: [0, length], units: [], lexemes: {} }] };
+}

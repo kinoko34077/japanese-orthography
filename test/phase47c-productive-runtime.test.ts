@@ -13,6 +13,9 @@ async function loadRuntime() {
   const sandbox: Record<string, any> = {};
   sandbox.globalThis = sandbox;
   if (source) {
+    vm.runInNewContext(await readFile('runtime/occurrence-arbitration.js', 'utf8'), sandbox, {
+      filename: 'runtime/occurrence-arbitration.js'
+    });
     vm.runInNewContext(source, sandbox, {
       filename: 'runtime/productive-relation-runtime.js'
     });

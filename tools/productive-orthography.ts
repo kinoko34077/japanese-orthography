@@ -1,4 +1,6 @@
+import { createRequire } from 'node:module';
 import type {
+  ApplicabilityPolicy,
   ApplicationMode,
   NormalizedOrthographyRelation,
   RelationChannel,
@@ -6,6 +8,37 @@ import type {
 } from './normalized-relation-model.ts';
 
 type JsonRecord = Record<string, any>;
+
+// Shared with the browser/worker runtime so both resolvers arbitrate identically (4.8E).
+const { arbitrate } = createRequire(import.meta.url)('../runtime/occurrence-arbitration.js') as {
+  arbitrate: (input: {
+    length: number;
+    candidates: OccurrenceCandidate[];
+    lexical?: LexicalOccurrenceContext | null;
+  }) => {
+    accepted: OccurrenceCandidate[];
+    blocked: { candidate: OccurrenceCandidate; reason: BlockedProductiveRule['reason'] }[];
+    unresolved: { start: number; end: number; reasons: string[] }[];
+  };
+};
+
+
+/** Lexical occurrence evidence: boundaries/units of each best analysis path (see lexicalOccurrenceContext). */
+export type { ApplicabilityPolicy };
+
+export interface LexicalOccurrenceContext {
+  paths: { boundaries: number[]; units: [number, number][]; lexemes?: Record<string, string[]> }[];
+}
+
+interface OccurrenceCandidate {
+  key: string;
+  start: number;
+  end: number;
+  output: string;
+  policy: ApplicabilityPolicy;
+  lexicalIdentity?: string;
+  match: Match;
+}
 
 export interface ProductiveSegment {
   start: number;
@@ -43,7 +76,14 @@ export interface BlockedProductiveRule {
     | 'invalid_character_productive_relation'
     | 'overlaps_preserve_block'
     | 'conflicting_productive_outputs'
-    | 'shadowed_by_longer_match';
+    | 'shadowed_by_longer_match'
+    | 'crosses_lexical_boundary'
+    | 'ambiguous_lexical_boundary'
+    | 'lexical_identity_mismatch'
+    | 'lexical_analysis_unavailable'
+    | 'outranked_by_overlap'
+    | 'equivalent_overlap'
+    | 'unresolved_shifted_overlap';
 }
 
 export interface ProductiveResolution {
@@ -56,6 +96,8 @@ export interface ProductiveResolution {
 
 export interface ProductiveResolutionOptions {
   allowedChannels?: RelationChannel[];
+  /** When present, substring_productive relations default to the lexical_boundary policy. */
+  lexical?: LexicalOccurrenceContext;
 }
 
 interface Match {
@@ -358,6 +400,33 @@ export function resolveProductiveOrthography(
     }
   }
 
+  const arbitration = arbitrate({
+    length: chars.length,
+    lexical: options.lexical ?? null,
+    candidates: availableProductive.map((match) => {
+      const relation = match.relation;
+      const policy: ApplicabilityPolicy = relation.applicability
+        ?? (options.lexical && relation.applicationMode === 'substring_productive' ? 'lexical_boundary' : 'anywhere');
+      return {
+        key: `${relation.id} ${match.start} ${match.from}`,
+        start: match.start,
+        end: match.end,
+        output: match.output!,
+        policy,
+        ...(options.lexical && relation.lexicalIdentity ? { lexicalIdentity: relation.lexicalIdentity } : {}),
+        match
+      };
+    })
+  });
+  for (const { candidate, reason } of arbitration.blocked) blockedRules.push(blockedTrace(candidate.match, reason));
+  const acceptedAt = new Map<number, Match[]>();
+  for (const candidate of arbitration.accepted) {
+    const list = acceptedAt.get(candidate.start) ?? [];
+    list.push(candidate.match);
+    acceptedAt.set(candidate.start, list);
+  }
+  const unresolvedAt = new Map(arbitration.unresolved.map((region) => [region.start, region]));
+
   const segments: ProductiveSegment[] = [];
   let index = 0;
 
@@ -382,8 +451,15 @@ export function resolveProductiveOrthography(
       continue;
     }
 
-    const starting = availableProductive.filter(match => match.start === index);
-    if (starting.length === 0) {
+    const region = unresolvedAt.get(index);
+    if (region) {
+      pushSegment(segments, makeSegment(chars, region.start, region.end, sliceText(chars, region.start, region.end), 'unresolved', []));
+      index = region.end;
+      continue;
+    }
+
+    const winners = acceptedAt.get(index) ?? [];
+    if (winners.length === 0) {
       pushSegment(
         segments,
         makeSegment(chars, index, index + 1, chars[index]!, 'unresolved', [])
@@ -392,39 +468,15 @@ export function resolveProductiveOrthography(
       continue;
     }
 
-    const maxLength = Math.max(...starting.map(match => match.end - match.start));
-    const longest = starting.filter(match => match.end - match.start === maxLength);
-    const shorter = starting.filter(match => match.end - match.start < maxLength);
-    for (const match of shorter) {
-      blockedRules.push(blockedTrace(match, 'shadowed_by_longer_match'));
-    }
-
-    const outputs = canonicalStrings(longest.map(match => match.output!));
-    const end = index + maxLength;
-
-    if (outputs.length !== 1) {
-      for (const match of longest) {
-        blockedRules.push(blockedTrace(match, 'conflicting_productive_outputs'));
-      }
-      pushSegment(
-        segments,
-        makeSegment(chars, index, end, sliceText(chars, index, end), 'unresolved', [])
-      );
-      index = end;
-      continue;
-    }
-
-    const output = outputs[0]!;
-    const winningRelations = longest.map(match => match.relation);
-    const basis = longest.every(match => match.relation.applicationMode === 'character_productive')
+    const end = winners[0]!.end;
+    const basis = winners.every(match => match.relation.applicationMode === 'character_productive')
       ? 'generated_character'
       : 'generated_productive_span';
-
     pushSegment(
       segments,
-      makeSegment(chars, index, end, output, basis, winningRelations)
+      makeSegment(chars, index, end, winners[0]!.output!, basis, winners.map(match => match.relation))
     );
-    for (const match of longest) {
+    for (const match of winners) {
       appliedRules.push(appliedTrace(match));
     }
     index = end;

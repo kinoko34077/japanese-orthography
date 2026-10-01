@@ -1,11 +1,18 @@
 (function (root, factory) {
-  const api = factory();
+  const arbitration = typeof module === "object" && module.exports
+    ? require("./occurrence-arbitration.js")
+    : root.OccurrenceArbitration;
+  const api = factory(arbitration);
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
   root.ProductiveRelationRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (OccurrenceArbitration) {
   "use strict";
+
+  if (!OccurrenceArbitration || typeof OccurrenceArbitration.arbitrate !== "function") {
+    throw new Error("ProductiveRelationRuntime requires OccurrenceArbitration (load occurrence-arbitration.js first)");
+  }
 
   const PRODUCTIVE_MODES = new Set([
     "substring_productive",
@@ -72,6 +79,15 @@
       fromForms,
       toForms
     };
+    if (raw.applicability !== undefined) {
+      if (!OccurrenceArbitration.POLICIES.includes(raw.applicability)) {
+        throw new TypeError(`Unknown applicability policy for ${raw.id}`);
+      }
+      relation.applicability = raw.applicability;
+    }
+    if (typeof raw.lexicalIdentity === "string" && raw.lexicalIdentity !== "") {
+      relation.lexicalIdentity = raw.lexicalIdentity;
+    }
 
     if (PRODUCTIVE_MODES.has(relation.applicationMode)) {
       if (relation.relationKind === "candidates" || toForms.length !== 1) {
@@ -141,11 +157,18 @@
           source,
           target,
           mode: relation.applicationMode,
+          applicability: relation.applicability ?? null,
+          lexicalIdentity: relation.lexicalIdentity ?? null,
           ruleRefs: [relation.id]
         });
         return;
       }
-      if (existing.target !== target || existing.mode !== relation.applicationMode) {
+      if (
+        existing.target !== target ||
+        existing.mode !== relation.applicationMode ||
+        existing.applicability !== (relation.applicability ?? null) ||
+        existing.lexicalIdentity !== (relation.lexicalIdentity ?? null)
+      ) {
         throw new Error(
           `Conflicting productive relation for ${source}: ${existing.ruleRefs[0]} vs ${relation.id}`
         );
@@ -413,6 +436,46 @@
       const segments = [];
       const blockedRules = [];
       const blockedSeen = new Set();
+      const lexical = options.lexical ?? null;
+
+      // 4.8E: collect every productive occurrence, then arbitrate globally.
+      const preserveSpans = [];
+      for (let at = 0; at < inputPoints.length; at += 1) {
+        for (const rule of matchingPreserve(inputPoints, at)) preserveSpans.push([at, at + codePoints(rule.source).length]);
+      }
+      const candidates = [];
+      for (let at = 0; at < inputPoints.length; at += 1) {
+        for (const rule of matchingProductive(inputPoints, at)) {
+          const end = at + codePoints(rule.source).length;
+          const lockedOverlap = lockedSegments.some((segment) => at < segment.end && end > segment.start);
+          const lockedInside = lockedSegments.some((segment) => at >= segment.start && end <= segment.end);
+          if (lockedOverlap) {
+            if (!lockedInside) {
+              for (const ruleRef of rule.ruleRefs) addBlocked(blockedRules, blockedSeen, ruleRef, at, end, "upstream_locked_segment");
+            }
+            continue;
+          }
+          if (preserveSpans.some(([s, e]) => at < e && end > s)) {
+            for (const ruleRef of rule.ruleRefs) addBlocked(blockedRules, blockedSeen, ruleRef, at, end, "preserve_block");
+            continue;
+          }
+          candidates.push({
+            key: `${rule.ruleRefs.join(",")} ${at}`,
+            start: at,
+            end,
+            output: rule.target,
+            policy: rule.applicability ?? (lexical && rule.mode === "substring_productive" ? "lexical_boundary" : "anywhere"),
+            ...(lexical && rule.lexicalIdentity ? { lexicalIdentity: rule.lexicalIdentity } : {}),
+            rule
+          });
+        }
+      }
+      const decision = OccurrenceArbitration.arbitrate({ length: inputPoints.length, candidates, lexical });
+      for (const { candidate, reason } of decision.blocked) {
+        for (const ruleRef of candidate.rule.ruleRefs) addBlocked(blockedRules, blockedSeen, ruleRef, candidate.start, candidate.end, reason);
+      }
+      const acceptedAt = new Map(decision.accepted.map((candidate) => [candidate.start, candidate]));
+      const unresolvedAt = new Map(decision.unresolved.map((region) => [region.start, region]));
       let index = 0;
 
       while (index < inputPoints.length) {
@@ -457,37 +520,36 @@
           continue;
         }
 
-        const productiveMatches = matchingProductive(inputPoints, index);
-        if (productiveMatches.length > 0) {
-          const selected = productiveMatches[0];
-          const selectedLength = codePoints(selected.source).length;
-          const selectedEnd = index + selectedLength;
-
-          for (const shadowed of productiveMatches.slice(1)) {
-            for (const ruleRef of shadowed.ruleRefs) {
-              addBlocked(
-                blockedRules,
-                blockedSeen,
-                ruleRef,
-                index,
-                index + codePoints(shadowed.source).length,
-                "shadowed_by_longer_match"
-              );
-            }
-          }
+        const region = unresolvedAt.get(index);
+        if (region) {
           recordPassiveAt(inputPoints, index, blockedRules, blockedSeen);
+          appendSegment(segments, {
+            sourceText: inputPoints.slice(region.start, region.end).join(""),
+            outputText: inputPoints.slice(region.start, region.end).join(""),
+            start: region.start,
+            end: region.end,
+            basis: "unresolved",
+            ruleRefs: []
+          });
+          index = region.end;
+          continue;
+        }
 
+        const winner = acceptedAt.get(index);
+        if (winner) {
+          const selected = winner.rule;
+          recordPassiveAt(inputPoints, index, blockedRules, blockedSeen);
           appendSegment(segments, {
             sourceText: selected.source,
             outputText: selected.target,
             start: index,
-            end: selectedEnd,
+            end: winner.end,
             basis: selected.mode === "character_productive"
               ? "generated_character"
               : "generated_productive_span",
             ruleRefs: selected.ruleRefs
           });
-          index = selectedEnd;
+          index = winner.end;
           continue;
         }
 
