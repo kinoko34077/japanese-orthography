@@ -102,17 +102,19 @@ export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: 
 
   const formText = new Map(lexicalGraph.forms.map((form) => [form.id, form.text]));
   const formIndex: Array<[number, number[]]> = [...formLexemes.entries()]
-    .map(([form, ids]) => [stringId.get(formText.get(form)!)!, [...new Set(ids)].sort((a,b) => a-b)] as [number, number[]])
+    .map(([form, ids]) => [stringId.get(formText.get(form as Id<'form'>)!)!, [...new Set(ids)].sort((a,b) => a-b)] as [number, number[]])
     .sort((a,b) => a[0]-b[0]);
   const readingIndex: Array<[number, number[]]> = [...readingLexemes.entries()]
     .map(([reading, ids]) => [pathIndex.get(reading)!, [...new Set(ids)].sort((a,b) => a-b)] as [number, number[]])
     .sort((a,b) => a[0]-b[0]);
 
-  const restrictions: Array<[number, number, number[]]> = lexicalGraph.restrictions.map((restriction) => [
-    lexemeIndex.get(restriction.lexeme)!,
-    pathIndex.get(restriction.reading)!,
-    restriction.forms.map((form) => stringId.get(formText.get(form)!)!).sort((a,b) => a-b)
-  ]).sort((a,b) => a[0]-b[0] || a[1]-b[1] || JSON.stringify(a[2]).localeCompare(JSON.stringify(b[2])));
+  const restrictions: Array<[number, number, number[]]> = lexicalGraph.restrictions
+    .map((restriction): [number, number, number[]] => [
+      lexemeIndex.get(restriction.lexeme)!,
+      pathIndex.get(restriction.reading)!,
+      restriction.forms.map((form) => stringId.get(formText.get(form)!)!).sort((a,b) => a-b)
+    ])
+    .sort((a,b) => a[0]-b[0] || a[1]-b[1] || JSON.stringify(a[2]).localeCompare(JSON.stringify(b[2])));
 
   const patternIds = sinoGraph.convergencePatterns.map((pattern) => pattern.id).sort(cmp);
   const patternIndex = new Map(patternIds.map((id, index) => [id, index]));
@@ -130,21 +132,28 @@ export function buildPhase48RuntimeBundle(lexicalGraph: EntityGraph, sinoGraph: 
 
   const symbolText = new Map(sinoGraph.symbols.map((symbol) => [symbol.id, symbol.text]));
   const evidenceText = new Map(sinoGraph.evidence.map((evidence) => [evidence.id, idKey(evidence.id)]));
-  const bindings: Phase48HotRuntime['bindings'] = sinoGraph.bindings.map((binding) => [
-    stringId.get(symbolText.get(binding.symbol)!)!,
-    pathIndex.get(binding.modern)!,
-    binding.context === null ? -1 : stringId.get(idKey(binding.context))!,
-    binding.patterns.map((pattern) => patternIndex.get(pattern)!).sort((a,b) => a-b),
-    binding.evidence.map((evidence) => stringId.get(evidenceText.get(evidence)!)!).sort((a,b) => a-b)
-  ]).sort((a,b) => a[0]-b[0] || a[1]-b[1] || a[2]-b[2]);
+  const bindings: Phase48HotRuntime['bindings'] = sinoGraph.bindings
+    .map((binding): [number, number, number, number[], number[]] => [
+      stringId.get(symbolText.get(binding.symbol)!)!,
+      pathIndex.get(binding.modern)!,
+      binding.context === null ? -1 : stringId.get(idKey(binding.context))!,
+      binding.patterns.map((pattern) => patternIndex.get(pattern)!).sort((a,b) => a-b),
+      binding.evidence.map((evidence) => stringId.get(evidenceText.get(evidence)!)!).sort((a,b) => a-b)
+    ])
+    .sort((a,b) => a[0]-b[0] || a[1]-b[1] || a[2]-b[2]);
 
   const cold: Phase48ColdProjection = {
     schemaVersion: '1',
     kind: 'phase48-cold-provenance',
     lexicalSources: structuredClone(lexicalGraph.sources),
     sinoSources: structuredClone(sinoGraph.sources),
-    lexicalSourceRefs: lexicalGraph.lexemes.map((lexeme) => [lexeme.id, [...lexeme.sourceRefs]]).sort((a,b) => cmp(a[0],b[0])),
-    lexicalCategories: lexicalGraph.lexemes.map((lexeme) => [lexeme.id, [...lexeme.categories].sort(cmp)]).filter(([, categories]) => categories.length > 0).sort((a,b) => cmp(a[0],b[0])),
+    lexicalSourceRefs: lexicalGraph.lexemes
+      .map((lexeme): [string, string[]] => [lexeme.id, [...lexeme.sourceRefs]])
+      .sort((a,b) => cmp(a[0],b[0])),
+    lexicalCategories: lexicalGraph.lexemes
+      .map((lexeme): [string, string[]] => [lexeme.id, [...lexeme.categories].sort(cmp)])
+      .filter(([, categories]) => categories.length > 0)
+      .sort((a,b) => cmp(a[0],b[0])),
     sinoEvidence: structuredClone(sinoGraph.evidence)
   };
 
@@ -214,18 +223,21 @@ export function createPhase48HotRuntime(hot: Phase48HotRuntime) {
   };
 
   const resolveDirect = (symbol: string, modern: string, query: HotSinoQuery = {}): HotDirectResult => {
-    const matches = selectMatches(symbol, modern, query).filter((match) => {
-      // Direct component authority is carried only by a binding's primary pattern.
-      const binding = hot.bindings.find(([s,p,c]) =>
-        strings[s] === symbol && pathText[p] === modern && (query.context === undefined || (c < 0 ? null : strings[c]) === query.context)
-      );
-      if (!binding) return false;
-      return binding[3].some((pid) => pathText[hot.patterns[pid]![0]] === match.historical && pathText[hot.patterns[pid]![1]] === modern);
-    });
-    const historicalReadings = uniqueSorted(matches.map((match) => match.historical));
+    const chosen = hot.bindings.filter(([symbolId, modernPath, contextId]) =>
+      strings[symbolId] === symbol &&
+      pathText[modernPath] === modern &&
+      (query.context === undefined || (contextId < 0 ? null : strings[contextId]) === query.context)
+    );
+    const historicalReadings = uniqueSorted(chosen.flatMap((binding) =>
+      binding[3].map((patternId) => pathText[hot.patterns[patternId]![0]]!)
+    ));
     if (historicalReadings.length === 0) return null;
     if (historicalReadings.length > 1) return { status: 'candidates', historicalReadings };
-    return { status: 'resolved', historicalReading: historicalReadings[0]!, evidenceRefs: uniqueSorted(matches.flatMap((match) => match.evidence)) };
+    return {
+      status: 'resolved',
+      historicalReading: historicalReadings[0]!,
+      evidenceRefs: uniqueSorted(chosen.flatMap((binding) => binding[4].map((id) => strings[id]!)))
+    };
   };
 
   const segmentOptions = (symbol: string, segment: string, query: HotSinoQuery) => {
