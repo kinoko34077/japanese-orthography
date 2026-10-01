@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "bench:resolver": "node --import tsx tools/bench-orthography-resolution.ts --json",
     "check:profile": "node --import tsx tools/check-profile.ts",
-    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
+    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm run validate:browser-pack && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
     "generate:native-kana": "node --import tsx tools/generate-native-kana.ts",
     "validate:native-kana": "node --import tsx tools/validate-native-kana.ts",
     "generate:sino-kana": "node --import tsx tools/sino-kana.ts",
@@ -30,7 +30,9 @@
     "measure:browser-pack": "node --expose-gc --import tsx tools/measure-browser-pack.ts",
     "generate:orthography-v2-bundle": "node --import tsx tools/orthography-v2-bundle.ts",
     "validate:orthography-v2-bundle": "node --import tsx tools/orthography-v2-bundle.ts --check",
-    "validate:orthography-accounting": "node --import tsx tools/orthography-migration-accounting.ts --check"
+    "validate:orthography-accounting": "node --import tsx tools/orthography-migration-accounting.ts --check",
+    "generate:browser-pack": "node --import tsx tools/generate-browser-pack.ts",
+    "validate:browser-pack": "node --import tsx tools/generate-browser-pack.ts --check"
   },
   "repository": {
     "type": "git",

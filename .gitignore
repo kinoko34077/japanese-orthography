@@ -2,3 +2,5 @@ node_modules/
 dist/
 .tmp/
 .superpowers/
+data/browser-pack/*
+!data/browser-pack/manifest.json
