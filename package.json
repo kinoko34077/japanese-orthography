@@ -20,7 +20,8 @@
     "generate:kinotch-profile-intake": "node --import tsx tools/kinotch-profile-intake.ts",
     "validate:kinotch-profile-intake": "node --import tsx tools/validate-kinotch-profile-intake.ts",
     "generate:jmdict-intake": "node --import tsx tools/generate-jmdict-intake.ts",
-    "validate:jmdict-intake": "node --import tsx tools/validate-jmdict-intake.ts"
+    "validate:jmdict-intake": "node --import tsx tools/validate-jmdict-intake.ts",
+    "measure:lexical-graph": "node --import tsx tools/measure-lexical-graph.ts"
   },
   "repository": {
     "type": "git",
