@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1",
+  "kind": "orthography-v2-measurements",
+  "owner": "japanese-orthography#172",
+  "note": "Sizes/digests are deterministic real compiled data; performance values are informational observations (machine-dependent). The v2 canonical graph holds all normalized sources (JMdict forms/readings, Phase-4.6 literal facts, shared rules, bindings) and is a different content set from the Phase-4.8 lexical entity graph.",
+  "canonicalGraph": {
+    "sha256": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+    "bytes": 160692862,
+    "gzipBytes": 13397228,
+    "ledgerDispositions": 257632
+  },
+  "counts": {
+    "facts": 555284,
+    "rules": 199,
+    "bindings": 2000,
+    "sources": 28
+  },
+  "hotArtifacts": {
+    "modern": {
+      "bytes": 60965586,
+      "gzipBytes": 9690748,
+      "contentDigest": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+      "profileDigest": "81550baef6409f30c7160f503cfb6e4991d1c50352bc37e2fdbc633c82185446",
+      "projectedFacts": 2253
+    },
+    "historical": {
+      "bytes": 60967613,
+      "gzipBytes": 9691785,
+      "contentDigest": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+      "profileDigest": "e29f816624fce000557cc0c0c94b62cf00a2b5b4e3cdab99089a767f1bc37162",
+      "projectedFacts": 2253
+    },
+    "kinotch": {
+      "bytes": 60967582,
+      "gzipBytes": 9691753,
+      "contentDigest": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+      "profileDigest": "83b14f02975cce62a90ffebd380d90fa892fd1e486a8b90a49f44fff3d7a9634",
+      "projectedFacts": 2253
+    }
+  },
+  "baseline": {
+    "phase48": {
+      "canonicalLexicalGraphBytes": 115706438,
+      "compactLexicalGraphBytes": 40398937,
+      "hotRuntimeBytes": 21810629,
+      "sinoDagHotTablesBytes": 66990
+    }
+  },
+  "performanceObserved": {
+    "node": "v26.10.0",
+    "hotStartupMs": 10428,
+    "hotHeapDeltaMb": 965,
+    "projectionsPerSecond": 2269,
+    "restorationsPerSecond": 1103
+  }
+}
