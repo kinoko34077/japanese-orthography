@@ -258,17 +258,21 @@ Node/VM internal copies that the runtime does not expose are explicitly marked u
 
 ## Current boundary
 
-Phase 3 is complete at the bounded production-resolver-bundle acceptance-slice level. This repository now owns:
+Phase 4.6 is complete / accepted. The repository now owns the accepted Phase-3 resolver foundation plus the later evidence-driven orthography expansion:
 
-- canonical contextual-kanji corpus/build-time behavior;
-- the fixed compatibility/runtime foundation;
-- a real-source UniDic lexical artifact/lookup acceptance path;
-- Phase 2B source-backed Sino-Japanese historical-reading resolution;
-- Phase 4.6D selected-source-complete native historical-kana classification, exact whole-surface/reading authority, and morphology-qualified resolution;
-- Phase 2C real lexical binding for canonical contextual restoration;
-- Phase 2D source-backed unconditional deterministic safe-character rendering;
-- Phase 3 deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
+- canonical contextual-kanji corpus/build-time behavior and the fixed compatibility/runtime foundation;
+- real-source UniDic lexical identity / reading-index acceptance paths established through Phase 3.5;
+- source-backed contextual restoration and deterministic safe-character rendering;
+- Phase 4.6A typed responsibility / admission / provenance foundations;
+- Phase 4.6B bounded deterministic same-character shinjitai→kyujitai authority;
+- Phase 4.6C lexical / homophone historical-kanji restoration with ambiguity preservation;
+- Phase 4.6D selected-source-complete native historical-kana classification and runtime authority;
+- Phase 4.6E selected-source-complete 字音仮名遣い authority and word-level reconstruction;
+- Phase 4.6F classification of the 373 active KiNoTch consumer-local relations without admitting new executable profile behavior;
+- deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
 
-These accepted layers prove responsibility boundaries, cross-layer composition and one production-shaped activation contract. Phase 4.6D claims completeness only for its five pinned selected native-kana snapshots; it does **not** claim universal historical-kana coverage or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
+The bounded KiNoTch project-profile authority accepted in Phase 4.5 (including `こと -> ヿ`) remains separate from generic authority. Phase 4.6 source completeness is relative to the selected pinned snapshots; it does **not** claim universal historical orthography correctness or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
 
-Phase 4.6D changes repository-owned native-kana authority only; consumer repositories remain unchanged/pinned. Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader corpus expansion remain explicitly unselected. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by this work.
+Post-acceptance review tightened the same contract without replacing the architecture: PR #94 made native-guide structural drift fail closed, and PR #96 preserved explicit native-dictionary alternatives as candidate sets instead of false unique authority. Consumer repositories remain explicitly source-locked; the accepted consumer is still `txt-auto-replace@198f8560613d23417cb0f87172ae8662e722ca30`.
+
+Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader unselected #46/#47 work remain explicitly unselected. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by this state.
