@@ -3,7 +3,7 @@
   "compilerVersion": "1",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "65b111d420f46f242babb45b0796761d3fd2103ac6b3ccbe89c904c724ac6899",
+  "packDigest": "dd49a99ebd535793a0ff3501a275199f03f466925d5707766363fbb94e205993",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -9251,7 +9251,7 @@
       ],
       "rowCount": 1753,
       "sectionId": "facts@surface/217",
-      "sha256": "c26422992d663a5aeb8d1f33afa0a870a231f3e158136c8ef3ad3c1393db4ae6",
+      "sha256": "1aafa353626919677497353b1c4e737742b95de169277eb8688d4cc468ebbe69",
       "shard": {
         "count": 328,
         "from": "満塁",
@@ -9391,7 +9391,7 @@
       ],
       "rowCount": 1753,
       "sectionId": "facts@surface/223",
-      "sha256": "3eec9959052de2d595f9fd8b37c6e5cd45c5d55a7cd640651f2b30cdab84fcea",
+      "sha256": "3b8553150ebff1d273c5386bb9dc0f03966a0ecb4e52848a29a0dc34b01ad550",
       "shard": {
         "count": 328,
         "from": "熇尾蛇",
@@ -10531,7 +10531,7 @@
       ],
       "rowCount": 1733,
       "sectionId": "facts@surface/275",
-      "sha256": "bbcb568226dc77f032232fc5a5abae0227a660c34d6e51bf21624aa6fea50c3c",
+      "sha256": "ec6ea65674f5188c65cae4f1b89f23bd24f586b0ac3f9e24ceda0201f1bfcd0d",
       "shard": {
         "count": 328,
         "from": "衝撃",
@@ -10731,7 +10731,7 @@
       ],
       "rowCount": 1779,
       "sectionId": "facts@surface/284",
-      "sha256": "6b658ddfaf32dc14b7842e68a0a16382e8078d8b158e57c716ad60b346a609c1",
+      "sha256": "d9ed408fa3891ebc90f8319c3737208c4a16ed4de33b4a1d061d6c7b8d8edacd",
       "shard": {
         "count": 328,
         "from": "諸仏",
@@ -10791,7 +10791,7 @@
       ],
       "rowCount": 1741,
       "sectionId": "facts@surface/287",
-      "sha256": "3695bb7bf008905150c5a28a7aec407b4b9a3474d9d301e12a6a8190965b41b9",
+      "sha256": "0a48288c0bce1d8e2bcc697bdb299b763134ff5dc7141e9e855c5746378f6666",
       "shard": {
         "count": 328,
         "from": "資産担保証券",
@@ -11211,7 +11211,7 @@
       ],
       "rowCount": 1729,
       "sectionId": "facts@surface/305",
-      "sha256": "d3016ec5d99eb914b98c0be0d0dc61fdb9949b3892c0ab1edbab4752f4508be4",
+      "sha256": "9aae6e9502d3dd60db57a17abae7f5c0430fe07105f1220170b415859de51c15",
       "shard": {
         "count": 328,
         "from": "開院",

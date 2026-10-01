@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>表記変換デバッグ</title>
+  <meta name="description" content="日本語の現代表記・歴史的表記・KiNoTch 表記をブラウザ内で変換し、各箇所の確度と根拠を確認できるデバッグ用ツールです。入力した文章はサーバーに送信されません。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>表記変換デバッグ</h1>
+    <p class="lede">文章を貼り付けて変換すると、変換した箇所ごとに「確度」と「根拠」を確認できます。変換はすべてこのブラウザの中で行われ、入力した文章は送信されません。</p>
+  </header>
+
+  <main class="layout">
+    <section class="controls" aria-label="変換の設定">
+      <fieldset class="profiles">
+        <legend>変換プロファイル</legend>
+        <label><input type="radio" name="profile" value="historical" checked> 歴史的表記 <span class="hint">現代 → 歴史的</span></label>
+        <label><input type="radio" name="profile" value="modern"> 現代表記 <span class="hint">歴史的 → 現代</span></label>
+        <label><input type="radio" name="profile" value="kinotch-fixed"> KiNoTch <span class="hint">歴史的＋KiNoTch 独自</span></label>
+      </fieldset>
+      <div class="actions">
+        <button type="button" id="convert" class="primary">変換</button>
+        <label class="auto"><input type="checkbox" id="auto"> 入力中に自動で変換</label>
+        <button type="button" id="copy" disabled>結果をコピー</button>
+      </div>
+      <details class="settings">
+        <summary>詳細設定</summary>
+        <div id="policy" class="policy"><p class="muted">辞書データの読み込み後に表示されます。</p></div>
+      </details>
+    </section>
+
+    <section class="pane source-pane" aria-labelledby="source-label">
+      <h2 id="source-label">入力</h2>
+      <textarea id="source" spellcheck="false" placeholder="ここに文章を貼り付けてください" aria-describedby="source-help">溶接の装丁を円周に描いた台風の日のこと。</textarea>
+      <p id="source-help" class="muted">変換したい日本語の文章を入力または貼り付けます。</p>
+    </section>
+
+    <section class="pane result-pane" aria-labelledby="result-label">
+      <h2 id="result-label">変換結果</h2>
+      <div id="summary" class="summary" aria-live="polite"></div>
+      <div id="result" class="result" aria-live="polite"><p class="muted">「変換」を押すと結果がここに表示されます。</p></div>
+      <p class="legend">
+        <span class="diag diag-unique legend-chip">✓ 一意確定</span>
+        <span class="diag diag-conditional legend-chip">◆ 条件付き確定</span>
+        <span class="diag diag-unresolved legend-chip">! 未解決</span>
+        <span class="muted">色の付いた箇所をクリック（またはタップ・Enter）すると詳細を表示します。</span>
+      </p>
+    </section>
+
+    <aside id="detail" class="detail" aria-label="選択箇所の詳細" hidden>
+      <div class="detail-head">
+        <h2>選択箇所の詳細</h2>
+        <button type="button" id="detail-close" class="close" aria-label="詳細を閉じる">×</button>
+      </div>
+      <div id="detail-body"></div>
+    </aside>
+  </main>
+
+  <div id="status" class="status" role="status" aria-live="polite">辞書データを準備しています…</div>
+
+  <footer class="footer">
+    <p>データ: JMdict（CC BY-SA 4.0, EDRDG）ほか、各出典は詳細表示の「出典・証拠」を参照してください。</p>
+  </footer>
+
+  <script src="terminology.js"></script>
+  <script src="worker-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

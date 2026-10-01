@@ -122,3 +122,20 @@ test('corruption fails closed', () => {
   const truncated = build.files.get('rules.bin')!.slice(0, 40);
   assert.throws(() => decodeSection(truncated), /out of range|truncated/);
 });
+
+test('a fact is contextual only when a context constraint is attached', () => {
+  const g = fixture();
+  g.facts.push(
+    { id: 'fact:form_relation:颱風||台風', kind: 'form_relation', lexicalRefs: [], surface: '颱風', target: '台風', periodRefs: ['period:historical-kana'], tags: ['contextual_kanji', 'context:constraint-taifu'], ...prov },
+    { id: 'fact:form_relation:讃嘆||賛嘆', kind: 'form_relation', lexicalRefs: [], surface: '讃嘆', target: '賛嘆', periodRefs: ['period:historical-kana'], tags: ['contextual_kanji', 'lexical_historical_kanji'], ...prov }
+  );
+  const graph = canonicalizeOrthographyKnowledge(g);
+  const build = compileBrowserPack(graph, PROFILES);
+  const flags = new Map<string, number>();
+  for (const section of build.manifest.sections.filter((s) => s.kind === 'facts')) {
+    const f = decodeSection(build.files.get(section.path));
+    for (let row = 0; row < f.rowCount('kind'); row += 1) flags.set(graph.facts[f.value('factIndex', row)]!.id, f.value('flags', row));
+  }
+  assert.ok(flags.get('fact:form_relation:颱風||台風')! & FACT_FLAGS.contextual);
+  assert.equal(flags.get('fact:form_relation:讃嘆||賛嘆')! & FACT_FLAGS.contextual, 0);
+});
