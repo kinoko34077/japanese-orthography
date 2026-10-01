@@ -295,15 +295,34 @@ unknown/new string
 
 Generated, preferred, and unresolved results remain epistemically distinct from source-attested exact authority. Phase 4.7 does not freeze a package/public API, binary format, consumer integration contract, or release/distribution mechanism.
 
-## Pinned JMdict lexical intake (Phase 4.8A)
+## Dictionary-backed lexical entity graph and occurrence-aware resolver (Phase 4.8)
 
-`data/lexical/sources/jmdict/2026-10-01/` holds a field-selected, gloss-free extract of the JMdict 2026-10-01 snapshot (218,850 entries; CC BY-SA 4.0, see its `NOTICE.md`). It is lexical identity evidence only: JMdict entry grouping never selects a historical form, and `ent_seq` is source-local provenance (`jmdict:<date>:seq:<n>`), not a repository semantic ID. `npm run validate:jmdict-intake` enforces the extract hash, field contract and zero-loss accounting. Contract: `docs/phase48a-jmdict-intake-contract.md`.
+Phase 4.8 adds a lexical layer above the accepted Phase-4.6/4.7 authority. Its rule: **dictionary data identifies which lexical entity is present; Phase-4.6/4.7 evidence decides which historical form is justified.**
 
-Phase 4.8B adds the typed lexical entity graph and shared historical→modern reading-convergence DAG (`tools/lexical-entity-graph.ts`, `docs/phase48b-entity-graph.md`). Phase 4.8C compiles the pinned JMdict extract into that graph (218,850 lexemes) and projects the accepted 4.6E 字音 authority onto 177 shared primary + 94 derived convergence patterns that reproduce the accepted direct and word-level results exactly (`docs/phase48c-lexical-graph-compiler.md`, measurements in `data/reports/phase48c-lexical-graph-measurements.json`).
+```text
+input text
+  -> span lattice over pinned JMdict surfaces (+ UniDic slice morphology evidence)      4.8D
+  -> best lexical paths -> occurrence applicability / overlap arbitration               4.8E
+  -> typed entity graph (Symbol/Form/ReadingAtom/ReadingPath/Pattern/Lexeme/...)         4.8B/C
+  -> shared historical->modern reading-convergence DAG + reverse traversal              4.8B/C
+  -> join to accepted 4.6/4.7 authority (written form + reading)                        4.8F
+  -> compact cold graph + hot runtime                                                   4.8G
+```
+
+- **4.8A** — `data/lexical/sources/jmdict/2026-10-01/`: field-selected, gloss-free JMdict 2026-10-01 extract (218,850 entries; CC BY-SA 4.0, `NOTICE.md`), fail-closed field contract, zero-loss accounting (`validate:jmdict-intake`). `ent_seq` is source-local provenance only. `docs/phase48a-jmdict-intake-contract.md`.
+- **4.8B** — typed ids `<namespace>:<key>` with fail-closed schema; shared convergence patterns bound by `(symbol, modern reading path, context)`; order-independent reverse reconstruction. `docs/phase48b-entity-graph.md`.
+- **4.8C** — JMdict → typed graph (explicit LexemeId contract); accepted 4.6E 字音 authority → 177 primary + 94 derived shared patterns reproducing the accepted direct (6,000) and word (18,495) results exactly. `docs/phase48c-lexical-graph-compiler.md`.
+- **4.8D** — span lattice keeping all overlapping candidates, unknown spans, reading-aligned composition (`弁護 + 士/人/団`). `docs/phase48d-span-analysis.md`.
+- **4.8E** — `runtime/occurrence-arbitration.js`, shared by the TS resolver and the browser/worker runtime: lexical-boundary / whole-lexeme / identity gates against every best analysis path, same-start longest match, global overlap arbitration (shifted `AB`/`BC` decided by evidence or left `unresolved`). `勘弁護衛` no longer receives `弁護 -> 辯護` when lexical evidence is supplied; without lexical evidence the accepted 4.7 behaviour is unchanged. `docs/phase48e-occurrence-applicability.md`.
+- **4.8F** — every accepted 4.6 intake record bound to lexemes / symbols / shared patterns (`data/historical/phase48f-lexical-authority-join.json`); lexeme history resolver where JMdict groups are equivalence evidence only, written forms come from accepted records (plus reading-aligned component reuse), and readings come from whole-word source authority or reverse DAG traversal. `docs/phase48f-lexical-historical-join.md`.
+- **4.8G** — derived-column compaction (inflate == canonical), schema-checked hot runtime (`runtime/lexical-hot-runtime.js`) with parity proofs, and real measurements. `docs/phase48g-compact-runtime.md`.
+- **4.8H** — `test/phase48h-acceptance.test.ts` runs the end-to-end acceptance matrix.
+
+`法 / ほう` stays `はふ | ほふ` without context and `仏教用語 -> ほふ`; the hypothesis "non-Buddhist -> はふ" is **not** admitted. UniDic + JMdict met every 4.8 acceptance case, so Sudachi was not added. A broader historical-kana dictionary survey remains deferred.
 
 ## Current boundary
 
-Phase 4.7 is **complete / accepted**. The repository now owns the accepted Phase-3 resolver foundation, Phase-4.6 evidence-driven authority expansion, and the Phase-4.7 hybrid generation/audit layer.
+Phase 4.8 is **complete / accepted**. The repository now owns the accepted Phase-3 resolver foundation, Phase-4.6 evidence-driven authority expansion, the Phase-4.7 hybrid generation/audit layer, and the Phase-4.8 dictionary-backed lexical entity graph + occurrence-aware resolver.
 
 The accepted authority boundaries are:
 
@@ -316,10 +335,12 @@ The accepted authority boundaries are:
 - representation-only Kana/iteration variation can be normalized without being misreported as linguistic ambiguity;
 - specialist/domain metadata participates only where context is known;
 - generated/preferred decisions remain distinguishable and auditable;
-- compact runtime artifacts are generated implementation details reproducible from canonical data.
+- compact runtime artifacts are generated implementation details reproducible from canonical data;
+- dictionary lexical grouping (JMdict) is lexical-identity evidence, never historical winner authority;
+- with lexical evidence, productive relations apply per occurrence (lexical boundaries), and unresolvable overlaps stay unresolved instead of being decided by input order.
 
-The bounded KiNoTch project-profile authority accepted in Phase 4.5 (including `こと -> ヿ`) remains separate from generic authority. Phase-4.6 source completeness is relative to selected pinned snapshots; Phase 4.7 does **not** claim universal historical orthography correctness.
+The bounded KiNoTch project-profile authority accepted in Phase 4.5 (including `こと -> ヿ`) remains separate from generic authority. Phase-4.6 source completeness is relative to selected pinned snapshots; Phases 4.7 and 4.8 do **not** claim universal historical orthography correctness.
 
-Consumer repositories remain explicitly source-locked. The accepted consumer remains `txt-auto-replace@198f8560613d23417cb0f87172ae8662e722ca30`; Phase 4.7 does not silently move that consumer to newer core behavior.
+Consumer repositories remain explicitly source-locked. The accepted consumer remains `txt-auto-replace@198f8560613d23417cb0f87172ae8662e722ca30`; Phases 4.7 and 4.8 do not silently move that consumer to newer core behavior.
 
 Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader unselected #46/#47 work remain explicitly unselected. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by this state.
