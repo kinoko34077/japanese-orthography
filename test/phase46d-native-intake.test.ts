@@ -15,6 +15,7 @@ import {
   buildCoverageSummary,
   validateCoverageAccounting
 } from '../tools/intake-accounting.ts';
+import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
 const repositoryRoot = process.cwd();
 
@@ -22,9 +23,9 @@ async function sourceText(path: string): Promise<string> {
   const bytes = await readFile(path);
   const header = bytes.subarray(0, 2048).toString('latin1').toLowerCase();
   if (header.includes('charset=x-sjis') || header.includes('charset=shift_jis')) {
-    return new TextDecoder('shift_jis').decode(bytes);
+    return normalizeCheckoutText(new TextDecoder('shift_jis').decode(bytes));
   }
-  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  return normalizeCheckoutText(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
 }
 
 async function loadClassifier(): Promise<Record<string, any> | null> {
@@ -231,8 +232,8 @@ test('generated Phase 4.6D intake and coverage report are canonical outputs of t
     readFile('data/intake/phase46d-native-kana.json', 'utf8'),
     readFile('data/reports/phase46d-native-kana-coverage.json', 'utf8')
   ]);
-  assert.equal(intake, generated.intakeText);
-  assert.equal(report, generated.coverageReportText);
+  assert.equal(normalizeCheckoutText(intake), generated.intakeText);
+  assert.equal(normalizeCheckoutText(report), generated.coverageReportText);
 });
 
 test('native coverage validation CLI succeeds on canonical Phase 4.6D artifacts', () => {
