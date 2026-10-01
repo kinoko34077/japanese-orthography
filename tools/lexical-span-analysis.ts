@@ -16,6 +16,7 @@ export interface LexicalSpanCandidate {
   modernReadings: string[];
   morphology: SpanMorphology;
   entityLexemes: Id<'lexeme'>[];
+  categories: Id<'category'>[];
 }
 
 export interface LexicalSpan {
@@ -49,45 +50,6 @@ export interface SpanGraphOptions {
 }
 
 const cmp = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
-
-function decodeCandidate(
-  artifact: LexicalArtifact,
-  candidateIndex: number,
-  entityGraph: EntityGraph,
-  surface: string
-): LexicalSpanCandidate {
-  const record = artifact.candidates[candidateIndex];
-  if (!record) throw new Error(`candidate index ${candidateIndex} out of range`);
-  const lemma = artifact.lemmas[record.lemmaIndex];
-  const morphology = artifact.morphologies[record.morphologyId];
-  if (!lemma || !morphology) throw new Error(`candidate ${candidateIndex} has dangling references`);
-  const modernReadings = [...record.modernReadings].sort(cmp);
-  const reading = modernReadings.length === 1
-    ? modernReadings[0]!
-    : modernReadings.includes(lemma.lexicalReading)
-      ? lemma.lexicalReading
-      : null;
-  const runtime = createEntityGraphRuntime(entityGraph);
-  let entityLexemes = runtime.lexemesByForm(makeId('form', surface)) as Id<'lexeme'>[];
-  if (reading !== null) {
-    const byReading = new Set(runtime.lexemesByReading(makeId('reading-path', reading)));
-    const restricted = entityLexemes.filter((id) => byReading.has(id));
-    if (restricted.length > 0) entityLexemes = restricted;
-  }
-  return {
-    lexicalIdentity: lemma.lexicalIdentity,
-    lemma: lemma.lemma,
-    reading,
-    lexicalReading: lemma.lexicalReading,
-    modernReadings,
-    morphology: {
-      partOfSpeech: [...morphology.pos],
-      conjugationType: morphology.cType === '*' ? null : morphology.cType,
-      conjugationForm: morphology.cForm === '*' ? null : morphology.cForm
-    },
-    entityLexemes: [...new Set(entityLexemes)].sort(cmp) as Id<'lexeme'>[]
-  };
-}
 
 function surfaceCandidates(artifact: LexicalArtifact): Map<string, number[]> {
   const out = new Map<string, number[]>();
@@ -162,6 +124,9 @@ export function buildLexicalSpanGraph(
   const maxComponentPaths = Math.max(1, options.maxComponentPaths ?? 16);
   const index = surfaceCandidates(lexicalArtifact);
   const entityRuntime = createEntityGraphRuntime(entityGraph);
+  const categoriesByLexeme = new Map(
+    entityGraph.lexemes.map((lexeme) => [lexeme.id, lexeme.categories] as const)
+  );
   const spans: LexicalSpan[] = [];
 
   const decode = (candidateIndex: number, surface: string): LexicalSpanCandidate => {
@@ -191,7 +156,10 @@ export function buildLexicalSpanGraph(
         conjugationType: morphology.cType === '*' ? null : morphology.cType,
         conjugationForm: morphology.cForm === '*' ? null : morphology.cForm
       },
-      entityLexemes: [...new Set(entityLexemes)].sort(cmp) as Id<'lexeme'>[]
+      entityLexemes: [...new Set(entityLexemes)].sort(cmp) as Id<'lexeme'>[],
+      categories: [...new Set(
+        entityLexemes.flatMap((id) => categoriesByLexeme.get(id) ?? [])
+      )].sort(cmp) as Id<'category'>[]
     };
   };
 
