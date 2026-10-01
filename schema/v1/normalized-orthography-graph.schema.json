@@ -164,7 +164,7 @@
             "required": ["relationKind"]
           },
           "then": {
-            "properties": { "toForms": { "maxItems": 1 } }
+            "properties": { "toForms": { "type": "array", "maxItems": 1 } }
           }
         },
         {
@@ -179,7 +179,7 @@
           "then": {
             "properties": {
               "relationKind": { "const": "mapping" },
-              "toForms": { "maxItems": 1 }
+              "toForms": { "type": "array", "maxItems": 1 }
             }
           }
         }
