@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1",
+  "kind": "phase48g-gpt-hot-runtime-measurements",
+  "source": {
+    "jmdictCreatedDate": "2026-10-01",
+    "jmdictEntries": 218850,
+    "sinoComponentRelations": 2000
+  },
+  "entities": {
+    "lexemes": 218850,
+    "forms": 229114,
+    "readingAtoms": 236621,
+    "readingPaths": 236621,
+    "sinoPatterns": 271,
+    "sinoBindings": 2000
+  },
+  "sizes": {
+    "canonicalLexicalGraph": {
+      "bytes": 115706438,
+      "gzipBytes": 13402055
+    },
+    "canonicalSinoDag": {
+      "bytes": 644876,
+      "gzipBytes": 46866
+    },
+    "hot": {
+      "bytes": 29832983,
+      "gzipBytes": 7596456
+    },
+    "cold": {
+      "bytes": 36229277,
+      "gzipBytes": 5894964
+    },
+    "fullBundle": {
+      "bytes": 66062328,
+      "gzipBytes": 13491820
+    }
+  },
+  "timingsMs": {
+    "compileLexicalGraph": 20389.513,
+    "compileHotBundle": 3363.899,
+    "initHotRuntime": 510.235,
+    "lexicalLookups10k": 10.448,
+    "historicalReadingReconstruction10k": 105.17
+  },
+  "benchmarkChecks": {
+    "lexicalResults": 10000,
+    "readingResults": 10000
+  }
+}
