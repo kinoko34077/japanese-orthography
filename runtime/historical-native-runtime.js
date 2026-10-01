@@ -235,7 +235,7 @@
         return {
           status: "candidates",
           route: "native",
-          surface,
+          surface: exactSurface?.target ?? surface,
           reading: exactReading?.target ?? null,
           surfaceCandidates: surfaceCandidate?.alternatives ?? [],
           readingCandidates: readingCandidate?.alternatives ?? [],

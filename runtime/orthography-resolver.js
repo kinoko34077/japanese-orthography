@@ -308,10 +308,10 @@
         components: resolvedComponents,
         historical: {
           route: surfaceDecision?.route ?? "native",
-          kana: null,
+          kana: surfaceDecision?.reading ?? null,
           contextualKanji,
           deterministicKanji: null,
-          surface: sourceSurface,
+          surface: surfaceDecision?.surface ?? sourceSurface,
           disposition: "CANDIDATES",
           evidenceRefs: [...(surfaceDecision?.evidenceRefs ?? [])],
           nativeCandidates
@@ -358,10 +358,10 @@
         ...unit,
         historical: {
           route: decision.route ?? "native",
-          kana: null,
+          kana: decision.reading ?? null,
           contextualKanji: emptyContextualDecision(),
           deterministicKanji: null,
-          surface: evidence.baseSurface,
+          surface: decision.surface ?? evidence.baseSurface,
           disposition: "CANDIDATES",
           evidenceRefs: [...(decision.evidenceRefs ?? [])],
           nativeCandidates: {
