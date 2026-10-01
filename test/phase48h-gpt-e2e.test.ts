@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { buildEntityGraph } from '../tools/lexical-entity-graph.ts';
 import { compileLexicalSourceSlice, type UniDicSourceSlice } from '../tools/lexical-compiler.ts';
 import { loadJmdictIntake } from '../tools/jmdict-intake.ts';
 import { compileJmdictLexicalGraph } from '../tools/jmdict-lexical-graph.ts';
