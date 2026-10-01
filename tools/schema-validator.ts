@@ -8,7 +8,9 @@ const schemaFiles = [
   '../schema/v1/evidence-bundle.schema.json',
   '../schema/v1/lexical-constraints.schema.json',
   '../schema/v1/contextual-kanji-pack.schema.json',
-  '../schema/v1/orthography-intake-bundle.schema.json'
+  '../schema/v1/orthography-intake-bundle.schema.json',
+  '../schema/v1/normalized-orthography-graph.schema.json',
+  '../schema/v1/orthography-applicability-ledger.schema.json'
 ] as const;
 
 function loadSchema(relativePath: string): object {
