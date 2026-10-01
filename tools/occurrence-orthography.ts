@@ -253,9 +253,34 @@ export function resolveOccurrenceOrthography(
     return false;
   });
 
-  const selected = chooseCompatible(nonConflicting);
-  const selectedKeys = new Set(selected.map((m) => `${m.start}:${m.end}:${m.relation.id}`));
+  const bestByStart = new Map<number, { authority: number; length: number }>();
   for (const match of nonConflicting) {
+    const prior = bestByStart.get(match.start);
+    const length = match.end - match.start;
+    if (
+      prior === undefined ||
+      match.authority > prior.authority ||
+      (match.authority === prior.authority && length > prior.length)
+    ) {
+      bestByStart.set(match.start, { authority: match.authority, length });
+    }
+  }
+  const sameStartFiltered = nonConflicting.filter((match) => {
+    const best = bestByStart.get(match.start)!;
+    const keep = match.authority === best.authority && match.end - match.start === best.length;
+    if (!keep) blocked.push({
+      relationId: match.relation.id,
+      start: match.start,
+      end: match.end,
+      input: match.input,
+      reason: 'overlap_lost_arbitration'
+    });
+    return keep;
+  });
+
+  const selected = chooseCompatible(sameStartFiltered);
+  const selectedKeys = new Set(selected.map((m) => `${m.start}:${m.end}:${m.relation.id}`));
+  for (const match of sameStartFiltered) {
     const key = `${match.start}:${match.end}:${match.relation.id}`;
     if (!selectedKeys.has(key)) blocked.push({
       relationId: match.relation.id, start: match.start, end: match.end,
