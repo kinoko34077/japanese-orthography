@@ -146,6 +146,34 @@ test('conflicting diachronic preferences do not choose by rule order', () => {
   assert.ok(first.blockedRuleRefs.includes('dia:b'));
 });
 
+test('manual priority may resolve a residual after conflicting diachronic rules fail to select', () => {
+  const result = selectHistoricalCandidate({
+    sourceCandidates: ['はふ', 'ほふ'],
+    diachronicRules: [{
+      id: 'dia:a',
+      admissibleCandidates: ['はふ', 'ほふ'],
+      preferred: 'はふ'
+    }, {
+      id: 'dia:b',
+      admissibleCandidates: ['はふ', 'ほふ'],
+      preferred: 'ほふ'
+    }],
+    manualPriority: {
+      id: 'manual:law-residual',
+      candidateSet: ['はふ', 'ほふ'],
+      preferred: 'はふ',
+      rationale: 'explicit residual decision'
+    }
+  });
+
+  assert.equal(result.status, 'selected');
+  assert.equal(result.selectedResult, 'はふ');
+  assert.equal(result.basis, 'manual_preference');
+  assert.deepEqual(result.appliedRuleRefs, ['manual:law-residual']);
+  assert.ok(result.blockedRuleRefs.includes('dia:a'));
+  assert.ok(result.blockedRuleRefs.includes('dia:b'));
+});
+
 test('full-size sokuon preference is gated by same-historical-representation evidence', () => {
   const gated = selectHistoricalCandidate({
     sourceCandidates: ['しょっちう', 'しょつちう'],
