@@ -10,7 +10,8 @@ const schemaFiles = [
   '../schema/v1/contextual-kanji-pack.schema.json',
   '../schema/v1/orthography-intake-bundle.schema.json',
   '../schema/v1/normalized-orthography-graph.schema.json',
-  '../schema/v1/orthography-applicability-ledger.schema.json'
+  '../schema/v1/orthography-applicability-ledger.schema.json',
+  '../schema/v1/orthography-manual-priority-overlay.schema.json'
 ] as const;
 
 function loadSchema(relativePath: string): object {
@@ -43,7 +44,33 @@ export function createSchemaValidator(): (document: unknown, schemaId: string) =
         message: `Unknown schema: ${schemaId}`
       }];
     }
-    if (validator(document)) return [];
-    return (validator.errors ?? []).map(diagnosticFromAjv);
+    if (!validator(document)) {
+      return (validator.errors ?? []).map(diagnosticFromAjv);
+    }
+
+    if (schemaId === 'orthography-manual-priority-overlay-v1') {
+      const entries = (document as any)?.entries;
+      if (Array.isArray(entries)) {
+        const diagnostics: Diagnostic[] = [];
+        for (let index = 0; index < entries.length; index += 1) {
+          const entry = entries[index];
+          if (
+            Array.isArray(entry?.sourceCandidates) &&
+            typeof entry?.preferred === 'string' &&
+            !entry.sourceCandidates.includes(entry.preferred)
+          ) {
+            diagnostics.push({
+              severity: 'ERROR',
+              code: 'E_SCHEMA',
+              path: `/entries/${index}/preferred`,
+              message: 'preferred must be one of sourceCandidates'
+            });
+          }
+        }
+        return diagnostics;
+      }
+    }
+
+    return [];
   };
 }
