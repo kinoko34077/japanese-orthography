@@ -138,6 +138,11 @@ function assertNormalizedRelationSemantics(
   }
 
   if (relationKind === 'identity') {
+    if (identitySemantics === undefined) {
+      throw new TypeError(
+        `Normalized relation ${relation.id}: identity relation requires identity semantics`
+      );
+    }
     if (!sameCanonicalStrings(fromForms, toForms)) {
       throw new TypeError(
         `Normalized relation ${relation.id}: identity relation must preserve the same form set`
