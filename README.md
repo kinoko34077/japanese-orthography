@@ -256,23 +256,64 @@ The harness reports:
 
 Node/VM internal copies that the runtime does not expose are explicitly marked unobserved rather than estimated. Benchmark values are expected to vary by host and run; optimization decisions require repeated measurements on the actual browser/Worker path.
 
+## Hybrid generative historical-orthography layer (Phase 4.7)
+
+Phase 4.7 adds a **hybrid dictionary + productive-rule resolver layer** on top of the accepted Phase-4.6 evidence/intake authority. It does not replace exact lexical/context evidence with broad substitution. The operative rule is: use reusable generation where its applicability is explicitly safe, and keep dictionary/context selection where a relation is lexical, ambiguous, domain-dependent, or otherwise unsafe to generalize.
+
+The normalized relation model separates graph shape from application policy. Relations can represent 1:1, 1:N, N:1, or N:N form sets while independently declaring exact-lexeme, productive-substring, productive-character, contextual, generated-pattern, or preserve/block behavior. Graph cardinality therefore never implies generic safety by itself.
+
+Accepted layers:
+
+- **4.7A — normalized relation/trace contract:** canonical surface, reading, and character-form relations with source/evidence provenance and distinct implicit/attested/preserve identity semantics.
+- **4.7B — Kana/render normalization:** opt-in Hiragana/Katakana folding for script-equivalent forms; script-significant Katakana remains distinct. Expanded repetition is canonical internally for supported iteration forms, with ゝ/ゞ, ヽ/ヾ, 々, and explicit-span 〳〵 treated as rendering. Full-size `つ` preference is gated by evidence that the small/full forms are the same already-reconstructed historical representation.
+- **4.7C — productive/unknown-word execution:** only explicitly productive relations apply inside larger or dictionary-unknown strings. Longest-match is deterministic; preserve/block wins; equal-priority conflicting outputs remain unresolved; exact/contextual/candidate relations never leak into generic substitution.
+- **4.7D — context propagation:** specialist labels in the official homophone table remain metadata/eligibility signals rather than unconditional authority. 字音 usage context is executable; `法 / ほう / 仏教用語 -> ほふ` and `法 / ぼう / 仏教用語 -> ぼふ`, while missing context preserves the unqualified candidate family.
+- **4.7E — candidate coherence/preference:** exact cross-channel evidence may select a compatible source candidate without deleting the source set. Incompatible exact evidence fails closed before weaker preference. Diachronic, rendering, and manual priority layers are explicitly bounded; unresolved remains valid.
+- **4.7F — generated compact runtime/audit:** canonical Unicode/source data remains readable authority while a deterministic generated projection interns reusable strings and builds per-channel indexes. It inflates losslessly to the normalized graph. On the accepted native normalized graph, the current JSON projection measured 3,467,849 canonical bytes vs. 2,145,617 compact bytes (ratio 0.6187169626). This is an implementation measurement, not a frozen target or public format. Applicability-ledger records expose candidates, result basis, applied/blocked rules, and provenance.
+- **4.7G — end-to-end acceptance:** a cross-layer acceptance matrix proves A–F interoperate without adding new production semantics.
+
+Representative boundaries:
+
+```text
+unknown/new string
+  -> safe productive character/span rules may apply
+  -> untouched regions remain unresolved rather than guessed
+
+弁 -> 辯 / 辨 / 瓣 / 辦
+  -> lexical/contextual family; never a generic one-character substitution
+
+うじうじ
+  exact historical reading: うぢうぢ
+  surface candidates:       うじ〳〵 | うぢうぢ
+  -> compatible cross-channel evidence may select うぢうぢ
+  -> original source candidates remain inspectable
+
+法 / ほう
+  no usage context -> はふ | ほふ
+  仏教用語         -> ほふ
+```
+
+Generated, preferred, and unresolved results remain epistemically distinct from source-attested exact authority. Phase 4.7 does not freeze a package/public API, binary format, consumer integration contract, or release/distribution mechanism.
+
 ## Current boundary
 
-Phase 4.6 is complete / accepted. The repository now owns the accepted Phase-3 resolver foundation plus the later evidence-driven orthography expansion:
+Phase 4.7 is **complete / accepted**. The repository now owns the accepted Phase-3 resolver foundation, Phase-4.6 evidence-driven authority expansion, and the Phase-4.7 hybrid generation/audit layer.
 
-- canonical contextual-kanji corpus/build-time behavior and the fixed compatibility/runtime foundation;
-- real-source UniDic lexical identity / reading-index acceptance paths established through Phase 3.5;
-- source-backed contextual restoration and deterministic safe-character rendering;
-- Phase 4.6A typed responsibility / admission / provenance foundations;
-- Phase 4.6B bounded deterministic same-character shinjitai→kyujitai authority;
-- Phase 4.6C lexical / homophone historical-kanji restoration with ambiguity preservation;
-- Phase 4.6D selected-source-complete native historical-kana classification and runtime authority;
-- Phase 4.6E selected-source-complete 字音仮名遣い authority and word-level reconstruction;
-- Phase 4.6F classification of the 373 active KiNoTch consumer-local relations without admitting new executable profile behavior;
-- deterministic build-time resolver bundle composition and atomic full-bundle runtime activation.
+The accepted authority boundaries are:
 
-The bounded KiNoTch project-profile authority accepted in Phase 4.5 (including `こと -> ヿ`) remains separate from generic authority. Phase 4.6 source completeness is relative to the selected pinned snapshots; it does **not** claim universal historical orthography correctness or freeze a stable public API/package, binary format, consumer loading contract or distribution mechanism.
+- exact lexical/context/source evidence outranks generated preference;
+- all source-supported candidates remain represented even when a later layer selects one;
+- source/storage order never chooses a winner;
+- generic authority remains separate from KiNoTch-specific semantic/style policy;
+- unsafe homophone/merged-character relations remain guarded;
+- dictionary absence does not imply total failure when an explicitly safe productive rule applies;
+- representation-only Kana/iteration variation can be normalized without being misreported as linguistic ambiguity;
+- specialist/domain metadata participates only where context is known;
+- generated/preferred decisions remain distinguishable and auditable;
+- compact runtime artifacts are generated implementation details reproducible from canonical data.
 
-Post-acceptance review tightened the same contract without replacing the architecture: PR #94 made native-guide structural drift fail closed, and PR #96 preserved explicit native-dictionary alternatives as candidate sets instead of false unique authority. Consumer repositories remain explicitly source-locked; the accepted consumer is still `txt-auto-replace@198f8560613d23417cb0f87172ae8662e722ca30`.
+The bounded KiNoTch project-profile authority accepted in Phase 4.5 (including `こと -> ヿ`) remains separate from generic authority. Phase-4.6 source completeness is relative to selected pinned snapshots; Phase 4.7 does **not** claim universal historical orthography correctness.
+
+Consumer repositories remain explicitly source-locked. The accepted consumer remains `txt-auto-replace@198f8560613d23417cb0f87172ae8662e722ca30`; Phase 4.7 does not silently move that consumer to newer core behavior.
 
 Phase 5 `kinotch-api` integration, Phase 6 stable package/public API/distribution, and broader unselected #46/#47 work remain explicitly unselected. No release, deploy, publication, credential/permission change, destructive operation, shared-history rewrite, or generated-artifact publication is authorized by this state.
