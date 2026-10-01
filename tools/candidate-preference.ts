@@ -193,10 +193,7 @@ export function selectHistoricalCandidate(
         compatible,
         'cross_channel_selected',
         [cross.ruleRef],
-        downstreamRuleRefs({
-          ...input,
-          exactCrossChannel: undefined
-        }),
+        downstreamRuleRefs(input),
         cross.sourceRefs,
         cross.evidenceRefs
       );
