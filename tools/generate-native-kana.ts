@@ -13,6 +13,7 @@ import {
   buildPhase46dNativeKanaIntake,
   type Phase46dNativeParsedSources
 } from './native-kana-intake.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 export const PHASE46D_INTAKE_PATH = 'data/intake/phase46d-native-kana.json';
 export const PHASE46D_COVERAGE_REPORT_PATH = 'data/reports/phase46d-native-kana-coverage.json';
@@ -21,9 +22,9 @@ async function sourceText(path: string): Promise<string> {
   const bytes = await readFile(path);
   const header = bytes.subarray(0, 2048).toString('latin1').toLowerCase();
   if (header.includes('charset=x-sjis') || header.includes('charset=shift_jis')) {
-    return new TextDecoder('shift_jis').decode(bytes);
+    return normalizeCheckoutText(new TextDecoder('shift_jis').decode(bytes));
   }
-  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  return normalizeCheckoutText(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
 }
 
 export async function loadPhase46dNativeParseResults(rootDir: string): Promise<Phase46dNativeParsedSources> {

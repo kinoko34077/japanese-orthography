@@ -5,6 +5,7 @@ import { TextDecoder } from 'node:util';
 import { buildCoverageSummary, canonicalizeAlternatives, type CoverageSummary } from './intake-accounting.ts';
 import type { IntakeBundleDocument, IntakeRecord, SourceSnapshot } from './intake-model.ts';
 import { parseSinoTableHtml, type SinoTableParseResult, type SinoTableRecord } from './sino-table-parser.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 export const PHASE46E_TABLE_PATH = '仮名遣等資料/字音仮名遣い表.html';
 export const PHASE46E_INTAKE_PATH = 'data/intake/phase46e-sino-kana.json';
@@ -136,7 +137,9 @@ export function compileSinoKanaArtifact(bundle: IntakeBundleDocument, parsed: Si
 }
 
 async function tableText(rootDir: string): Promise<string> {
-  return new TextDecoder('shift_jis').decode(await readFile(resolve(rootDir, PHASE46E_TABLE_PATH)));
+  return normalizeCheckoutText(
+    new TextDecoder('shift_jis').decode(await readFile(resolve(rootDir, PHASE46E_TABLE_PATH)))
+  );
 }
 
 function canonicalJson(value: unknown, pretty = false): string {

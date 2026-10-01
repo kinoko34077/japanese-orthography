@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { buildPhase46eSinoArtifacts } from '../tools/sino-kana.ts';
 import { buildResolverBundleArtifact } from '../tools/resolver-bundle.ts';
+import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
 async function json(path: string) {
   return JSON.parse(await readFile(path, 'utf8')) as Record<string, any>;
@@ -48,7 +49,7 @@ test('字音 table extraction is complete and fully dispositioned', async () => 
 test('canonical 字音 artifacts are reproducible byte-for-byte', async () => {
   const { texts } = await buildPhase46eSinoArtifacts(process.cwd());
   for (const [path, text] of Object.entries(texts)) {
-    assert.equal(await readFile(path, 'utf8'), text, path);
+    assert.equal(normalizeCheckoutText(await readFile(path, 'utf8')), text, path);
   }
 });
 

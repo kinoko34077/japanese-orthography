@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { buildCoverageSummary, type ParserRemainder } from './intake-accounting.ts';
 import type { IntakeBundleDocument, IntakeRecord, Responsibility, SourceSnapshot } from './intake-model.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 // Phase 4.6F: responsibility classification of every active KiNoTch-local consumer relation
 // (txt-auto-replace stages 10/15/20/30/31/60). Classification only; no runtime authority is created.
@@ -128,7 +129,7 @@ export async function buildPhase46fArtifacts(rootDir: string) {
   const parses = new Map<string, StageParse>();
   for (const [index, { stage, file }] of STAGES.entries()) {
     const snapshot = PHASE46F_SNAPSHOTS[index]!;
-    const parse = extractStage(parseJson5(await readFile(resolve(rootDir, VENDOR_DIR, file), 'utf8')));
+    const parse = extractStage(parseJson5(normalizeCheckoutText(await readFile(resolve(rootDir, VENDOR_DIR, file), 'utf8'))));
     parses.set(snapshot.sourceId, parse);
     for (const record of parse.records) {
       const classification = classify(stage, record, stage60, admittedCharacterForms);

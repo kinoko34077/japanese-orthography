@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { buildPhase46fArtifacts, extractStage, parseJson5 } from '../tools/kinotch-profile-intake.ts';
+import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
 test('every active KiNoTch-local consumer relation has an explicit responsibility', async () => {
   const { bundle, coverageReport } = await buildPhase46fArtifacts(process.cwd());
@@ -48,5 +49,5 @@ test('stage extraction reports unknown rule shapes instead of dropping them', ()
 
 test('Phase 4.6F artifacts are reproducible', async () => {
   const { texts } = await buildPhase46fArtifacts(process.cwd());
-  for (const [path, text] of Object.entries(texts)) assert.equal(await readFile(path, 'utf8'), text, path);
+  for (const [path, text] of Object.entries(texts)) assert.equal(normalizeCheckoutText(await readFile(path, 'utf8')), text, path);
 });

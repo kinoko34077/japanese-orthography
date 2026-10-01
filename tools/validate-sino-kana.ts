@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { buildCoverageSummary, validateCoverageAccounting } from './intake-accounting.ts';
 import { createSchemaValidator } from './schema-validator.ts';
 import { buildPhase46eSinoArtifacts, PHASE46E_SINO_SOURCE_SNAPSHOT } from './sino-kana.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 async function main(): Promise<void> {
   const rootDir = resolve(process.env.ORTHOGRAPHY_ROOT ?? process.cwd());
@@ -28,7 +29,7 @@ async function main(): Promise<void> {
   if (summary.unparsedMappingRecords !== 0) throw new Error('Phase 4.6E parser remainder is not empty');
 
   for (const [relativePath, text] of Object.entries(generated.texts)) {
-    if (await readFile(resolve(rootDir, relativePath), 'utf8') !== text) {
+    if (normalizeCheckoutText(await readFile(resolve(rootDir, relativePath), 'utf8')) !== text) {
       throw new Error(`Phase 4.6E artifact is stale: ${relativePath}`);
     }
   }

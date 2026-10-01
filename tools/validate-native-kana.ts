@@ -10,6 +10,7 @@ import {
   PHASE46D_COVERAGE_REPORT_PATH,
   PHASE46D_INTAKE_PATH
 } from './generate-native-kana.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
 const validateSchema = createSchemaValidator();
 
@@ -55,10 +56,10 @@ async function main(): Promise<void> {
     readFile(resolve(rootDir, PHASE46D_INTAKE_PATH), 'utf8'),
     readFile(resolve(rootDir, PHASE46D_COVERAGE_REPORT_PATH), 'utf8')
   ]);
-  if (canonicalIntake !== generated.intakeText) {
+  if (normalizeCheckoutText(canonicalIntake) !== generated.intakeText) {
     throw new Error('Phase 4.6D intake artifact is stale');
   }
-  if (canonicalReport !== generated.coverageReportText) {
+  if (normalizeCheckoutText(canonicalReport) !== generated.coverageReportText) {
     throw new Error('Phase 4.6D coverage report is stale');
   }
 
