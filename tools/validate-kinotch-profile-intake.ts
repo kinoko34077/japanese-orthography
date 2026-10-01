@@ -1,12 +1,13 @@
-import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { validateCoverageAccounting } from './intake-accounting.ts';
 import { createSchemaValidator } from './schema-validator.ts';
 import { buildPhase46fArtifacts, CONSUMER_COMMIT, PHASE46F_SNAPSHOTS } from './kinotch-profile-intake.ts';
+import { normalizeCheckoutText } from './verification-text.ts';
 
-export function gitBlobSha(bytes: Buffer): string {
-  return createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${bytes.length}\0`), bytes])).digest('hex');
+function readCommittedBlobSha(path: string): string {
+  return execFileSync('git', ['rev-parse', `HEAD:${path}`], { encoding: 'utf8' }).trim();
 }
 
 async function main(): Promise<void> {
@@ -16,8 +17,10 @@ async function main(): Promise<void> {
   if (schema.length > 0) throw new Error(`Phase 4.6F intake schema validation failed: ${schema[0]!.message}`);
 
   for (const snapshot of PHASE46F_SNAPSHOTS) {
-    const bytes = await readFile(resolve(rootDir, `data/sources/txt-auto-replace/${CONSUMER_COMMIT}`, snapshot.path));
-    if (gitBlobSha(bytes) !== snapshot.blobSha) throw new Error(`Vendored consumer source drift: ${snapshot.path}`);
+    const sourcePath = `data/sources/txt-auto-replace/${CONSUMER_COMMIT}/${snapshot.path}`;
+    if (readCommittedBlobSha(sourcePath) !== snapshot.blobSha) {
+      throw new Error(`Vendored consumer source drift: ${snapshot.path}`);
+    }
     const parse = generated.parses.get(snapshot.sourceId)!;
     const diagnostics = validateCoverageAccounting({
       snapshot, discoveredRecordIds: parse.records.map((record) => record.locator),
@@ -28,7 +31,7 @@ async function main(): Promise<void> {
   }
 
   for (const [path, text] of Object.entries(generated.texts)) {
-    if (await readFile(resolve(rootDir, path), 'utf8') !== text) throw new Error(`Phase 4.6F artifact is stale: ${path}`);
+    if (normalizeCheckoutText(await readFile(resolve(rootDir, path), 'utf8')) !== text) throw new Error(`Phase 4.6F artifact is stale: ${path}`);
   }
   console.log(`Phase 4.6F KiNoTch profile intake validation OK: ${generated.bundle.records.length} records`);
 }
