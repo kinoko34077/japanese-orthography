@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { access, readFile } from 'node:fs/promises';
 import { TextDecoder } from 'node:util';
 import test from 'node:test';
+import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
 const KKH_SOURCE = 'data/sources/kkh/19b24f88ab55809a186d88c465959548495b26a2/kana-jisyo';
 const KKH_LICENSE = 'data/sources/kkh/19b24f88ab55809a186d88c465959548495b26a2/LICENSE';
@@ -15,18 +16,17 @@ async function loadParser(): Promise<Record<string, any> | null> {
   }
 }
 
-function gitBlobSha(bytes: Buffer): string {
-  const header = Buffer.from(`blob ${bytes.length}\0`, 'utf8');
-  return createHash('sha1').update(header).update(bytes).digest('hex');
+function committedBlobSha(path: string): string {
+  return execFileSync('git', ['rev-parse', `HEAD:${path}`], { encoding: 'utf8' }).trim();
 }
 
 async function sourceText(path: string): Promise<string> {
   const bytes = await readFile(path);
   const header = bytes.subarray(0, 2048).toString('latin1').toLowerCase();
   if (header.includes('charset=x-sjis') || header.includes('charset=shift_jis')) {
-    return new TextDecoder('shift_jis').decode(bytes);
+    return normalizeCheckoutText(new TextDecoder('shift_jis').decode(bytes));
   }
-  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  return normalizeCheckoutText(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
 }
 
 test('Phase 4.6D native source parser exposes all four deterministic extractors', async () => {
@@ -46,8 +46,8 @@ test('vendored KKH kana-jisyo is the exact pinned upstream blob with its BSD-2-C
   }
   assert.equal(exists, true, 'pinned KKH source and license must be vendored');
 
-  const [bytes, license] = await Promise.all([readFile(KKH_SOURCE), sourceText(KKH_LICENSE)]);
-  assert.equal(gitBlobSha(bytes), '6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be');
+  const license = await sourceText(KKH_LICENSE);
+  assert.equal(committedBlobSha(KKH_SOURCE), '6a69cdc140994a0b8d5f6acb86d7b3b8c3ef20be');
   assert.match(license, /Redistribution and use in source and binary forms/);
 });
 
