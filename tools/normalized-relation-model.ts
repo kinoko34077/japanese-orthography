@@ -72,7 +72,12 @@ export interface NormalizedOrthographyRelation {
   lexicalIdentity?: string;
   requiredMorphology?: Record<string, string>;
   identitySemantics?: IdentitySemantics;
+  /** Phase 4.8E occurrence policy for productive relations (default: lexical_boundary when lexical evidence is supplied). */
+  applicability?: ApplicabilityPolicy;
 }
+
+export const APPLICABILITY_POLICIES = ['anywhere', 'lexical_boundary', 'left_boundary', 'right_boundary', 'whole_lexeme'] as const;
+export type ApplicabilityPolicy = typeof APPLICABILITY_POLICIES[number];
 
 export interface NormalizedOrthographyGraph {
   schemaVersion: '1';
@@ -130,6 +135,15 @@ function assertNormalizedRelationSemantics(
   relation: NormalizedOrthographyRelation
 ): void {
   const { relationKind, applicationMode, fromForms, toForms, basis, identitySemantics } = relation;
+
+  if (relation.applicability !== undefined) {
+    if (!(APPLICABILITY_POLICIES as readonly string[]).includes(relation.applicability)) {
+      throw new TypeError(`Normalized relation ${relation.id}: unknown applicability ${relation.applicability}`);
+    }
+    if (applicationMode !== 'substring_productive' && applicationMode !== 'character_productive') {
+      throw new TypeError(`Normalized relation ${relation.id}: applicability requires a productive application mode`);
+    }
+  }
 
   if (applicationMode === 'preserve_block' && relationKind !== 'preserve') {
     throw new TypeError(
@@ -262,6 +276,9 @@ export function canonicalizeNormalizedRelation(
   }
   if (relation.identitySemantics !== undefined) {
     normalized.identitySemantics = relation.identitySemantics;
+  }
+  if (relation.applicability !== undefined) {
+    normalized.applicability = relation.applicability;
   }
   assertNormalizedRelationSemantics(normalized);
   return normalized;
