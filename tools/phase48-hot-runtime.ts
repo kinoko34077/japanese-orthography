@@ -225,18 +225,11 @@ export function createPhase48HotRuntime(hot: Phase48HotRuntime) {
   };
 
   const resolveDirect = (symbol: string, modern: string, query: HotSinoQuery = {}): HotDirectResult => {
-    const all = hot.bindings.filter(([symbolId, modernPath]) =>
-      strings[symbolId] === symbol && pathText[modernPath] === modern
+    const chosen = hot.bindings.filter(([symbolId, modernPath, contextId]) =>
+      strings[symbolId] === symbol &&
+      pathText[modernPath] === modern &&
+      (query.context === undefined || (contextId < 0 ? null : strings[contextId]) === query.context)
     );
-    let chosen = all;
-    if (query.context !== undefined) {
-      const exact = all.filter(([, , contextId]) =>
-        (contextId < 0 ? null : strings[contextId]) === query.context
-      );
-      if (exact.length > 0) chosen = exact;
-      else if (all.some(([, , contextId]) => contextId >= 0)) chosen = [];
-      else chosen = all.filter(([, , contextId]) => contextId < 0);
-    }
     const historicalReadings = uniqueSorted(chosen.flatMap((binding) =>
       binding[3].map((patternId) => pathText[hot.patterns[patternId]![0]]!)
     ));
