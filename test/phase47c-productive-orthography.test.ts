@@ -115,7 +115,7 @@ test('preserve_block wins over overlapping productive mappings', () => {
     relation('preserve:gakkou', ['学校'], ['学校'], 'preserve_block', 'preserve')
   ];
 
-  const result = resolveProductiveOrthography('学校外');
+  const result = resolveProductiveOrthography('学校外', relations);
 
   assert.equal(result.output, '学校外');
   assert.ok(result.appliedRules.some(entry =>
