@@ -106,7 +106,14 @@
             "properties": { "relationKind": { "const": "identity" } },
             "required": ["relationKind"]
           },
-          "then": { "required": ["identitySemantics"] }
+          "then": {
+            "properties": {
+              "identitySemantics": {
+                "enum": ["implicit", "attested", "preserve"]
+              }
+            },
+            "required": ["identitySemantics"]
+          }
         },
         {
           "if": {
