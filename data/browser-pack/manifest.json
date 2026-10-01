@@ -3,7 +3,7 @@
   "compilerVersion": "1",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "6764d4bdb2530dae2716cec86a3002a81a3536d4627e8a9b49ccedf1a049eeec",
+  "packDigest": "ac9b2de3ecd9c35f54fa3123f58e410763b9ee5267b8dc02b2a8480904b1c32a",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -26321,14 +26321,14 @@
       "sha256": "a3a00b45b90e2c6217658e93b9c37d92efbb216e26e5b574d312a90dcd3b34ef"
     },
     {
-      "byteLength": 15340,
+      "byteLength": 15700,
       "encoding": "binary-columnar",
       "kind": "shard-directory",
       "loading": "eager",
       "path": "shard-directory.bin",
       "rowCount": 328,
       "sectionId": "shard-directory",
-      "sha256": "7287af7617a11f19f28b0837012de4d0fb5796685b905a4433659952196ca43b"
+      "sha256": "89f236e6f394f19f7a7b47ec976718e947ec717599903cb49202baee23a258bd"
     },
     {
       "byteLength": 31776,

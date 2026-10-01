@@ -110,7 +110,7 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
   });
   entries.sort((a, b) => cmp(a.key, b.key) || a.factIndex - b.factIndex || a.role - b.role);
   const shards = partition(entries, graph.facts, options.shardBudgetBytes ?? DEFAULT_SHARD_BUDGET_BYTES);
-  const directory = { index: [] as number[], from: [] as string[], to: [] as string[], rows: [] as number[], keys: [] as number[] };
+  const directory = { index: [] as number[], from: [] as string[], to: [] as string[], rows: [] as number[], keys: [] as number[], maxKeyLength: [] as number[] };
 
   shards.forEach((shardEntries, index) => {
     const shard: BrowserPackShardDescriptor = { key: BROWSER_PACK_SHARD_KEY, index, count: shards.length, from: shardEntries[0]!.key, to: shardEntries[shardEntries.length - 1]!.key };
@@ -162,6 +162,8 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
     directory.to.push(shard.to);
     directory.rows.push(shardEntries.length);
     directory.keys.push(keys.length);
+    // the lexical scan window is derived from the indexed keys, never a fixed cap (#154 H4)
+    directory.maxKeyLength.push(Math.max(...keys.map((k) => k.length)));
   });
 
   // ---- eager tables ------------------------------------------------------------------------------
@@ -172,7 +174,8 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
     add('shard-directory', encodeSection([
       { name: 'strings', kind: 'strings', values: s.values }, { name: 'shardKey', kind: 'scalar', values: directory.index.map(() => s.id(BROWSER_PACK_SHARD_KEY)) },
       { name: 'index', kind: 'scalar', values: directory.index }, { name: 'from', kind: 'scalar', values: from }, { name: 'to', kind: 'scalar', values: to },
-      { name: 'rows', kind: 'scalar', values: directory.rows }, { name: 'keys', kind: 'scalar', values: directory.keys }
+      { name: 'rows', kind: 'scalar', values: directory.rows }, { name: 'keys', kind: 'scalar', values: directory.keys },
+      { name: 'maxKeyLength', kind: 'scalar', values: directory.maxKeyLength }
     ]), { rowCount: directory.index.length });
   }
   const ruleRow = new Map(graph.rules.map((r, i) => [r.id, i]));
