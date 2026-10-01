@@ -110,12 +110,14 @@ export function expandIterationMarks(
   value: string,
   options: IterationBoundaryOptions = {}
 ): string {
+  const source = [...value];
   const expanded: string[] = [];
   const boundaries = new Set(options.boundaryOffsets ?? []);
-  let index = 0;
 
-  for (const character of value) {
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index]!;
     const atBoundary = boundaries.has(index);
+
     if (character === 'ゝ' || character === 'ヽ') {
       if (atBoundary) {
         throw new RangeError(`Iteration mark ${character} cannot appear at render-unit start`);
@@ -147,7 +149,6 @@ export function expandIterationMarks(
     }
 
     expanded.push(character);
-    index += 1;
   }
 
   return expanded.join('');
