@@ -37,7 +37,9 @@ test('lexical 弁護 components transform inside 国選弁護士 / 弁護人 / �
 
 test('勘弁護衛 does not transform through an accidental raw 弁護 substring', () => {
   const lexical = contextFor('勘弁護衛');
-  assert.ok(lexical.paths.every((p) => p.boundaries.includes(2) && !p.boundaries.includes(3)));
+  // every optimal analysis is 勘弁 + 護衛: no optimal edge starts or ends at offset 3
+  const { edges } = (lexical as { dag: { edges: { start: number; end: number; internal: number[] }[] } }).dag;
+  assert.ok(edges.every((e) => e.start !== 3 && e.end !== 3 && !e.internal.includes(3)));
   const result = resolveProductiveOrthography('勘弁護衛', [bengo], { lexical });
   assert.equal(result.output, '勘弁護衛');
   assert.deepEqual(result.blockedRules.map((b) => [b.relationId, b.start, b.end, b.reason]), [['span:bengo', 1, 3, 'crosses_lexical_boundary']]);
@@ -82,7 +84,7 @@ test('lexicalIdentity constraints execute against the analysed lexeme', () => {
   assert.equal(resolveProductiveOrthography('弁護士', [right], { lexical }).output, '辯護士');
   const blocked = resolveProductiveOrthography('弁護士', [wrong], { lexical });
   assert.equal(blocked.output, '弁護士');
-  assert.equal(blocked.blockedRules[0]!.reason, 'crosses_lexical_boundary');
+  assert.equal(blocked.blockedRules[0]!.reason, 'lexical_identity_mismatch');
 });
 
 test('browser/worker runtime arbitrates identically', async () => {

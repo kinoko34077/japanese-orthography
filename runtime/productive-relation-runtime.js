@@ -88,6 +88,12 @@
     if (typeof raw.lexicalIdentity === "string" && raw.lexicalIdentity !== "") {
       relation.lexicalIdentity = raw.lexicalIdentity;
     }
+    if (raw.requiredMorphology != null) {
+      if (typeof raw.requiredMorphology !== "object" || Array.isArray(raw.requiredMorphology)) {
+        throw new TypeError(`Invalid requiredMorphology for ${raw.id}`);
+      }
+      relation.requiredMorphology = Object.fromEntries(Object.entries(raw.requiredMorphology).sort(([a], [b]) => compareText(a, b)));
+    }
 
     if (PRODUCTIVE_MODES.has(relation.applicationMode)) {
       if (relation.relationKind === "candidates" || toForms.length !== 1) {
@@ -159,6 +165,7 @@
           mode: relation.applicationMode,
           applicability: relation.applicability ?? null,
           lexicalIdentity: relation.lexicalIdentity ?? null,
+          requiredMorphology: relation.requiredMorphology ?? null,
           ruleRefs: [relation.id]
         });
         return;
@@ -167,7 +174,8 @@
         existing.target !== target ||
         existing.mode !== relation.applicationMode ||
         existing.applicability !== (relation.applicability ?? null) ||
-        existing.lexicalIdentity !== (relation.lexicalIdentity ?? null)
+        existing.lexicalIdentity !== (relation.lexicalIdentity ?? null) ||
+        JSON.stringify(existing.requiredMorphology) !== JSON.stringify(relation.requiredMorphology ?? null)
       ) {
         throw new Error(
           `Conflicting productive relation for ${source}: ${existing.ruleRefs[0]} vs ${relation.id}`
@@ -465,7 +473,8 @@
             end,
             output: rule.target,
             policy: rule.applicability ?? (lexical && rule.mode === "substring_productive" ? "lexical_boundary" : "anywhere"),
-            ...(lexical && rule.lexicalIdentity ? { lexicalIdentity: rule.lexicalIdentity } : {}),
+            ...(rule.lexicalIdentity ? { lexicalIdentity: rule.lexicalIdentity } : {}),
+            ...(rule.requiredMorphology ? { requiredMorphology: rule.requiredMorphology } : {}),
             rule
           });
         }

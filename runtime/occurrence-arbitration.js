@@ -23,6 +23,7 @@
     "whole_lexeme"
   ]);
   const MAX_COMPONENT_CANDIDATES = 24;
+  const AMBIGUOUS_REASONS = new Set(["ambiguous_lexical_boundary", "ambiguous_lexical_identity", "ambiguous_morphology"]);
 
   const compareText = (left, right) => (left < right ? -1 : left > right ? 1 : 0);
   const candidateSort = (a, b) => (
@@ -34,48 +35,173 @@
     return policy;
   };
 
-  // lexical: { paths: [{ boundaries: number[], units: [[start, end]], lexemes?: { "s:e": [ids] } }] }
+  // Lexical occurrence evidence comes in one of two shapes:
+  //  - { dag: { length, edges } } — every edge lies on at least one optimal analysis; the set of
+  //    complete paths through the DAG is exactly the set of optimal analyses (no enumeration cap).
+  //    edge: { start, end, internal: number[], units: [{ start, end, lexemes: string[], morphology: object[] | null }] }
+  //  - { paths: [{ boundaries, units, lexemes?, morphology? }] } — explicitly enumerated analyses.
+  // A gate holds only if it holds on every optimal analysis; holding on some is ambiguity.
+  const MORPHOLOGY_KEYS = new Set(["partOfSpeech", "conjugationType", "conjugationForm"]);
+
   const normalizeLexical = (lexical, length) => {
     if (lexical == null) return null;
+    if (lexical.dag) {
+      const edges = lexical.dag.edges ?? [];
+      if (lexical.dag.length !== length) throw new TypeError("Lexical DAG length does not match input");
+      for (const edge of edges) {
+        if (!Number.isInteger(edge.start) || !Number.isInteger(edge.end) || edge.start < 0 || edge.end <= edge.start || edge.end > length) {
+          throw new TypeError("Invalid lexical DAG edge");
+        }
+      }
+      return { kind: "dag", length, edges };
+    }
     if (!Array.isArray(lexical.paths) || lexical.paths.length === 0) {
-      throw new TypeError("Lexical occurrence context requires at least one path");
+      throw new TypeError("Lexical occurrence context requires a dag or at least one path");
     }
-    return lexical.paths.map((path) => {
-      const boundaries = new Set([0, length, ...(path.boundaries ?? [])]);
-      const units = new Set((path.units ?? []).map(([s, e]) => `${s}:${e}`));
-      const lexemes = new Map(Object.entries(path.lexemes ?? {}));
-      return { boundaries, units, lexemes };
-    });
+    return {
+      kind: "paths",
+      paths: lexical.paths.map((path) => ({
+        boundaries: new Set([0, length, ...(path.boundaries ?? [])]),
+        units: new Map((path.units ?? []).map(([s, e]) => [`${s}:${e}`, {
+          lexemes: (path.lexemes ?? {})[`${s}:${e}`] ?? null,
+          morphology: (path.morphology ?? {})[`${s}:${e}`] ?? null
+        }]))
+      }))
+    };
   };
 
-  const admittedOnPath = (candidate, path) => {
-    const left = path.boundaries.has(candidate.start);
-    const right = path.boundaries.has(candidate.end);
-    const unit = `${candidate.start}:${candidate.end}`;
-    let ok;
+  const morphologyValue = (record, key) => {
+    if (key === "partOfSpeech") return record.partOfSpeech ?? record.pos ?? null;
+    return record[key] ?? null;
+  };
+  const morphologyRecordMatches = (required, record) => Object.entries(required).every(([key, value]) => {
+    const actual = morphologyValue(record, key);
+    if (key === "partOfSpeech") {
+      const wanted = `${value}`.split(",");
+      return Array.isArray(actual) && wanted.every((part, i) => actual[i] === part);
+    }
+    return actual === value;
+  });
+
+  // Tri-state evaluation of one unit against identity / morphology requirements.
+  const unitVerdict = (unit, candidate) => {
+    let verdict = "yes";
+    const merge = (next) => {
+      if (next === "no" || verdict === "no") verdict = "no";
+      else if (next === "maybe") verdict = "maybe";
+    };
+    if (candidate.lexicalIdentity) {
+      const lexemes = unit.lexemes ?? [];
+      if (!lexemes.includes(candidate.lexicalIdentity)) merge("no");
+      else if (lexemes.length > 1) merge("maybe");
+    }
+    if (candidate.requiredMorphology) {
+      const records = unit.morphology ?? [];
+      if (records.length === 0) merge("no");
+      else {
+        const matches = records.filter((record) => morphologyRecordMatches(candidate.requiredMorphology, record)).length;
+        merge(matches === records.length ? "yes" : matches === 0 ? "no" : "maybe");
+      }
+    }
+    return verdict;
+  };
+
+  const needsUnit = (candidate) => candidate.policy === "whole_lexeme" || Boolean(candidate.lexicalIdentity) || Boolean(candidate.requiredMorphology);
+  const boundaryFacts = (candidate) => {
     switch (candidate.policy) {
-      case "left_boundary": ok = left; break;
-      case "right_boundary": ok = right; break;
-      case "whole_lexeme": ok = path.units.has(unit); break;
-      default: ok = left && right;
+      case "left_boundary": return ["left"];
+      case "right_boundary": return ["right"];
+      case "lexical_boundary": return ["left", "right"];
+      default: return [];
     }
-    if (ok && candidate.lexicalIdentity) {
-      ok = (path.lexemes.get(unit) ?? []).includes(candidate.lexicalIdentity);
-    }
-    return ok;
   };
 
-  const gate = (candidate, paths) => {
-    if (candidate.policy === "anywhere" && !candidate.lexicalIdentity) return { ok: true };
-    if (!paths) {
-      // Without lexical evidence only an explicit lexical identity is unverifiable; boundary
-      // policies fall back to the accepted Phase-4.7 substring behaviour.
-      return candidate.lexicalIdentity ? { ok: false, reason: "lexical_analysis_unavailable" } : { ok: true };
+  // Which outcomes are reachable over all optimal analyses: { all, some }.
+  const quantify = (candidate, evidence, facts, unitCheck) => {
+    if (facts.length === 0) return { all: true, some: true };
+    const bit = new Map(facts.map((fact, i) => [fact, 1 << i]));
+    const full = (1 << facts.length) - 1;
+    const evaluateEdge = (edge) => {
+      // masks this edge can contribute (two when a unit fact is only "maybe")
+      let masks = [0];
+      const add = (fact, verdict) => {
+        if (verdict === "no") return;
+        const b = bit.get(fact);
+        masks = verdict === "yes" ? masks.map((m) => m | b) : [...masks, ...masks.map((m) => m | b)];
+      };
+      const covers = (p) => edge.start === p || edge.end === p || (edge.start < p && p < edge.end && (edge.internal ?? []).includes(p));
+      if (bit.has("left")) add("left", covers(candidate.start) ? "yes" : "no");
+      if (bit.has("right")) add("right", covers(candidate.end) ? "yes" : "no");
+      if (bit.has("unit")) {
+        const units = (edge.units ?? []).filter((u) => u.start === candidate.start && u.end === candidate.end);
+        let verdict = "no";
+        for (const unit of units) {
+          const v = unitCheck(unit);
+          if (v === "yes") { verdict = "yes"; break; }
+          if (v === "maybe") verdict = "maybe";
+        }
+        add("unit", verdict);
+      }
+      return [...new Set(masks)];
+    };
+    if (evidence.kind === "paths") {
+      const results = evidence.paths.map((path) => facts.every((fact) => {
+        if (fact === "left") return path.boundaries.has(candidate.start);
+        if (fact === "right") return path.boundaries.has(candidate.end);
+        const unit = path.units.get(`${candidate.start}:${candidate.end}`);
+        return unit ? unitCheck(unit) === "yes" : false;
+      }));
+      return { all: results.every(Boolean), some: results.some(Boolean) };
     }
-    const results = paths.map((path) => admittedOnPath(candidate, path));
-    if (results.every(Boolean)) return { ok: true };
-    if (results.some(Boolean)) return { ok: false, reason: "ambiguous_lexical_boundary", ambiguous: true };
-    return { ok: false, reason: candidate.lexicalIdentity && candidate.policy === "anywhere" ? "lexical_identity_mismatch" : "crosses_lexical_boundary" };
+    const reach = new Map([[0, new Set([0])]]);
+    const edges = [...evidence.edges].sort((a, b) => a.start - b.start || a.end - b.end);
+    for (const edge of edges) {
+      const from = reach.get(edge.start);
+      if (!from) continue;
+      const to = reach.get(edge.end) ?? new Set();
+      const contributions = evaluateEdge(edge);
+      for (const mask of from) for (const c of contributions) to.add(mask | c);
+      reach.set(edge.end, to);
+    }
+    const end = reach.get(evidence.length) ?? new Set();
+    if (end.size === 0) return { all: false, some: false };
+    return { all: [...end].every((m) => m === full), some: [...end].some((m) => m === full) };
+  };
+
+  const gate = (candidate, evidence) => {
+    if (candidate.requiredMorphology && Object.keys(candidate.requiredMorphology).some((key) => !MORPHOLOGY_KEYS.has(key))) {
+      return { ok: false, reason: "morphology_unsupported" };
+    }
+    const constrained = Boolean(candidate.lexicalIdentity || candidate.requiredMorphology);
+    if (candidate.policy === "anywhere" && !constrained) return { ok: true };
+    if (!evidence) {
+      // Without lexical evidence identity/morphology cannot be verified (fail closed); pure boundary
+      // policies fall back to the accepted Phase-4.7 substring behaviour.
+      return constrained ? { ok: false, reason: "lexical_analysis_unavailable" } : { ok: true };
+    }
+    const boundaries = boundaryFacts(candidate);
+    const facts = [...boundaries, ...(needsUnit(candidate) ? ["unit"] : [])];
+    const total = quantify(candidate, evidence, facts, (u) => unitVerdict(u, candidate));
+    if (total.all) return { ok: true };
+    const structural = [...boundaries, ...(candidate.policy === "whole_lexeme" || constrained ? ["unit"] : [])];
+    const shape = quantify(candidate, evidence, structural, () => "yes");
+    if (!shape.all) {
+      return shape.some || total.some
+        ? { ok: false, reason: "ambiguous_lexical_boundary", ambiguous: true }
+        : { ok: false, reason: "crosses_lexical_boundary" };
+    }
+    if (total.some) {
+      return { ok: false, reason: candidate.requiredMorphology ? "ambiguous_morphology" : "ambiguous_lexical_identity", ambiguous: true };
+    }
+    if (candidate.lexicalIdentity) {
+      const identity = quantify(candidate, evidence, structural, (u) => unitVerdict(u, { lexicalIdentity: candidate.lexicalIdentity }));
+      if (!identity.some) return { ok: false, reason: "lexical_identity_mismatch" };
+    }
+    if (candidate.requiredMorphology) {
+      const available = quantify(candidate, evidence, structural, (u) => ((u.morphology ?? []).length > 0 ? "yes" : "no"));
+      return { ok: false, reason: available.some ? "morphology_mismatch" : "morphology_unavailable" };
+    }
+    return { ok: false, reason: "lexical_identity_mismatch" };
   };
 
   // All optimal non-overlapping selections of one overlap component (max covered length).
@@ -100,7 +226,7 @@
 
   const arbitrate = (input) => {
     const length = input.length;
-    const paths = normalizeLexical(input.lexical, length);
+    const evidence = normalizeLexical(input.lexical, length);
     const accepted = [];
     const blocked = [];
     const unresolved = [];
@@ -112,7 +238,7 @@
 
     const live = [];
     for (const candidate of candidates) {
-      const verdict = gate(candidate, paths);
+      const verdict = gate(candidate, evidence);
       if (verdict.ok) live.push(candidate);
       else blocked.push({ candidate, reason: verdict.reason });
     }
@@ -178,11 +304,11 @@
 
     // ambiguous-boundary candidates leave their region explicitly unresolved when nothing else won
     for (const entry of blocked) {
-      if (entry.reason !== "ambiguous_lexical_boundary") continue;
+      if (!AMBIGUOUS_REASONS.has(entry.reason)) continue;
       const { start, end } = entry.candidate;
       const overlapsAccepted = accepted.some((c) => c.start < end && c.end > start);
       const overlapsUnresolved = unresolved.some((u) => u.start < end && u.end > start);
-      if (!overlapsAccepted && !overlapsUnresolved) unresolved.push({ start, end, reason: "ambiguous_lexical_boundary" });
+      if (!overlapsAccepted && !overlapsUnresolved) unresolved.push({ start, end, reason: entry.reason });
     }
 
     accepted.sort(candidateSort);

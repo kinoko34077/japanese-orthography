@@ -76,3 +76,35 @@ test('hot reverse reading-DAG traversal reproduces the accepted 4.6E runtime', a
   assert.deepEqual(plain(hot.reconstructWord('法', 'ほう')), { status: 'candidates', historicalReadings: ['はふ', 'ほふ'] });
   assert.equal(hot.reconstructWord('装丁', 'そうてい').historicalReading, 'さうてい');
 });
+
+test('R3: restriction-aware hot form+reading lookup equals canonical restrictions across the full JMdict graph', () => {
+  const hot = createLexicalHotRuntime(built.hot);
+  const restricted = new Map(built.lexical.restrictions.map((r) => [`${r.lexeme}\u0000${r.reading}`, new Set(r.forms)]));
+  let checked = 0;
+  for (const lexeme of built.lexical.lexemes) {
+    for (const form of lexeme.forms) for (const reading of lexeme.readings) {
+      const allowedForms = restricted.get(`${lexeme.id}\u0000${reading}`);
+      const permitted = !allowedForms || allowedForms.has(form);
+      const result: string[] = hot.lookupFormReading(form.slice('form:'.length), reading.slice('reading-path:'.length));
+      assert.equal(result.includes(lexeme.id), permitted, `${lexeme.id} ${form} ${reading}`);
+      checked += 1;
+    }
+  }
+  assert.ok(checked > 250000, `checked ${checked}`);
+});
+
+test('R4: hot single-component reconstruction matches the accepted 4.6E runtime for every relation and context shape', async () => {
+  const sandbox: Record<string, any> = {};
+  sandbox.globalThis = sandbox;
+  vm.runInNewContext(await readFile('runtime/historical-sino-runtime.js', 'utf8'), sandbox);
+  const legacy = sandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(built.sinoSource);
+  const hot = createLexicalHotRuntime(built.hot);
+  let checked = 0;
+  for (const r of built.sinoSource.componentRelations) {
+    for (const query of [{}, { context: null }, { context: '仏教用語' }]) {
+      assert.deepEqual(plain(hot.reconstructWord(r.character, r.modernReading, query)), plain(legacy.reconstructWord(r.character, r.modernReading, query)), `${r.character}/${r.modernReading}/${JSON.stringify(query)}`);
+      checked += 1;
+    }
+  }
+  assert.equal(checked, 6000);
+});

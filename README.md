@@ -317,6 +317,7 @@ input text
 - **4.8F** — every accepted 4.6 intake record bound to lexemes / symbols / shared patterns (`data/historical/phase48f-lexical-authority-join.json`); lexeme history resolver where JMdict groups are equivalence evidence only, written forms come from accepted records (plus reading-aligned component reuse), and readings come from whole-word source authority or reverse DAG traversal. `docs/phase48f-lexical-historical-join.md`.
 - **4.8G** — derived-column compaction (inflate == canonical), schema-checked hot runtime (`runtime/lexical-hot-runtime.js`) with parity proofs, and real measurements. `docs/phase48g-compact-runtime.md`.
 - **4.8H** — `test/phase48h-acceptance.test.ts` runs the end-to-end acceptance matrix.
+- **Reconciliation (#154)** — occurrence evidence is the DAG of all optimal analyses (no path cap, unknown edges everywhere, per-candidate compositions); `requiredMorphology` and `lexicalIdentity` are executed fail-closed; compact relations preserve `applicability`; the hot runtime adds restriction-aware `lookupFormReading`; Phase-4.6D whole-word readings are routed. `docs/phase48-reconciliation.md`.
 
 `法 / ほう` stays `はふ | ほふ` without context and `仏教用語 -> ほふ`; the hypothesis "non-Buddhist -> はふ" is **not** admitted. UniDic + JMdict met every 4.8 acceptance case, so Sudachi was not added. A broader historical-kana dictionary survey remains deferred.
 

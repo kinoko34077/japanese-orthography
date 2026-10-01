@@ -1,4 +1,5 @@
 import {
+  APPLICABILITY_POLICIES,
   APPLICATION_MODES,
   IDENTITY_SEMANTICS,
   RELATION_CHANNELS,
@@ -22,13 +23,15 @@ type CompactRelationRow = [
   number[],
   number | null,
   Array<[number, number]> | null,
-  number | null
+  number | null,
+  number | null // applicability (Phase 4.8E); schemaVersion 2
 ];
 
 type CompactIndexRow = [number, number[]];
 
 export interface CompactOrthographyArtifact {
-  schemaVersion: '1';
+  // '2' added the applicability column; '1' artifacts are rejected rather than defaulted.
+  schemaVersion: '2';
   kind: 'compact_orthography_runtime';
   lexicalNamespaceId: string;
   sources: Record<string, unknown>[];
@@ -123,7 +126,10 @@ function encodeRelation(
     morphology,
     relation.identitySemantics === undefined
       ? null
-      : enumIndex(IDENTITY_SEMANTICS, relation.identitySemantics, 'identity semantics')
+      : enumIndex(IDENTITY_SEMANTICS, relation.identitySemantics, 'identity semantics'),
+    relation.applicability === undefined
+      ? null
+      : enumIndex(APPLICABILITY_POLICIES, relation.applicability, 'applicability')
   ];
 }
 
@@ -171,7 +177,7 @@ export function compileCompactOrthographyArtifact(
   const relations = graph.relations.map(relation => encodeRelation(relation, stringIndex));
 
   return {
-    schemaVersion: '1',
+    schemaVersion: '2',
     kind: 'compact_orthography_runtime',
     lexicalNamespaceId: graph.lexicalNamespaceId,
     sources: structuredClone(graph.sources),
@@ -219,6 +225,12 @@ function decodeRelation(
   if (row[11] !== null) {
     relation.identitySemantics = IDENTITY_SEMANTICS[row[11]]!;
   }
+  if (row.length !== 13) throw new TypeError('Compact relation row must have 13 columns (schemaVersion 2)');
+  if (row[12] !== null) {
+    const applicability = APPLICABILITY_POLICIES[row[12]];
+    if (applicability === undefined) throw new TypeError(`Compact relation applicability index out of range: ${row[12]}`);
+    relation.applicability = applicability;
+  }
   return relation;
 }
 
@@ -226,7 +238,7 @@ export function inflateCompactOrthographyArtifact(
   artifact: CompactOrthographyArtifact
 ): NormalizedOrthographyGraph {
   if (
-    artifact?.schemaVersion !== '1' ||
+    artifact?.schemaVersion !== '2' ||
     artifact?.kind !== 'compact_orthography_runtime'
   ) {
     throw new TypeError('Unsupported compact orthography artifact');
@@ -279,7 +291,7 @@ export function createCompactOrthographyRuntime(
   lookup(channel: RelationChannel, from: string): NormalizedOrthographyRelation[];
 } {
   if (
-    artifact?.schemaVersion !== '1' ||
+    artifact?.schemaVersion !== '2' ||
     artifact?.kind !== 'compact_orthography_runtime'
   ) {
     throw new TypeError('Unsupported compact orthography artifact');
