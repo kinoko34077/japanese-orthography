@@ -59,6 +59,39 @@ test('exact reading can select a compatible kana-only surface candidate without 
   assert.deepEqual(result.evidenceRefs, ['ev:exact-reading']);
 });
 
+test('incompatible exact cross-channel evidence fails closed before weaker preferences', () => {
+  const result = selectHistoricalCandidate({
+    sourceCandidates: ['はふ', 'ほふ'],
+    exactCrossChannel: {
+      value: 'まをす',
+      ruleRef: 'cross:incompatible',
+      sourceRefs: ['native:exact'],
+      evidenceRefs: ['ev:cross-conflict']
+    },
+    diachronicRules: [{
+      id: 'dia:prefer-hafu',
+      admissibleCandidates: ['はふ', 'ほふ'],
+      preferred: 'はふ'
+    }],
+    manualPriority: {
+      id: 'manual:prefer-hofu',
+      candidateSet: ['はふ', 'ほふ'],
+      preferred: 'ほふ',
+      rationale: 'must not override conflicting exact evidence'
+    }
+  });
+
+  assert.equal(result.status, 'candidates');
+  assert.equal(result.selectedResult, null);
+  assert.equal(result.basis, 'unresolved');
+  assert.deepEqual(result.appliedRuleRefs, []);
+  assert.ok(result.blockedRuleRefs.includes('cross:incompatible'));
+  assert.ok(result.blockedRuleRefs.includes('dia:prefer-hafu'));
+  assert.ok(result.blockedRuleRefs.includes('manual:prefer-hofu'));
+  assert.deepEqual(result.sourceRefs, ['native:exact']);
+  assert.deepEqual(result.evidenceRefs, ['ev:cross-conflict']);
+});
+
 test('explicit diachronic preference selects only within its declared admissible candidate set', () => {
   const selected = selectHistoricalCandidate({
     sourceCandidates: ['はふ', 'ほふ'],
