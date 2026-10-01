@@ -67,9 +67,10 @@ export function resolveLexicalHistorical(
   const lexemeIds = lexemesForFormReading(lexicalGraph, surface, modernReading);
   const surfaceDecision = resolveOccurrenceOrthography(surface, relations, spanGraph, options.occurrence);
   const sino = createSinoDagRuntime(sinoGraph);
-  const query = Object.prototype.hasOwnProperty.call(options, 'context')
-    ? { context: options.context }
-    : {};
+  const query: { context?: string | null } = {};
+  if (Object.prototype.hasOwnProperty.call(options, 'context') && options.context !== undefined) {
+    query.context = options.context;
+  }
   const reconstructed = sino.reconstructWord(surface, modernReading, query);
 
   let readingDecision: HistoricalReadingDecision;
