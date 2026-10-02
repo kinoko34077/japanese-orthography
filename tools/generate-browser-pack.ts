@@ -27,6 +27,7 @@ export const BROWSER_PACK_V2_DIR = 'data/browser-pack-v2';
 export const BROWSER_PACK_V2_MANIFEST = `${BROWSER_PACK_V2_DIR}/manifest.json`;
 export const BROWSER_PACK_V2_COMPILED_REPORT = 'data/reports/browser-pack-v2-compiled.json';
 export const BROWSER_PACK_V3_DIR = 'data/browser-pack-v3';
+export const BROWSER_RESOLVER_PARITY_REPORT_V3 = 'data/reports/browser-resolver-parity-v3.json';
 export const BROWSER_PACK_V3_MANIFEST = `${BROWSER_PACK_V3_DIR}/manifest.json`;
 export const BROWSER_PACK_V3_COMPILED_REPORT = 'data/reports/browser-pack-v3-compiled.json';
 
@@ -135,4 +136,14 @@ if (process.argv[1]?.endsWith('generate-browser-pack.ts')) {
   await emit(rootDir, v3, BROWSER_PACK_V3_DIR, BROWSER_PACK_V3_MANIFEST, BROWSER_PACK_V3_COMPILED_REPORT, check);
   const compared = await assertV3Equivalent(v2, v3, CAPABILITY_PROBES.map((p) => p.text));
   console.log(`BrowserPack v3 ≡ v2 on ${compared} probe conversions`);
+  // #211 I: browser/core parity on v3 must classify every case exactly as on v2
+  const parityV3 = await browserCoreParity(rootDir, v3);
+  if (JSON.stringify(parityV3.cases) !== JSON.stringify(parity.cases)) throw new Error('browser/core parity differs between v3 and v2');
+  const parityV3Text = `${JSON.stringify(parityV3, null, 2)}
+`;
+  if (check) {
+    if (normalizeCheckoutText(await readFile(resolve(rootDir, BROWSER_RESOLVER_PARITY_REPORT_V3), 'utf8')) !== parityV3Text) throw new Error(`stale ${BROWSER_RESOLVER_PARITY_REPORT_V3}; run npm run generate:browser-pack`);
+  } else {
+    await writeFile(resolve(rootDir, BROWSER_RESOLVER_PARITY_REPORT_V3), parityV3Text);
+  }
 }

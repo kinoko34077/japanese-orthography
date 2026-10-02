@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import type { BrowserPackBuild } from './browser-pack-compiler.ts';
-import { buildAcceptedBrowserPack, buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
+import { buildAcceptedBrowserPack, buildAcceptedBrowserPackV2, buildAcceptedBrowserPackV3 } from './generate-browser-pack.ts';
 import type { OrthographyFact, OrthographyKnowledgeGraph, OrthographyRule } from './orthography-knowledge-model.ts';
 import { withProfileRules } from './orthography-policy.ts';
 import { normalizeAcceptedOrthographySources } from './orthography-source-normalization.ts';
@@ -17,6 +17,7 @@ import { normalizeAcceptedOrthographySources } from './orthography-source-normal
 
 export const BROWSER_CAPABILITY_REPORT = 'data/reports/browser-capability-utilization-v1.json';
 export const BROWSER_CAPABILITY_REPORT_V2 = 'data/reports/browser-capability-utilization-v2.json';
+export const BROWSER_CAPABILITY_REPORT_V3 = 'data/reports/browser-capability-utilization-v3.json';
 
 const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
@@ -260,6 +261,13 @@ async function main() {
   }
   await writeFile(path, text);
   console.log(`wrote ${BROWSER_CAPABILITY_REPORT}: ${report.probes.rows.length} probe rows, ${report.canonical.facts} facts`);
+  if (process.argv.includes('--v3')) {
+    // #211 I: the same probes on BrowserPack v3, compared with the same v1 oracle
+    const v3 = await measureCapabilityUtilizationV2(await buildAcceptedBrowserPackV3(root, graph), report);
+    await writeFile(resolve(root, BROWSER_CAPABILITY_REPORT_V3), `${JSON.stringify({ ...v3, kind: 'browser-capability-utilization-v3', owner: 'japanese-orthography#211 I' }, null, 2)}
+`);
+    console.log(`wrote ${BROWSER_CAPABILITY_REPORT_V3}`);
+  }
   if (process.argv.includes('--v2')) {
     const v2 = await measureCapabilityUtilizationV2(await buildAcceptedBrowserPackV2(root, graph), report);
     await writeFile(resolve(root, BROWSER_CAPABILITY_REPORT_V2), `${JSON.stringify(v2, null, 2)}\n`);
