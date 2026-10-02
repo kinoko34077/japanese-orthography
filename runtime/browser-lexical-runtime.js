@@ -22,6 +22,7 @@
   const MORPHOLOGY_SOURCES = ["jmdict", "unidic"];
   const FORM_FLAGS = { listed: 1, ateji: 2, iK: 4, oK: 8, io: 16, rK: 32, sK: 64 };
   const PERIODS = { 1: "modern", 2: "historical" };
+  const ROUTES = [null, "native", "sino"];
   const compareText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
   const isHighSurrogate = (code) => code >= 0xd800 && code <= 0xdbff;
 
@@ -73,7 +74,9 @@
         source: MORPHOLOGY_SOURCES[morph.value("source", i)],
         partOfSpeech: [...morph.list("pos", i)].map((id) => morph.string("strings", id)),
         conjugationType: s(morph.value("conjugationType", i)),
-        conjugationForm: s(morph.value("conjugationForm", i))
+        conjugationForm: s(morph.value("conjugationForm", i)),
+        reading: s(morph.value("reading", i)),
+        lexicalOrigin: s(morph.value("lexicalOrigin", i))
       }));
     }
 
@@ -125,6 +128,7 @@
       const rReading = [...shard.readings.list("reading", row)];
       const rPeriod = [...shard.readings.list("period", row)];
       const rFact = [...shard.readings.list("factIndex", row)];
+      const rRoute = [...shard.readings.list("route", row)];
       for (const m of t.list("morphology", row)) if (m >= morphologies.length) throw new Error(`BrowserLexicalRuntime: dangling morphology id ${m}`);
       return {
         lexemeId: id,
@@ -137,21 +141,21 @@
           flags: Object.keys(FORM_FLAGS).filter((name) => (formFlags[i] & FORM_FLAGS[name]) !== 0),
           factIndex: formFact[i]
         })),
-        readings: rSurface.map((sid, i) => ({ surface: rs(sid), reading: rs(rReading[i]), period: PERIODS[rPeriod[i]], factIndex: rFact[i] }))
+        readings: rSurface.map((sid, i) => ({ surface: rs(sid), reading: rs(rReading[i]), period: PERIODS[rPeriod[i]], route: ROUTES[rRoute[i]] ?? null, factIndex: rFact[i] }))
       };
     };
 
-    // morphology for a candidate: the unique UniDic row (accepted resolver morphology source), else
-    // the unique JMdict POS row; several rows of the deciding source stay unresolved (`null`)
-    const chooseMorphology = (ids) => {
+    // morphology for a candidate: the unique UniDic row of that reading (the accepted resolver's
+    // morphology source), else the unique JMdict POS row; several rows of the deciding source stay
+    // unresolved (`null`). A UniDic row of another reading never applies.
+    const chooseMorphologyRow = (ids, reading) => {
       const rows = ids.map((id) => morphologies[id]);
-      for (const source of ["unidic", "jmdict"]) {
-        const of = rows.filter((m) => m.source === source);
-        if (of.length === 1) return { partOfSpeech: [...of[0].partOfSpeech], conjugationType: of[0].conjugationType, conjugationForm: of[0].conjugationForm, source };
-        if (of.length > 1) return null;
-      }
-      return null;
+      const unidic = rows.filter((m) => m.source === "unidic" && (reading === null || reading === undefined || m.reading === reading));
+      if (unidic.length) return unidic.length === 1 ? unidic[0] : null;
+      const jmdict = rows.filter((m) => m.source === "jmdict");
+      return jmdict.length === 1 ? jmdict[0] : null;
     };
+    const morphologyOf = (row) => row && { partOfSpeech: [...row.partOfSpeech], conjugationType: row.conjugationType, conjugationForm: row.conjugationForm, source: row.source };
     // same rule as the accepted LexicalRuntime.chooseReading: single reading, else the lemma's own
     const chooseReading = (headReading, modernReadings) => {
       if (modernReadings.length === 0) return headReading ?? null;
@@ -170,16 +174,18 @@
         resolvedSurface = lexeme.headReading === viaReading && carriers.includes(lexeme.headSurface) ? lexeme.headSurface : carriers.length === 1 ? carriers[0] : null;
       }
       const modernReadings = resolvedSurface === null ? (viaReading ? [viaReading] : []) : modernFor(resolvedSurface);
+      const reading = viaReading !== undefined ? viaReading : chooseReading(lexeme.headReading, modernReadings);
+      const morphologyRow = chooseMorphologyRow(lexeme.morphologyIds, reading);
       return {
         lexicalIdentity: lexeme.lexicalIdentity,
         lemma: lexeme.headSurface ?? lexeme.headReading,
         surface: resolvedSurface,
-        reading: viaReading !== undefined ? viaReading : chooseReading(lexeme.headReading, modernReadings),
+        reading,
         lexicalReading: lexeme.headReading,
         modernReadings,
-        historicalReadings: historical.map((r) => ({ surface: r.surface, reading: r.reading })),
-        lexicalOrigin: "unknown",
-        morphology: chooseMorphology(lexeme.morphologyIds),
+        historicalReadings: historical.map((r) => ({ surface: r.surface, reading: r.reading, route: r.route, factIndex: r.factIndex })),
+        lexicalOrigin: morphologyRow?.lexicalOrigin ?? "unknown",
+        morphology: morphologyOf(morphologyRow),
         morphologyCandidates: lexeme.morphologyIds.map((id) => ({ ...morphologies[id], partOfSpeech: [...morphologies[id].partOfSpeech] })),
         forms: lexeme.forms.map((f) => ({ surface: f.surface, flags: [...f.flags] })),
         components: [],
@@ -204,6 +210,14 @@
     };
 
     const getLexeme = async (id) => { await loadLexemeShard(id); return lexemeSync(id); };
+    /** Synchronous lookups for the span planner / resolver adapter (after `prepare`). */
+    const lookupSurfaceSync = (surface) => idsForSync("surface", `${surface ?? ""}`).map((id) => candidate(lexemeSync(id), `${surface}`));
+    const lookupReadingSync = (reading) => idsForSync("reading", `${reading ?? ""}`).map((id) => candidate(lexemeSync(id), null, `${reading}`));
+    /** Re-derive a candidate for one specific modern reading (per-reading candidates, like UniDic rows). */
+    const withReading = (c, reading) => {
+      const row = chooseMorphologyRow(lexemeSync(c.lexemeId).morphologyIds, reading);
+      return { ...c, reading, modernReadings: [reading], morphology: morphologyOf(row), lexicalOrigin: row?.lexicalOrigin ?? "unknown" };
+    };
     const lookupSurface = async (surface) => {
       const ids = await idsFor("surface", `${surface ?? ""}`);
       await Promise.all(ids.map(loadLexemeShard));
@@ -258,6 +272,9 @@
       maxKeyLength: { ...maxKeyLength },
       lookupSurface,
       lookupReading,
+      lookupSurfaceSync,
+      lookupReadingSync,
+      withReading,
       getLexeme,
       getForms: async (id) => (await getLexeme(id)).forms,
       getReadings: async (id) => (await getLexeme(id)).readings,

@@ -24,6 +24,7 @@
 
   const authorityOf = (winner, ruleOrigin) => {
     if (!winner) return "none";
+    if (winner.origin === "resolver") return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
     if (winner.origin === "fact") return "literal_fact";
     if (winner.origin === "safety") return "literal_fact";
     const origin = ruleOrigin ?? winner.rule?.origin ?? "historically_attested";
@@ -81,6 +82,21 @@
 
   const describeCandidate = async (pack, candidate, accepted) => {
     const base = { output: candidate.output, accepted, policy: candidate.policy ?? null, reason: candidate.reason ?? null, start: candidate.start, end: candidate.end };
+    if (candidate.origin === "resolver") {
+      // accepted OrthographyResolver unit (#196 D): its semantic fields, plus the canonical relation
+      // facts it was given for this surface (lazy provenance)
+      const facts = [];
+      for (const f of candidate.relationFacts ?? []) {
+        const detail = await pack.loadDetail(f.detailRef);
+        facts.push({ id: detail.factId, surface: f.surface, target: f.target, sourceCandidate: Boolean(f.candidate), tags: detail.tags, sourceRefs: detail.sourceRefs, evidenceRefs: detail.evidenceRefs });
+      }
+      const unit = candidate.unit ?? null;
+      return {
+        ...base, kind: "resolver_unit", basis: unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver",
+        authority: candidate.authority ?? "source_rule", ruleChain: [], unit, relationFacts: facts,
+        provenance: { sourceRefs: [...new Set(facts.flatMap((f) => f.sourceRefs))].sort(), evidenceRefs: [...new Set([...facts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort() }
+      };
+    }
     if (candidate.origin === "rule") {
       const rule = ruleById(pack, candidate.ref);
       return {
@@ -146,6 +162,7 @@
         sourceRefs: [...new Set(accepted.flatMap((c) => c.provenance?.sourceRefs ?? []))].sort(),
         evidenceRefs: [...new Set(accepted.flatMap((c) => c.provenance?.evidenceRefs ?? []))].sort()
       },
+      resolverUnit: span.winners[0]?.unit ?? span.blocked.find((b) => b.unit)?.unit ?? null,
       compatibilityAgreement: { status: "not_involved", note: "このブラウザ版は新方式（v2）の知識だけを使います。互換用に残している旧方式（UniDic 語彙ID の対応表, #173）は使っていないため、比較対象はありません。" },
       profileEffects: { profileId: raw.profileId, period: policy.policy.period ?? null, candidatePolicy: policy.policy.candidatePolicy ?? null, disabledRuleIds: policy.policy.disabledRuleIds ?? [] }
     };

@@ -15,6 +15,10 @@ export const SITE_RUNTIME_MODULES = [
   'browser-span-planner.js',
   'browser-diagnostic-contract.js',
   'browser-section-fetcher.js',
+  'transform-shared.js',
+  'orthography-resolver.js',
+  'browser-lexical-runtime.js',
+  'browser-resolver-adapter.js',
   'browser-transform-worker.js'
 ];
 
