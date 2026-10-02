@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1",
+  "kind": "symbol-sequence-encoding-comparison",
+  "owner": "japanese-orthography#211 C (spec #208 §6.6, §16.2)",
+  "registry": {
+    "size": 6520,
+    "generation": 1
+  },
+  "dataset": {
+    "distinctSequences": 474379,
+    "symbols": 2399616,
+    "symbolsBelow255": 1959870,
+    "maxSequenceLength": 37
+  },
+  "encodings": {
+    "utf8-strings": {
+      "bytes": 9096531,
+      "gzipBytes": 3342048,
+      "scanMs": 215.1,
+      "randomAccess": "O(1) per string; per-character access needs UTF-8 decoding"
+    },
+    "fixed-uint16": {
+      "bytes": 6696752,
+      "gzipBytes": 3061951,
+      "scanMs": 47.7,
+      "randomAccess": "O(1) per symbol (offset + index); TypedArray view, no decode"
+    },
+    "short-id-escape": {
+      "bytes": 5176628,
+      "gzipBytes": 2987679,
+      "scanMs": 11.4,
+      "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
+    },
+    "varint": {
+      "bytes": 4943423,
+      "gzipBytes": 2984117,
+      "scanMs": 22.4,
+      "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
+    }
+  },
+  "choice": {
+    "encoding": "fixed-uint16",
+    "reason": "registry ids fit uint16 (wider ids would use a versioned extension, §6.5); fixed width gives zero-decode TypedArray views and O(1) symbol access in the binary sections the runtime already uses; the variable-width encodings save raw bytes, and the measured gzip and scan figures here are what the trade-off is judged on",
+    "revisit": "re-measure when the registry approaches 65,535 ids or if transfer size dominates (short-id tier is prepared by the frequency-ordered ids)"
+  }
+}
