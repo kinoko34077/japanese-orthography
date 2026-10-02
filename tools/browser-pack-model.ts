@@ -56,15 +56,32 @@ const SECTION_KINDS = {
   'provenance-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'compact provenance/detail references resolvable to canonical ids' },
   'detail-shard': { contentClass: 'detail', encoding: 'binary-columnar', loading: 'lazy', shardable: true, profileScoped: false, description: 'diagnostic/provenance detail payload opened only when a span is inspected' },
   'profile-policy': { contentClass: 'profile', encoding: 'json', loading: 'eager', shardable: false, profileScoped: true, description: 'one profile policy descriptor; carries no knowledge tables' },
-  terminology: { contentClass: 'presentation', encoding: 'json', loading: 'eager', shardable: false, profileScoped: false, description: 'Japanese-first label/help dictionary' }
+  terminology: { contentClass: 'presentation', encoding: 'json', loading: 'eager', shardable: false, profileScoped: false, description: 'Japanese-first label/help dictionary' },
+  // ---- BrowserPack v2 lexical layer (#196 B): lexeme-centric, surface and reading converge -------
+  'lexical-directory': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'eager range directory for the surface index, reading index and lexeme tables' },
+  'morphology-table': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'compact morphology rows (POS, conjugation type/form) addressed by dense id' },
+  'surface-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'surface -> lexeme ids' },
+  'reading-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'reading -> lexeme ids (secondary index over the same lexeme table)' },
+  'lexeme-table': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'lexical identity, headword and morphology ids by dense lexeme id' },
+  'lexeme-forms': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'written forms of each lexeme (aligned with the lexeme-table shard)' },
+  'lexeme-readings': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'modern/historical readings of each lexeme form (aligned with the lexeme-table shard)' }
 } as const;
 
 export type BrowserPackSectionKind = keyof typeof SECTION_KINDS;
 
 export const BROWSER_PACK_SECTION_KINDS: Record<BrowserPackSectionKind, BrowserPackSectionKindSpec> = SECTION_KINDS;
 
-/** Every kind is required: a pack missing any one of them cannot serve the #184 acceptance flow. */
-export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = Object.keys(SECTION_KINDS).sort() as BrowserPackSectionKind[];
+/** Kinds added by the BrowserPack v2 lexical layer (#196 B). */
+export const BROWSER_PACK_V2_LEXICAL_SECTION_KINDS: readonly BrowserPackSectionKind[] = ['lexeme-forms', 'lexeme-readings', 'lexeme-table', 'lexical-directory', 'morphology-table', 'reading-index', 'surface-index'];
+export const BROWSER_PACK_V2_COMPILER_VERSION = '2';
+
+/** Every v1 kind is required: a pack missing any one of them cannot serve the #184 acceptance flow. */
+export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k)).sort();
+
+/** Required kinds by compiler version: v2 = v1 + the lexical layer; v1 packs may not carry v2 kinds. */
+export function requiredSectionKinds(compilerVersion: string): readonly BrowserPackSectionKind[] {
+  return compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION ? [...BROWSER_PACK_REQUIRED_SECTION_KINDS, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS].sort() : BROWSER_PACK_REQUIRED_SECTION_KINDS;
+}
 
 export interface BrowserPackShardDescriptor {
   /** What the shard set partitions, e.g. `surface` for the lexical index. */
@@ -222,7 +239,7 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
   const candidate = manifest as BrowserPackManifestV1;
   if (candidate.schemaVersion !== BROWSER_PACK_SCHEMA_VERSION) throw new Error(`unsupported schemaVersion ${String(candidate.schemaVersion)}`);
   if (candidate.kind !== BROWSER_PACK_MANIFEST_KIND) throw new Error(`unsupported manifest kind ${String(candidate.kind)}`);
-  if (candidate.compilerVersion !== BROWSER_PACK_COMPILER_VERSION) throw new Error(`unsupported compiler version ${String(candidate.compilerVersion)}`);
+  if (candidate.compilerVersion !== BROWSER_PACK_COMPILER_VERSION && candidate.compilerVersion !== BROWSER_PACK_V2_COMPILER_VERSION) throw new Error(`unsupported compiler version ${String(candidate.compilerVersion)}`);
   assertDigest(candidate.canonicalGraphSha256, 'canonicalGraphSha256');
   assertDigest(candidate.sourceSetDigest, 'sourceSetDigest');
   if (typeof candidate.lexicalNamespaceId !== 'string' || candidate.lexicalNamespaceId === '') throw new Error('lexicalNamespaceId must be a non-empty string');
@@ -256,7 +273,11 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
     assertDigest(section.sha256, `section ${section.sectionId} sha256`);
     if (section.rowCount !== undefined && (!Number.isInteger(section.rowCount) || section.rowCount < 0)) throw new Error(`section ${section.sectionId}: rowCount must be a non-negative integer`);
   }
-  for (const kind of BROWSER_PACK_REQUIRED_SECTION_KINDS) {
+  const required = requiredSectionKinds(candidate.compilerVersion);
+  for (const section of declared) {
+    if (!required.includes(section.kind)) throw new Error(`section kind ${section.kind} is not part of compiler version ${candidate.compilerVersion}`);
+  }
+  for (const kind of required) {
     if (!candidate.sections.some((section) => section.kind === kind)) throw new Error(`missing required section kind ${kind}`);
   }
   assertShardSets(candidate.sections);

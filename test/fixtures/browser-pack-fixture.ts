@@ -31,3 +31,20 @@ export async function plannerPack(graph = plannerFixture()) {
   return { build, pack: await openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!) };
 }
 
+/** #196 B+: lexeme-centric fixture (surface/reading convergence, candidate sets, kana-only lexemes). */
+export function lexicalFixture(): OrthographyKnowledgeGraph {
+  const g = plannerFixture();
+  const form = (lexeme: string, surface: string, tags?: string[]) => ({ id: `fact:literal_form:${surface}|${lexeme}`, kind: 'literal_form' as const, lexicalRefs: [lexeme], surface, periodRefs: M, ...(tags ? { tags } : {}), ...prov });
+  const reading = (lexeme: string, surface: string | undefined, r: string, period = M) => ({ id: `fact:literal_reading:${surface ?? ''}|${r}|${lexeme}|${period[0]}`, kind: 'literal_reading' as const, lexicalRefs: [lexeme], ...(surface ? { surface } : {}), reading: r, periodRefs: period, ...prov });
+  g.facts.push(
+    form('lexeme:学校/がっこう', '学校'), reading('lexeme:学校/がっこう', '学校', 'がっこう'), reading('lexeme:学校/がっこう', '學校', 'がっこう'),
+    reading('lexeme:学校/がっこう', '学校', 'がくかう', H),
+    form('lexeme:楽校/がっこう', '楽校'), reading('lexeme:楽校/がっこう', '楽校', 'がっこう'),
+    form('lexeme:独逸/ドイツ', '独逸', ['ateji', 'rK']), form('lexeme:独逸/ドイツ', '独乙', ['ateji']),
+    reading('lexeme:独逸/ドイツ', '独逸', 'ドイツ'), reading('lexeme:独逸/ドイツ', '独乙', 'ドイツ'),
+    form('lexeme:見る/みる', '見る'), form('lexeme:見る/みる', '観る'), reading('lexeme:見る/みる', '見る', 'みる'), reading('lexeme:見る/みる', '観る', 'みる'),
+    form('lexeme:診る/みる', '診る'), reading('lexeme:診る/みる', '診る', 'みる'),
+    reading('lexeme:ドキドキ/ドキドキ', undefined, 'ドキドキ')
+  );
+  return canonicalizeOrthographyKnowledge(g);
+}

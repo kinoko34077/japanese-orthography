@@ -4,4 +4,6 @@ dist/
 .superpowers/
 data/browser-pack/*
 !data/browser-pack/manifest.json
+data/browser-pack-v2/*
+!data/browser-pack-v2/manifest.json
 dist-site/
