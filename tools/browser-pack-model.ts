@@ -66,7 +66,9 @@ const SECTION_KINDS = {
   'lexeme-forms': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'written forms of each lexeme (aligned with the lexeme-table shard)' },
   'lexeme-readings': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'modern/historical readings of each lexeme form (aligned with the lexeme-table shard)' },
   // ---- BrowserPack v2 physical layout (#196 I) -----------------------------------------------------
-  'knowledge-bundle': { contentClass: 'knowledge', encoding: 'binary-bundle', loading: 'on-demand', shardable: true, profileScoped: false, description: 'one fetch per knowledge shard: its string-pool, facts and lexical-index sections as zero-copy parts' }
+  'knowledge-bundle': { contentClass: 'knowledge', encoding: 'binary-bundle', loading: 'on-demand', shardable: true, profileScoped: false, description: 'one fetch per knowledge shard: its string-pool, facts and lexical-index sections as zero-copy parts' },
+  // ---- BrowserPack v3 (#208 / #211 F) ---------------------------------------------------------------
+  'symbol-registry': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'append-only Symbol Registry atoms; every v3 string column is a SymbolId token list over it' }
 } as const;
 
 export type BrowserPackSectionKind = keyof typeof SECTION_KINDS;
@@ -78,15 +80,17 @@ export const BROWSER_PACK_V2_LEXICAL_SECTION_KINDS: readonly BrowserPackSectionK
 /** v2 replaces these per-shard v1 sections by one `knowledge-bundle` per shard. */
 export const BROWSER_PACK_V2_BUNDLED_KINDS: readonly BrowserPackSectionKind[] = ['facts', 'lexical-index', 'string-pool'];
 export const BROWSER_PACK_V2_COMPILER_VERSION = '2';
+export const BROWSER_PACK_V3_COMPILER_VERSION = '3';
 
 /** Every v1 kind is required: a pack missing any one of them cannot serve the #184 acceptance flow. */
-export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k) && k !== 'knowledge-bundle').sort();
+export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k) && k !== 'knowledge-bundle' && k !== 'symbol-registry').sort();
 
 /** Required kinds by compiler version: v2 = v1 + the lexical layer; v1 packs may not carry v2 kinds. */
 export function requiredSectionKinds(compilerVersion: string): readonly BrowserPackSectionKind[] {
-  return compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION
-    ? [...BROWSER_PACK_REQUIRED_SECTION_KINDS.filter((k) => !BROWSER_PACK_V2_BUNDLED_KINDS.includes(k)), 'knowledge-bundle' as const, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS].sort()
-    : BROWSER_PACK_REQUIRED_SECTION_KINDS;
+  const v2 = [...BROWSER_PACK_REQUIRED_SECTION_KINDS.filter((k) => !BROWSER_PACK_V2_BUNDLED_KINDS.includes(k)), 'knowledge-bundle' as const, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS];
+  if (compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION) return v2.sort();
+  if (compilerVersion === BROWSER_PACK_V3_COMPILER_VERSION) return [...v2, 'symbol-registry' as const].sort();
+  return BROWSER_PACK_REQUIRED_SECTION_KINDS;
 }
 
 export interface BrowserPackShardDescriptor {
@@ -245,7 +249,7 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
   const candidate = manifest as BrowserPackManifestV1;
   if (candidate.schemaVersion !== BROWSER_PACK_SCHEMA_VERSION) throw new Error(`unsupported schemaVersion ${String(candidate.schemaVersion)}`);
   if (candidate.kind !== BROWSER_PACK_MANIFEST_KIND) throw new Error(`unsupported manifest kind ${String(candidate.kind)}`);
-  if (candidate.compilerVersion !== BROWSER_PACK_COMPILER_VERSION && candidate.compilerVersion !== BROWSER_PACK_V2_COMPILER_VERSION) throw new Error(`unsupported compiler version ${String(candidate.compilerVersion)}`);
+  if (![BROWSER_PACK_COMPILER_VERSION, BROWSER_PACK_V2_COMPILER_VERSION, BROWSER_PACK_V3_COMPILER_VERSION].includes(candidate.compilerVersion)) throw new Error(`unsupported compiler version ${String(candidate.compilerVersion)}`);
   assertDigest(candidate.canonicalGraphSha256, 'canonicalGraphSha256');
   assertDigest(candidate.sourceSetDigest, 'sourceSetDigest');
   if (typeof candidate.lexicalNamespaceId !== 'string' || candidate.lexicalNamespaceId === '') throw new Error('lexicalNamespaceId must be a non-empty string');

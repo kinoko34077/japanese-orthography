@@ -6,4 +6,6 @@ data/browser-pack/*
 !data/browser-pack/manifest.json
 data/browser-pack-v2/*
 !data/browser-pack-v2/manifest.json
+data/browser-pack-v3/*
+!data/browser-pack-v3/manifest.json
 dist-site/

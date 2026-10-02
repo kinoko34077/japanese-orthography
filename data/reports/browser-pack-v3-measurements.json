@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-pack-v3-measurements",
+  "owner": "japanese-orthography#211 F",
+  "packDigest": "222b7ed4a561203ea987325915c7ad6858ad80aca8ca4a0fa8e80d4df73b33ca",
+  "sections": 1905,
+  "sizes": {
+    "total": 115650776,
+    "totalGzip": 48303017,
+    "byLoading": {
+      "eager": {
+        "sections": 10,
+        "bytes": 426660,
+        "gzipBytes": 162822
+      },
+      "lazy": {
+        "sections": 328,
+        "bytes": 27276256,
+        "gzipBytes": 8600862
+      },
+      "on-demand": {
+        "sections": 1567,
+        "bytes": 87947860,
+        "gzipBytes": 39539333
+      }
+    },
+    "byKind": {
+      "bindings": {
+        "sections": 1,
+        "bytes": 200932,
+        "gzipBytes": 64085
+      },
+      "detail-shard": {
+        "sections": 328,
+        "bytes": 27276256,
+        "gzipBytes": 8600862
+      },
+      "knowledge-bundle": {
+        "sections": 328,
+        "bytes": 18252576,
+        "gzipBytes": 8436816
+      },
+      "lexeme-forms": {
+        "sections": 54,
+        "bytes": 6888400,
+        "gzipBytes": 3417119
+      },
+      "lexeme-readings": {
+        "sections": 54,
+        "bytes": 14328512,
+        "gzipBytes": 6125267
+      },
+      "lexeme-table": {
+        "sections": 54,
+        "bytes": 7960492,
+        "gzipBytes": 3414386
+      },
+      "lexical-directory": {
+        "sections": 1,
+        "bytes": 32664,
+        "gzipBytes": 18577
+      },
+      "morphology-table": {
+        "sections": 1,
+        "bytes": 10684,
+        "gzipBytes": 4791
+      },
+      "profile-policy": {
+        "sections": 3,
+        "bytes": 1714,
+        "gzipBytes": 871
+      },
+      "provenance-index": {
+        "sections": 328,
+        "bytes": 3398348,
+        "gzipBytes": 2526216
+      },
+      "reading-index": {
+        "sections": 409,
+        "bytes": 19227284,
+        "gzipBytes": 8255245
+      },
+      "rules": {
+        "sections": 1,
+        "bytes": 110092,
+        "gzipBytes": 31329
+      },
+      "shard-directory": {
+        "sections": 1,
+        "bytes": 12896,
+        "gzipBytes": 7969
+      },
+      "surface-index": {
+        "sections": 340,
+        "bytes": 17892248,
+        "gzipBytes": 7364284
+      },
+      "symbol-registry": {
+        "sections": 1,
+        "bytes": 45704,
+        "gzipBytes": 31083
+      },
+      "terminology": {
+        "sections": 1,
+        "bytes": 11974,
+        "gzipBytes": 4117
+      }
+    }
+  },
+  "runs": {
+    "short": {
+      "textLength": 20,
+      "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
+      "eager": {
+        "requests": 10,
+        "bytes": 426660,
+        "gzipBytes": 163880,
+        "openMs": 96
+      },
+      "coldFirstResult": {
+        "requests": 66,
+        "bytes": 3561188,
+        "gzipBytes": 1587794,
+        "ms": 531
+      },
+      "warmRepeat": {
+        "requests": 0,
+        "ms": 13
+      },
+      "detailLatencyMs": 4,
+      "unitDetailLatencyMs": 83,
+      "residentArrayBufferBytes": 6255284,
+      "jsHeapDeltaBytes": 15723768,
+      "spans": 4,
+      "inspectableUnits": 8
+    },
+    "representative": {
+      "textLength": 74,
+      "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
+      "eager": {
+        "requests": 10,
+        "bytes": 426660,
+        "gzipBytes": 163880,
+        "openMs": 45
+      },
+      "coldFirstResult": {
+        "requests": 148,
+        "bytes": 7790020,
+        "gzipBytes": 3459765,
+        "ms": 738
+      },
+      "warmRepeat": {
+        "requests": 0,
+        "ms": 34
+      },
+      "detailLatencyMs": 5,
+      "unitDetailLatencyMs": 31,
+      "residentArrayBufferBytes": 8933312,
+      "jsHeapDeltaBytes": 14339456,
+      "spans": 7,
+      "inspectableUnits": 23
+    }
+  },
+  "note": "sizes exact; ms and heap are local observations (machine-dependent), recorded for comparison only"
+}
