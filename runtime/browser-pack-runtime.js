@@ -272,6 +272,12 @@
       },
       getTerminology: () => terminology,
       loadDetail,
+      // layer access (#196 C): digest-verified, cached section loading for additional pack layers
+      compilerVersion: manifest.compilerVersion,
+      hasSection: (sectionId) => byId.has(sectionId),
+      sectionsOfKind: (kind) => manifest.sections.filter((s) => s.kind === kind).map((s) => ({ sectionId: s.sectionId, shard: s.shard ? { ...s.shard } : undefined, rowCount: s.rowCount })),
+      loadSection: fetchVerified,
+      eagerSection: (sectionId) => loadedEager.get(sectionId),
       stats: () => ({ ...stats, loaded: [...stats.loaded] })
     });
   };
