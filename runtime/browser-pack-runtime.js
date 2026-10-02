@@ -18,7 +18,7 @@
   if (!BrowserPackBinary || typeof BrowserPackBinary.decodeSection !== "function") {
     throw new Error("BrowserPackRuntime requires BrowserPackBinary (load browser-pack-binary.js first)");
   }
-  const { decodeSection } = BrowserPackBinary;
+  const { decodeSection, decodeBundle } = BrowserPackBinary;
 
   const SCHEMA_VERSION = "1";
   const MANIFEST_KIND = "japanese-orthography-browser-pack";
@@ -79,7 +79,8 @@
         stats.sectionsLoaded += 1;
         stats.bytesLoaded += bytes.byteLength;
         stats.loaded.push(sectionId);
-        return section.encoding === "json" ? JSON.parse(new TextDecoder().decode(bytes)) : decodeSection(bytes);
+        if (section.encoding === "json") return JSON.parse(new TextDecoder().decode(bytes));
+        return section.encoding === "binary-bundle" ? decodeBundle(bytes) : decodeSection(bytes);
       })();
       cache.set(sectionId, promise);
       try {
@@ -127,7 +128,13 @@
       if (shards.has(index)) return shards.get(index);
       const promise = (async () => {
         const id = (kind) => `${kind}@surface/${index}`;
-        const [pool, facts, lexical] = await Promise.all([fetchVerified(id("string-pool")), fetchVerified(id("facts")), fetchVerified(id("lexical-index"))]);
+        let pool, facts, lexical;
+        if (byId.has(id("knowledge-bundle"))) {
+          const bundle = await fetchVerified(id("knowledge-bundle")); // v2: one fetch per shard
+          [pool, facts, lexical] = [bundle.part("string-pool"), bundle.part("facts"), bundle.part("lexical-index")];
+        } else {
+          [pool, facts, lexical] = await Promise.all([fetchVerified(id("string-pool")), fetchVerified(id("facts")), fetchVerified(id("lexical-index"))]);
+        }
         const keyRow = new Map();
         for (let i = 0; i < lexical.rowCount("key"); i += 1) keyRow.set(pool.string("strings", lexical.value("key", i)), i);
         const shard = { index, pool, facts, lexical, keyRow };
@@ -243,12 +250,29 @@
       const [shardIndex, row] = [Number(match[1]), Number(match[2])];
       const detail = await fetchVerified(`detail-shard@surface/${shardIndex}`);
       const s = (id) => detail.string("strings", id);
+      const compact = Object.prototype.hasOwnProperty.call(detail.columns, "evidencePrefix");
+      let factId;
+      let evidenceRefs;
+      if (compact) {
+        // v2 compact detail (#196 I): id derived from the facts row, evidence = prefix + suffix
+        const explicit = detail.value("factId", row);
+        if (explicit !== 0) factId = s(explicit);
+        else {
+          const fact = factAt(await loadShard(shardIndex), row);
+          factId = `fact:${fact.kind}:${fact.surface ?? ""}|${fact.reading ?? ""}|${fact.target ?? ""}`;
+        }
+        const prefix = [...detail.list("evidencePrefix", row)].map(s);
+        evidenceRefs = [...detail.list("evidenceSuffix", row)].map((x, i) => `${prefix[i]}${s(x)}`);
+      } else {
+        factId = s(detail.value("factId", row));
+        evidenceRefs = [...detail.list("evidenceRefs", row)].map(s);
+      }
       return {
-        factId: s(detail.value("factId", row)),
+        factId,
         lexicalRefs: [...detail.list("lexicalRefs", row)].map(s),
         tags: [...detail.list("tags", row)].map(s),
         sourceRefs: [...detail.list("sourceRefs", row)].map(s),
-        evidenceRefs: [...detail.list("evidenceRefs", row)].map(s)
+        evidenceRefs
       };
     };
 

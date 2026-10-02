@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import {
+  BROWSER_PACK_V2_COMPILER_VERSION,
   BROWSER_PACK_COMPILER_VERSION,
   BROWSER_PACK_EXTERNAL_OFFSET_UNIT,
   BROWSER_PACK_MANIFEST_KIND,
@@ -13,7 +14,7 @@ import {
   type BrowserPackSectionKind,
   type BrowserPackShardDescriptor
 } from './browser-pack-model.ts';
-import { encodeSection, StringTable } from './browser-pack-encoding.ts';
+import { encodeBundle, encodeSection, StringTable } from './browser-pack-encoding.ts';
 import { knowledgeDigest } from './orthography-hot-artifact.ts';
 import { canonicalizeOrthographyKnowledge, FACT_KINDS, KNOWLEDGE_ORIGINS, RULE_CLASSES, RULE_DIRECTIONALITIES, RULE_LOSSINESS, type OrthographyFact, type OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
 import { resolveProjectionPolicy, type OrthographyProfilePolicy } from './orthography-policy.ts';
@@ -86,6 +87,9 @@ export interface BrowserPackLayerContext {
   add(kind: BrowserPackSectionKind, body: Uint8Array, extra?: { shard?: BrowserPackShardDescriptor; profileId?: string; rowCount?: number; requires?: string[] }): string;
 }
 
+/** Canonical fact id form; v2 compact detail stores no ids and derives them from the facts row. */
+export const derivedFactId = (fact: { kind: string; surface?: string; reading?: string; target?: string }) => `fact:${fact.kind}:${fact.surface ?? ''}|${fact.reading ?? ''}|${fact.target ?? ''}`;
+
 export interface CompileOptions {
   shardBudgetBytes?: number;
   terminology?: unknown;
@@ -125,12 +129,16 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
   const shards = partition(entries, graph.facts, options.shardBudgetBytes ?? DEFAULT_SHARD_BUDGET_BYTES);
   const directory = { index: [] as number[], from: [] as string[], to: [] as string[], rows: [] as number[], keys: [] as number[], maxKeyLength: [] as number[] };
 
+  // v2 (#196 I): bundled knowledge shards + compact detail encoding
+  const bundled = options.compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION;
+  const compact = bundled;
   shards.forEach((shardEntries, index) => {
     const shard: BrowserPackShardDescriptor = { key: BROWSER_PACK_SHARD_KEY, index, count: shards.length, from: shardEntries[0]!.key, to: shardEntries[shardEntries.length - 1]!.key };
     const pool = new StringTable();
     const kind: number[] = [], surface: number[] = [], reading: number[] = [], target: number[] = [], flags: number[] = [], origin: number[] = [], role: number[] = [], factIndex: number[] = [];
     const detail = new StringTable();
     const factId: number[] = [], lexicalRefs: number[][] = [], tags: number[][] = [], sourceRefs: number[][] = [], evidenceRefs: number[][] = [];
+    const evidencePrefix: number[][] = [], evidenceSuffix: number[][] = [];
     const postings = new Map<string, number[]>();
     shardEntries.forEach((entry, row) => {
       const fact = graph.facts[entry.factIndex]!;
@@ -142,30 +150,53 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
       origin.push(enumIndex(KNOWLEDGE_ORIGINS, fact.origin));
       role.push(entry.role);
       factIndex.push(entry.factIndex);
-      factId.push(detail.id(fact.id));
+      if (compact) {
+        // v2 compact detail: the fact id is derived from the facts row; evidence refs are split into a
+        // shared prefix and a suffix (a handful of prefixes cover every evidence ref)
+        factId.push(fact.id === derivedFactId(fact) ? 0 : detail.id(fact.id)); // 0 = derived from the facts row
+        const split = fact.evidenceRefs.map((r) => { const at = r.lastIndexOf(':') + 1; return [r.slice(0, at), r.slice(at)] as const; });
+        evidencePrefix.push(split.map(([p]) => detail.id(p)));
+        evidenceSuffix.push(split.map(([, x]) => detail.id(x)));
+      } else {
+        factId.push(detail.id(fact.id));
+      }
       lexicalRefs.push(fact.lexicalRefs.map((r) => detail.id(r)));
       tags.push((fact.tags ?? []).map((t) => detail.id(t)));
       sourceRefs.push(fact.sourceRefs.map((r) => detail.id(r)));
-      evidenceRefs.push(fact.evidenceRefs.map((r) => detail.id(r)));
+      if (!compact) evidenceRefs.push(fact.evidenceRefs.map((r) => detail.id(r)));
       postings.set(entry.key, [...(postings.get(entry.key) ?? []), row]);
     });
     const keys = [...postings.keys()].sort(cmp);
     const keyIds = keys.map((k) => pool.id(k));
-    const poolId = add('string-pool', encodeSection([{ name: 'strings', kind: 'strings', values: pool.values }]), { shard, rowCount: pool.values.length });
-    const factsId = add('facts', encodeSection([
+    const poolBody = encodeSection([{ name: 'strings', kind: 'strings', values: pool.values }]);
+    const factsBody = encodeSection([
       { name: 'kind', kind: 'scalar', values: kind }, { name: 'surface', kind: 'scalar', values: surface }, { name: 'reading', kind: 'scalar', values: reading },
       { name: 'target', kind: 'scalar', values: target }, { name: 'flags', kind: 'scalar', values: flags }, { name: 'origin', kind: 'scalar', values: origin },
       { name: 'role', kind: 'scalar', values: role }, { name: 'factIndex', kind: 'scalar', values: factIndex }
-    ]), { shard, rowCount: shardEntries.length, requires: [poolId] });
-    add('lexical-index', encodeSection([
+    ]);
+    const lexicalBody = encodeSection([
       { name: 'key', kind: 'scalar', values: keyIds },
       { name: 'rows', kind: 'list', values: keys.map((k) => postings.get(k)!) }
-    ]), { shard, rowCount: keys.length, requires: [factsId] });
+    ]);
+    let factsId: string;
+    if (bundled) {
+      // v2: one fetch per knowledge shard (#196 I)
+      factsId = add('knowledge-bundle', encodeBundle([['string-pool', poolBody], ['facts', factsBody], ['lexical-index', lexicalBody]]), { shard, rowCount: shardEntries.length });
+    } else {
+      const poolId = add('string-pool', poolBody, { shard, rowCount: pool.values.length });
+      factsId = add('facts', factsBody, { shard, rowCount: shardEntries.length, requires: [poolId] });
+      add('lexical-index', lexicalBody, { shard, rowCount: keys.length, requires: [factsId] });
+    }
     add('provenance-index', encodeSection([
       { name: 'factIndex', kind: 'scalar', values: factIndex },
       { name: 'detailRow', kind: 'scalar', values: shardEntries.map((_, row) => row) }
     ]), { shard, rowCount: shardEntries.length, requires: [factsId] });
-    add('detail-shard', encodeSection([
+    add('detail-shard', encodeSection(compact ? [
+      { name: 'strings', kind: 'strings', values: detail.values }, { name: 'factId', kind: 'scalar', values: factId },
+      { name: 'lexicalRefs', kind: 'list', values: lexicalRefs }, { name: 'tags', kind: 'list', values: tags },
+      { name: 'sourceRefs', kind: 'list', values: sourceRefs },
+      { name: 'evidencePrefix', kind: 'list', values: evidencePrefix }, { name: 'evidenceSuffix', kind: 'list', values: evidenceSuffix }
+    ] : [
       { name: 'strings', kind: 'strings', values: detail.values }, { name: 'factId', kind: 'scalar', values: factId },
       { name: 'lexicalRefs', kind: 'list', values: lexicalRefs }, { name: 'tags', kind: 'list', values: tags },
       { name: 'sourceRefs', kind: 'list', values: sourceRefs }, { name: 'evidenceRefs', kind: 'list', values: evidenceRefs }

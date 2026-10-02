@@ -274,6 +274,13 @@
     }
     for (const reading of readingKeys) await pack.prepare(reading);
 
+    // style overlay attested-form check (#196 G) needs the lexeme's forms: fetch those few records
+    const styleFrom = new Set(rules.filter((r) => r.predicate?.styleFamily === "okurigana-abbreviation").flatMap((r) => r.from));
+    const formsOf = new Map();
+    for (const list of inflected.values()) for (const c of list) {
+      if (c.inflection && styleFrom.has(c.inflection.baseSurface) && !formsOf.has(c.lexemeId)) formsOf.set(c.lexemeId, (await lexical.getForms(c.lexemeId)).map((f) => f.surface));
+    }
+
     const candidates = [];
     const contextual = [];
     const recognized = [];
@@ -356,7 +363,7 @@
             while (k < Math.min(from.length, to.length) && from[from.length - 1 - k] === to[to.length - 1 - k]) k += 1;
             const stemFrom = from.slice(0, from.length - k);
             const stemTo = to.slice(0, to.length - k);
-            if (same.length && same.every((c) => c.inflection?.baseSurface === from && c.forms.some((f) => f.surface === to)) && surface.startsWith(stemFrom)) {
+            if (same.length && same.every((c) => c.inflection?.baseSurface === from && (formsOf.get(c.lexemeId) ?? []).includes(to)) && surface.startsWith(stemFrom)) {
               output = stemTo + surface.slice(stemFrom.length);
             }
           }

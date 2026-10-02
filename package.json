@@ -35,7 +35,8 @@
     "validate:browser-pack": "node --import tsx tools/generate-browser-pack.ts --check",
     "build:site": "node --import tsx tools/build-site.ts",
     "serve:site": "node --import tsx tools/serve-site.ts",
-    "measure:browser-capability": "node --import tsx tools/measure-browser-capability-utilization.ts"
+    "measure:browser-capability": "node --import tsx tools/measure-browser-capability-utilization.ts",
+    "measure:browser-pack-v2": "node --expose-gc --import tsx tools/measure-browser-pack-v2.ts"
   },
   "repository": {
     "type": "git",

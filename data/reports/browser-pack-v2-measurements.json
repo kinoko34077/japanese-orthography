@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-pack-v2-measurements",
+  "owner": "japanese-orthography#196 I",
+  "packDigest": "4e95b70d91cc25d33beffbd74558bdfba7a2057e4ed6f922ef136fa4c4ddf782",
+  "sections": 1904,
+  "sizes": {
+    "total": 136729044,
+    "totalGzip": 51036839,
+    "byLoading": {
+      "eager": {
+        "sections": 9,
+        "bytes": 414800,
+        "gzipBytes": 119417
+      },
+      "lazy": {
+        "sections": 328,
+        "bytes": 29117688,
+        "gzipBytes": 8554170
+      },
+      "on-demand": {
+        "sections": 1567,
+        "bytes": 107196556,
+        "gzipBytes": 42363252
+      }
+    },
+    "byKind": {
+      "bindings": {
+        "sections": 1,
+        "bytes": 234608,
+        "gzipBytes": 56976
+      },
+      "detail-shard": {
+        "sections": 328,
+        "bytes": 29117688,
+        "gzipBytes": 8554170
+      },
+      "knowledge-bundle": {
+        "sections": 328,
+        "bytes": 20837392,
+        "gzipBytes": 9074423
+      },
+      "lexeme-forms": {
+        "sections": 54,
+        "bytes": 7734256,
+        "gzipBytes": 3580942
+      },
+      "lexeme-readings": {
+        "sections": 54,
+        "bytes": 16740212,
+        "gzipBytes": 6441577
+      },
+      "lexeme-table": {
+        "sections": 54,
+        "bytes": 11057316,
+        "gzipBytes": 3745035
+      },
+      "lexical-directory": {
+        "sections": 1,
+        "bytes": 40188,
+        "gzipBytes": 20799
+      },
+      "morphology-table": {
+        "sections": 1,
+        "bytes": 10204,
+        "gzipBytes": 4534
+      },
+      "profile-policy": {
+        "sections": 3,
+        "bytes": 1714,
+        "gzipBytes": 871
+      },
+      "provenance-index": {
+        "sections": 328,
+        "bytes": 3398348,
+        "gzipBytes": 2526216
+      },
+      "reading-index": {
+        "sections": 409,
+        "bytes": 24808608,
+        "gzipBytes": 8905564
+      },
+      "rules": {
+        "sections": 1,
+        "bytes": 100412,
+        "gzipBytes": 22342
+      },
+      "shard-directory": {
+        "sections": 1,
+        "bytes": 15700,
+        "gzipBytes": 9778
+      },
+      "surface-index": {
+        "sections": 340,
+        "bytes": 22620424,
+        "gzipBytes": 8089495
+      },
+      "terminology": {
+        "sections": 1,
+        "bytes": 11974,
+        "gzipBytes": 4117
+      }
+    }
+  },
+  "runs": {
+    "short": {
+      "textLength": 20,
+      "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
+      "eager": {
+        "requests": 9,
+        "bytes": 414800,
+        "gzipBytes": 120419,
+        "openMs": 47
+      },
+      "coldFirstResult": {
+        "requests": 66,
+        "bytes": 4284008,
+        "gzipBytes": 1718322,
+        "ms": 309
+      },
+      "warmRepeat": {
+        "requests": 0,
+        "ms": 8
+      },
+      "detailLatencyMs": 4,
+      "unitDetailLatencyMs": 81,
+      "residentArrayBufferBytes": 7428100,
+      "jsHeapDeltaBytes": 11832312,
+      "spans": 4,
+      "inspectableUnits": 8
+    },
+    "representative": {
+      "textLength": 74,
+      "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
+      "eager": {
+        "requests": 9,
+        "bytes": 414800,
+        "gzipBytes": 120419,
+        "openMs": 31
+      },
+      "coldFirstResult": {
+        "requests": 148,
+        "bytes": 9520052,
+        "gzipBytes": 3758620,
+        "ms": 540
+      },
+      "warmRepeat": {
+        "requests": 0,
+        "ms": 20
+      },
+      "detailLatencyMs": 3,
+      "unitDetailLatencyMs": 23,
+      "residentArrayBufferBytes": 10778136,
+      "jsHeapDeltaBytes": 11888408,
+      "spans": 7,
+      "inspectableUnits": 23
+    }
+  },
+  "note": "sizes exact; ms and heap are local observations (machine-dependent), recorded for comparison only",
+  "baselineBeforeI": {
+    "packDigest": "709d1f1781e90884f407733c5783cd389df54bf84ce26e8baead10f589c13391",
+    "sections": 2033,
+    "sizes": {
+      "total": 131450672,
+      "totalGzip": 46493400,
+      "byLoading": {
+        "eager": {
+          "sections": 9,
+          "bytes": 387712,
+          "gzipBytes": 106007
+        },
+        "lazy": {
+          "sections": 328,
+          "bytes": 57711144,
+          "gzipBytes": 14158350
+        },
+        "on-demand": {
+          "sections": 1696,
+          "bytes": 73351816,
+          "gzipBytes": 32229043
+        }
+      }
+    },
+    "runs": {
+      "short": {
+        "textLength": 20,
+        "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
+        "eager": {
+          "requests": 9,
+          "bytes": 387712,
+          "gzipBytes": 106998,
+          "openMs": 57
+        },
+        "coldFirstResult": {
+          "requests": 232,
+          "bytes": 27895996,
+          "gzipBytes": 11700465,
+          "ms": 1201
+        },
+        "warmRepeat": {
+          "requests": 0,
+          "ms": 15
+        },
+        "detailLatencyMs": 7,
+        "unitDetailLatencyMs": 1,
+        "residentArrayBufferBytes": 28456420,
+        "jsHeapDeltaBytes": 13038232,
+        "spans": 4,
+        "inspectableUnits": 8
+      },
+      "representative": {
+        "textLength": 74,
+        "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
+        "eager": {
+          "requests": 9,
+          "bytes": 387712,
+          "gzipBytes": 106998,
+          "openMs": 33
+        },
+        "coldFirstResult": {
+          "requests": 358,
+          "bytes": 36261568,
+          "gzipBytes": 15256452,
+          "ms": 1694
+        },
+        "warmRepeat": {
+          "requests": 0,
+          "ms": 42
+        },
+        "detailLatencyMs": 7,
+        "unitDetailLatencyMs": 5,
+        "residentArrayBufferBytes": 36989624,
+        "jsHeapDeltaBytes": 11480776,
+        "spans": 7,
+        "inspectableUnits": 23
+      }
+    }
+  }
+}
