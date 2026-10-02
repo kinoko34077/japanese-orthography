@@ -17,7 +17,7 @@ test('every section byte is assigned to exactly one payload class', () => {
   const report = measurePackPayload(build);
   assert.equal(report.classTotalBytes, report.totalBytes);
   for (const c of Object.values(report.classes)) {
-    assert.equal(c.unicodeStringBytes + c.stringOffsetBytes + c.integerBytes + c.overheadBytes + c.jsonBytes, c.bytes);
+    assert.equal(c.unicodeStringBytes + c.stringOffsetBytes + c.symbolTokenBytes + c.integerBytes + c.overheadBytes + c.jsonBytes, c.bytes);
   }
   const t = report.textualPayload;
   assert.equal(t.occurrenceBytes, t.occurrences.orthographic.bytes + t.occurrences.identifier.bytes);

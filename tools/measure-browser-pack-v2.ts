@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import type { BrowserPackBuild } from './browser-pack-compiler.ts';
-import { buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
+import { buildAcceptedBrowserPackV2, buildAcceptedBrowserPackV3 } from './generate-browser-pack.ts';
 
 // #196 I — BrowserPack v2 physical measurements over the real accepted pack and the real runtime
 // path (pack runtime + lexical runtime + resolver adapter + diagnostic contract). Sizes are exact;
@@ -12,6 +12,7 @@ import { buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
 //   npm run measure:browser-pack-v2   (node --expose-gc) -> data/reports/browser-pack-v2-measurements.json
 
 export const BROWSER_PACK_V2_MEASUREMENTS = 'data/reports/browser-pack-v2-measurements.json';
+export const BROWSER_PACK_V3_MEASUREMENTS = 'data/reports/browser-pack-v3-measurements.json';
 
 const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
@@ -94,7 +95,14 @@ export async function measureBrowserPackV2(build: BrowserPackBuild) {
   };
 }
 
-if (process.argv[1]?.endsWith('measure-browser-pack-v2.ts')) {
+if (process.argv[1]?.endsWith('measure-browser-pack-v2.ts') && process.argv.includes('--v3')) {
+  // #211 F: the same harness over BrowserPack v3 (symbol-encoded hot strings)
+  const root = resolve(process.cwd());
+  const report = await measureBrowserPackV2(await buildAcceptedBrowserPackV3(root));
+  await writeFile(resolve(root, BROWSER_PACK_V3_MEASUREMENTS), `${JSON.stringify({ ...report, kind: 'browser-pack-v3-measurements', owner: 'japanese-orthography#211 F' }, null, 2)}
+`);
+  console.log(JSON.stringify({ total: report.sizes.total, gzip: report.sizes.totalGzip, runs: report.runs }, null, 1));
+} else if (process.argv[1]?.endsWith('measure-browser-pack-v2.ts')) {
   const root = resolve(process.cwd());
   const report = await measureBrowserPackV2(await buildAcceptedBrowserPackV2(root));
   let previous: unknown = null;

@@ -65,6 +65,8 @@
     if ((await packIdentity(manifest)) !== manifest.packDigest) throw new Error("BrowserPack manifest digest mismatch");
 
     const byId = new Map(manifest.sections.map((s) => [s.sectionId, s]));
+    // v3 (#211 F): string columns are SymbolId tokens over the pack's Symbol Registry
+    let decodeOptions = {};
     const stats = { sectionsLoaded: 0, bytesLoaded: 0, loaded: [] };
     const cache = new Map();
     const fetchVerified = async (sectionId) => {
@@ -80,7 +82,7 @@
         stats.bytesLoaded += bytes.byteLength;
         stats.loaded.push(sectionId);
         if (section.encoding === "json") return JSON.parse(new TextDecoder().decode(bytes));
-        return section.encoding === "binary-bundle" ? decodeBundle(bytes) : decodeSection(bytes);
+        return section.encoding === "binary-bundle" ? decodeBundle(bytes, decodeOptions) : decodeSection(bytes, decodeOptions);
       })();
       cache.set(sectionId, promise);
       try {
@@ -94,6 +96,13 @@
     // ---- eager open -------------------------------------------------------------------------------
     const eager = manifest.sections.filter((s) => s.loading === "eager");
     const loadedEager = new Map();
+    if (byId.has("symbol-registry")) {
+      const registry = await fetchVerified("symbol-registry");
+      const atoms = [];
+      for (let i = 0; i < registry.rowCount("atoms"); i += 1) atoms.push(registry.string("atoms", i));
+      decodeOptions = { atoms };
+      loadedEager.set("symbol-registry", registry);
+    }
     for (const section of eager) loadedEager.set(section.sectionId, await fetchVerified(section.sectionId));
     const directory = loadedEager.get("shard-directory");
     const rules = loadedEager.get("rules");

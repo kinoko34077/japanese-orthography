@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import type { BrowserPackBuild } from './browser-pack-compiler.ts';
-import { buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
+import { buildAcceptedBrowserPackV2, buildAcceptedBrowserPackV3 } from './generate-browser-pack.ts';
 
 // #208 / #211 A — payload decomposition of the accepted BrowserPack v2 (§16.1). Every section byte is
 // assigned to exactly one payload class, and within binary sections split into Unicode string bytes
@@ -15,6 +15,7 @@ import { buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
 //   npm run measure:pack-payload -- --check
 
 export const PACK_PAYLOAD_REPORT = 'data/reports/browser-pack-v2-payload-decomposition.json';
+export const PACK_PAYLOAD_REPORT_V3 = 'data/reports/browser-pack-v3-payload-decomposition.json';
 
 const require = createRequire(import.meta.url);
 const { decodeSection, decodeBundle } = require('../runtime/browser-pack-binary.js');
@@ -27,37 +28,43 @@ export const PAYLOAD_CLASS: Record<string, string> = {
   'morphology-table': 'morphology',
   'detail-shard': 'provenance-evidence', 'provenance-index': 'provenance-evidence',
   rules: 'rules-bindings', bindings: 'rules-bindings',
-  'profile-policy': 'profile', terminology: 'presentation'
+  'profile-policy': 'profile', terminology: 'presentation', 'symbol-registry': 'symbol-registry'
 };
 
 const utf8 = new TextEncoder();
 /** Orthographic text vs identifier text (ids, refs, tags, URLs): identifiers contain ':' or are ASCII-only. */
 export const isIdentifierText = (s: string) => s.includes(':') || /^[\x00-\x7f]*$/u.test(s);
 
-export function measurePackPayload(build: BrowserPackBuild) {
-  const classes: Record<string, { sections: number; bytes: number; unicodeStringBytes: number; stringOffsetBytes: number; integerBytes: number; overheadBytes: number; jsonBytes: number }> = {};
+export function measurePackPayload(build: BrowserPackBuild, options: { atoms?: string[] } = {}) {
+  const classes: Record<string, { sections: number; bytes: number; unicodeStringBytes: number; stringOffsetBytes: number; symbolTokenBytes: number; integerBytes: number; overheadBytes: number; jsonBytes: number }> = {};
   const occurrences = { orthographic: { count: 0, bytes: 0 }, identifier: { count: 0, bytes: 0 } };
   const distinct = new Map<string, number>(); // string -> occurrences
   const atomOccurrences = new Map<string, number>();
-  const row = (name: string) => (classes[name] ??= { sections: 0, bytes: 0, unicodeStringBytes: 0, stringOffsetBytes: 0, integerBytes: 0, overheadBytes: 0, jsonBytes: 0 });
+  const row = (name: string) => (classes[name] ??= { sections: 0, bytes: 0, unicodeStringBytes: 0, stringOffsetBytes: 0, symbolTokenBytes: 0, integerBytes: 0, overheadBytes: 0, jsonBytes: 0 });
 
+  const decodeOptions = options.atoms ? { atoms: options.atoms } : {};
+  const recordString = (s: string) => {
+    if (s === '') return;
+    const bytes = utf8.encode(s).length;
+    const kind = isIdentifierText(s) ? 'identifier' : 'orthographic';
+    occurrences[kind].count += 1; occurrences[kind].bytes += bytes;
+    distinct.set(s, (distinct.get(s) ?? 0) + 1);
+    if (kind === 'orthographic') for (const atom of Array.from(s)) atomOccurrences.set(atom, (atomOccurrences.get(atom) ?? 0) + 1);
+  };
   const account = (cls: string, section: any, totalBytes: number) => {
     const r = row(cls);
     let accounted = 0;
     for (const column of Object.values<any>(section.columns)) {
       const data = column.values.byteLength;
       const offsets = column.offsets?.byteLength ?? 0;
-      if (column.utf8) {
+      if (column.name.endsWith('$tok')) {
+        // v3 symbol-encoded string column: logical strings are decoded through the registry atoms
+        r.symbolTokenBytes += data + offsets;
+        const logical: string = column.name.slice(0, -4);
+        for (let i = 0; i < column.rowCount; i += 1) recordString(section.string(logical, i));
+      } else if (column.utf8) {
         r.unicodeStringBytes += data; r.stringOffsetBytes += offsets;
-        for (let i = 0; i < column.rowCount; i += 1) {
-          const s: string = section.string(column.name, i);
-          if (s === '') continue;
-          const bytes = utf8.encode(s).length;
-          const kind = isIdentifierText(s) ? 'identifier' : 'orthographic';
-          occurrences[kind].count += 1; occurrences[kind].bytes += bytes;
-          distinct.set(s, (distinct.get(s) ?? 0) + 1);
-          if (kind === 'orthographic') for (const atom of Array.from(s as string)) atomOccurrences.set(atom, (atomOccurrences.get(atom) ?? 0) + 1);
-        }
+        if (!column.name.endsWith('$raw')) for (let i = 0; i < column.rowCount; i += 1) recordString(section.string(column.name, i));
       } else {
         r.integerBytes += data + offsets;
       }
@@ -74,7 +81,7 @@ export function measurePackPayload(build: BrowserPackBuild) {
       continue;
     }
     if (s.encoding === 'binary-bundle') {
-      const bundle = decodeBundle(body);
+      const bundle = decodeBundle(body, decodeOptions);
       let partBytes = 0;
       for (const [name, part] of Object.entries<any>(bundle.parts)) {
         const cls = PAYLOAD_CLASS[name] ?? name;
@@ -90,7 +97,7 @@ export function measurePackPayload(build: BrowserPackBuild) {
     const cls = PAYLOAD_CLASS[s.kind] ?? s.kind;
     const r = row(cls);
     r.sections += 1; r.bytes += body.byteLength;
-    account(cls, decodeSection(body), body.byteLength);
+    account(cls, decodeSection(body, decodeOptions), body.byteLength);
   }
 
   const total = build.manifest.sections.reduce((n, s) => n + s.byteLength, 0);
@@ -127,14 +134,17 @@ export function measurePackPayload(build: BrowserPackBuild) {
 
 if (process.argv[1]?.endsWith('measure-pack-payload.ts')) {
   const root = resolve(process.cwd());
-  const report = measurePackPayload(await buildAcceptedBrowserPackV2(root));
+  const v3 = process.argv.includes('--v3');
+  const atoms = v3 ? (JSON.parse(await readFile(resolve(root, 'data/runtime/symbol-registry.json'), 'utf8')).atoms as string[]) : undefined;
+  const out = v3 ? PACK_PAYLOAD_REPORT_V3 : PACK_PAYLOAD_REPORT;
+  const report = measurePackPayload(v3 ? await buildAcceptedBrowserPackV3(root) : await buildAcceptedBrowserPackV2(root), atoms ? { atoms } : {});
   const text = `${JSON.stringify(report, null, 2)}\n`;
   if (process.argv.includes('--check')) {
-    const committed = (await readFile(resolve(root, PACK_PAYLOAD_REPORT), 'utf8')).replace(/\r\n/g, '\n');
-    if (committed !== text) throw new Error(`stale ${PACK_PAYLOAD_REPORT}; run npm run measure:pack-payload`);
-    console.log(`${PACK_PAYLOAD_REPORT} OK`);
+    const committed = (await readFile(resolve(root, out), 'utf8')).replace(/\r\n/g, '\n');
+    if (committed !== text) throw new Error(`stale ${out}; run npm run measure:pack-payload`);
+    console.log(`${out} OK`);
   } else {
-    await writeFile(resolve(root, PACK_PAYLOAD_REPORT), text);
+    await writeFile(resolve(root, out), text);
     console.log(JSON.stringify({ total: report.totalBytes, textual: report.textualPayload, atoms: report.orthographicAtoms.distinct }, null, 1));
   }
 }

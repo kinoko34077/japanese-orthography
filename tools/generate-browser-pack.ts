@@ -9,6 +9,9 @@ import { jmdictLexemeMorphology, lexicalLayer, mergeMorphology, unidicLexemeMorp
 import { loadJmdictIntake } from './jmdict-intake.ts';
 import type { UniDicSourceSlice } from './lexical-compiler.ts';
 import { BROWSER_RESOLVER_PARITY_REPORT, browserCoreParity } from './browser-resolver-parity.ts';
+import { assertV3Equivalent, transcodeToV3 } from './browser-pack-v3.ts';
+import { SYMBOL_REGISTRY, type SymbolRegistry } from './symbol-registry.ts';
+import { CAPABILITY_PROBES } from './measure-browser-capability-utilization.ts';
 import { normalizeCheckoutText } from './verification-text.ts';
 
 // BrowserPack B (#185 B): build the pack from the accepted v2 knowledge.
@@ -21,6 +24,15 @@ export const BROWSER_PACK_COMPILED_REPORT = 'data/reports/browser-pack-v1-compil
 export const BROWSER_PACK_V2_DIR = 'data/browser-pack-v2';
 export const BROWSER_PACK_V2_MANIFEST = `${BROWSER_PACK_V2_DIR}/manifest.json`;
 export const BROWSER_PACK_V2_COMPILED_REPORT = 'data/reports/browser-pack-v2-compiled.json';
+export const BROWSER_PACK_V3_DIR = 'data/browser-pack-v3';
+export const BROWSER_PACK_V3_MANIFEST = `${BROWSER_PACK_V3_DIR}/manifest.json`;
+export const BROWSER_PACK_V3_COMPILED_REPORT = 'data/reports/browser-pack-v3-compiled.json';
+
+/** BrowserPack v3 (#211 F): the v2 build transcoded to symbol-encoded hot strings. */
+export async function buildAcceptedBrowserPackV3(rootDir: string, graph?: AcceptedGraph): Promise<BrowserPackBuild> {
+  const registry = JSON.parse(await readFile(resolve(rootDir, SYMBOL_REGISTRY), 'utf8')) as SymbolRegistry;
+  return transcodeToV3(await buildAcceptedBrowserPackV2(rootDir, graph), registry);
+}
 const PROFILES = [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE];
 
 type AcceptedGraph = Awaited<ReturnType<typeof normalizeAcceptedOrthographySources>>['graph'];
@@ -62,7 +74,7 @@ export function compiledReport(build: BrowserPackBuild) {
   return {
     schemaVersion: '1',
     kind: `browser-pack-v${build.manifest.compilerVersion}-compiled`,
-    owner: build.manifest.compilerVersion === '1' ? 'japanese-orthography#185 B' : 'japanese-orthography#196 B',
+    owner: { '1': 'japanese-orthography#185 B', '2': 'japanese-orthography#196 B', '3': 'japanese-orthography#211 F' }[build.manifest.compilerVersion] ?? 'unknown',
     packDigest: build.manifest.packDigest,
     canonicalGraphSha256: build.manifest.canonicalGraphSha256,
     totals: Object.values(byLoading).reduce((t, r) => ({ sections: t.sections + r.sections, bytes: t.bytes + r.bytes, gzipBytes: t.gzipBytes + r.gzipBytes }), { sections: 0, bytes: 0, gzipBytes: 0 }),
@@ -112,4 +124,10 @@ if (process.argv[1]?.endsWith('generate-browser-pack.ts')) {
   } else {
     await writeFile(resolve(rootDir, BROWSER_RESOLVER_PARITY_REPORT), parityText);
   }
+  // #211 F: BrowserPack v3 (symbol-encoded hot strings) must be semantically identical to v2
+  const registry = JSON.parse(await readFile(resolve(rootDir, SYMBOL_REGISTRY), 'utf8')) as SymbolRegistry;
+  const v3 = transcodeToV3(v2, registry);
+  await emit(rootDir, v3, BROWSER_PACK_V3_DIR, BROWSER_PACK_V3_MANIFEST, BROWSER_PACK_V3_COMPILED_REPORT, check);
+  const compared = await assertV3Equivalent(v2, v3, CAPABILITY_PROBES.map((p) => p.text));
+  console.log(`BrowserPack v3 ≡ v2 on ${compared} probe conversions`);
 }
