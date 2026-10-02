@@ -2,11 +2,11 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization",
   "owner": "japanese-orthography#196 A",
-  "packDigest": "dd49a99ebd535793a0ff3501a275199f03f466925d5707766363fbb94e205993",
+  "packDigest": "c69c8ed17b0d345dc8b15df357fc4950b5a03e5edc3dec40964156abfaf995ff",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
   "canonical": {
     "facts": 555284,
-    "rules": 199,
+    "rules": 203,
     "bindings": 2000,
     "factsByKindAndV1Route": {
       "form_relation": {
@@ -40,9 +40,9 @@
         "not_executed": 4
       },
       "render": {
-        "total": 8,
+        "total": 12,
         "not_executed": 7,
-        "exact_token_rule": 1
+        "exact_token_rule": 5
       }
     },
     "lexicalIdentities": {
@@ -59,7 +59,7 @@
     }
   },
   "probes": {
-    "eagerBytes": 359842,
+    "eagerBytes": 361206,
     "profiles": [
       "modern",
       "historical",
@@ -99,9 +99,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122608,
-          "total": 482450
+          "total": 483814
         }
       },
       {
@@ -141,9 +141,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122608,
-          "total": 482450
+          "total": 483814
         }
       },
       {
@@ -183,9 +183,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122608,
-          "total": 482450
+          "total": 483814
         }
       },
       {
@@ -220,9 +220,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 256612,
-          "total": 616454
+          "total": 617818
         }
       },
       {
@@ -261,9 +261,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 256612,
-          "total": 616454
+          "total": 617818
         }
       },
       {
@@ -302,9 +302,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 256612,
-          "total": 616454
+          "total": 617818
         }
       },
       {
@@ -340,9 +340,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 182936,
-          "total": 542778
+          "total": 544142
         }
       },
       {
@@ -378,9 +378,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 182936,
-          "total": 542778
+          "total": 544142
         }
       },
       {
@@ -416,9 +416,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 182936,
-          "total": 542778
+          "total": 544142
         }
       },
       {
@@ -453,9 +453,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 224320,
-          "total": 584162
+          "total": 585526
         }
       },
       {
@@ -490,9 +490,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 224320,
-          "total": 584162
+          "total": 585526
         }
       },
       {
@@ -527,9 +527,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 224320,
-          "total": 584162
+          "total": 585526
         }
       },
       {
@@ -564,9 +564,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 131464,
-          "total": 491306
+          "total": 492670
         }
       },
       {
@@ -601,9 +601,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 131464,
-          "total": 491306
+          "total": 492670
         }
       },
       {
@@ -638,9 +638,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 131464,
-          "total": 491306
+          "total": 492670
         }
       },
       {
@@ -676,9 +676,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 254680,
-          "total": 614522
+          "total": 615886
         }
       },
       {
@@ -714,9 +714,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 254680,
-          "total": 614522
+          "total": 615886
         }
       },
       {
@@ -727,8 +727,8 @@
           "surface",
           "profile_style"
         ],
-        "renderedText": "分かる",
-        "changed": false,
+        "renderedText": "分る",
+        "changed": true,
         "lexicalMatches": 4,
         "reachedFacts": 8,
         "reachedFactsByKind": {
@@ -738,23 +738,27 @@
         "promotedFacts": 0,
         "lookupOnlyReachedFacts": 8,
         "contextualFacts": 0,
-        "candidates": 0,
-        "candidatesByOrigin": {},
-        "enteredArbitration": 0,
-        "accepted": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "rule": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
         "blocked": 0,
         "blockedByReason": {},
         "unresolved": 0,
-        "spanStates": [],
+        "spanStates": [
+          "分かる:applied:分る"
+        ],
         "sectionRequests": {
           "eager": 7,
           "onDemand": 12,
           "total": 19
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 254680,
-          "total": 614522
+          "total": 615886
         }
       },
       {
@@ -791,9 +795,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 119804,
-          "total": 479646
+          "total": 481010
         }
       },
       {
@@ -836,9 +840,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 119804,
-          "total": 479646
+          "total": 481010
         }
       },
       {
@@ -881,9 +885,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 119804,
-          "total": 479646
+          "total": 481010
         }
       },
       {
@@ -920,9 +924,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122488,
-          "total": 482330
+          "total": 483694
         }
       },
       {
@@ -965,9 +969,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122488,
-          "total": 482330
+          "total": 483694
         }
       },
       {
@@ -1010,9 +1014,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 122488,
-          "total": 482330
+          "total": 483694
         }
       },
       {
@@ -1048,9 +1052,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 463984,
-          "total": 823826
+          "total": 825190
         }
       },
       {
@@ -1092,9 +1096,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 463984,
-          "total": 823826
+          "total": 825190
         }
       },
       {
@@ -1136,9 +1140,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 463984,
-          "total": 823826
+          "total": 825190
         }
       },
       {
@@ -1174,9 +1178,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 460068,
-          "total": 819910
+          "total": 821274
         }
       },
       {
@@ -1216,9 +1220,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 460068,
-          "total": 819910
+          "total": 821274
         }
       },
       {
@@ -1258,9 +1262,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 460068,
-          "total": 819910
+          "total": 821274
         }
       },
       {
@@ -1299,9 +1303,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 370352,
-          "total": 730194
+          "total": 731558
         }
       },
       {
@@ -1344,9 +1348,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 370352,
-          "total": 730194
+          "total": 731558
         }
       },
       {
@@ -1389,9 +1393,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 359842,
+          "eager": 361206,
           "onDemand": 370352,
-          "total": 730194
+          "total": 731558
         }
       }
     ],

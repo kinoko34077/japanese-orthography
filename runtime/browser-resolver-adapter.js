@@ -339,9 +339,31 @@
         for (const r of relationsHere.filter((x) => x.contextual && resolved.historical.contextualKanji.status !== "resolved")) contextual.push({ start, end, output: r.target, fact: r.fact });
       }
       if (!outputs.length) recognized.push({ start, end, surface, unit: summarizeUnit(resolved) });
-      // KiNoTch exact-token profile rules (accepted v1 behaviour; the style overlay is unit G)
-      for (const rule of exactTokenRules.filter((r) => r.from.includes(surface))) {
-        candidates.push({ start, end, output: rule.to[0], policy: "whole_lexeme", origin: "rule", ref: rule.id, rule });
+      // KiNoTch style/render overlay (#196 G, #47): composed *after* the semantic result. A profile
+      // style rule applies to an exact token, or — for the okurigana family — to an inflected form
+      // of the same lexeme when the style target is an attested form of that lexeme. It never
+      // overrides a semantic change (the semantic output no longer carries the rule's source form).
+      if (!outputs.length && !unit.ruby) {
+        const lexicalForStyle = isKana(surface) ? [] : lexicalCandidates(surface);
+        for (const rule of exactTokenRules) {
+          let output = null;
+          if (rule.from.includes(surface)) output = rule.to[0];
+          else if (rule.predicate?.styleFamily === "okurigana-abbreviation" && resolved.kind === "resolved" && resolved.lexicalIdentity) {
+            const same = lexicalForStyle.filter((c) => c.lexicalIdentity === resolved.lexicalIdentity);
+            const from = rule.from[0];
+            const to = rule.to[0];
+            let k = 0;
+            while (k < Math.min(from.length, to.length) && from[from.length - 1 - k] === to[to.length - 1 - k]) k += 1;
+            const stemFrom = from.slice(0, from.length - k);
+            const stemTo = to.slice(0, to.length - k);
+            if (same.length && same.every((c) => c.inflection?.baseSurface === from && c.forms.some((f) => f.surface === to)) && surface.startsWith(stemFrom)) {
+              output = stemTo + surface.slice(stemFrom.length);
+            }
+          }
+          if (output !== null && output !== surface) {
+            candidates.push({ start, end, output, policy: "whole_lexeme", origin: "rule", ref: rule.id, rule, unit: summarizeUnit(resolved), authority: "project_rule" });
+          }
+        }
       }
     }
     // deterministic character rendering outside lexical units (identity-independent, as in v1)
