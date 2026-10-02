@@ -1,7 +1,7 @@
 import { copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { serializeBrowserPackManifest } from './browser-pack-model.ts';
-import { buildAcceptedBrowserPack } from './generate-browser-pack.ts';
+import { buildAcceptedBrowserPack, buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
 
 // #185 G/I: assemble the static GitHub Pages site.
 //   dist-site/                 site/* (HTML, CSS, UI scripts, terminology)
@@ -22,7 +22,8 @@ export const SITE_RUNTIME_MODULES = [
   'browser-transform-worker.js'
 ];
 
-export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_OUT)): Promise<{ outDir: string; packDigest: string; files: number }> {
+/** `pack: 'v2'` builds the BrowserPack v2 (resolver) site for local preview; Pages stays on v1 until #196 J. */
+export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_OUT), pack: 'v1' | 'v2' = 'v1'): Promise<{ outDir: string; packDigest: string; files: number }> {
   await rm(outDir, { recursive: true, force: true });
   await mkdir(resolve(outDir, 'runtime'), { recursive: true });
   await mkdir(resolve(outDir, 'browser-pack'), { recursive: true });
@@ -35,7 +36,7 @@ export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_
     await copyFile(resolve(rootDir, 'runtime', name), resolve(outDir, 'runtime', name));
     files += 1;
   }
-  const build = await buildAcceptedBrowserPack(rootDir);
+  const build = pack === 'v2' ? await buildAcceptedBrowserPackV2(rootDir) : await buildAcceptedBrowserPack(rootDir);
   for (const [path, body] of build.files) {
     await writeFile(resolve(outDir, 'browser-pack', path), body);
     files += 1;
@@ -48,6 +49,6 @@ export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_
 
 if (process.argv[1]?.endsWith('build-site.ts')) {
   const rootDir = resolve(process.env.ORTHOGRAPHY_ROOT ?? process.cwd());
-  const result = await buildSite(rootDir);
+  const result = await buildSite(rootDir, resolve(rootDir, SITE_OUT), process.argv.includes('--v2') ? 'v2' : 'v1');
   console.log(`site built in ${result.outDir}: ${result.files} files, pack ${result.packDigest}`);
 }

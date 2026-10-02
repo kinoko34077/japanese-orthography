@@ -21,6 +21,12 @@
         <label><input type="radio" name="profile" value="modern"> 現代表記 <span class="hint">歴史的 → 現代</span></label>
         <label><input type="radio" name="profile" value="kinotch-fixed"> KiNoTch <span class="hint">歴史的＋KiNoTch 独自</span></label>
       </fieldset>
+      <fieldset class="profiles render-modes" id="render-modes" hidden>
+        <legend>出力形式 <span class="hint">output</span></legend>
+        <label><input type="radio" name="renderMode" value="plain" checked> 通常 <span class="hint">ルビなし</span></label>
+        <label><input type="radio" name="renderMode" value="ruby-whole-explicit"> 語全体にルビ <span class="hint">｜學校《がくかう》</span></label>
+        <label><input type="radio" name="renderMode" value="ruby-components-explicit"> 部分ルビ <span class="hint">構成要素ごと（情報がなければ語全体）</span></label>
+      </fieldset>
       <div class="actions">
         <button type="button" id="convert" class="primary">変換</button>
         <label class="auto"><input type="checkbox" id="auto"> 入力中に自動で変換</label>

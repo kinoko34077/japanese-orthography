@@ -1,15 +1,15 @@
 (function (root, factory) {
   const isCommonJs = typeof module === "object" && module.exports;
-  if (isCommonJs) require("./transform-shared.js"); // sets globalThis.TransformShared for the resolver
+  const shared = isCommonJs ? require("./transform-shared.js") : root.TransformShared; // also sets globalThis.TransformShared for the resolver
   const deps = isCommonJs
-    ? { planner: require("./browser-span-planner.js"), resolver: require("./orthography-resolver.js") }
-    : { planner: root.BrowserSpanPlanner, resolver: root.OrthographyResolver };
+    ? { planner: require("./browser-span-planner.js"), resolver: require("./orthography-resolver.js"), shared }
+    : { planner: root.BrowserSpanPlanner, resolver: root.OrthographyResolver, shared };
   const api = factory(deps);
   if (isCommonJs) module.exports = api;
   root.BrowserResolverAdapter = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function (deps) {
   "use strict";
-  const { planner, resolver: OrthographyResolver } = deps;
+  const { planner, resolver: OrthographyResolver, shared: TransformShared } = deps;
 
   // Browser resolver adapter (#196 D). The accepted OrthographyResolver is the single semantic
   // authority for historical-direction conversion; this module only feeds it pack-derived lookups
@@ -44,6 +44,30 @@
   const RUBY_MODES = new Set(["plain", "ruby-whole-explicit", "ruby-whole-implicit", "ruby-components-explicit", "ruby-components-implicit"]);
 
   const uniq = (values) => [...new Set(values)];
+
+  /**
+   * Ruby syntax spans of `text` (#196 E) via the accepted TransformShared parser, with UTF-16
+   * offsets. An explicit `｜` bar belongs to its span. If the segments cannot be laid back onto the
+   * text exactly, no Ruby is recognised (fail closed: the text is then ordinary text).
+   */
+  const rubySpans = (text) => {
+    if (typeof TransformShared?.parseRubySegments !== "function") return [];
+    const spans = [];
+    let at = 0;
+    for (const segment of TransformShared.parseRubySegments(text)) {
+      if (segment.type !== "ruby") {
+        if (text.slice(at, at + segment.text.length) !== segment.text) return [];
+        at += segment.text.length;
+        continue;
+      }
+      const explicit = (text[at] === "｜" || text[at] === "|") && text.slice(at + 1, at + 1 + segment.text.length) === segment.text;
+      const length = segment.text.length + (explicit ? 1 : 0);
+      if (!explicit && text.slice(at, at + length) !== segment.text) return [];
+      spans.push({ start: at, end: at + length, base: segment.base, reading: segment.ruby, explicit, source: text.slice(at, at + length) });
+      at += length;
+    }
+    return at === text.length ? spans : [];
+  };
 
   const transformWithResolver = async (pack, lexical, text, profileId, options = {}) => {
     const policy = pack.getProfilePolicy(profileId).policy;
@@ -156,11 +180,17 @@
     }
     // relation keys the lexicon does not list (e.g. inflected stems) are still lexical units
     for (const m of factMatches) if (m.facts.some((f) => kanjiRelation(f) || kanaRelation(f) || f.safety)) addUnit(m.start, m.end);
+    // Ruby spans are protected syntax: one unit each, resolved with the Ruby as reading evidence;
+    // no other unit may cut into them (so base and reading are never rewritten piecemeal)
+    const rubies = rubySpans(text);
+    for (const [key, unit] of units) if (rubies.some((r) => unit.start < r.end && unit.end > r.start)) units.delete(key);
+    for (const r of rubies) units.set(`${r.start}:${r.end}`, { start: r.start, end: r.end, surface: r.source, ruby: r });
 
     const readingKeys = new Set();
     for (const unit of units.values()) {
-      if (isKana(unit.surface)) continue;
-      for (const c of lexicalCandidates(unit.surface)) if (typeof c.reading === "string" && !factsAt.has(c.reading)) readingKeys.add(c.reading);
+      const base = unit.ruby ? unit.ruby.base : unit.surface;
+      if (isKana(base)) continue;
+      for (const c of lexicalCandidates(base)) if (typeof c.reading === "string" && !factsAt.has(c.reading)) readingKeys.add(c.reading);
     }
     for (const reading of readingKeys) await pack.prepare(reading);
 
@@ -172,7 +202,18 @@
       const { start, end, surface } = unit;
       let outputs = [];
       let resolved = null;
-      if (isKana(surface)) {
+      if (unit.ruby) {
+        // Ruby input: the resolver reads the Ruby as reading evidence (whole-word Ruby filters the
+        // lexical candidates). The author's Ruby markup round-trips: the output keeps Ruby in the
+        // input's explicit/implicit style unless a Ruby render mode is requested. Without a resolved
+        // historical reading the whole segment is preserved unchanged (fail closed).
+        resolved = resolver.resolveUnit(surface);
+        const h = resolved.historical;
+        if (resolved.kind === "resolved" && h.disposition !== "PRESERVE" && h.disposition !== "CANDIDATES" && h.kana) {
+          const mode = renderMode === "plain" ? (unit.ruby.explicit ? "ruby-whole-explicit" : "ruby-whole-implicit") : renderMode;
+          outputs = [resolver.render(resolved, { mode })];
+        }
+      } else if (isKana(surface)) {
         const readingCandidates = lexical.lookupReadingSync(surface);
         const hist = kanaHistorical(surface);
         resolved = {
@@ -226,7 +267,7 @@
     for (const [start, end] of charBoundaries) {
       const ch = text.slice(start, end);
       const rule = safeRules.get(ch);
-      if (rule) candidates.push({ start, end, output: rule.from[0], policy: "anywhere", origin: "rule", ref: rule.id, rule });
+      if (rule && !rubies.some((r) => start < r.end && end > r.start)) candidates.push({ start, end, output: rule.from[0], policy: "anywhere", origin: "rule", ref: rule.id, rule });
     }
 
     // Analysis DAG: kanji-bearing lexical units plus every unit that proposes an output. Kana-only

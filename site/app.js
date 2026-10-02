@@ -118,6 +118,10 @@
     let selected = null;
 
     const profile = () => doc.querySelector('input[name="profile"]:checked').value;
+    const renderMode = () => {
+      const checked = doc.querySelector('input[name="renderMode"]:checked');
+      return checked && !checked.disabled && !$("render-modes").hidden ? checked.value : "plain";
+    };
     const manifestUrl = new URL("browser-pack/manifest.json", win.location.href).href;
 
     const showDetail = async (ref, el) => {
@@ -141,7 +145,7 @@
       const text = $("source").value;
       status("変換中…");
       try {
-        const reply = await client.transform(text, profile());
+        const reply = await client.transform(text, profile(), renderMode());
         if (reply.stale) return;
         current = reply;
         $("result").innerHTML = renderResultHtml(reply.result);
@@ -161,6 +165,10 @@
         const profileSection = manifest.sections.find((s) => s.kind === "profile-policy" && s.profileId === profile());
         const policy = profileSection ? await (await win.fetch(new URL(profileSection.path, manifestUrl))).json() : null;
         pruneCache(manifest);
+        // output format (Ruby) is shown only when the pack's engine supports it (#196 E)
+        const modes = reply.renderModes ?? ["plain"];
+        $("render-modes").hidden = modes.length < 2;
+        for (const radio of doc.querySelectorAll('input[name="renderMode"]')) radio.disabled = !modes.includes(radio.value);
         $("policy").innerHTML = renderPolicyHtml(terms, policy, profile());
         terms.bindHelp($("policy"));
         status(`準備完了（辞書 ${reply.packDigest.slice(0, 12)}…）。文章を入力して「変換」を押してください。`);
@@ -209,6 +217,7 @@
     };
 
     $("convert").addEventListener("click", convert);
+    for (const radio of doc.querySelectorAll('input[name="renderMode"]')) radio.addEventListener("change", () => convert());
     for (const radio of doc.querySelectorAll('input[name="profile"]')) radio.addEventListener("change", () => { loadPolicy().then((ok) => ok && convert()); });
     let timer = null;
     $("source").addEventListener("input", () => {

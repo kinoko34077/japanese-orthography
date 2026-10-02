@@ -8,12 +8,14 @@
     "browser-wider-lexicon": "the browser lexicon (JMdict) has further lexemes for the same input; the core identity is among the browser candidates and nothing is selected",
     "core-unknown": "the input is outside the core first-slice lexicon; there is nothing to compare",
     "unbound-relation": "both sides keep the lexical ambiguity; the browser additionally applies a canonical relation bound to no lexeme (it holds for every candidate), which the core first slice does not carry",
+    "ruby-round-trip": "every semantic field is identical; on Ruby input the browser keeps the authors Ruby markup in plain mode (late render), where the core plain renderer drops it",
+    "browser-agreeing-sources": "same identity and reading; the core slice has no historical reading, the browser has one confirmed by two agreeing canonical sources (surface-keyed historical reading + the native kana relation of the reading)",
     "pending-F-inflection": "the core UniDic slice lists this inflected surface; browser inflection/morphology analysis is owned by #196 F, which must turn this case identical or reclassify it"
   },
   "summary": {
-    "cases": 9,
+    "cases": 11,
     "identical": 2,
-    "classified": 7,
+    "classified": 9,
     "mismatches": 0
   },
   "cases": [
@@ -337,6 +339,97 @@
         "lexicalOrigin",
         "partOfSpeech",
         "disposition"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "｜学校《がっこう》",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:学校/がっこう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "がっこう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": "がくかう",
+        "historicalSurface": "學校",
+        "disposition": "AUTO",
+        "plain": "學校",
+        "rubyWhole": "｜學校《がくかう》"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:学校/がっこう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "がっこう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": "がくかう",
+        "historicalSurface": "學校",
+        "disposition": "AUTO",
+        "plain": "｜學校《がくかう》",
+        "rubyWhole": "｜學校《がくかう》"
+      },
+      "difference": "ruby-round-trip",
+      "fieldsDiffering": [
+        "plain"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "｜今日《きょう》",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:今日/きょう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "きょう",
+        "lexicalOrigin": "native",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "副詞可能"
+        ],
+        "historicalKana": null,
+        "historicalSurface": "今日",
+        "disposition": "SOURCE_REVIEW",
+        "plain": "今日",
+        "rubyWhole": "今日"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:今日/きょう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "きょう",
+        "lexicalOrigin": "native",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "副詞可能"
+        ],
+        "historicalKana": "けふ",
+        "historicalSurface": "今日",
+        "disposition": "AUTO",
+        "plain": "｜今日《けふ》",
+        "rubyWhole": "｜今日《けふ》"
+      },
+      "difference": "browser-agreeing-sources",
+      "fieldsDiffering": [
+        "historicalKana",
+        "disposition",
+        "plain",
+        "rubyWhole"
       ]
     },
     {
