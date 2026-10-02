@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import type { BrowserPackBuild } from './browser-pack-compiler.ts';
-import { buildAcceptedBrowserPack } from './generate-browser-pack.ts';
+import { buildAcceptedBrowserPack, buildAcceptedBrowserPackV2 } from './generate-browser-pack.ts';
 import type { OrthographyFact, OrthographyKnowledgeGraph, OrthographyRule } from './orthography-knowledge-model.ts';
 import { withProfileRules } from './orthography-policy.ts';
 import { normalizeAcceptedOrthographySources } from './orthography-source-normalization.ts';
@@ -16,10 +16,14 @@ import { normalizeAcceptedOrthographySources } from './orthography-source-normal
 //   npm run measure:browser-capability -- --check -> recomputes and requires the committed report
 
 export const BROWSER_CAPABILITY_REPORT = 'data/reports/browser-capability-utilization-v1.json';
+export const BROWSER_CAPABILITY_REPORT_V2 = 'data/reports/browser-capability-utilization-v2.json';
 
 const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { planAndTransform } = require('../runtime/browser-span-planner.js');
+const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
+const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
+const { summarize } = require('../runtime/browser-diagnostic-contract.js');
 
 export interface CapabilityProbe { readonly id: string; readonly text: string; readonly covers: readonly string[] }
 
@@ -185,6 +189,62 @@ export async function measureCapabilityUtilization(graph: OrthographyKnowledgeGr
 
 export type CapabilityReport = Awaited<ReturnType<typeof measureCapabilityUtilization>>;
 
+/**
+ * #196 J — the same probes through the BrowserPack v2 resolver path, compared row by row with the
+ * committed v1 oracle (#196 A): what each probe now recognizes, resolves and changes.
+ */
+export async function measureCapabilityUtilizationV2(build: BrowserPackBuild, v1: CapabilityReport, probes = CAPABILITY_PROBES, profiles: readonly string[] = CAPABILITY_PROFILES) {
+  const rows = [];
+  for (const probe of probes) {
+    for (const profileId of profiles) {
+      let requests = 0;
+      let bytes = 0;
+      const pack = await openBrowserPack(build.manifest, async (s: { path: string }) => { const body = build.files.get(s.path)!; requests += 1; bytes += body.byteLength; return body; });
+      const eager = { requests, bytes };
+      const lexical = createBrowserLexicalRuntime(pack);
+      const raw = await transformWithResolver(pack, lexical, probe.text, profileId, { renderMode: 'plain' });
+      const summary = summarize(raw);
+      const units = raw.units ?? [];
+      const identities = new Set<string>(units.flatMap((u: any) => [u.unit.lexicalIdentity, ...u.unit.lexicalCandidates.map((c: any) => c.lexicalIdentity)].filter(Boolean)));
+      const before = v1.probes.rows.find((r) => r.probeId === probe.id && r.profileId === profileId)!;
+      const whole = units.find((u: any) => u.start === 0 && u.end === probe.text.length)?.unit ?? null;
+      rows.push({
+        probeId: probe.id, profileId, text: probe.text, covers: probe.covers, engine: raw.engine,
+        renderedText: raw.renderedText,
+        changed: raw.renderedText !== probe.text,
+        recognizedUnits: units.length,
+        resolvedUnits: units.filter((u: any) => u.unit.kind === 'resolved').length,
+        lexicalIdentitiesReached: identities.size,
+        wholeInputUnit: whole && { kind: whole.kind, lexicalIdentity: whole.lexicalIdentity, reading: whole.reading, readingSource: whole.readingSource, candidates: whole.lexicalCandidates.length, historicalKana: whole.historical.kana, historicalRoute: whole.historical.route, disposition: whole.historical.disposition },
+        spansByCertainty: summary.counts,
+        inspectableUnchangedUnits: summary.units.length,
+        sectionRequests: { eager: eager.requests, onDemand: requests - eager.requests },
+        transferredBytes: { eager: eager.bytes, onDemand: bytes - eager.bytes },
+        v1: { renderedText: before.renderedText, changed: before.changed, reachedFacts: before.reachedFacts, promotedFacts: before.promotedFacts, sectionRequests: before.sectionRequests.onDemand, transferredBytes: before.transferredBytes.onDemand }
+      });
+    }
+  }
+  // v1 exposed no lexical identity, reading evidence or morphology for any probe: a recognized whole
+  // input unit (identity, candidates, Ruby/kana reading evidence) is capability v1 did not have
+  const gained = rows.filter((r) => r.wholeInputUnit !== null).map((r) => `${r.probeId}/${r.profileId}`);
+  return {
+    schemaVersion: '1',
+    kind: 'browser-capability-utilization-v2',
+    owner: 'japanese-orthography#196 J',
+    packDigest: build.manifest.packDigest,
+    oracle: { report: BROWSER_CAPABILITY_REPORT, packDigest: v1.packDigest },
+    rows,
+    summary: {
+      rows: rows.length,
+      outputChangedVsV1: rows.filter((r) => r.renderedText !== r.v1.renderedText).length,
+      rubyEvidenceRows: rows.filter((r) => r.wholeInputUnit?.readingSource === 'ruby-word').length,
+      wholeInputRecognized: rows.filter((r) => r.wholeInputUnit).length,
+      lexicalIdentitiesReached: rows.reduce((n, r) => n + r.lexicalIdentitiesReached, 0),
+      capabilityGained: gained
+    }
+  };
+}
+
 async function main() {
   const root = resolve(import.meta.dirname, '..');
   const { graph } = await normalizeAcceptedOrthographySources(root);
@@ -200,6 +260,11 @@ async function main() {
   }
   await writeFile(path, text);
   console.log(`wrote ${BROWSER_CAPABILITY_REPORT}: ${report.probes.rows.length} probe rows, ${report.canonical.facts} facts`);
+  if (process.argv.includes('--v2')) {
+    const v2 = await measureCapabilityUtilizationV2(await buildAcceptedBrowserPackV2(root, graph), report);
+    await writeFile(resolve(root, BROWSER_CAPABILITY_REPORT_V2), `${JSON.stringify(v2, null, 2)}\n`);
+    console.log(`wrote ${BROWSER_CAPABILITY_REPORT_V2}: ${v2.summary.outputChangedVsV1} rows changed output vs v1, ${v2.summary.wholeInputRecognized} whole-input units recognized`);
+  }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) await main();
