@@ -9,7 +9,7 @@ import test from 'node:test';
 import { buildSite, SITE_RUNTIME_MODULES } from '../tools/build-site.ts';
 import { registerVerticalCases } from './fixtures/vertical-cases.ts';
 
-// End-to-end over the built static site (#185 I, #196 J): the accepted BrowserPack v2 produced by
+// End-to-end over the built static site (#185 I, #196 J): the accepted BrowserPack v3 (#211 J) produced by
 // `build:site` is opened through the same section fetcher, worker service, resolver adapter and
 // diagnostic contract the page uses. Only the transport differs (files instead of HTTP). The twelve
 // mandatory #196 J vertical cases run here against the real accepted pack.
@@ -37,26 +37,26 @@ const service = createTransformService({
 test.after(() => rm(outDir, { recursive: true, force: true }));
 
 let requestId = 0;
-test('the built site serves BrowserPack v2 (resolver engine, Ruby render modes) with its runtime', async () => {
+test('the built site serves BrowserPack v3 (resolver engine, Ruby render modes) with its runtime', async () => {
   for (const file of ['index.html', 'app.js', 'sw.js', 'style.css', 'terminology-ja.json', '.nojekyll', ...SITE_RUNTIME_MODULES.map((m) => `runtime/${m}`)]) {
     await readFile(join(outDir, file));
   }
   const manifest = JSON.parse(await readFile(join(outDir, 'browser-pack', 'manifest.json'), 'utf8'));
-  const committed = JSON.parse(await readFile(new URL('../data/browser-pack-v2/manifest.json', import.meta.url), 'utf8'));
-  assert.equal(manifest.compilerVersion, '2');
-  assert.equal(manifest.packDigest, committed.packDigest, 'the site ships the committed v2 lock');
+  const committed = JSON.parse(await readFile(new URL('../data/browser-pack-v3/manifest.json', import.meta.url), 'utf8'));
+  assert.equal(manifest.compilerVersion, '3');
+  assert.equal(manifest.packDigest, committed.packDigest, 'the site ships the committed v3 lock');
   const opened = await service.handle({ type: 'open', requestId: ++requestId });
   assert.equal(opened.packDigest, built.packDigest);
   assert.ok(opened.renderModes.includes('ruby-whole-explicit'));
 });
 
-registerVerticalCases('v2 site', service);
+registerVerticalCases('v3 site', service);
 
 test('Browser/core parity holds for every case where both have the capability', async () => {
-  const report = JSON.parse(await readFile(new URL('../data/reports/browser-resolver-parity.json', import.meta.url), 'utf8'));
+  const report = JSON.parse(await readFile(new URL('../data/reports/browser-resolver-parity-v3.json', import.meta.url), 'utf8'));
   assert.equal(report.packDigest, built.packDigest);
   assert.equal(report.summary.mismatches, 0);
-  const v2 = JSON.parse(await readFile(new URL('../data/reports/browser-capability-utilization-v2.json', import.meta.url), 'utf8'));
+  const v2 = JSON.parse(await readFile(new URL('../data/reports/browser-capability-utilization-v3.json', import.meta.url), 'utf8'));
   assert.equal(v2.packDigest, built.packDigest);
   for (const probe of ['surface:学校', 'reading:ドイツ', 'reading:みる', 'surface:分かる', 'surface:台風', 'ruby:学校', 'ruby:今日']) {
     assert.ok(v2.summary.capabilityGained.includes(`${probe}/historical`), probe);
