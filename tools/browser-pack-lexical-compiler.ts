@@ -162,17 +162,39 @@ export interface LexicalLayerOptions {
 /** Fixed-width shard bound for the lexeme id space, so string order equals numeric order. */
 export const lexemeShardBound = (id: number) => String(id).padStart(8, '0');
 
-function partitionIndex(index: Map<string, number[]>, budget: number): Array<Array<[string, number[]]>> {
+function partitionIndex(index: Map<string, number[]>, budget: number, postingBytes: (key: string, id: number) => number): Array<Array<[string, number[]]>> {
   const shards: Array<Array<[string, number[]]>> = [];
   let current: Array<[string, number[]]> = [];
   let bytes = 0;
   for (const entry of index) {
     if (bytes >= budget && current.length) { shards.push(current); current = []; bytes = 0; }
     current.push(entry);
-    bytes += 12 + entry[0].length * 3 + entry[1].length * 4;
+    bytes += 12 + entry[0].length * 3 + entry[1].reduce((n, id) => n + 4 + postingBytes(entry[0], id), 0);
   }
   if (current.length) shards.push(current);
   return shards;
+}
+
+/**
+ * Posting payload (#196 I): everything conversion needs about lexeme `lexeme` reached through
+ * `key`, stored with the posting so a conversion reads index shards only; whole lexeme records
+ * (all forms / readings) are fetched only for inspection.
+ */
+export function postingPayload(kind: 'surface' | 'reading', key: string, lexeme: LexemeModel) {
+  const uniqSorted = (values: Array<string | null>) => [...new Set(values.filter((v): v is string => v !== null))].sort(cmp);
+  if (kind === 'surface') {
+    const historical = lexeme.readings.filter((r) => r.period === READING_PERIODS.historical && r.surface === key);
+    return {
+      modern: uniqSorted(lexeme.readings.filter((r) => r.period === READING_PERIODS.modern && r.surface === key).map((r) => r.reading)),
+      historical: historical.map((r) => r.reading), route: historical.map((r) => r.route), historicalFact: historical.map((r) => r.factIndex),
+      morphology: lexeme.morphologyIds
+    };
+  }
+  return {
+    modern: uniqSorted(lexeme.readings.filter((r) => r.reading === key).map((r) => r.surface)), // carrier surfaces of this reading
+    historical: [] as string[], route: [] as number[], historicalFact: [] as number[],
+    morphology: lexeme.morphologyIds
+  };
 }
 
 /** Pack layer emitting the v2 lexical sections (use with compilerVersion '2'). */
@@ -185,15 +207,27 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
     };
 
     for (const [kindIndex, kind, index] of [[0, 'surface-index', model.surfaceIndex], [1, 'reading-index', model.readingIndex]] as const) {
-      const shards = partitionIndex(index, options.indexShardBudgetBytes ?? 64 * 1024);
+      const indexKind = kindIndex === 0 ? 'surface' : 'reading';
+      const payloadBytes = (key: string, id: number) => {
+        const p = postingPayload(indexKind, key, model.lexemes[id]!);
+        return 8 + model.lexemes[id]!.lexicalIdentity.length * 3 + (p.modern.length + p.historical.length * 3 + p.morphology.length) * 4;
+      };
+      const shards = partitionIndex(index, options.indexShardBudgetBytes ?? 64 * 1024, payloadBytes);
       shards.forEach((entries, i) => {
         const shard: BrowserPackShardDescriptor = { key: LEXICAL_INDEX_KINDS[kindIndex], index: i, count: shards.length, from: entries[0]![0], to: entries[entries.length - 1]![0] };
         const s = new StringTable();
         const keyIds = entries.map(([key]) => s.id(key));
+        // one posting row per (key, lexeme), in key order then posting order (= flattened `lexemes`)
+        const postings = entries.flatMap(([key, ids]) => ids.map((id) => ({ id, p: postingPayload(indexKind, key, model.lexemes[id]!) })));
         add(kind, encodeSection([
           { name: 'strings', kind: 'strings', values: s.values },
           { name: 'key', kind: 'scalar', values: keyIds },
-          { name: 'lexemes', kind: 'list', values: entries.map(([, ids]) => ids) }
+          { name: 'lexemes', kind: 'list', values: entries.map(([, ids]) => ids) },
+          { name: 'pIdentity', kind: 'scalar', values: postings.map(({ id }) => s.id(model.lexemes[id]!.lexicalIdentity)) },
+          { name: 'pModern', kind: 'list', values: postings.map(({ p }) => p.modern.map((v) => s.id(v))) },
+          // historical readings of this surface as (reading, route, factIndex) triplets; surface index only
+          ...(indexKind === 'surface' ? [{ name: 'pHistorical', kind: 'list' as const, values: postings.map(({ p }) => p.historical.flatMap((v, i) => [s.id(v), p.route[i]!, p.historicalFact[i]!])) }] : []),
+          { name: 'pMorphology', kind: 'list', values: postings.map(({ p }) => p.morphology) }
         ]), { shard, rowCount: entries.length });
         directoryRow(kindIndex, i, shard.from, shard.to, entries.length, Math.max(...entries.map(([key]) => key.length)));
       });

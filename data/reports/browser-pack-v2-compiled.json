@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-compiled",
   "owner": "japanese-orthography#196 B",
-  "packDigest": "709d1f1781e90884f407733c5783cd389df54bf84ce26e8baead10f589c13391",
+  "packDigest": "4e95b70d91cc25d33beffbd74558bdfba7a2057e4ed6f922ef136fa4c4ddf782",
   "canonicalGraphSha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
   "totals": {
-    "sections": 2033,
-    "bytes": 131450672,
-    "gzipBytes": 46493400
+    "sections": 1904,
+    "bytes": 136729044,
+    "gzipBytes": 51036839
   },
   "byLoading": {
     "eager": {
       "sections": 9,
-      "bytes": 387712,
-      "gzipBytes": 106007
+      "bytes": 414800,
+      "gzipBytes": 119417
     },
     "lazy": {
       "sections": 328,
-      "bytes": 57711144,
-      "gzipBytes": 14158350
+      "bytes": 29117688,
+      "gzipBytes": 8554170
     },
     "on-demand": {
-      "sections": 1696,
-      "bytes": 73351816,
-      "gzipBytes": 32229043
+      "sections": 1567,
+      "bytes": 107196556,
+      "gzipBytes": 42363252
     }
   },
   "byKind": {
@@ -34,13 +34,13 @@
     },
     "detail-shard": {
       "sections": 328,
-      "bytes": 57711144,
-      "gzipBytes": 14158350
+      "bytes": 29117688,
+      "gzipBytes": 8554170
     },
-    "facts": {
+    "knowledge-bundle": {
       "sections": 328,
-      "bytes": 7903584,
-      "gzipBytes": 3212784
+      "bytes": 20837392,
+      "gzipBytes": 9074423
     },
     "lexeme-forms": {
       "sections": 54,
@@ -59,13 +59,8 @@
     },
     "lexical-directory": {
       "sections": 1,
-      "bytes": 13100,
-      "gzipBytes": 7389
-    },
-    "lexical-index": {
-      "sections": 328,
-      "bytes": 3012268,
-      "gzipBytes": 2042636
+      "bytes": 40188,
+      "gzipBytes": 20799
     },
     "morphology-table": {
       "sections": 1,
@@ -83,9 +78,9 @@
       "gzipBytes": 2526216
     },
     "reading-index": {
-      "sections": 127,
-      "bytes": 7837088,
-      "gzipBytes": 3386530
+      "sections": 409,
+      "bytes": 24808608,
+      "gzipBytes": 8905564
     },
     "rules": {
       "sections": 1,
@@ -97,15 +92,10 @@
       "bytes": 15700,
       "gzipBytes": 9778
     },
-    "string-pool": {
-      "sections": 328,
-      "bytes": 9895908,
-      "gzipBytes": 4016505
-    },
     "surface-index": {
-      "sections": 95,
-      "bytes": 5772836,
-      "gzipBytes": 3276818
+      "sections": 340,
+      "bytes": 22620424,
+      "gzipBytes": 8089495
     },
     "terminology": {
       "sections": 1,
@@ -114,8 +104,8 @@
     }
   },
   "shards": {
-    "count": 328,
-    "largestFactsBytes": 25392
+    "count": 0,
+    "largestFactsBytes": null
   },
   "baseline": {
     "aReport": "data/reports/browser-pack-v1-measurements.json",

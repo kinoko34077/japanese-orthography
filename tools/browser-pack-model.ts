@@ -15,7 +15,7 @@ export const BROWSER_PACK_MANIFEST_KIND = 'japanese-orthography-browser-pack';
 export const BROWSER_PACK_EXTERNAL_OFFSET_UNIT = 'utf16-code-unit';
 
 export type BrowserPackContentClass = 'knowledge' | 'detail' | 'profile' | 'presentation';
-export type BrowserPackSectionEncoding = 'binary-columnar' | 'json';
+export type BrowserPackSectionEncoding = 'binary-columnar' | 'binary-bundle' | 'json';
 
 /**
  * Availability of a section, strongest first.
@@ -64,7 +64,9 @@ const SECTION_KINDS = {
   'reading-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'reading -> lexeme ids (secondary index over the same lexeme table)' },
   'lexeme-table': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'lexical identity, headword and morphology ids by dense lexeme id' },
   'lexeme-forms': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'written forms of each lexeme (aligned with the lexeme-table shard)' },
-  'lexeme-readings': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'modern/historical readings of each lexeme form (aligned with the lexeme-table shard)' }
+  'lexeme-readings': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'modern/historical readings of each lexeme form (aligned with the lexeme-table shard)' },
+  // ---- BrowserPack v2 physical layout (#196 I) -----------------------------------------------------
+  'knowledge-bundle': { contentClass: 'knowledge', encoding: 'binary-bundle', loading: 'on-demand', shardable: true, profileScoped: false, description: 'one fetch per knowledge shard: its string-pool, facts and lexical-index sections as zero-copy parts' }
 } as const;
 
 export type BrowserPackSectionKind = keyof typeof SECTION_KINDS;
@@ -73,14 +75,18 @@ export const BROWSER_PACK_SECTION_KINDS: Record<BrowserPackSectionKind, BrowserP
 
 /** Kinds added by the BrowserPack v2 lexical layer (#196 B). */
 export const BROWSER_PACK_V2_LEXICAL_SECTION_KINDS: readonly BrowserPackSectionKind[] = ['lexeme-forms', 'lexeme-readings', 'lexeme-table', 'lexical-directory', 'morphology-table', 'reading-index', 'surface-index'];
+/** v2 replaces these per-shard v1 sections by one `knowledge-bundle` per shard. */
+export const BROWSER_PACK_V2_BUNDLED_KINDS: readonly BrowserPackSectionKind[] = ['facts', 'lexical-index', 'string-pool'];
 export const BROWSER_PACK_V2_COMPILER_VERSION = '2';
 
 /** Every v1 kind is required: a pack missing any one of them cannot serve the #184 acceptance flow. */
-export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k)).sort();
+export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k) && k !== 'knowledge-bundle').sort();
 
 /** Required kinds by compiler version: v2 = v1 + the lexical layer; v1 packs may not carry v2 kinds. */
 export function requiredSectionKinds(compilerVersion: string): readonly BrowserPackSectionKind[] {
-  return compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION ? [...BROWSER_PACK_REQUIRED_SECTION_KINDS, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS].sort() : BROWSER_PACK_REQUIRED_SECTION_KINDS;
+  return compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION
+    ? [...BROWSER_PACK_REQUIRED_SECTION_KINDS.filter((k) => !BROWSER_PACK_V2_BUNDLED_KINDS.includes(k)), 'knowledge-bundle' as const, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS].sort()
+    : BROWSER_PACK_REQUIRED_SECTION_KINDS;
 }
 
 export interface BrowserPackShardDescriptor {

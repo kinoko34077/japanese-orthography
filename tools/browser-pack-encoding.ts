@@ -72,6 +72,31 @@ export function encodeSection(columns: readonly ColumnInput[]): Uint8Array {
 }
 
 /** Deterministic local string table: first-use order, id 0 reserved for "absent". */
+/** Bundle container (#196 I); see runtime/browser-pack-binary.js `decodeBundle`. */
+export function encodeBundle(parts: ReadonlyArray<readonly [string, Uint8Array]>): Uint8Array {
+  const utf8 = new TextEncoder();
+  const names = parts.map(([name]) => utf8.encode(name));
+  let header = 8;
+  for (const name of names) header += 2 + name.length + 8;
+  const align8 = (n: number) => (n + 7) & ~7;
+  const offsets: number[] = [];
+  let at = align8(header);
+  for (const [, body] of parts) { offsets.push(at); at = align8(at + body.byteLength); }
+  const out = new Uint8Array(at);
+  const view = new DataView(out.buffer);
+  out.set([0x42, 0x50, 0x4b, 0x42], 0);
+  view.setUint32(4, parts.length, true);
+  let h = 8;
+  parts.forEach(([, body], i) => {
+    view.setUint16(h, names[i]!.length, true); h += 2;
+    out.set(names[i]!, h); h += names[i]!.length;
+    view.setUint32(h, offsets[i]!, true); h += 4;
+    view.setUint32(h, body.byteLength, true); h += 4;
+    out.set(body, offsets[i]!);
+  });
+  return out;
+}
+
 export class StringTable {
   private readonly ids = new Map<string, number>();
   readonly values: string[] = [''];

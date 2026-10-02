@@ -48,8 +48,10 @@ test('ドイツ exposes 独逸 / 独乙; the reconstructed surface is the one th
   const { lexical } = await open();
   const [germany, ...rest] = await lexical.lookupReading('ドイツ');
   assert.equal(rest.length, 0);
-  assert.deepEqual(germany.forms.map((f: any) => f.surface).sort(), ['独乙', '独逸']);
-  assert.ok(germany.forms.find((f: any) => f.surface === '独逸').flags.includes('ateji'));
+  assert.deepEqual((await lexical.getForms(germany.lexemeId)).map((f: any) => f.surface).sort(), ['独乙', '独逸']);
+  assert.equal(germany.forms, null, 'conversion postings do not carry whole form lists');
+  // form tags are lexeme-record detail (inspection API), not part of the conversion posting
+  assert.ok((await lexical.getForms(germany.lexemeId)).find((f: any) => f.surface === '独逸').flags.includes('ateji'));
   assert.equal(germany.surface, '独逸');
 });
 
@@ -68,14 +70,16 @@ test('みる keeps every lexical candidate; getLexeme/getForms/getReadings/getMo
   await assert.rejects(lexical.getLexeme(10_000), RangeError);
 });
 
-test('demand loading: open fetches only eager sections; lookups fetch only the shards they reach', async () => {
+test('demand loading: open is eager-only; conversion lookups read index shards only; inspection loads one lexeme shard', async () => {
   const { lexical, requested } = await open();
   const eager = build.manifest.sections.filter((s) => s.loading === 'eager').map((s) => s.sectionId).sort();
   assert.deepEqual([...requested].sort(), eager);
-  await lexical.lookupSurface('学校');
+  const [school] = await lexical.lookupSurface('学校');
   const fetched = requested.slice(eager.length);
-  assert.ok(fetched.every((id) => /^(surface-index@surface|lexeme-(table|forms|readings)@lexeme)\//.test(id)), fetched.join());
-  assert.equal(fetched.filter((id) => id.startsWith('lexeme-table')).length, 1);
+  assert.ok(fetched.length > 0 && fetched.every((id) => id.startsWith('surface-index@surface/')), fetched.join());
+  assert.equal(lexical.loadedShards().lexeme, 0);
+  await lexical.getLexeme(school.lexemeId);
+  assert.deepEqual(requested.slice(eager.length + fetched.length).map((id) => id.split('@')[0]).sort(), ['lexeme-forms', 'lexeme-readings', 'lexeme-table']);
   assert.ok(build.manifest.sections.filter((s) => s.kind === 'lexeme-table').length > 1);
   assert.equal(lexical.loadedShards().lexeme, 1);
 });
