@@ -261,6 +261,16 @@
       await Promise.all([...ids].map(loadLexemeShard));
       return { indexShards: needed.size, lexemes: ids.size };
     };
+    /** Prepare explicit lookup keys (e.g. deinflected base forms) of one index kind, plus their lexemes. */
+    const prepareKeys = async (keys, kind = "surface") => {
+      const needed = new Set();
+      for (const key of keys) { const range = shardFor(kind, key); if (range) needed.add(range.index); }
+      await Promise.all([...needed].map((index) => loadIndexShard(kind, index)));
+      const ids = new Set();
+      for (const key of keys) for (const id of idsForSync(kind, key)) ids.add(id);
+      await Promise.all([...ids].map(loadLexemeShard));
+      return { indexShards: needed.size, lexemes: ids.size };
+    };
     /** Lexical units starting at `start` whose surface is an index key (after `prepare`). */
     const matchesAtSync = (text, start, kind = "surface") => keysAt(text, start, maxKeyLength[kind])
       .map((key) => ({ start, end: start + key.length, key, ids: idsForSync(kind, key) }))
@@ -284,6 +294,7 @@
         return { ...m, partOfSpeech: [...m.partOfSpeech] };
       },
       prepare,
+      prepareKeys,
       matchesAtSync,
       loadedShards: () => ({ index: indexShards.size, lexeme: lexemeShards.size })
     });

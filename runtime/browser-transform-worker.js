@@ -3,7 +3,7 @@
   if (!isCommonJs && typeof importScripts === "function" && typeof root.BrowserSpanPlanner === "undefined") {
     // dedicated Worker: load the runtime modules next to this script
     importScripts("browser-pack-binary.js", "browser-pack-runtime.js", "occurrence-arbitration.js", "browser-span-planner.js", "browser-diagnostic-contract.js", "browser-section-fetcher.js",
-      "transform-shared.js", "orthography-resolver.js", "browser-lexical-runtime.js", "browser-resolver-adapter.js");
+      "transform-shared.js", "orthography-resolver.js", "browser-lexical-runtime.js", "browser-inflection.js", "historical-sino-runtime.js", "browser-resolver-adapter.js");
   }
   const deps = isCommonJs
     ? { runtime: require("./browser-pack-runtime.js"), planner: require("./browser-span-planner.js"), diagnostics: safeRequire("./browser-diagnostic-contract.js"), fetcher: safeRequire("./browser-section-fetcher.js"),

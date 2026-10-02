@@ -90,6 +90,11 @@ test('the committed browser/core parity report has no unclassified mismatch', as
   const manifest = JSON.parse(await readFile(new URL('../data/browser-pack-v2/manifest.json', import.meta.url), 'utf8'));
   assert.equal(report.packDigest, manifest.packDigest);
   assert.equal(report.summary.mismatches, 0);
-  for (const input of ['学校', '台風']) assert.equal(report.cases.find((c: any) => c.input === input).difference, null, `${input} must be identical to the core resolver`);
+  assert.equal(report.cases.find((c: any) => c.input === '学校').difference, null, '学校 must be identical to the core resolver');
+  // 台風 keeps the accepted contextual kanji result; only the browser's extra Sino reading differs
+  const taifu = report.cases.find((c: any) => c.input === '台風');
+  assert.equal(taifu.difference, 'browser-sino-reconstruction');
+  assert.equal(taifu.browser.historicalSurface, '颱風');
+  assert.equal(taifu.browser.plain, taifu.core.plain);
   for (const c of report.cases) if (c.difference !== null) assert.ok(c.difference in report.differenceKinds, c.difference);
 });

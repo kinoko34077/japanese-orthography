@@ -2,14 +2,41 @@
   const isCommonJs = typeof module === "object" && module.exports;
   const shared = isCommonJs ? require("./transform-shared.js") : root.TransformShared; // also sets globalThis.TransformShared for the resolver
   const deps = isCommonJs
-    ? { planner: require("./browser-span-planner.js"), resolver: require("./orthography-resolver.js"), shared }
-    : { planner: root.BrowserSpanPlanner, resolver: root.OrthographyResolver, shared };
+    ? { planner: require("./browser-span-planner.js"), resolver: require("./orthography-resolver.js"), shared,
+      inflection: require("./browser-inflection.js"), sino: require("./historical-sino-runtime.js") }
+    : { planner: root.BrowserSpanPlanner, resolver: root.OrthographyResolver, shared, inflection: root.BrowserInflection, sino: root.HistoricalSinoRuntime };
   const api = factory(deps);
   if (isCommonJs) module.exports = api;
   root.BrowserResolverAdapter = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function (deps) {
   "use strict";
-  const { planner, resolver: OrthographyResolver, shared: TransformShared } = deps;
+  const { planner, resolver: OrthographyResolver, shared: TransformShared, inflection: Inflection, sino: HistoricalSino } = deps;
+  const HAN = /\p{Script=Han}/u;
+
+  // Accepted 4.6E Sino component table, rebuilt from the pack's canonical sino bindings
+  // (binding:sino:<char>:<historical>><modern>@<context>); one reconstructor per pack.
+  const sinoReconstructors = new WeakMap();
+  const sinoFor = (pack) => {
+    if (sinoReconstructors.has(pack)) return sinoReconstructors.get(pack);
+    const grouped = new Map();
+    for (let i = 0; i < pack.bindingCount(); i += 1) {
+      const binding = pack.getBinding(i);
+      const rule = pack.getRule(binding.rule);
+      const symbol = binding.lexicalRefs.find((r) => r.startsWith("symbol:"));
+      if (!symbol || !rule.id.startsWith("rule:sino:") || rule.from.length !== 1 || rule.to.length !== 1) continue;
+      const context = binding.contextRefs.find((r) => r.startsWith("context:usage:"))?.slice("context:usage:".length) ?? null;
+      const character = symbol.slice("symbol:".length);
+      const key = JSON.stringify([character, rule.to[0], context]);
+      const entry = grouped.get(key) ?? { character, modernReading: rule.to[0], context, historicalReadings: [], evidenceRefs: [] };
+      if (!entry.historicalReadings.includes(rule.from[0])) entry.historicalReadings.push(rule.from[0]);
+      for (const ref of binding.evidenceRefs) if (!entry.evidenceRefs.includes(ref)) entry.evidenceRefs.push(ref);
+      grouped.set(key, entry);
+    }
+    const relations = [...grouped.values()];
+    const reconstructor = relations.length && HistoricalSino?.createSinoComponentReconstructor ? HistoricalSino.createSinoComponentReconstructor(relations) : null;
+    sinoReconstructors.set(pack, reconstructor);
+    return reconstructor;
+  };
 
   // Browser resolver adapter (#196 D). The accepted OrthographyResolver is the single semantic
   // authority for historical-direction conversion; this module only feeds it pack-derived lookups
@@ -78,6 +105,42 @@
     if (!RUBY_MODES.has(renderMode)) throw new RangeError(`unknown render mode ${renderMode}`);
     await Promise.all([pack.prepare(text), lexical.prepare(text, { reading: true })]);
 
+    // ---- inflected forms (#196 F): deinflect to dictionary forms whose JMdict POS admits the rule ---
+    const inflected = new Map(); // inflected surface -> lexical candidates (one per base reading)
+    const inflectedSites = [];
+    if (Inflection) {
+      const sites = Inflection.scan(text, 6).filter((site) => HAN.test(site.baseSurface) || isKana(text.slice(site.start, site.end)));
+      const surfaceBases = uniq(sites.filter((x) => HAN.test(x.baseSurface)).map((x) => x.baseSurface));
+      const readingBases = uniq(sites.filter((x) => !HAN.test(x.baseSurface)).map((x) => x.baseSurface));
+      await Promise.all([lexical.prepareKeys(surfaceBases, "surface"), lexical.prepareKeys(readingBases, "reading")]);
+      for (const site of sites) {
+        const surface = text.slice(site.start, site.end);
+        const kana = !HAN.test(site.baseSurface);
+        const bases = kana ? lexical.lookupReadingSync(site.baseSurface) : lexical.lookupSurfaceSync(site.baseSurface);
+        for (const base of bases) {
+          const pos = base.morphologyCandidates.filter((m) => m.source === "jmdict").flatMap((m) => m.partOfSpeech);
+          if (!Inflection.admits(pos, site.rule)) continue;
+          for (const baseReading of (base.modernReadings.length ? base.modernReadings : [base.reading]).filter(Boolean)) {
+            const reading = Inflection.inflectReading(baseReading, site.rule);
+            if (!reading) continue;
+            const unidic = base.morphologyCandidates.filter((m) => m.source === "unidic" && m.reading === baseReading);
+            const row = unidic.find((m) => m.conjugationForm === site.rule.form) ?? (unidic.length === 1 ? unidic[0] : null);
+            const candidate = {
+              ...base, surface, reading, modernReadings: [reading],
+              lexicalOrigin: row?.lexicalOrigin ?? (unidic[0]?.lexicalOrigin ?? base.lexicalOrigin),
+              morphology: { partOfSpeech: row ? [...row.partOfSpeech] : pos, conjugationType: row?.conjugationType ?? site.rule.pos, conjugationForm: row?.conjugationForm ?? site.rule.form, source: row ? "unidic" : "jmdict+deinflection" },
+              inflection: { baseSurface: base.surface ?? site.baseSurface, baseReading, rule: site.rule.inflected, conjugationClass: site.rule.pos, conjugationForm: site.rule.form },
+              historicalReadings: []
+            };
+            const list = inflected.get(surface) ?? [];
+            if (!list.some((c) => c.lexicalIdentity === candidate.lexicalIdentity && c.reading === candidate.reading)) list.push(candidate);
+            inflected.set(surface, list);
+            inflectedSites.push({ start: site.start, end: site.end });
+          }
+        }
+      }
+    }
+
     // ---- pack facts reached by the text (v1 knowledge shards) --------------------------------------
     const charBoundaries = [];
     const factMatches = [];
@@ -133,8 +196,11 @@
     const applySafe = (surface) => Array.from(surface).map((c) => safeKanjiMap[c] ?? c).join("");
 
     // ---- resolver over pack-derived lookups ----------------------------------------------------------
-    const lexicalCandidates = (surface) => lexical.lookupSurfaceSync(surface)
-      .flatMap((c) => (c.modernReadings.length > 1 ? c.modernReadings.map((r) => lexical.withReading(c, r)) : [c]));
+    const lexicalCandidates = (surface) => [
+      ...lexical.lookupSurfaceSync(surface).flatMap((c) => (c.modernReadings.length > 1 ? c.modernReadings.map((r) => lexical.withReading(c, r)) : [c])),
+      ...(inflected.get(surface) ?? [])
+    ];
+    const sino = sinoFor(pack);
     const kanaHistorical = (reading) => uniq(facts(reading).filter(kanaRelation).map((f) => f.surface));
     const resolver = OrthographyResolver.createResolver({
       lexicalLookup: lexicalCandidates,
@@ -146,9 +212,22 @@
           return { route: bound[0].route ?? "native", reading: readings[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
         }
         if (readings.length > 1) return { status: "candidates", route: bound[0].route ?? "native", readings, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
+        if (typeof candidate.reading !== "string") return null;
+        // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
+        // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
+        if (sino && candidate.lexicalOrigin !== "native" && candidate.lexicalOrigin !== "loan" && !candidate.inflection && Array.from(surface).every((ch) => HAN.test(ch))) {
+          const reconstructed = sino.reconstructWord(surface, candidate.reading);
+          if (reconstructed?.status === "resolved") {
+            return {
+              route: "sino", reading: reconstructed.historicalReading, surface, requiresMorphology: false, requiredMorphology: null,
+              components: reconstructed.components.map((c) => ({ lexicalIdentity: null, surface: c.surface, lexicalReading: c.modernReading, lexicalOrigin: "sino", readingClass: "on", historicalKana: c.historicalReading, evidenceRefs: c.evidenceRefs })),
+              evidenceRefs: reconstructed.evidenceRefs
+            };
+          }
+          if (reconstructed?.status === "candidates") return { status: "candidates", route: "sino", readings: reconstructed.historicalReadings, evidenceRefs: [] };
+        }
         // surface-keyed historical reading, accepted only when the native kana relation of the
         // candidate's own modern reading names the same historical kana (two sources agree)
-        if (typeof candidate.reading !== "string") return null;
         const surfaceReadings = uniq(facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface).map((f) => f.reading));
         const agreed = surfaceReadings.filter((r) => kanaHistorical(candidate.reading).includes(r));
         if (agreed.length !== 1) return null;
@@ -178,6 +257,7 @@
       for (const m of lexical.matchesAtSync(text, start, "surface")) addUnit(m.start, m.end);
       for (const m of lexical.matchesAtSync(text, start, "reading")) if (isKana(m.surface)) addUnit(m.start, m.end);
     }
+    for (const site of inflectedSites) addUnit(site.start, site.end);
     // relation keys the lexicon does not list (e.g. inflected stems) are still lexical units
     for (const m of factMatches) if (m.facts.some((f) => kanjiRelation(f) || kanaRelation(f) || f.safety)) addUnit(m.start, m.end);
     // Ruby spans are protected syntax: one unit each, resolved with the Ruby as reading evidence;
@@ -214,7 +294,8 @@
           outputs = [resolver.render(resolved, { mode })];
         }
       } else if (isKana(surface)) {
-        const readingCandidates = lexical.lookupReadingSync(surface);
+        // dictionary-form readings plus deinflected kana forms (morphology-filtered by JMdict POS)
+        const readingCandidates = [...lexical.lookupReadingSync(surface), ...(inflected.get(surface) ?? [])];
         const hist = kanaHistorical(surface);
         resolved = {
           kind: readingCandidates.length === 1 ? "resolved" : readingCandidates.length ? "candidates" : "unresolved",

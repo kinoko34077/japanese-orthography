@@ -184,19 +184,20 @@
     return forms;
   };
 
-  const createV2Runtime = (artifact, options = {}) => {
-    const identity = createLegacyRuntime(artifact.identitySlice, options);
-    if (artifact.lexicalNamespaceId !== identity.lexicalNamespaceId) {
-      throw new Error("Historical Sino lexical namespace mismatch");
-    }
-    if (!Array.isArray(artifact.componentRelations) || artifact.componentRelations.length === 0) {
+  /**
+   * Accepted Phase-4.6E component reconstruction over (character, modern reading, context) ->
+   * historical readings relations. Shared by the v2 runtime and the browser resolver adapter
+   * (#196 F), so both reconstruct Sino readings with the same code.
+   */
+  const createSinoComponentReconstructor = (componentRelations) => {
+    if (!Array.isArray(componentRelations) || componentRelations.length === 0) {
       throw new TypeError("Historical Sino artifact requires component relations");
     }
 
     const relationsByCharacter = new Map();
     const formsByCharacter = new Map();
     const tableForms = new Set();
-    for (const relation of artifact.componentRelations) {
+    for (const relation of componentRelations) {
       requireNonEmptyString(relation?.character, "historical Sino component character");
       requireNonEmptyString(relation?.modernReading, "historical Sino component modern reading");
       if (!Array.isArray(relation?.historicalReadings) || relation.historicalReadings.length === 0) {
@@ -319,6 +320,19 @@
       return resolved;
     };
 
+    return { resolveHistoricalSino, reconstructWord };
+  };
+
+  const createV2Runtime = (artifact, options = {}) => {
+    const identity = createLegacyRuntime(artifact.identitySlice, options);
+    if (artifact.lexicalNamespaceId !== identity.lexicalNamespaceId) {
+      throw new Error("Historical Sino lexical namespace mismatch");
+    }
+    if (!Array.isArray(artifact.componentRelations) || artifact.componentRelations.length === 0) {
+      throw new TypeError("Historical Sino artifact requires component relations");
+    }
+    const { resolveHistoricalSino, reconstructWord } = createSinoComponentReconstructor(artifact.componentRelations);
+
     const lookup = (candidate, surface) => {
       const relation = identity.lookup(candidate);
       if (relation || candidate?.lexicalOrigin !== "sino" || typeof surface !== "string") return relation;
@@ -375,5 +389,5 @@
     throw new TypeError("Unsupported historical Sino slice");
   };
 
-  return { createHistoricalSinoRuntime };
+  return { createHistoricalSinoRuntime, createSinoComponentReconstructor };
 });
