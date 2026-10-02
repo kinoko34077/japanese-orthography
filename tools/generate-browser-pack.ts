@@ -8,6 +8,7 @@ import { normalizeAcceptedOrthographySources } from './orthography-source-normal
 import { jmdictLexemeMorphology, lexicalLayer, mergeMorphology, unidicLexemeMorphology } from './browser-pack-lexical-compiler.ts';
 import { loadJmdictIntake } from './jmdict-intake.ts';
 import type { UniDicSourceSlice } from './lexical-compiler.ts';
+import { BROWSER_RESOLVER_PARITY_REPORT, browserCoreParity } from './browser-resolver-parity.ts';
 import { normalizeCheckoutText } from './verification-text.ts';
 
 // BrowserPack B (#185 B): build the pack from the accepted v2 knowledge.
@@ -98,5 +99,17 @@ if (process.argv[1]?.endsWith('generate-browser-pack.ts')) {
   const check = process.argv.includes('--check');
   const { graph } = await normalizeAcceptedOrthographySources(rootDir);
   await emit(rootDir, await buildAcceptedBrowserPack(rootDir, graph), BROWSER_PACK_DIR, BROWSER_PACK_MANIFEST, BROWSER_PACK_COMPILED_REPORT, check);
-  await emit(rootDir, await buildAcceptedBrowserPackV2(rootDir, graph), BROWSER_PACK_V2_DIR, BROWSER_PACK_V2_MANIFEST, BROWSER_PACK_V2_COMPILED_REPORT, check);
+  const v2 = await buildAcceptedBrowserPackV2(rootDir, graph);
+  await emit(rootDir, v2, BROWSER_PACK_V2_DIR, BROWSER_PACK_V2_MANIFEST, BROWSER_PACK_V2_COMPILED_REPORT, check);
+  // #196 D: browser resolver adapter vs accepted core resolver (fails on any unclassified difference)
+  const parity = await browserCoreParity(rootDir, v2);
+  const parityText = `${JSON.stringify(parity, null, 2)}
+`;
+  if (parity.summary.mismatches > 0) throw new Error(`browser/core resolver parity: ${parity.summary.mismatches} unclassified mismatch(es): ${parity.cases.filter((c) => c.difference === 'MISMATCH').map((c) => c.input).join(', ')}`);
+  if (check) {
+    if (normalizeCheckoutText(await readFile(resolve(rootDir, BROWSER_RESOLVER_PARITY_REPORT), 'utf8')) !== parityText) throw new Error(`stale ${BROWSER_RESOLVER_PARITY_REPORT}; run npm run generate:browser-pack`);
+    console.log(`browser/core parity OK: ${parity.summary.identical} identical, ${parity.summary.classified} classified`);
+  } else {
+    await writeFile(resolve(rootDir, BROWSER_RESOLVER_PARITY_REPORT), parityText);
+  }
 }

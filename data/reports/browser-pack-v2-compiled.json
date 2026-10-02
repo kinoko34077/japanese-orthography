@@ -2,18 +2,18 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-compiled",
   "owner": "japanese-orthography#196 B",
-  "packDigest": "2f2eeda5b44727f8a75b033401446dffa28cd9f16ad60d0f53725f4116a94b50",
+  "packDigest": "25a0842f0369547ce3016d0de665f6670b1ec649ed67aaf8f068220bf48f3ff7",
   "canonicalGraphSha256": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
   "totals": {
     "sections": 2033,
-    "bytes": 130248474,
-    "gzipBytes": 46476960
+    "bytes": 131446106,
+    "gzipBytes": 46491994
   },
   "byLoading": {
     "eager": {
       "sections": 9,
-      "bytes": 381422,
-      "gzipBytes": 104365
+      "bytes": 383146,
+      "gzipBytes": 104601
     },
     "lazy": {
       "sections": 328,
@@ -22,8 +22,8 @@
     },
     "on-demand": {
       "sections": 1696,
-      "bytes": 72155908,
-      "gzipBytes": 32214245
+      "bytes": 73351816,
+      "gzipBytes": 32229043
     }
   },
   "byKind": {
@@ -49,13 +49,13 @@
     },
     "lexeme-readings": {
       "sections": 54,
-      "bytes": 15544304,
-      "gzipBytes": 6426783
+      "bytes": 16740212,
+      "gzipBytes": 6441577
     },
     "lexeme-table": {
       "sections": 54,
       "bytes": 11057316,
-      "gzipBytes": 3745031
+      "gzipBytes": 3745035
     },
     "lexical-directory": {
       "sections": 1,
@@ -69,8 +69,8 @@
     },
     "morphology-table": {
       "sections": 1,
-      "bytes": 8480,
-      "gzipBytes": 4298
+      "bytes": 10204,
+      "gzipBytes": 4534
     },
     "profile-policy": {
       "sections": 3,

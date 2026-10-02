@@ -1,0 +1,404 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-resolver-parity",
+  "owner": "japanese-orthography#196 D",
+  "packDigest": "25a0842f0369547ce3016d0de665f6670b1ec649ed67aaf8f068220bf48f3ff7",
+  "differenceKinds": {
+    "lexicon-granularity": "core lexicon has one candidate per UniDic conjugation row of the same lemma, so the core unit is `candidates`; the browser resolves the one JMdict lexeme (same headword)",
+    "browser-wider-lexicon": "the browser lexicon (JMdict) has further lexemes for the same input; the core identity is among the browser candidates and nothing is selected",
+    "core-unknown": "the input is outside the core first-slice lexicon; there is nothing to compare",
+    "unbound-relation": "both sides keep the lexical ambiguity; the browser additionally applies a canonical relation bound to no lexeme (it holds for every candidate), which the core first slice does not carry",
+    "pending-F-inflection": "the core UniDic slice lists this inflected surface; browser inflection/morphology analysis is owned by #196 F, which must turn this case identical or reclassify it"
+  },
+  "summary": {
+    "cases": 9,
+    "identical": 2,
+    "classified": 7,
+    "mismatches": 0
+  },
+  "cases": [
+    {
+      "route": "surface",
+      "input": "学校",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:学校/がっこう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "がっこう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": "がくかう",
+        "historicalSurface": "學校",
+        "disposition": "AUTO",
+        "plain": "學校",
+        "rubyWhole": "｜學校《がくかう》"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:学校/がっこう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "がっこう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": "がくかう",
+        "historicalSurface": "學校",
+        "disposition": "AUTO",
+        "plain": "學校",
+        "rubyWhole": "｜學校《がくかう》"
+      },
+      "difference": null,
+      "fieldsDiffering": []
+    },
+    {
+      "route": "surface",
+      "input": "台風",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:台風/たいふう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "たいふう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": null,
+        "historicalSurface": "颱風",
+        "disposition": "AUTO",
+        "plain": "颱風",
+        "rubyWhole": "颱風"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:台風/たいふう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "たいふう",
+        "lexicalOrigin": "sino",
+        "partOfSpeech": [
+          "名詞",
+          "普通名詞",
+          "一般"
+        ],
+        "historicalKana": null,
+        "historicalSurface": "颱風",
+        "disposition": "AUTO",
+        "plain": "颱風",
+        "rubyWhole": "颱風"
+      },
+      "difference": null,
+      "fieldsDiffering": []
+    },
+    {
+      "route": "surface",
+      "input": "今日",
+      "core": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:今日/きょう",
+          "lexeme:今日/こんにち"
+        ],
+        "candidateReadings": [
+          "きょう",
+          "こんにち"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "今日",
+        "disposition": "CANDIDATES",
+        "plain": "今日",
+        "rubyWhole": "今日"
+      },
+      "browser": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:今日/きょう"
+        ],
+        "candidateReadings": [
+          "きょう",
+          "こんじつ",
+          "こんち",
+          "こんにち"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "今日",
+        "disposition": "CANDIDATES",
+        "plain": "今日",
+        "rubyWhole": "今日"
+      },
+      "difference": "browser-wider-lexicon",
+      "fieldsDiffering": [
+        "candidateIdentities",
+        "candidateReadings"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "思う",
+      "core": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:思う/おもう"
+        ],
+        "candidateReadings": [
+          "おもう"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "思う",
+        "disposition": "CANDIDATES",
+        "plain": "思う",
+        "rubyWhole": "思う"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:思う/おもう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "おもう",
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "思ふ",
+        "disposition": "AUTO",
+        "plain": "思ふ",
+        "rubyWhole": "思ふ"
+      },
+      "difference": "lexicon-granularity",
+      "fieldsDiffering": [
+        "kind",
+        "lexicalIdentity",
+        "candidateIdentities",
+        "candidateReadings",
+        "reading",
+        "historicalSurface",
+        "disposition",
+        "plain",
+        "rubyWhole"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "買う",
+      "core": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:買う/かう"
+        ],
+        "candidateReadings": [
+          "かう",
+          "こう"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "買う",
+        "disposition": "CANDIDATES",
+        "plain": "買う",
+        "rubyWhole": "買う"
+      },
+      "browser": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:買う/かう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "かう",
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "買ふ",
+        "disposition": "AUTO",
+        "plain": "買ふ",
+        "rubyWhole": "買ふ"
+      },
+      "difference": "lexicon-granularity",
+      "fieldsDiffering": [
+        "kind",
+        "lexicalIdentity",
+        "candidateIdentities",
+        "candidateReadings",
+        "reading",
+        "historicalSurface",
+        "disposition",
+        "plain",
+        "rubyWhole"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "合う",
+      "core": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:合う/あう"
+        ],
+        "candidateReadings": [
+          "あう",
+          "おう"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "合う",
+        "disposition": "CANDIDATES",
+        "plain": "合う",
+        "rubyWhole": "合う"
+      },
+      "browser": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:合う/あう"
+        ],
+        "candidateReadings": [
+          "あう",
+          "おう"
+        ],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "合う",
+        "disposition": "CANDIDATES",
+        "plain": "合ふ",
+        "rubyWhole": "合ふ"
+      },
+      "difference": "unbound-relation",
+      "fieldsDiffering": [
+        "plain",
+        "rubyWhole"
+      ]
+    },
+    {
+      "route": "surface",
+      "input": "味わおう",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:味わう/あじわう",
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": "あじわおう",
+        "lexicalOrigin": "native",
+        "partOfSpeech": [
+          "動詞",
+          "一般"
+        ],
+        "historicalKana": null,
+        "historicalSurface": "味わおう",
+        "disposition": "SOURCE_REVIEW",
+        "plain": "味わおう",
+        "rubyWhole": "味わおう"
+      },
+      "browser": {
+        "kind": "unresolved",
+        "lexicalIdentity": null,
+        "candidateIdentities": [],
+        "candidateReadings": [],
+        "reading": null,
+        "lexicalOrigin": "unknown",
+        "partOfSpeech": null,
+        "historicalKana": null,
+        "historicalSurface": "味わおう",
+        "disposition": "UNRESOLVED",
+        "plain": "味わおう",
+        "rubyWhole": "味わおう"
+      },
+      "difference": "pending-F-inflection",
+      "fieldsDiffering": [
+        "kind",
+        "lexicalIdentity",
+        "reading",
+        "lexicalOrigin",
+        "partOfSpeech",
+        "disposition"
+      ]
+    },
+    {
+      "route": "reading",
+      "input": "がっこう",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:学校/がっこう",
+        "candidateIdentities": []
+      },
+      "browser": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:学校/がっこう",
+          "lexeme:楽校/がっこう"
+        ]
+      },
+      "difference": "browser-wider-lexicon",
+      "fieldsDiffering": [
+        "kind",
+        "lexicalIdentity",
+        "candidateIdentities"
+      ]
+    },
+    {
+      "route": "reading",
+      "input": "きょう",
+      "core": {
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:今日/きょう",
+        "candidateIdentities": []
+      },
+      "browser": {
+        "kind": "candidates",
+        "lexicalIdentity": null,
+        "candidateIdentities": [
+          "lexeme:京/きょう",
+          "lexeme:今日/きょう",
+          "lexeme:凶/きょう",
+          "lexeme:匈/きょう",
+          "lexeme:卿/きょう",
+          "lexeme:境/さかい",
+          "lexeme:孝/こう",
+          "lexeme:強/きょう",
+          "lexeme:教/きょう",
+          "lexeme:橋/きょう",
+          "lexeme:狂/きょう",
+          "lexeme:経/きょう",
+          "lexeme:羌/きょう",
+          "lexeme:興/きょう",
+          "lexeme:郷/きょう",
+          "lexeme:饗/きょう",
+          "lexeme:香/きょう"
+        ]
+      },
+      "difference": "browser-wider-lexicon",
+      "fieldsDiffering": [
+        "kind",
+        "lexicalIdentity",
+        "candidateIdentities"
+      ]
+    }
+  ]
+}

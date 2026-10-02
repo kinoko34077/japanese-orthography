@@ -3,7 +3,7 @@
   "compilerVersion": "2",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "2f2eeda5b44727f8a75b033401446dffa28cd9f16ad60d0f53725f4116a94b50",
+  "packDigest": "25a0842f0369547ce3016d0de665f6670b1ec649ed67aaf8f068220bf48f3ff7",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -14241,7 +14241,7 @@
       }
     },
     {
-      "byteLength": 356104,
+      "byteLength": 381792,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14251,7 +14251,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/0",
-      "sha256": "89c583458e8bace72db7b3f6e8a03ae5a8edbd5aa2b9e47c6a7a35088f77e326",
+      "sha256": "db52673dd833ebd65d9e366d7ed6e7669fd75f3d82f4ff43cdc8b81c85cf0cf1",
       "shard": {
         "count": 54,
         "from": "00000000",
@@ -14261,7 +14261,7 @@
       }
     },
     {
-      "byteLength": 324540,
+      "byteLength": 348952,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14271,7 +14271,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/1",
-      "sha256": "730843c52a27f41f4f59271973ee0f59b5ea4609df71e35d1228fd558f6d9db5",
+      "sha256": "2d90146cad285149c44a12e034a588efb5a462330657bc009d69e4f60b7881c5",
       "shard": {
         "count": 54,
         "from": "00004096",
@@ -14281,7 +14281,7 @@
       }
     },
     {
-      "byteLength": 314084,
+      "byteLength": 337028,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14291,7 +14291,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/10",
-      "sha256": "5debcc5d7911ce6fae85f9c62f59a1619552a22bea4604afed73c718df52e44b",
+      "sha256": "b7f98f1f8f006ffbe4b1e5ccecf2cea72612a6856dfac66558721ed8e09d6281",
       "shard": {
         "count": 54,
         "from": "00040960",
@@ -14301,7 +14301,7 @@
       }
     },
     {
-      "byteLength": 300084,
+      "byteLength": 322932,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14311,7 +14311,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/11",
-      "sha256": "25df36d18231e5460287315e11baab50cc41b81ddeec860e6642313143274174",
+      "sha256": "cb19aa2d5e2e33494f158bc7d4f5ee7ef46895427fb92e6884cfa12846269b03",
       "shard": {
         "count": 54,
         "from": "00045056",
@@ -14321,7 +14321,7 @@
       }
     },
     {
-      "byteLength": 295432,
+      "byteLength": 318156,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14331,7 +14331,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/12",
-      "sha256": "39df5a33647c21003dc48e00d5364c0d6540c42118bfb556b369b1cc57e8b2aa",
+      "sha256": "0ba7d5a89063467113d2489b72b2254ef387ede8bd94564b19ee36e49b1b38cf",
       "shard": {
         "count": 54,
         "from": "00049152",
@@ -14341,7 +14341,7 @@
       }
     },
     {
-      "byteLength": 305552,
+      "byteLength": 328436,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14351,7 +14351,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/13",
-      "sha256": "5da07c57f8137718e98a1455f05d9efbc5dbce7b9a4901e5abe0feed45acccf3",
+      "sha256": "a9092f6008caffa9e463edd3b024c841b9c1e38f259389c1a35c22a7466c7a6e",
       "shard": {
         "count": 54,
         "from": "00053248",
@@ -14361,7 +14361,7 @@
       }
     },
     {
-      "byteLength": 280268,
+      "byteLength": 302132,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14371,7 +14371,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/14",
-      "sha256": "71274574374b8de8a923a938877b5977388aa8d070f03e2e9e0d84c6377f8f9d",
+      "sha256": "7ea877f20168b2fc3253c324ebfe15551ee99030b34c57100b017178087d67c1",
       "shard": {
         "count": 54,
         "from": "00057344",
@@ -14381,7 +14381,7 @@
       }
     },
     {
-      "byteLength": 286800,
+      "byteLength": 308796,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14391,7 +14391,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/15",
-      "sha256": "c10d652897767f6626ed63fe2c2a3759c05538a33722dcc72efe5992369796df",
+      "sha256": "5054e41fe6a7507414a3b570cd336274d0fc3d3580cc276543ad5df2f70f1efc",
       "shard": {
         "count": 54,
         "from": "00061440",
@@ -14401,7 +14401,7 @@
       }
     },
     {
-      "byteLength": 286144,
+      "byteLength": 308296,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14411,7 +14411,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/16",
-      "sha256": "5a1a696d9bf091361fad2fbcbc376fe7903e24514b2236032a13cc7963e03aa7",
+      "sha256": "2f1af2294358c9c645428a16df6846252364d6ce35c6e85b63d33602342a1a27",
       "shard": {
         "count": 54,
         "from": "00065536",
@@ -14421,7 +14421,7 @@
       }
     },
     {
-      "byteLength": 273380,
+      "byteLength": 295164,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14431,7 +14431,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/17",
-      "sha256": "beda4a647a47003ded4d734f7b39c192f2ae4ce99c047c585b176b12cb6e646b",
+      "sha256": "f96b3e99bb8c027ed828195302cd165b7e8606d7613986df04616c6c50d94591",
       "shard": {
         "count": 54,
         "from": "00069632",
@@ -14441,7 +14441,7 @@
       }
     },
     {
-      "byteLength": 273836,
+      "byteLength": 295324,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14451,7 +14451,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/18",
-      "sha256": "91f5553c17f1c8629e9f510363afff689f06bfa33027fa454b259e3bec79ae6f",
+      "sha256": "08f97227f964f168bc0d9acc45019328836049e8bab597604dd85205a63ebb00",
       "shard": {
         "count": 54,
         "from": "00073728",
@@ -14461,7 +14461,7 @@
       }
     },
     {
-      "byteLength": 275968,
+      "byteLength": 297944,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14471,7 +14471,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/19",
-      "sha256": "e7d82354413427d0f804c6e8bf19fc2cd1fad3a5bc696adf05048d53c411fb6d",
+      "sha256": "2eba0542a29d6d6d38002fc29df3647c0bab76c23ae44e4aedd1f6dc4cd29478",
       "shard": {
         "count": 54,
         "from": "00077824",
@@ -14481,7 +14481,7 @@
       }
     },
     {
-      "byteLength": 321596,
+      "byteLength": 344384,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14491,7 +14491,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/2",
-      "sha256": "d71f0a78832022dcd68d2defd47fa406ae1d76ff51d7962ec28c106b4bc46819",
+      "sha256": "a91256196f879153ae35a7b72afad6270bc938e52f724e2d2c9bbc75ededfc2c",
       "shard": {
         "count": 54,
         "from": "00008192",
@@ -14501,7 +14501,7 @@
       }
     },
     {
-      "byteLength": 274652,
+      "byteLength": 296188,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14511,7 +14511,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/20",
-      "sha256": "f2cfee84038c4fea501396d7e4a42e6c743edb21c9736682600af004a809f7d8",
+      "sha256": "e97fedbe8d0a421aa231f1aeb9291b168bac70478bfd27e9c3a4527698004abe",
       "shard": {
         "count": 54,
         "from": "00081920",
@@ -14521,7 +14521,7 @@
       }
     },
     {
-      "byteLength": 294752,
+      "byteLength": 317340,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14531,7 +14531,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/21",
-      "sha256": "4e35ab6045dd284c6060e1aa1e77d8098caad10f1428dc6f0f1ab2494ec58bf7",
+      "sha256": "40ed34e2b238bc7b1c1606dd5cef2ec7803ef9c074f64ae5c40ff70a2a507fe2",
       "shard": {
         "count": 54,
         "from": "00086016",
@@ -14541,7 +14541,7 @@
       }
     },
     {
-      "byteLength": 297788,
+      "byteLength": 319876,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14551,7 +14551,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/22",
-      "sha256": "d21a7f0bacf69178604fea647ba06fd6d6dfa0e7a2783178d9ce20c8bc295143",
+      "sha256": "0a2960c3cd3374bec368def8f50b2a9657eb5d3b1109035d046ce70ffee4ed8f",
       "shard": {
         "count": 54,
         "from": "00090112",
@@ -14561,7 +14561,7 @@
       }
     },
     {
-      "byteLength": 273532,
+      "byteLength": 295304,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14571,7 +14571,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/23",
-      "sha256": "71862dd3ca5c7bef9ee55b0af424aca47ea6c22e5a9f674179ea6661c23a1c85",
+      "sha256": "22e994b46454dfd6149a3ce6e3bfe1c8dcdfa433f4f437cd33aca3034483a449",
       "shard": {
         "count": 54,
         "from": "00094208",
@@ -14581,7 +14581,7 @@
       }
     },
     {
-      "byteLength": 279500,
+      "byteLength": 301364,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14591,7 +14591,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/24",
-      "sha256": "1facddb3aab9dfc98dc28f43f40f7a5847f582a71986fe8c49008b3dcf23f0fe",
+      "sha256": "0ba60d0b6035a4ec27070c0502ea6823984dde0fe7025d42c5b951f50756ae1e",
       "shard": {
         "count": 54,
         "from": "00098304",
@@ -14601,7 +14601,7 @@
       }
     },
     {
-      "byteLength": 274200,
+      "byteLength": 295932,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14611,7 +14611,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/25",
-      "sha256": "26dbb3d831654107472b40c4139804ce8594c6ca5e14cf53f25a2e7d336a8fcc",
+      "sha256": "b704443cdf91cb6e5450c4f4d6eb5edbdf644c7130740b3bb0fef6f267477277",
       "shard": {
         "count": 54,
         "from": "00102400",
@@ -14621,7 +14621,7 @@
       }
     },
     {
-      "byteLength": 277912,
+      "byteLength": 300100,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14631,7 +14631,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/26",
-      "sha256": "e6daea6817ee7d45661e6cc151308a1708ef1ca7afb3d9e715f243e1a222a140",
+      "sha256": "ff0e87a5c4168a0a4105ad16ed618203525c55360da9ac776e5cda502a5f23b3",
       "shard": {
         "count": 54,
         "from": "00106496",
@@ -14641,7 +14641,7 @@
       }
     },
     {
-      "byteLength": 285384,
+      "byteLength": 307796,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14651,7 +14651,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/27",
-      "sha256": "741509f9554094ce1661f6f8bedffb7c04cbed9dda2a817ef58f4ecb87672567",
+      "sha256": "32b3df645ddb0cf0e589fe49c26a2811c1700cc99795efa1179a799d4104045d",
       "shard": {
         "count": 54,
         "from": "00110592",
@@ -14661,7 +14661,7 @@
       }
     },
     {
-      "byteLength": 287832,
+      "byteLength": 310168,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14671,7 +14671,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/28",
-      "sha256": "8bc3959483778671a2216bb5f1ff2d0e6c0fd66f318405cbdaef4e3da32a3bcb",
+      "sha256": "ffb7e03b821d51a3d0343f9778866f044b3fa2f5ab03d7b07ae9e91b7423fa7e",
       "shard": {
         "count": 54,
         "from": "00114688",
@@ -14681,7 +14681,7 @@
       }
     },
     {
-      "byteLength": 294888,
+      "byteLength": 317460,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14691,7 +14691,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/29",
-      "sha256": "ea7618bdf9d71665315766e94165341d0a58d4cdf2ee839b76a4e102c73cb28d",
+      "sha256": "4943bee83c121cdd5cd36ac8fd74ab22f63b45f0d9034ed8b1c189bc43fa8fdf",
       "shard": {
         "count": 54,
         "from": "00118784",
@@ -14701,7 +14701,7 @@
       }
     },
     {
-      "byteLength": 313420,
+      "byteLength": 336348,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14711,7 +14711,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/3",
-      "sha256": "db3a3ce93b7a63dc59cc8ed7ab9af8ebca644fbd7e54f33b525e648357d7f459",
+      "sha256": "569a0806f6b546d905ed8e2c349dbdc857ffe1f4e63c2118123dfa7f7f72f7b1",
       "shard": {
         "count": 54,
         "from": "00012288",
@@ -14721,7 +14721,7 @@
       }
     },
     {
-      "byteLength": 287752,
+      "byteLength": 310076,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14731,7 +14731,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/30",
-      "sha256": "4750547585bfc5e28c050168a6676708f6e253958b7a4f8cfba166e5b42f6023",
+      "sha256": "a873cad0ef5dad4cbc4cce58579c94f094f00efe381a07ce917c772ae98f50b6",
       "shard": {
         "count": 54,
         "from": "00122880",
@@ -14741,7 +14741,7 @@
       }
     },
     {
-      "byteLength": 298152,
+      "byteLength": 319724,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14751,7 +14751,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/31",
-      "sha256": "78b504ca3762c52bc38bb2754c92bf013e588fbe70e5094e36820e0f8522411e",
+      "sha256": "dce4bc705f9feec95fad671a51168db1667ff7e8ef0d05b3d195b853e3778713",
       "shard": {
         "count": 54,
         "from": "00126976",
@@ -14761,7 +14761,7 @@
       }
     },
     {
-      "byteLength": 278660,
+      "byteLength": 300604,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14771,7 +14771,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/32",
-      "sha256": "f5738013f6544d2fcaae1a667894599a262077c07ed44da85a34455598b6b50f",
+      "sha256": "1529537b7c64929cbd85271a72473f38dc5669acbbdf61635712e81b744cf1f0",
       "shard": {
         "count": 54,
         "from": "00131072",
@@ -14781,7 +14781,7 @@
       }
     },
     {
-      "byteLength": 284312,
+      "byteLength": 306344,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14791,7 +14791,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/33",
-      "sha256": "6d037259f07d95a51b98ec3059abea26674572c08644a4e2fba80cb958400180",
+      "sha256": "9743b2d22f8dc08bd269da77ad028d071b7a9edd250f89e0b33eac49ab3d8f5e",
       "shard": {
         "count": 54,
         "from": "00135168",
@@ -14801,7 +14801,7 @@
       }
     },
     {
-      "byteLength": 275588,
+      "byteLength": 297524,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14811,7 +14811,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/34",
-      "sha256": "f6bd3822fb628510eef5b9b2b7d30e369cde0da89ba2a670ff398fb6b5769b34",
+      "sha256": "034c73890ce1fdda24ef5a6c4586432ffd2aac6d1753d10cd2383027ea4ebec9",
       "shard": {
         "count": 54,
         "from": "00139264",
@@ -14821,7 +14821,7 @@
       }
     },
     {
-      "byteLength": 282668,
+      "byteLength": 304780,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14831,7 +14831,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/35",
-      "sha256": "6954a3730dddcbd0e7e65d2da5be8473c2960ec9e1e8d29fe7402bf3f7fa6cd8",
+      "sha256": "62bfac7bbf0716f1e88a5691c582c1972cb43c12b5dae997f0eda9097e533ffb",
       "shard": {
         "count": 54,
         "from": "00143360",
@@ -14841,7 +14841,7 @@
       }
     },
     {
-      "byteLength": 273844,
+      "byteLength": 295856,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14851,7 +14851,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/36",
-      "sha256": "e5f1774218004c14eea9017d50ecd91f85d684dc18dda44b8f62c2aa65365cf3",
+      "sha256": "9f90e39bd40b8f38c0553f9d69a5f54c063c64f88e8ce9acb060210ef86fd51a",
       "shard": {
         "count": 54,
         "from": "00147456",
@@ -14861,7 +14861,7 @@
       }
     },
     {
-      "byteLength": 286848,
+      "byteLength": 309144,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14871,7 +14871,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/37",
-      "sha256": "7226e9ed96a302f58b2a6ca91f5f5ad942373596edac1a14eac0e8d34a3387e8",
+      "sha256": "062a5965a44dc42f2f8ee435fd92f9cfa36abf00480a36d05fa7892b5fb123de",
       "shard": {
         "count": 54,
         "from": "00151552",
@@ -14881,7 +14881,7 @@
       }
     },
     {
-      "byteLength": 280848,
+      "byteLength": 302856,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14891,7 +14891,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/38",
-      "sha256": "d99057509340948cfdea7457cc6650bc3abc2d32aadf6be625154065bf73a5a3",
+      "sha256": "9455eb497e3a6c86a9d5886285b9a29f87998f775660058721d6d416cd47eae2",
       "shard": {
         "count": 54,
         "from": "00155648",
@@ -14901,7 +14901,7 @@
       }
     },
     {
-      "byteLength": 285368,
+      "byteLength": 307596,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14911,7 +14911,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/39",
-      "sha256": "b4036819f968c8f12272b19661aaa772eae8dc347f1fdf91fe863cf03311f027",
+      "sha256": "ae754accfd0ec08be0daacfa8a418ef21306c7ae3ddb49e976ccd294b33afe0e",
       "shard": {
         "count": 54,
         "from": "00159744",
@@ -14921,7 +14921,7 @@
       }
     },
     {
-      "byteLength": 302588,
+      "byteLength": 325516,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14931,7 +14931,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/4",
-      "sha256": "263e9cf5fc844434480772fdbda73cf9d31cc6e843499d5ef29baf2deeefdff9",
+      "sha256": "238a5f3adff687c418e86692f48b077fdd09771c8b4756cbb5a3607c3beb8cd3",
       "shard": {
         "count": 54,
         "from": "00016384",
@@ -14941,7 +14941,7 @@
       }
     },
     {
-      "byteLength": 285900,
+      "byteLength": 308144,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14951,7 +14951,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/40",
-      "sha256": "c167a08c784cc3e4a6a3ac35c2aff9e70f80b553df1ade9c7107bd41054a704a",
+      "sha256": "e352ae9beedf995098ef42a9b8f190778b1e7352d2e10320cda306e1b190f98c",
       "shard": {
         "count": 54,
         "from": "00163840",
@@ -14961,7 +14961,7 @@
       }
     },
     {
-      "byteLength": 281876,
+      "byteLength": 303956,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14971,7 +14971,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/41",
-      "sha256": "288ccf3475e2ca1eb0ed4967feff8ea6a5183ebee301b18075b990ea9b33f98d",
+      "sha256": "62e41e119b25f6347caaad54a31630b235b6ff9c8cf986cdd22139acc06d49bd",
       "shard": {
         "count": 54,
         "from": "00167936",
@@ -14981,7 +14981,7 @@
       }
     },
     {
-      "byteLength": 281308,
+      "byteLength": 303492,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -14991,7 +14991,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/42",
-      "sha256": "5a0ca5dcd45fb86bcf3ac195a65581925488bd679be12d6b6b0d0664117ad719",
+      "sha256": "f59d6646d53e1427e3f03f482d1a504bc104b1eba19a69268ff5d5b4b6cf0e64",
       "shard": {
         "count": 54,
         "from": "00172032",
@@ -15001,7 +15001,7 @@
       }
     },
     {
-      "byteLength": 286272,
+      "byteLength": 308320,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15011,7 +15011,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/43",
-      "sha256": "93193dc69e7f0a7a5d013f1ccd1c28e37b8dafa94ef8ac915ee78a155847d40f",
+      "sha256": "ef844fb712dfd6b5847e002e1009e81a59cd708e6877ba0e7356d3a4892460cc",
       "shard": {
         "count": 54,
         "from": "00176128",
@@ -15021,7 +15021,7 @@
       }
     },
     {
-      "byteLength": 282720,
+      "byteLength": 305388,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15031,7 +15031,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/44",
-      "sha256": "90e67abd37856f16d81c3db4e359ede7ccdb407920d68ba8716e9378b02617ec",
+      "sha256": "81fb63dd9a13ebf3bf5d2d200b22ee7a3ccf4b5a4a4911415d2ddd350fcb8dbc",
       "shard": {
         "count": 54,
         "from": "00180224",
@@ -15041,7 +15041,7 @@
       }
     },
     {
-      "byteLength": 287804,
+      "byteLength": 310108,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15051,7 +15051,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/45",
-      "sha256": "550533bbbcb7d93957bf338276c60ee7a8a193469245f8aad0cd68f6af84784d",
+      "sha256": "98a26a5a78f1345ecbf40ba922bfd9448b70ac01a731783cfa3b272bb3bcac57",
       "shard": {
         "count": 54,
         "from": "00184320",
@@ -15061,7 +15061,7 @@
       }
     },
     {
-      "byteLength": 279488,
+      "byteLength": 301472,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15071,7 +15071,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/46",
-      "sha256": "9606423fac7e93058e53f4218966f9f4e8942a5e9dca565c41ae41c79a51a38b",
+      "sha256": "c6e8a09739ba5502bad7bfc434dd11e09a2c24d5a8b0dab8066b5ca18a2b310d",
       "shard": {
         "count": 54,
         "from": "00188416",
@@ -15081,7 +15081,7 @@
       }
     },
     {
-      "byteLength": 281144,
+      "byteLength": 303136,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15091,7 +15091,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/47",
-      "sha256": "8a2d02f7789dda0141b34c9da0bfcfc82781103c638304e7e049c5411e744f59",
+      "sha256": "d058096250f90cae3e3c6a90ed54bc02451a0a27a7ecfe7b0bbd208c6c863194",
       "shard": {
         "count": 54,
         "from": "00192512",
@@ -15101,7 +15101,7 @@
       }
     },
     {
-      "byteLength": 274124,
+      "byteLength": 295724,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15111,7 +15111,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/48",
-      "sha256": "2337cde29f45ad63b905eede3737eaa6ebbbccae1ca50b5dcaec3e290785b65f",
+      "sha256": "545952e5e257c808db1e8e11dc7202ae0d9bc956ac8f77b391a760406e479cb5",
       "shard": {
         "count": 54,
         "from": "00196608",
@@ -15121,7 +15121,7 @@
       }
     },
     {
-      "byteLength": 272152,
+      "byteLength": 294080,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15131,7 +15131,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/49",
-      "sha256": "adf37863b4014423151dff46e4ddacf2157d423067df77c1e44d23138847e3ca",
+      "sha256": "3e9cba2eb57d96df6196cd0115a9110a235cdf9277a57847a2bb6cbeb85ffc94",
       "shard": {
         "count": 54,
         "from": "00200704",
@@ -15141,7 +15141,7 @@
       }
     },
     {
-      "byteLength": 310444,
+      "byteLength": 333328,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15151,7 +15151,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/5",
-      "sha256": "cded87814a5db6bc58f2657206869cdf31b4a179c817deeb8dd853e6849d8d35",
+      "sha256": "ce9936ba6658c971861ce6bb1610746d327807380e36b39f14109dfba1412a8d",
       "shard": {
         "count": 54,
         "from": "00020480",
@@ -15161,7 +15161,7 @@
       }
     },
     {
-      "byteLength": 276420,
+      "byteLength": 298320,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15171,7 +15171,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/50",
-      "sha256": "4bb49da7e396460b97882ec22f6bfea8d6f02fbe7ffb319ff7fb44905418a4bf",
+      "sha256": "c027ed3538c681b9b621052cefefbbedcf39e490876d963fc21e8e65c5094a49",
       "shard": {
         "count": 54,
         "from": "00204800",
@@ -15181,7 +15181,7 @@
       }
     },
     {
-      "byteLength": 290400,
+      "byteLength": 312708,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15191,7 +15191,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/51",
-      "sha256": "340c4159da4b4dd3a63d329ce028a889efc6b6bb6f6e2cd1cae05e15efc5c35e",
+      "sha256": "616f6a86cbf346f4eae44b5eefa91e6d3739157ca3ea73de5afe1fdbf35ce176",
       "shard": {
         "count": 54,
         "from": "00208896",
@@ -15201,7 +15201,7 @@
       }
     },
     {
-      "byteLength": 298472,
+      "byteLength": 321492,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15211,7 +15211,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/52",
-      "sha256": "60d1a780bfa88972dc3bd0aec60397b7e380556dda3c23ae9dbc510bc0e3e6e9",
+      "sha256": "ab27770f8d1576e9c966566679bfb7f641abef490ad43315517da3116eb41e81",
       "shard": {
         "count": 54,
         "from": "00212992",
@@ -15221,7 +15221,7 @@
       }
     },
     {
-      "byteLength": 155748,
+      "byteLength": 165976,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15231,7 +15231,7 @@
       ],
       "rowCount": 1762,
       "sectionId": "lexeme-readings@lexeme/53",
-      "sha256": "9f5bd235150f7864c12eca7f5d3f0e1bd40703bde2896266f913f7ac38031aab",
+      "sha256": "5dc5d752894b7c0ffa5c5ac0813f504e68f64cc077002f81da1d5d4937548aa0",
       "shard": {
         "count": 54,
         "from": "00217088",
@@ -15241,7 +15241,7 @@
       }
     },
     {
-      "byteLength": 301792,
+      "byteLength": 324520,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15251,7 +15251,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/6",
-      "sha256": "ac1c213f7fb10b36219f0f72ad5e09a169f13623ecf26639e3938f00752ae22d",
+      "sha256": "9120c9cc526608ede5faa366120d82f66e8f5691abb605ea5b99f9298a8fa5bc",
       "shard": {
         "count": 54,
         "from": "00024576",
@@ -15261,7 +15261,7 @@
       }
     },
     {
-      "byteLength": 303992,
+      "byteLength": 326976,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15271,7 +15271,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/7",
-      "sha256": "68c2e651cef7e6651c3f226b7a89f9030d115c0c97ae6b1aa42558ff858b4299",
+      "sha256": "39260e7c6f05bbd09c55e9a92c7ddcd00d15130bc47d5ea7bf25b6099a520fd6",
       "shard": {
         "count": 54,
         "from": "00028672",
@@ -15281,7 +15281,7 @@
       }
     },
     {
-      "byteLength": 305856,
+      "byteLength": 328744,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15291,7 +15291,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/8",
-      "sha256": "7a09cf7d2ef9230f2f63227c6683b6c7ddb2709ca3fe0f74e5fa2781f928988c",
+      "sha256": "e28dc9acd9aa95a46053724cefb96293225d79ac2c902384d62be8161646f915",
       "shard": {
         "count": 54,
         "from": "00032768",
@@ -15301,7 +15301,7 @@
       }
     },
     {
-      "byteLength": 304116,
+      "byteLength": 327096,
       "encoding": "binary-columnar",
       "kind": "lexeme-readings",
       "loading": "on-demand",
@@ -15311,7 +15311,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-readings@lexeme/9",
-      "sha256": "1ab6c320a0e70c5a9ea95d3ad038ccc311be89d7a34635296790ef96963784c9",
+      "sha256": "f004d184e2e2a003c277d402785f24eb7c3fb89da8be24c7d2df5b14b7e8974f",
       "shard": {
         "count": 54,
         "from": "00036864",
@@ -15691,7 +15691,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/25",
-      "sha256": "c1a00d2a706ebb6c9920e8f016615f568d860b0df96268c31d656bee76babf4e",
+      "sha256": "a36888b8d2c899923a507c4d8cccd7e2b6fdc6dd7064e5a16bbebd478dfb9dcb",
       "shard": {
         "count": 54,
         "from": "00102400",
@@ -15711,7 +15711,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/26",
-      "sha256": "ab81fb8e1639e9300ae9a64967aef415e5761be96e55e4be80aae0c2ed60266d",
+      "sha256": "8e977fe154765bd7642a96ec3757be2490ba9bd3cc82711d3da62d1391febc3c",
       "shard": {
         "count": 54,
         "from": "00106496",
@@ -15731,7 +15731,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/27",
-      "sha256": "521bbf8a60054b6c075569e6ffaebea6330a105560a4b88c8ef2deee5c31c228",
+      "sha256": "08e0c64d6c7b0105c951cbdc78156b75d7390340390460c1e1741c3ada6b87b9",
       "shard": {
         "count": 54,
         "from": "00110592",
@@ -15751,7 +15751,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/28",
-      "sha256": "072414d6683a836e9a9e6043e8aac21e54d6a0c2aa8d7618b6b1455aaba15d03",
+      "sha256": "3f5b3240607e9204e7cb4ee9bbe16edd0dc6abc2b5cd6d774e1bd11964f2df92",
       "shard": {
         "count": 54,
         "from": "00114688",
@@ -15771,7 +15771,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/29",
-      "sha256": "544cd8b4c32f4f4a57c44ae079a10cf5e76d88b39846b7730cb34dcfd13e510b",
+      "sha256": "22587e364e64a689308ba479fee71baf757b2e63f727801cd3a68313e5306fc6",
       "shard": {
         "count": 54,
         "from": "00118784",
@@ -15811,7 +15811,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/30",
-      "sha256": "1f282b3dc980dcd78c02d86e38582103ba83ac635a9f01f3b4b1c206a10e02fd",
+      "sha256": "2505222af3e57d80b78d8c5d3f7de5bd033a9cfdf078dd8d409ec3d0b9e0fd66",
       "shard": {
         "count": 54,
         "from": "00122880",
@@ -15831,7 +15831,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/31",
-      "sha256": "b7517ee1b0908057fa9d70450e636d88ff947ad820c6873306889a284e75543d",
+      "sha256": "8ac820c08e722b677f1b0f41925bba29978f60c8e819d082d94c55ca3d6cad31",
       "shard": {
         "count": 54,
         "from": "00126976",
@@ -15851,7 +15851,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/32",
-      "sha256": "ff9b0b8f394f7bdf50a930dd75aee9d384b9245f57d2e633e8f78d5ff5b8e202",
+      "sha256": "3e8fd32226b090d62d7c9970098503c652fb365fdb08774ae2f5075d4e1b1a1d",
       "shard": {
         "count": 54,
         "from": "00131072",
@@ -15871,7 +15871,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/33",
-      "sha256": "860d89f913fa414113df37fa2364d34e4471e4113c3aef93b6cd982882e6b0a2",
+      "sha256": "dde0a736fa13ad2829f24e959fe482b867de68227f824279da4191905b2b095b",
       "shard": {
         "count": 54,
         "from": "00135168",
@@ -15891,7 +15891,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/34",
-      "sha256": "cc99c1b8e79ba170ace0bd3eb0fde80875853951a94520e974bd1dd10911f57a",
+      "sha256": "6a23b4928c0284ef6e8ce8941674521027b4f2cf5506be5fb2bf6fa9052d6554",
       "shard": {
         "count": 54,
         "from": "00139264",
@@ -15911,7 +15911,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/35",
-      "sha256": "e132f82883f1c62a272a6560f3af46dc4e7f3e69ed328e5d7a4797db07580213",
+      "sha256": "a7d1efc10a72da7ec0d7f03190a853378bbdfa89477d056e2f4e3f0b6d541faa",
       "shard": {
         "count": 54,
         "from": "00143360",
@@ -15931,7 +15931,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/36",
-      "sha256": "40004bc1c1dc30bbde4fcca8dae97ede32168c2612efaffedea16b7285694f29",
+      "sha256": "8c9b06073152140042d28e21e6571ccf9f1e5e0a45dd4da2335566cbd2882b0b",
       "shard": {
         "count": 54,
         "from": "00147456",
@@ -15951,7 +15951,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/37",
-      "sha256": "8f1dc1a05782efca9028593ace7d6737e22a78e087beb4cd9060ebe70737aca9",
+      "sha256": "9863c0d027a7ce9e8c32390e13efcbf052bffa9c0b855fb64ca7c9bc2e0bb585",
       "shard": {
         "count": 54,
         "from": "00151552",
@@ -15971,7 +15971,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/38",
-      "sha256": "998a5fe29a57fc78e683422ed399112521c75dc423dadbc52cc8bd0fab23e431",
+      "sha256": "0af546c7cebb6f2d9584df51d37672cb868388629751e8e43d9ac6540fee2f58",
       "shard": {
         "count": 54,
         "from": "00155648",
@@ -15991,7 +15991,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/39",
-      "sha256": "d554cc43901d0bdff0227713477cac8fb83bbef7a09c19d566eb3a62906efe6f",
+      "sha256": "557588013d2754e79dee646761f64011fcb245f4758d9ce69c88a6c4f1bd16b2",
       "shard": {
         "count": 54,
         "from": "00159744",
@@ -16031,7 +16031,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/40",
-      "sha256": "82d9db61a00e075efbdf3fe1552fbbc56f6e275e21c360d488f6cfbe8763c50d",
+      "sha256": "4d3231b1e71620bdb3475795c053e80a34621018d0d4242462e544f755504c0a",
       "shard": {
         "count": 54,
         "from": "00163840",
@@ -16051,7 +16051,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/41",
-      "sha256": "2bee5211ba60351711279ceb2633d6263c739bd661107b259298611b29a6d051",
+      "sha256": "ac29da495b9f669925c1a645bb5f3b86ba2ade9dedea7a275efffd5f307bec9f",
       "shard": {
         "count": 54,
         "from": "00167936",
@@ -16071,7 +16071,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/42",
-      "sha256": "37857212ceedba0b81a969375e32748ec1df55a90b6d3a221ff214c196d3595a",
+      "sha256": "a05c11f19d431e4060d506591a7741a67f68c4ebe9619e3ce3b598630a8b89e5",
       "shard": {
         "count": 54,
         "from": "00172032",
@@ -16091,7 +16091,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/43",
-      "sha256": "0d2a5c9d12d01c32d7ea5fb1eee92f9b271d451e29232fc2ce0434cde2d44596",
+      "sha256": "e044eb046811a67bb62775743c9d008d1fbd10d37678157938079332e75e1a5f",
       "shard": {
         "count": 54,
         "from": "00176128",
@@ -16111,7 +16111,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/44",
-      "sha256": "1d2f524eee694dc787e8787350ace6cec1e0bc0e2a6df9c74d987671ef3209e9",
+      "sha256": "3a014bbe8ac9de6e5beaa0fdebe62fb2aa4ae51c7ee14132a145c0e87c279a8e",
       "shard": {
         "count": 54,
         "from": "00180224",
@@ -16131,7 +16131,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/45",
-      "sha256": "b5c4d57e8438528a4ebde8e8153cd2000d735f231ce884c66ba5d30cbdf688d8",
+      "sha256": "18de66280f7579c70b457b84b7b57564d95ec62e10180553116d541478776eaa",
       "shard": {
         "count": 54,
         "from": "00184320",
@@ -16151,7 +16151,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/46",
-      "sha256": "53b426cbca3d700b757f03247dd3b0d3d2e57a463f1057678c5f0374b14d41dc",
+      "sha256": "c5e86aa61d541a3764deedf42c4b1e879c1d95951b4cdda922c3ea008f471340",
       "shard": {
         "count": 54,
         "from": "00188416",
@@ -16171,7 +16171,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/47",
-      "sha256": "1246686057adcd468b60377edec6198ccbc7a5956f0133312ec5fca78f9d26af",
+      "sha256": "b2a2f99bf3d21e7311ad4c769fc11bdefd95dfdfbd206094b8507a4e9392147e",
       "shard": {
         "count": 54,
         "from": "00192512",
@@ -16191,7 +16191,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/48",
-      "sha256": "f3bb3d4c9b625ed713356c7be81c7cb5eb5c86cae7755f23b3b61466ea0fc97c",
+      "sha256": "0f413ebb8c527e484f5d6fc6a5bbf6ad4e62376c666f8c892f3aa3ee4c4b8a0e",
       "shard": {
         "count": 54,
         "from": "00196608",
@@ -16211,7 +16211,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/49",
-      "sha256": "3f44f84c83bc15a52fa1d404dc1f540a697c1cafb0d51cfcfc21835733590bb1",
+      "sha256": "1f767d7dcc73cb9430b6504ef687a335936873acbd9ee8f43674fa27a196a0d5",
       "shard": {
         "count": 54,
         "from": "00200704",
@@ -16251,7 +16251,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/50",
-      "sha256": "e36b208d75365c1f206daec6d6a3ce582788b668dbc8d9b8cc63f51b51a0e70d",
+      "sha256": "90c758c760b025e4d330d21732c87abc4d7bb84955dc575054942f5eac1037f4",
       "shard": {
         "count": 54,
         "from": "00204800",
@@ -16271,7 +16271,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/51",
-      "sha256": "4691b3d06f6081f07fce53a8479d9b573287f2c8820dd94120228b4c9f6a2f08",
+      "sha256": "856aa9a800bd913d853eee2e248f9b22af5e6c79e86a67d9f409031c7f6d8465",
       "shard": {
         "count": 54,
         "from": "00208896",
@@ -16291,7 +16291,7 @@
       ],
       "rowCount": 4096,
       "sectionId": "lexeme-table@lexeme/52",
-      "sha256": "5b31427c0ccf21d60fe62b277cda19e2f7cee749e99d9fe210b74691c5c1cca1",
+      "sha256": "afb70cf6af340f138b307e4d01fb99bf850abf8c1fc046a5edadd55ce5ce718d",
       "shard": {
         "count": 54,
         "from": "00212992",
@@ -16311,7 +16311,7 @@
       ],
       "rowCount": 1762,
       "sectionId": "lexeme-table@lexeme/53",
-      "sha256": "5b7223934d3475805ccd5e9eeb08d4691c9f1e9ba7afbbe326ad9d761025eb6a",
+      "sha256": "4033ae92609bbe3386215418b52c815fd00d88c1cc484bef8ddd3a6f3374e871",
       "shard": {
         "count": 54,
         "from": "00217088",
@@ -22974,14 +22974,14 @@
       }
     },
     {
-      "byteLength": 8480,
+      "byteLength": 10204,
       "encoding": "binary-columnar",
       "kind": "morphology-table",
       "loading": "eager",
       "path": "morphology-table.bin",
-      "rowCount": 746,
+      "rowCount": 750,
       "sectionId": "morphology-table",
-      "sha256": "cf46c7ee2327ea9fc35143d1622f6775ea98d8ef6369af9d2a6163839c4a97ff"
+      "sha256": "40ee1d620050fecee221063ef21b56d7c21be4a3ed30d813bc3e601386ede7f4"
     },
     {
       "byteLength": 385,

@@ -36,7 +36,8 @@ test('がっこう and 学校 converge on one identity with the accepted candida
   assert.deepEqual(school.modernReadings, ['がっこう']);
   assert.deepEqual(school.morphology, { partOfSpeech: ['名詞', '普通名詞', '一般'], conjugationType: null, conjugationForm: null, source: 'unidic' });
   assert.deepEqual(school.viableBindingIds, ['lexeme:学校/がっこう']);
-  assert.deepEqual(school.historicalReadings, [{ surface: '学校', reading: 'がくかう' }]);
+  assert.deepEqual(school.historicalReadings.map((h: any) => [h.surface, h.reading]), [['学校', 'がくかう']]);
+  assert.equal(school.lexicalOrigin, 'sino');
   const byReading = await lexical.lookupReading('がっこう');
   assert.deepEqual(byReading.map((c: any) => [c.lexicalIdentity, c.surface]).sort(), [['lexeme:学校/がっこう', '学校'], ['lexeme:楽校/がっこう', '楽校']]);
   // an ambiguous reading stays a candidate list; nothing picks a winner

@@ -125,6 +125,19 @@
         if (ch === from && rule.directionality === "reverse_traversable") push({ start, end, output: to, policy: "anywhere", origin: "rule", ref: rule.id, rule });
       }
     }
+    return assemble(text, profileId, lexical, candidates, contextual, {
+      ...options, lexicalMatchCount: matches.length,
+      matchedFacts: options.trace ? matches.flatMap((m) => m.facts.map((f) => ({ factIndex: f.factIndex, kind: f.kind, start: m.start, end: m.end }))) : []
+    });
+  };
+
+  /**
+   * Shared span assembly (#196 D): arbitrate the candidates over the lexical DAG and build rendered
+   * text + per-occurrence spans. Used by this planner and by the resolver adapter, so both engines
+   * report spans, regions and blocked candidates identically.
+   */
+  const assemble = (text, profileId, lexical, candidates, contextual, options = {}) => {
+    for (const c of candidates) if (c.key === undefined) c.key = `${c.origin}:${c.ref}:${c.start}:${c.output}`;
     candidates.sort((a, b) => a.start - b.start || b.end - a.end || compareText(a.key, b.key));
 
     const decision = OccurrenceArbitration.arbitrate({
@@ -192,13 +205,13 @@
 
     return {
       profileId, sourceText: text, renderedText, offsetUnit: "utf16-code-unit", spans,
-      lexicalMatchCount: matches.length, candidateCount: candidates.length,
+      lexicalMatchCount: options.lexicalMatchCount ?? 0, candidateCount: candidates.length,
       // blocked candidates outside any reported span are ordinary non-applications (e.g. a lexical
       // boundary the relation does not fit); kept for diagnostics, never shown as changes
       quietlyBlocked: decision.blocked.filter((b) => !merged.some((r) => b.candidate.start < r.end && b.candidate.end > r.start)).map((b) => ({ ...byKey.get(b.candidate.key), reason: b.reason })),
       // opt-in measurement seam (#196 A): what was looked up, promoted and decided. No effect on output.
       ...(options.trace ? { trace: {
-        matchedFacts: matches.flatMap((m) => m.facts.map((f) => ({ factIndex: f.factIndex, kind: f.kind, start: m.start, end: m.end }))),
+        matchedFacts: options.matchedFacts ?? [],
         candidates: candidates.map((c) => ({ key: c.key, origin: c.origin, ref: c.ref, factIndex: c.fact?.factIndex ?? null, start: c.start, end: c.end, output: c.output, policy: c.policy })),
         contextual: contextual.map((c) => ({ factIndex: c.fact.factIndex, start: c.start, end: c.end, output: c.output })),
         accepted: decision.accepted.map((a) => a.key),
@@ -208,5 +221,5 @@
     };
   };
 
-  return { planAndTransform, lexicalDag };
+  return { planAndTransform, lexicalDag, assemble, ruleTables, charAt };
 });
