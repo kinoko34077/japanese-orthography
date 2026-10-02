@@ -37,10 +37,31 @@ export const KINOTCH_PROFILE_RULES: readonly OrthographyRule[] = [
   }
 ];
 
+// #196 G / #47: the bounded KiNoTch style slice selected for the Browser profile — the Phase-4.6F
+// okurigana-abbreviation family (stage 30), each rule one 4.6F record classified `kinotch_style` and
+// `admitted` (test-locked to data/intake/phase46f-kinotch-profile.json). Project style, never generic
+// authority: disabled unless a profile enables it. No Stage-60, punctuation or semantic-override
+// records are admitted here.
+export const KINOTCH_STYLE_SOURCE = 'intake/phase46f-kinotch-profile';
+export const KINOTCH_OKURIGANA_STYLE: ReadonlyArray<{ readonly from: string; readonly to: string; readonly record: string }> = [
+  { from: '分かる', to: '分る', record: 'phase46f:phase46f-txt-auto-stage30:rules[0]' },
+  { from: '悩み', to: '悩', record: 'phase46f:phase46f-txt-auto-stage30:rules[1]' },
+  { from: '書き出す', to: '書出す', record: 'phase46f:phase46f-txt-auto-stage30:rules[2]' },
+  { from: '当たる', to: '当る', record: 'phase46f:phase46f-txt-auto-stage30:rules[3]' }
+];
+export const KINOTCH_STYLE_RULES: readonly OrthographyRule[] = KINOTCH_OKURIGANA_STYLE.map(({ from, to, record }) => ({
+  id: `rule:profile:kinotch:okurigana:${from}>${to}`, class: 'render', directionality: 'forward_only', lossiness: 'lossless',
+  from: [from], to: [to], dependencies: [],
+  predicate: { channel: 'surface', exactToken: true, defaultEnabled: false, styleFamily: 'okurigana-abbreviation' },
+  origin: 'project_defined',
+  sourceRefs: [KINOTCH_STYLE_SOURCE], evidenceRefs: [record]
+}));
+
 export function withProfileRules(graph: OrthographyKnowledgeGraph): OrthographyKnowledgeGraph {
   const out = structuredClone(graph);
   if (!out.sources.some((s) => s.sourceId === KINOTCH_PROFILE_SOURCE)) out.sources.push({ sourceId: KINOTCH_PROFILE_SOURCE, path: 'data/profiles/kinotch/token-style-overlay.json', role: 'kinotch-profile' });
-  for (const rule of KINOTCH_PROFILE_RULES) if (!out.rules.some((r) => r.id === rule.id)) out.rules.push(structuredClone(rule));
+  if (!out.sources.some((s) => s.sourceId === KINOTCH_STYLE_SOURCE)) out.sources.push({ sourceId: KINOTCH_STYLE_SOURCE, path: 'data/intake/phase46f-kinotch-profile.json', role: 'phase46-intake' });
+  for (const rule of [...KINOTCH_PROFILE_RULES, ...KINOTCH_STYLE_RULES]) if (!out.rules.some((r) => r.id === rule.id)) out.rules.push(structuredClone(rule));
   return out;
 }
 
@@ -53,7 +74,7 @@ export const HISTORICAL_PROFILE: OrthographyProfilePolicy = {
   candidatePolicy: 'preserve_all', allowOrigins: ['historically_attested']
 };
 export const KINOTCH_PROFILE: OrthographyProfilePolicy = {
-  profileId: 'kinotch-fixed', targetPeriod: 'historical', enableRules: ['rule:profile:kinotch:koto-ligature'], disableRules: [],
+  profileId: 'kinotch-fixed', targetPeriod: 'historical', enableRules: ['rule:profile:kinotch:koto-ligature', ...KINOTCH_STYLE_RULES.map((r) => r.id)], disableRules: [],
   thresholds: { renderIterationMarks: true }, candidatePolicy: 'profile_choice', allowOrigins: ['historically_attested', 'project_defined']
 };
 
