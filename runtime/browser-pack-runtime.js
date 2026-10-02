@@ -285,8 +285,68 @@
       };
     };
 
+    // ---- cold evidence (#211 G): lazy, never part of a conversion -----------------------------------
+    const shardOf = (kind, key) => manifest.sections.find((s) => s.kind === kind && s.shard && compareText(key, s.shard.from) >= 0 && compareText(key, s.shard.to) <= 0) ?? null;
+    const findRow = (section, column, key) => {
+      let lo = 0;
+      let hi = section.rowCount(column) - 1;
+      while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        const c = compareText(section.string("strings", section.value(column, mid)), key);
+        if (c === 0) return mid;
+        if (c < 0) lo = mid + 1;
+        else hi = mid - 1;
+      }
+      return -1;
+    };
+    const hasEvidence = manifest.sections.some((s) => s.kind === "evidence-map");
+    const STAGES = ["lexical", "semantic", "diachronic", "orthographic", "profile", "render"];
+    const RULE_KINDS = ["exact", "productive", "contextual", "preserve", "deterministic-char", "profile-style", "render"];
+    const evidenceShards = manifest.sections.filter((s) => s.kind === "evidence-map").sort((a, b) => a.shard.index - b.shard.index);
+    const evidenceFirst = [];
+    evidenceShards.reduce((first, s) => { evidenceFirst.push(first); return first + s.rowCount; }, 0);
+    const evidenceRow = (body, row, canonicalId) => {
+      const s = (id) => body.string("strings", id);
+      const snapshots = [...body.list("recordSnapshot", row)].map(s);
+      return {
+        canonicalId: canonicalId ?? s(body.value("canonicalId", row)),
+        kind: ["fact", "rule", "binding"][body.value("kind", row)],
+        sourceRecords: [...body.list("recordLocal", row)].map((l, i) => (s(l) ? `${snapshots[i]}#${s(l)}` : snapshots[i])),
+        dispositions: [...body.list("dispositions", row)].map(s),
+        sourceSnapshots: [...body.list("sourceSnapshots", row)].map(s),
+        periodRefs: [...body.list("periodRefs", row)].map(s),
+        programs: [...body.list("programs", row)]
+      };
+    };
+    const loadEvidence = async (canonicalId) => {
+      const section = shardOf("evidence-map", `${canonicalId}`);
+      if (!section) return null;
+      const body = await fetchVerified(section.sectionId);
+      const row = findRow(body, "canonicalId", `${canonicalId}`);
+      return row < 0 ? null : evidenceRow(body, row, `${canonicalId}`);
+    };
+    const loadEvidenceById = async (evidenceId) => {
+      let i = evidenceFirst.length - 1;
+      while (i > 0 && evidenceFirst[i] > evidenceId) i -= 1;
+      const section = evidenceShards[i];
+      if (!section || evidenceId - evidenceFirst[i] >= section.rowCount) throw new RangeError(`BrowserPack: evidence id ${evidenceId} out of range`);
+      return evidenceRow(await fetchVerified(section.sectionId), evidenceId - evidenceFirst[i]);
+    };
+    const loadProgramEvidence = async (programId) => {
+      const section = shardOf("program-evidence", String(programId).padStart(8, "0"));
+      if (!section) return null;
+      const body = await fetchVerified(section.sectionId);
+      const row = programId - Number(section.shard.from);
+      const canonicalIds = [];
+      for (const id of body.list("evidence", row)) canonicalIds.push((await loadEvidenceById(id)).canonicalId);
+      return { programId, evidenceType: body.string("strings", body.value("evidenceType", row)), stage: STAGES[body.value("stage", row)], kind: RULE_KINDS[body.value("ruleKind", row)], canonicalIds };
+    };
+
     return Object.freeze({
       packDigest: manifest.packDigest,
+      hasEvidence,
+      loadEvidence,
+      loadProgramEvidence,
       canonicalGraphSha256: manifest.canonicalGraphSha256,
       profiles: manifest.profiles.map((p) => p.profileId),
       externalOffsetUnit: OFFSET_UNIT,

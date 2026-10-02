@@ -2,12 +2,12 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "222b7ed4a561203ea987325915c7ad6858ad80aca8ca4a0fa8e80d4df73b33ca",
+  "packDigest": "17ac2182b926b9d2a5df883a2e4c96e55c828ddc1c0f97984a7a99dc5c9959dd",
   "canonicalGraphSha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
   "totals": {
-    "sections": 1905,
-    "bytes": 115650776,
-    "gzipBytes": 48303017
+    "sections": 1726,
+    "bytes": 157056684,
+    "gzipBytes": 61408160
   },
   "byLoading": {
     "eager": {
@@ -16,14 +16,14 @@
       "gzipBytes": 162822
     },
     "lazy": {
-      "sections": 328,
-      "bytes": 27276256,
-      "gzipBytes": 8600862
+      "sections": 477,
+      "bytes": 72080512,
+      "gzipBytes": 24232221
     },
     "on-demand": {
-      "sections": 1567,
-      "bytes": 87947860,
-      "gzipBytes": 39539333
+      "sections": 1239,
+      "bytes": 84549512,
+      "gzipBytes": 37013117
     }
   },
   "byKind": {
@@ -36,6 +36,11 @@
       "sections": 328,
       "bytes": 27276256,
       "gzipBytes": 8600862
+    },
+    "evidence-map": {
+      "sections": 137,
+      "bytes": 42444868,
+      "gzipBytes": 14377440
     },
     "knowledge-bundle": {
       "sections": 328,
@@ -72,10 +77,10 @@
       "bytes": 1714,
       "gzipBytes": 871
     },
-    "provenance-index": {
-      "sections": 328,
-      "bytes": 3398348,
-      "gzipBytes": 2526216
+    "program-evidence": {
+      "sections": 12,
+      "bytes": 2359388,
+      "gzipBytes": 1253919
     },
     "reading-index": {
       "sections": 409,

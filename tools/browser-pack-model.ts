@@ -68,7 +68,10 @@ const SECTION_KINDS = {
   // ---- BrowserPack v2 physical layout (#196 I) -----------------------------------------------------
   'knowledge-bundle': { contentClass: 'knowledge', encoding: 'binary-bundle', loading: 'on-demand', shardable: true, profileScoped: false, description: 'one fetch per knowledge shard: its string-pool, facts and lexical-index sections as zero-copy parts' },
   // ---- BrowserPack v3 (#208 / #211 F) ---------------------------------------------------------------
-  'symbol-registry': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'append-only Symbol Registry atoms; every v3 string column is a SymbolId token list over it' }
+  'symbol-registry': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'append-only Symbol Registry atoms; every v3 string column is a SymbolId token list over it' },
+  // ---- cold evidence (#211 G): never needed for conversion ---------------------------------------
+  'evidence-map': { contentClass: 'detail', encoding: 'binary-columnar', loading: 'lazy', shardable: true, profileScoped: false, description: 'canonical id -> source records, dispositions, snapshots, period and the Programs compiled from it' },
+  'program-evidence': { contentClass: 'detail', encoding: 'binary-columnar', loading: 'lazy', shardable: true, profileScoped: false, description: 'ProgramId -> IR rule, human-readable evidence type, stage/kind and canonical ids' }
 } as const;
 
 export type BrowserPackSectionKind = keyof typeof SECTION_KINDS;
@@ -83,13 +86,14 @@ export const BROWSER_PACK_V2_COMPILER_VERSION = '2';
 export const BROWSER_PACK_V3_COMPILER_VERSION = '3';
 
 /** Every v1 kind is required: a pack missing any one of them cannot serve the #184 acceptance flow. */
-export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k) && k !== 'knowledge-bundle' && k !== 'symbol-registry').sort();
+export const BROWSER_PACK_REQUIRED_SECTION_KINDS: readonly BrowserPackSectionKind[] = (Object.keys(SECTION_KINDS) as BrowserPackSectionKind[]).filter((k) => !BROWSER_PACK_V2_LEXICAL_SECTION_KINDS.includes(k) && !['knowledge-bundle', 'symbol-registry', 'evidence-map', 'program-evidence'].includes(k)).sort();
 
 /** Required kinds by compiler version: v2 = v1 + the lexical layer; v1 packs may not carry v2 kinds. */
 export function requiredSectionKinds(compilerVersion: string): readonly BrowserPackSectionKind[] {
   const v2 = [...BROWSER_PACK_REQUIRED_SECTION_KINDS.filter((k) => !BROWSER_PACK_V2_BUNDLED_KINDS.includes(k)), 'knowledge-bundle' as const, ...BROWSER_PACK_V2_LEXICAL_SECTION_KINDS];
   if (compilerVersion === BROWSER_PACK_V2_COMPILER_VERSION) return v2.sort();
-  if (compilerVersion === BROWSER_PACK_V3_COMPILER_VERSION) return [...v2, 'symbol-registry' as const].sort();
+  // v3: + symbol registry + cold evidence; the per-shard provenance-index (never read by the runtime) is gone
+  if (compilerVersion === BROWSER_PACK_V3_COMPILER_VERSION) return [...v2.filter((k) => k !== 'provenance-index'), 'symbol-registry' as const, 'evidence-map' as const, 'program-evidence' as const].sort();
   return BROWSER_PACK_REQUIRED_SECTION_KINDS;
 }
 
