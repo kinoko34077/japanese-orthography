@@ -39,7 +39,8 @@
     "measure:browser-pack-v2": "node --expose-gc --import tsx tools/measure-browser-pack-v2.ts",
     "measure:pack-payload": "node --import tsx tools/measure-pack-payload.ts",
     "generate:symbol-registry": "node --import tsx tools/symbol-registry.ts",
-    "validate:symbol-registry": "node --import tsx tools/symbol-registry.ts --check"
+    "validate:symbol-registry": "node --import tsx tools/symbol-registry.ts --check",
+    "measure:sequence-encoding": "node --import tsx tools/sequence-pool.ts"
   },
   "repository": {
     "type": "git",
