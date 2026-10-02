@@ -1,0 +1,564 @@
+{
+  "schemaVersion": "1",
+  "kind": "ijidokun-period-diff",
+  "owner": "japanese-orthography#211 H",
+  "from": "1972",
+  "to": "2014",
+  "families": {
+    "from": 114,
+    "to": 132,
+    "both": 97
+  },
+  "records": {
+    "from": 268,
+    "to": 309
+  },
+  "changes": [
+    {
+      "family": "あからむ",
+      "change": "family-added",
+      "to": [
+        "赤らむ",
+        "明らむ"
+      ]
+    },
+    {
+      "family": "あがる・あげる",
+      "change": "form-groups-changed",
+      "from": [
+        "上がる・上げる",
+        "揚がる・揚げる",
+        "挙げる"
+      ],
+      "to": [
+        "上がる・上げる",
+        "揚がる・揚げる",
+        "挙がる・挙げる"
+      ],
+      "addedForms": [
+        "挙がる"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "あたる・あてる",
+      "change": "family-absent",
+      "from": [
+        "当たる・当てる",
+        "充てる"
+      ]
+    },
+    {
+      "family": "あつい",
+      "change": "form-groups-changed",
+      "from": [
+        "暑い",
+        "熱い",
+        "厚い"
+      ],
+      "to": [
+        "熱い",
+        "暑い"
+      ],
+      "addedForms": [],
+      "absentForms": [
+        "厚い"
+      ]
+    },
+    {
+      "family": "あてる",
+      "change": "family-added",
+      "to": [
+        "当てる",
+        "充てる",
+        "宛てる"
+      ]
+    },
+    {
+      "family": "あと",
+      "change": "form-groups-changed",
+      "from": [
+        "跡",
+        "後"
+      ],
+      "to": [
+        "後",
+        "跡",
+        "痕"
+      ],
+      "addedForms": [
+        "痕"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "あやしい",
+      "change": "family-added",
+      "to": [
+        "怪しい",
+        "妖しい"
+      ]
+    },
+    {
+      "family": "いく・ゆく",
+      "change": "family-added",
+      "to": [
+        "行く",
+        "逝く"
+      ]
+    },
+    {
+      "family": "うた",
+      "change": "family-added",
+      "to": [
+        "歌",
+        "唄"
+      ]
+    },
+    {
+      "family": "うたう",
+      "change": "family-added",
+      "to": [
+        "歌う",
+        "謡う"
+      ]
+    },
+    {
+      "family": "うまれる・うむ",
+      "change": "family-added",
+      "to": [
+        "生まれる・生む",
+        "産まれる・産む"
+      ]
+    },
+    {
+      "family": "うむ・うまれる",
+      "change": "family-absent",
+      "from": [
+        "生む・生まれる",
+        "産む・産まれる"
+      ]
+    },
+    {
+      "family": "うれい・うれえ",
+      "change": "family-absent",
+      "from": [
+        "憂い・憂え",
+        "愁い"
+      ]
+    },
+    {
+      "family": "うれい・うれえる",
+      "change": "family-added",
+      "to": [
+        "憂い・憂える",
+        "愁い・愁える"
+      ]
+    },
+    {
+      "family": "える",
+      "change": "family-absent",
+      "from": [
+        "得る",
+        "獲る"
+      ]
+    },
+    {
+      "family": "おそれ・おそれる",
+      "change": "family-added",
+      "to": [
+        "恐れ・恐れる",
+        "畏れ・畏れる",
+        "虞"
+      ]
+    },
+    {
+      "family": "かおり・かおる",
+      "change": "family-added",
+      "to": [
+        "香り・香る",
+        "薫り・薫る"
+      ]
+    },
+    {
+      "family": "かおる",
+      "change": "family-absent",
+      "from": [
+        "薫る",
+        "香り"
+      ]
+    },
+    {
+      "family": "かかる・かける",
+      "change": "form-groups-changed",
+      "from": [
+        "掛かる・掛ける",
+        "懸かる・懸ける",
+        "架かる・架ける",
+        "係る"
+      ],
+      "to": [
+        "掛かる・掛ける",
+        "懸かる・懸ける",
+        "架かる・架ける",
+        "係る",
+        "賭ける"
+      ],
+      "addedForms": [
+        "賭ける"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "かく",
+      "change": "family-added",
+      "to": [
+        "書く",
+        "描く"
+      ]
+    },
+    {
+      "family": "かま",
+      "change": "family-added",
+      "to": [
+        "釜",
+        "窯"
+      ]
+    },
+    {
+      "family": "きる",
+      "change": "family-added",
+      "to": [
+        "切る",
+        "斬る"
+      ]
+    },
+    {
+      "family": "くら",
+      "change": "family-absent",
+      "from": [
+        "倉",
+        "蔵"
+      ]
+    },
+    {
+      "family": "こう",
+      "change": "family-added",
+      "to": [
+        "請う",
+        "乞う"
+      ]
+    },
+    {
+      "family": "こおる・こおり",
+      "change": "family-absent",
+      "from": [
+        "凍る",
+        "氷"
+      ]
+    },
+    {
+      "family": "こたえる",
+      "change": "family-added",
+      "to": [
+        "答える",
+        "応える"
+      ]
+    },
+    {
+      "family": "こむ",
+      "change": "family-added",
+      "to": [
+        "混む",
+        "込む"
+      ]
+    },
+    {
+      "family": "さす",
+      "change": "form-groups-changed",
+      "from": [
+        "差す",
+        "指す",
+        "刺す"
+      ],
+      "to": [
+        "差す",
+        "指す",
+        "刺す",
+        "挿す"
+      ],
+      "addedForms": [
+        "挿す"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "さわる",
+      "change": "family-added",
+      "to": [
+        "触る",
+        "障る"
+      ]
+    },
+    {
+      "family": "すわる",
+      "change": "family-added",
+      "to": [
+        "座る",
+        "据わる"
+      ]
+    },
+    {
+      "family": "せめる",
+      "change": "family-added",
+      "to": [
+        "攻める",
+        "責める"
+      ]
+    },
+    {
+      "family": "そなえる",
+      "change": "family-added",
+      "to": [
+        "備える",
+        "供える"
+      ]
+    },
+    {
+      "family": "そなえる・そなわる",
+      "change": "family-absent",
+      "from": [
+        "備える・備わる",
+        "供える"
+      ]
+    },
+    {
+      "family": "たっとい・たっとぶ・とうとい・とうとぶ",
+      "change": "family-added",
+      "to": [
+        "尊い・尊ぶ",
+        "貴い・貴ぶ"
+      ]
+    },
+    {
+      "family": "たっとい・とうとい",
+      "change": "family-absent",
+      "from": [
+        "尊い",
+        "貴い"
+      ]
+    },
+    {
+      "family": "つくる",
+      "change": "form-groups-changed",
+      "from": [
+        "作る",
+        "造る"
+      ],
+      "to": [
+        "作る",
+        "造る",
+        "創る"
+      ],
+      "addedForms": [
+        "創る"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "つとまる・つとめる",
+      "change": "family-added",
+      "to": [
+        "勤まる・勤める",
+        "務まる・務める",
+        "努める"
+      ]
+    },
+    {
+      "family": "つとめる",
+      "change": "family-absent",
+      "from": [
+        "努める",
+        "勤める",
+        "務める"
+      ]
+    },
+    {
+      "family": "とかす・とく・とける",
+      "change": "family-added",
+      "to": [
+        "解かす・解く・解ける",
+        "溶かす・溶く・溶ける"
+      ]
+    },
+    {
+      "family": "とく・とける",
+      "change": "family-absent",
+      "from": [
+        "解く・解ける",
+        "溶く・溶ける"
+      ]
+    },
+    {
+      "family": "とらえる",
+      "change": "family-added",
+      "to": [
+        "捕らえる",
+        "捉える"
+      ]
+    },
+    {
+      "family": "におい・におう",
+      "change": "family-added",
+      "to": [
+        "匂い・匂う",
+        "臭い・臭う"
+      ]
+    },
+    {
+      "family": "のぞむ",
+      "change": "family-added",
+      "to": [
+        "望む",
+        "臨む"
+      ]
+    },
+    {
+      "family": "のばす・のびる",
+      "change": "family-absent",
+      "from": [
+        "伸ばす・伸びる",
+        "延ばす・延びる"
+      ]
+    },
+    {
+      "family": "のばす・のびる・のべる",
+      "change": "family-added",
+      "to": [
+        "伸ばす・伸びる・伸べる",
+        "延ばす・延びる・延べる"
+      ]
+    },
+    {
+      "family": "はえ・はえる",
+      "change": "form-groups-changed",
+      "from": [
+        "映え・映える",
+        "栄え"
+      ],
+      "to": [
+        "映え・映える",
+        "栄え・栄える"
+      ],
+      "addedForms": [
+        "栄える"
+      ],
+      "absentForms": []
+    },
+    {
+      "family": "はやい",
+      "change": "family-absent",
+      "from": [
+        "早い",
+        "速い"
+      ]
+    },
+    {
+      "family": "はやい・はやまる・はやめる",
+      "change": "family-added",
+      "to": [
+        "早い・早まる・早める",
+        "速い・速まる・速める"
+      ]
+    },
+    {
+      "family": "はる",
+      "change": "family-added",
+      "to": [
+        "張る",
+        "貼る"
+      ]
+    },
+    {
+      "family": "ひ",
+      "change": "family-absent",
+      "from": [
+        "火",
+        "灯"
+      ]
+    },
+    {
+      "family": "ふた",
+      "change": "family-absent",
+      "from": [
+        "二",
+        "双"
+      ]
+    },
+    {
+      "family": "ほか",
+      "change": "family-added",
+      "to": [
+        "外",
+        "他"
+      ]
+    },
+    {
+      "family": "やさしい",
+      "change": "family-added",
+      "to": [
+        "優しい",
+        "易しい"
+      ]
+    },
+    {
+      "family": "やぶる・やぶれる",
+      "change": "family-absent",
+      "from": [
+        "破る・破れる",
+        "敗れる"
+      ]
+    },
+    {
+      "family": "やぶれる",
+      "change": "family-added",
+      "to": [
+        "破れる",
+        "敗れる"
+      ]
+    },
+    {
+      "family": "よ",
+      "change": "family-added",
+      "to": [
+        "世",
+        "代"
+      ]
+    },
+    {
+      "family": "わく",
+      "change": "family-added",
+      "to": [
+        "沸く",
+        "湧く"
+      ]
+    },
+    {
+      "family": "わずらう",
+      "change": "family-added",
+      "to": [
+        "煩う",
+        "患う"
+      ]
+    },
+    {
+      "family": "わずらう・わずらわす",
+      "change": "family-absent",
+      "from": [
+        "煩う・煩わす",
+        "患う"
+      ]
+    }
+  ],
+  "note": "records are compared per reading family and form group; a record present in both versions is two records, never one continued record"
+}

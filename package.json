@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "bench:resolver": "node --import tsx tools/bench-orthography-resolution.ts --json",
     "check:profile": "node --import tsx tools/check-profile.ts",
-    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm run validate:browser-pack && npm run validate:symbol-registry && npm run validate:rule-ir && npm run validate:rule-programs && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
+    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm run validate:browser-pack && npm run validate:symbol-registry && npm run validate:rule-ir && npm run validate:rule-programs && npm run validate:ijidokun && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
     "generate:native-kana": "node --import tsx tools/generate-native-kana.ts",
     "validate:native-kana": "node --import tsx tools/validate-native-kana.ts",
     "generate:sino-kana": "node --import tsx tools/sino-kana.ts",
@@ -44,7 +44,9 @@
     "generate:rule-ir": "node --import tsx tools/rule-ir.ts",
     "validate:rule-ir": "node --import tsx tools/rule-ir.ts --check",
     "generate:rule-programs": "node --import tsx tools/rule-program-compiler.ts",
-    "validate:rule-programs": "node --import tsx tools/rule-program-compiler.ts --check"
+    "validate:rule-programs": "node --import tsx tools/rule-program-compiler.ts --check",
+    "generate:ijidokun": "node --import tsx tools/ijidokun-intake.ts",
+    "validate:ijidokun": "node --import tsx tools/ijidokun-intake.ts --check"
   },
   "repository": {
     "type": "git",

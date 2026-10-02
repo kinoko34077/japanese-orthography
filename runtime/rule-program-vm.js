@@ -70,6 +70,9 @@
       if (pred.constraint && !(context?.constraints ?? []).includes(pred.constraint)) return false;
       if (pred.usage && context?.usage !== pred.usage) return false;
       if (pred.period && context?.period !== pred.period) return false;
+      // a sense condition excludes a rule only when the context states a different sense; without
+      // sense evidence every sense stays a candidate (#208 §12)
+      if (pred.sense && context?.sense !== undefined && context.sense !== pred.sense) return false;
       return true;
     };
 
