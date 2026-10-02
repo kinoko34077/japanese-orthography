@@ -10,12 +10,13 @@
     "unbound-relation": "both sides keep the lexical ambiguity; the browser additionally applies a canonical relation bound to no lexeme (it holds for every candidate), which the core first slice does not carry",
     "ruby-round-trip": "every semantic field is identical; on Ruby input the browser keeps the authors Ruby markup in plain mode (late render), where the core plain renderer drops it",
     "browser-agreeing-sources": "same identity and reading; the core slice has no historical reading, the browser has one confirmed by two agreeing canonical sources (surface-keyed historical reading + the native kana relation of the reading)",
-    "pending-F-inflection": "the core UniDic slice lists this inflected surface; browser inflection/morphology analysis is owned by #196 F, which must turn this case identical or reclassify it"
+    "browser-canonical-relations": "every lexical field (identity, reading, origin, part of speech) is identical; the browser additionally reaches canonical historical relations for this surface that the core first slice does not carry, which changes only the historical disposition/output",
+    "browser-sino-reconstruction": "every lexical field is identical; the core first slice has no Sino component table, the browser reconstructs the historical reading with the accepted 4.6E component reconstructor over the canonical sino bindings"
   },
   "summary": {
     "cases": 11,
-    "identical": 2,
-    "classified": 9,
+    "identical": 1,
+    "classified": 10,
     "mismatches": 0
   },
   "cases": [
@@ -56,7 +57,8 @@
         "historicalSurface": "學校",
         "disposition": "AUTO",
         "plain": "學校",
-        "rubyWhole": "｜學校《がくかう》"
+        "rubyWhole": "｜學校《がくかう》",
+        "historicalRoute": "sino"
       },
       "difference": null,
       "fieldsDiffering": []
@@ -94,14 +96,18 @@
           "普通名詞",
           "一般"
         ],
-        "historicalKana": null,
+        "historicalKana": "たいふう",
         "historicalSurface": "颱風",
         "disposition": "AUTO",
         "plain": "颱風",
-        "rubyWhole": "颱風"
+        "rubyWhole": "｜颱風《たいふう》",
+        "historicalRoute": "sino"
       },
-      "difference": null,
-      "fieldsDiffering": []
+      "difference": "browser-sino-reconstruction",
+      "fieldsDiffering": [
+        "historicalKana",
+        "rubyWhole"
+      ]
     },
     {
       "route": "surface",
@@ -145,7 +151,8 @@
         "historicalSurface": "今日",
         "disposition": "CANDIDATES",
         "plain": "今日",
-        "rubyWhole": "今日"
+        "rubyWhole": "今日",
+        "historicalRoute": null
       },
       "difference": "browser-wider-lexicon",
       "fieldsDiffering": [
@@ -186,7 +193,8 @@
         "historicalSurface": "思ふ",
         "disposition": "AUTO",
         "plain": "思ふ",
-        "rubyWhole": "思ふ"
+        "rubyWhole": "思ふ",
+        "historicalRoute": null
       },
       "difference": "lexicon-granularity",
       "fieldsDiffering": [
@@ -235,7 +243,8 @@
         "historicalSurface": "買ふ",
         "disposition": "AUTO",
         "plain": "買ふ",
-        "rubyWhole": "買ふ"
+        "rubyWhole": "買ふ",
+        "historicalRoute": null
       },
       "difference": "lexicon-granularity",
       "fieldsDiffering": [
@@ -289,7 +298,8 @@
         "historicalSurface": "合う",
         "disposition": "CANDIDATES",
         "plain": "合ふ",
-        "rubyWhole": "合ふ"
+        "rubyWhole": "合ふ",
+        "historicalRoute": null
       },
       "difference": "unbound-relation",
       "fieldsDiffering": [
@@ -318,26 +328,25 @@
         "rubyWhole": "味わおう"
       },
       "browser": {
-        "kind": "unresolved",
-        "lexicalIdentity": null,
+        "kind": "resolved",
+        "lexicalIdentity": "lexeme:味わう/あじわう",
         "candidateIdentities": [],
         "candidateReadings": [],
-        "reading": null,
-        "lexicalOrigin": "unknown",
-        "partOfSpeech": null,
+        "reading": "あじわおう",
+        "lexicalOrigin": "native",
+        "partOfSpeech": [
+          "動詞",
+          "一般"
+        ],
         "historicalKana": null,
         "historicalSurface": "味わおう",
-        "disposition": "UNRESOLVED",
+        "disposition": "CANDIDATES",
         "plain": "味わおう",
-        "rubyWhole": "味わおう"
+        "rubyWhole": "味わおう",
+        "historicalRoute": null
       },
-      "difference": "pending-F-inflection",
+      "difference": "browser-canonical-relations",
       "fieldsDiffering": [
-        "kind",
-        "lexicalIdentity",
-        "reading",
-        "lexicalOrigin",
-        "partOfSpeech",
         "disposition"
       ]
     },
@@ -378,7 +387,8 @@
         "historicalSurface": "學校",
         "disposition": "AUTO",
         "plain": "｜學校《がくかう》",
-        "rubyWhole": "｜學校《がくかう》"
+        "rubyWhole": "｜學校《がくかう》",
+        "historicalRoute": "sino"
       },
       "difference": "ruby-round-trip",
       "fieldsDiffering": [
@@ -422,7 +432,8 @@
         "historicalSurface": "今日",
         "disposition": "AUTO",
         "plain": "｜今日《けふ》",
-        "rubyWhole": "｜今日《けふ》"
+        "rubyWhole": "｜今日《けふ》",
+        "historicalRoute": "native"
       },
       "difference": "browser-agreeing-sources",
       "fieldsDiffering": [

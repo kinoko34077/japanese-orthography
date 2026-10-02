@@ -18,6 +18,8 @@ export const SITE_RUNTIME_MODULES = [
   'transform-shared.js',
   'orthography-resolver.js',
   'browser-lexical-runtime.js',
+  'browser-inflection.js',
+  'historical-sino-runtime.js',
   'browser-resolver-adapter.js',
   'browser-transform-worker.js'
 ];

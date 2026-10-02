@@ -30,7 +30,8 @@ export const PARITY_DIFFERENCE_KINDS = {
   'unbound-relation': 'both sides keep the lexical ambiguity; the browser additionally applies a canonical relation bound to no lexeme (it holds for every candidate), which the core first slice does not carry',
   'ruby-round-trip': 'every semantic field is identical; on Ruby input the browser keeps the authors Ruby markup in plain mode (late render), where the core plain renderer drops it',
   'browser-agreeing-sources': 'same identity and reading; the core slice has no historical reading, the browser has one confirmed by two agreeing canonical sources (surface-keyed historical reading + the native kana relation of the reading)',
-  'pending-F-inflection': 'the core UniDic slice lists this inflected surface; browser inflection/morphology analysis is owned by #196 F, which must turn this case identical or reclassify it'
+  'browser-canonical-relations': 'every lexical field (identity, reading, origin, part of speech) is identical; the browser additionally reaches canonical historical relations for this surface that the core first slice does not carry, which changes only the historical disposition/output',
+  'browser-sino-reconstruction': 'every lexical field is identical; the core first slice has no Sino component table, the browser reconstructs the historical reading with the accepted 4.6E component reconstructor over the canonical sino bindings'
 } as const;
 
 const katakanaToHiragana = (text: string) => text.replace(/[ァ-ヶ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
@@ -102,12 +103,16 @@ export async function browserCoreParity(root: string, build: BrowserPackBuild) {
       historicalSurface: u?.historical.surface ?? null,
       disposition: u?.historical.disposition ?? null,
       plain: plain.raw.renderedText,
-      rubyWhole: ruby.raw.renderedText
+      rubyWhole: ruby.raw.renderedText,
+      // classification-only (not compared): what the browser used beyond the core slice
+      _route: u?.historical.route ?? null,
+      _contextualCandidates: u?.historical.contextualCandidates ?? []
     };
   };
 
   const classify = (core: Fields, browser: Fields, coreUnit: any): string | null => {
     const differs = Object.keys(core).some((k) => JSON.stringify(core[k]) !== JSON.stringify(browser[k]));
+    const lexicalSame = ['kind', 'lexicalIdentity', 'reading', 'lexicalOrigin', 'partOfSpeech'].every((k) => JSON.stringify(core[k]) === JSON.stringify(browser[k]));
     if (!differs) return null;
     if (core.kind === 'unresolved' && (core.candidateIdentities as string[]).length === 0) return 'core-unknown';
     const coreIds = new Set((coreUnit.lexicalCandidates ?? []).map((c: any) => c.lexicalIdentity));
@@ -120,9 +125,10 @@ export async function browserCoreParity(root: string, build: BrowserPackBuild) {
     }
     const differing = Object.keys(core).filter((k) => JSON.stringify(core[k]) !== JSON.stringify(browser[k]));
     if (differing.length === 1 && differing[0] === 'plain' && browser.plain === core.rubyWhole && browser.rubyWhole === core.rubyWhole) return 'ruby-round-trip';
+    if (lexicalSame && core.historicalKana === null && browser._route === 'sino' && browser.historicalKana !== null && core.historicalSurface === browser.historicalSurface) return 'browser-sino-reconstruction';
     if (core.kind === 'resolved' && browser.kind === 'resolved' && core.lexicalIdentity === browser.lexicalIdentity && core.reading === browser.reading
       && core.historicalSurface === browser.historicalSurface && core.historicalKana === null && browser.historicalKana !== null) return 'browser-agreeing-sources';
-    if (core.kind === 'resolved' && browser.kind === 'unresolved' && core.lexicalIdentity && core.reading !== null && !(core.lexicalIdentity as string).endsWith(`/${core.reading}`)) return 'pending-F-inflection';
+    if (lexicalSame && core.disposition === 'SOURCE_REVIEW' && (browser._contextualCandidates as string[]).length > 0) return 'browser-canonical-relations';
     if (coreIdentity && browser.kind === 'candidates' && (browser.candidateIdentities as string[]).includes(coreIdentity) && browser.plain === core.plain) return 'browser-wider-lexicon';
     return 'MISMATCH';
   };
@@ -133,7 +139,8 @@ export async function browserCoreParity(root: string, build: BrowserPackBuild) {
     const core = coreFields(u, bridge, (mode) => bundle.render(u, { mode }));
     const browser = await browserFields(text);
     const difference = classify(core, browser, u);
-    cases.push({ route: 'surface', input: text, core, browser, difference, fieldsDiffering: Object.keys(core).filter((k) => JSON.stringify(core[k]) !== JSON.stringify(browser[k])) });
+    const { _route, _contextualCandidates, ...browserFieldsOnly } = browser;
+    cases.push({ route: 'surface', input: text, core, browser: { ...browserFieldsOnly, historicalRoute: _route }, difference, fieldsDiffering: Object.keys(core).filter((k) => JSON.stringify(core[k]) !== JSON.stringify(browser[k])) });
   }
   for (const text of PARITY_READING_CASES) {
     const u = bundle.resolveReading(text);
