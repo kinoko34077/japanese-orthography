@@ -57,7 +57,10 @@
       try {
         if (message?.type === "open") {
           const p = await pack();
-          return { type: "opened", requestId: message.requestId, packDigest: p.packDigest, profiles: p.profiles, stats: p.stats() };
+          // render modes are a capability of the v2 resolver path; a v1 pack renders plain text only
+          const renderModes = typeof p.hasSection === "function" && p.hasSection("lexical-directory") && adapter
+            ? ["plain", "ruby-whole-explicit", "ruby-whole-implicit", "ruby-components-explicit", "ruby-components-implicit"] : ["plain"];
+          return { type: "opened", requestId: message.requestId, packDigest: p.packDigest, profiles: p.profiles, stats: p.stats(), renderModes };
         }
         if (message?.type === "transform") {
           const p = await pack();

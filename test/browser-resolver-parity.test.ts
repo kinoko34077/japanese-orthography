@@ -6,9 +6,8 @@ import { compileBrowserPack } from '../tools/browser-pack-compiler.ts';
 import { lexicalLayer } from '../tools/browser-pack-lexical-compiler.ts';
 import { BROWSER_PACK_V2_COMPILER_VERSION } from '../tools/browser-pack-model.ts';
 import { BROWSER_RESOLVER_PARITY_REPORT } from '../tools/browser-resolver-parity.ts';
-import { canonicalizeOrthographyKnowledge } from '../tools/orthography-knowledge-model.ts';
 import { HISTORICAL_PROFILE, KINOTCH_PROFILE, MODERN_PROFILE } from '../tools/orthography-policy.ts';
-import { lexicalFixture } from './fixtures/browser-pack-fixture.ts';
+import { adapterFixture } from './fixtures/browser-pack-fixture.ts';
 
 const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
@@ -16,18 +15,7 @@ const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runt
 const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
 const { createTransformService } = require('../runtime/browser-transform-worker.js');
 
-const prov = { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] };
-const graph = (() => {
-  const g = lexicalFixture();
-  g.facts.push(
-    { id: 'fact:literal_form:台頭', kind: 'literal_form', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '台頭', periodRefs: ['period:modern'], ...prov },
-    { id: 'fact:literal_reading:台頭|たいとう', kind: 'literal_reading', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '台頭', reading: 'たいとう', periodRefs: ['period:modern'], ...prov },
-    { id: 'fact:form_relation:擡頭||台頭', kind: 'form_relation', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '擡頭', target: '台頭', periodRefs: ['period:historical-kana'], tags: ['contextual_kanji', 'context:constraint-taito'], ...prov },
-    { id: 'fact:form_relation:がくかう||がっこう', kind: 'form_relation', lexicalRefs: [], surface: 'がくかう', target: 'がっこう', periodRefs: ['period:historical-kana'], tags: ['historical_kana_native'], ...prov }
-  );
-  g.rules.push({ id: 'rule:char:學>学', class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: ['學'], to: ['学'], dependencies: [], predicate: { channel: 'surface' }, ...prov });
-  return canonicalizeOrthographyKnowledge(g);
-})();
+const graph = adapterFixture();
 const build = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
 });

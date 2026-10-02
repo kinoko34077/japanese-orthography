@@ -48,3 +48,24 @@ export function lexicalFixture(): OrthographyKnowledgeGraph {
   );
   return canonicalizeOrthographyKnowledge(g);
 }
+
+/** #196 D/E: adapter fixture — contextual binding, native kana relations, 今日 with several readings. */
+export function adapterFixture(): OrthographyKnowledgeGraph {
+  const g = lexicalFixture();
+  const P = { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] };
+  const MOD = ['period:modern'];
+  const HIST = ['period:historical-kana'];
+  g.facts.push(
+    { id: 'fact:literal_form:台頭', kind: 'literal_form', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '台頭', periodRefs: MOD, ...P },
+    { id: 'fact:literal_reading:台頭|たいとう', kind: 'literal_reading', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '台頭', reading: 'たいとう', periodRefs: MOD, ...P },
+    { id: 'fact:form_relation:擡頭||台頭', kind: 'form_relation', lexicalRefs: ['lexeme:台頭/たいとう'], surface: '擡頭', target: '台頭', periodRefs: HIST, tags: ['contextual_kanji', 'context:constraint-taito'], ...P },
+    { id: 'fact:form_relation:がくかう||がっこう', kind: 'form_relation', lexicalRefs: [], surface: 'がくかう', target: 'がっこう', periodRefs: HIST, tags: ['historical_kana_native'], ...P },
+    { id: 'fact:form_relation:けふ||きょう', kind: 'form_relation', lexicalRefs: [], surface: 'けふ', target: 'きょう', periodRefs: HIST, tags: ['historical_kana_native'], ...P },
+    { id: 'fact:literal_form:今日', kind: 'literal_form', lexicalRefs: ['lexeme:今日/きょう'], surface: '今日', periodRefs: MOD, ...P },
+    { id: 'fact:literal_reading:今日|きょう', kind: 'literal_reading', lexicalRefs: ['lexeme:今日/きょう'], surface: '今日', reading: 'きょう', periodRefs: MOD, ...P },
+    { id: 'fact:literal_reading:今日|こんにち', kind: 'literal_reading', lexicalRefs: ['lexeme:今日/きょう'], surface: '今日', reading: 'こんにち', periodRefs: MOD, ...P },
+    { id: 'fact:literal_reading:今日|けふ', kind: 'literal_reading', lexicalRefs: [], surface: '今日', reading: 'けふ', periodRefs: HIST, tags: ['historical_kana_native'], ...P }
+  );
+  g.rules.push({ id: 'rule:char:學>学', class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: ['學'], to: ['学'], dependencies: [], predicate: { channel: 'surface' }, ...P });
+  return canonicalizeOrthographyKnowledge(g);
+}

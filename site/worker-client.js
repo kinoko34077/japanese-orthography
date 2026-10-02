@@ -44,10 +44,10 @@
         await send({ type: "configure", manifestUrl });
         return send({ type: "open" });
       },
-      transform: async (text, profileId) => {
+      transform: async (text, profileId, renderMode = "plain") => {
         const token = {};
         latestTransform = token;
-        const reply = await send({ type: "transform", text, profileId });
+        const reply = await send({ type: "transform", text, profileId, renderMode });
         return { ...reply, stale: latestTransform !== token };
       },
       detail: (resultId, detailRef) => send({ type: "detail", resultId, detailRef }),

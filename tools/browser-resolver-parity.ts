@@ -19,7 +19,7 @@ const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
 const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
 
-export const PARITY_SURFACE_CASES = ['学校', '台風', '今日', '思う', '買う', '合う', '味わおう'] as const;
+export const PARITY_SURFACE_CASES = ['学校', '台風', '今日', '思う', '買う', '合う', '味わおう', '｜学校《がっこう》', '｜今日《きょう》'] as const;
 export const PARITY_READING_CASES = ['がっこう', 'きょう'] as const;
 
 /** Admissible, explained differences (everything else is a parity failure). */
@@ -28,6 +28,8 @@ export const PARITY_DIFFERENCE_KINDS = {
   'browser-wider-lexicon': 'the browser lexicon (JMdict) has further lexemes for the same input; the core identity is among the browser candidates and nothing is selected',
   'core-unknown': 'the input is outside the core first-slice lexicon; there is nothing to compare',
   'unbound-relation': 'both sides keep the lexical ambiguity; the browser additionally applies a canonical relation bound to no lexeme (it holds for every candidate), which the core first slice does not carry',
+  'ruby-round-trip': 'every semantic field is identical; on Ruby input the browser keeps the authors Ruby markup in plain mode (late render), where the core plain renderer drops it',
+  'browser-agreeing-sources': 'same identity and reading; the core slice has no historical reading, the browser has one confirmed by two agreeing canonical sources (surface-keyed historical reading + the native kana relation of the reading)',
   'pending-F-inflection': 'the core UniDic slice lists this inflected surface; browser inflection/morphology analysis is owned by #196 F, which must turn this case identical or reclassify it'
 } as const;
 
@@ -116,6 +118,10 @@ export async function browserCoreParity(root: string, build: BrowserPackBuild) {
     if (core.kind === 'candidates' && browser.kind === 'candidates' && coreReadings.every((r) => browserReadings.includes(r))) {
       return browser.plain === core.plain ? 'browser-wider-lexicon' : 'unbound-relation';
     }
+    const differing = Object.keys(core).filter((k) => JSON.stringify(core[k]) !== JSON.stringify(browser[k]));
+    if (differing.length === 1 && differing[0] === 'plain' && browser.plain === core.rubyWhole && browser.rubyWhole === core.rubyWhole) return 'ruby-round-trip';
+    if (core.kind === 'resolved' && browser.kind === 'resolved' && core.lexicalIdentity === browser.lexicalIdentity && core.reading === browser.reading
+      && core.historicalSurface === browser.historicalSurface && core.historicalKana === null && browser.historicalKana !== null) return 'browser-agreeing-sources';
     if (core.kind === 'resolved' && browser.kind === 'unresolved' && core.lexicalIdentity && core.reading !== null && !(core.lexicalIdentity as string).endsWith(`/${core.reading}`)) return 'pending-F-inflection';
     if (coreIdentity && browser.kind === 'candidates' && (browser.candidateIdentities as string[]).includes(coreIdentity) && browser.plain === core.plain) return 'browser-wider-lexicon';
     return 'MISMATCH';
