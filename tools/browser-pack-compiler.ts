@@ -80,7 +80,19 @@ function partition(entries: readonly Entry[], facts: readonly OrthographyFact[],
   return shards;
 }
 
-export interface CompileOptions { shardBudgetBytes?: number; terminology?: unknown }
+/** Context handed to an additional pack layer (e.g. the v2 lexical layer, #196 B). */
+export interface BrowserPackLayerContext {
+  readonly graph: OrthographyKnowledgeGraph;
+  add(kind: BrowserPackSectionKind, body: Uint8Array, extra?: { shard?: BrowserPackShardDescriptor; profileId?: string; rowCount?: number; requires?: string[] }): string;
+}
+
+export interface CompileOptions {
+  shardBudgetBytes?: number;
+  terminology?: unknown;
+  /** Defaults to the v1 compiler version; layers that add v2 kinds must pass the v2 version. */
+  compilerVersion?: string;
+  layers?: ReadonlyArray<(context: BrowserPackLayerContext) => void>;
+}
 
 export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: readonly OrthographyProfilePolicy[], options: CompileOptions = {}): BrowserPackBuild {
   const graph = canonicalizeOrthographyKnowledge(input);
@@ -217,10 +229,12 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
     return { profileId: profile.profileId, profileDigest: sha(JSON.stringify(sortKeys(profile))), policySectionId };
   });
 
+  for (const layer of options.layers ?? []) layer({ graph, add });
+
   const manifest = sealBrowserPackManifest({
     schemaVersion: BROWSER_PACK_SCHEMA_VERSION,
     kind: BROWSER_PACK_MANIFEST_KIND,
-    compilerVersion: BROWSER_PACK_COMPILER_VERSION,
+    compilerVersion: options.compilerVersion ?? BROWSER_PACK_COMPILER_VERSION,
     canonicalGraphSha256: knowledgeDigest(graph),
     sourceSetDigest: sha(JSON.stringify(graph.sources)),
     lexicalNamespaceId: graph.lexicalNamespaceId,

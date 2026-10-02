@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-pack-v2-compiled",
+  "owner": "japanese-orthography#196 B",
+  "packDigest": "2f2eeda5b44727f8a75b033401446dffa28cd9f16ad60d0f53725f4116a94b50",
+  "canonicalGraphSha256": "c6487a172537e7806a507ba8b6da3817a0f727a8e45dc884405ba62a0ce2c8dd",
+  "totals": {
+    "sections": 2033,
+    "bytes": 130248474,
+    "gzipBytes": 46476960
+  },
+  "byLoading": {
+    "eager": {
+      "sections": 9,
+      "bytes": 381422,
+      "gzipBytes": 104365
+    },
+    "lazy": {
+      "sections": 328,
+      "bytes": 57711144,
+      "gzipBytes": 14158350
+    },
+    "on-demand": {
+      "sections": 1696,
+      "bytes": 72155908,
+      "gzipBytes": 32214245
+    }
+  },
+  "byKind": {
+    "bindings": {
+      "sections": 1,
+      "bytes": 234608,
+      "gzipBytes": 56979
+    },
+    "detail-shard": {
+      "sections": 328,
+      "bytes": 57711144,
+      "gzipBytes": 14158350
+    },
+    "facts": {
+      "sections": 328,
+      "bytes": 7903584,
+      "gzipBytes": 3212784
+    },
+    "lexeme-forms": {
+      "sections": 54,
+      "bytes": 7734256,
+      "gzipBytes": 3580942
+    },
+    "lexeme-readings": {
+      "sections": 54,
+      "bytes": 15544304,
+      "gzipBytes": 6426783
+    },
+    "lexeme-table": {
+      "sections": 54,
+      "bytes": 11057316,
+      "gzipBytes": 3745031
+    },
+    "lexical-directory": {
+      "sections": 1,
+      "bytes": 13100,
+      "gzipBytes": 7389
+    },
+    "lexical-index": {
+      "sections": 328,
+      "bytes": 3012268,
+      "gzipBytes": 2042636
+    },
+    "morphology-table": {
+      "sections": 1,
+      "bytes": 8480,
+      "gzipBytes": 4298
+    },
+    "profile-policy": {
+      "sections": 3,
+      "bytes": 1114,
+      "gzipBytes": 609
+    },
+    "provenance-index": {
+      "sections": 328,
+      "bytes": 3398348,
+      "gzipBytes": 2526216
+    },
+    "reading-index": {
+      "sections": 127,
+      "bytes": 7837088,
+      "gzipBytes": 3386530
+    },
+    "rules": {
+      "sections": 1,
+      "bytes": 99648,
+      "gzipBytes": 22062
+    },
+    "shard-directory": {
+      "sections": 1,
+      "bytes": 15700,
+      "gzipBytes": 9778
+    },
+    "string-pool": {
+      "sections": 328,
+      "bytes": 9895908,
+      "gzipBytes": 4016505
+    },
+    "surface-index": {
+      "sections": 95,
+      "bytes": 5772836,
+      "gzipBytes": 3276818
+    },
+    "terminology": {
+      "sections": 1,
+      "bytes": 8772,
+      "gzipBytes": 3250
+    }
+  },
+  "shards": {
+    "count": 328,
+    "largestFactsBytes": 25392
+  },
+  "baseline": {
+    "aReport": "data/reports/browser-pack-v1-measurements.json",
+    "v2HotArtifactModernBytes": 60965586
+  }
+}
