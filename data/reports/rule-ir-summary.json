@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1",
+  "kind": "rule-ir-summary",
+  "owner": "japanese-orthography#211 D (spec #208 §3-4)",
+  "digest": "199e036b7d91cc7b63955ef159706fe9e24f60aa377b81b01c1ffb65de46f214",
+  "rules": 182175,
+  "branches": 268191,
+  "multiBranchRules": 44541,
+  "byKind": {
+    "contextual": 18,
+    "deterministic-char": 5,
+    "exact": 179951,
+    "preserve": 3,
+    "productive": 2186,
+    "profile-style": 5,
+    "render": 7
+  },
+  "byStage": {
+    "diachronic": 9678,
+    "lexical": 163374,
+    "orthographic": 9090,
+    "profile": 5,
+    "render": 7,
+    "semantic": 21
+  },
+  "byDirection": {
+    "reconstruct": 163374,
+    "to-historical": 11496,
+    "to-modern": 7305
+  },
+  "byEvidenceType": {
+    "binding/diachronic/reverse_traversable/lossless": 2000,
+    "component-jion": 2,
+    "contextual_kanji": 27,
+    "diachronic/reverse_traversable/lossless": 177,
+    "historical_kana_native": 16557,
+    "lexical_reading": 163374,
+    "merged_character": 8,
+    "orthographic/forward_infer_reverse/many_to_one": 4,
+    "orthographic/forward_only/contextual": 1,
+    "orthographic/reverse_traversable/lossless": 5,
+    "phonological/forward_infer_reverse/contextual": 1,
+    "phonological/forward_infer_reverse/many_to_one": 1,
+    "phonological/reverse_traversable/lossless": 2,
+    "render/forward_only/lossless": 6,
+    "render/forward_only/many_to_one": 1,
+    "render/reverse_traversable/lossless": 5,
+    "safety:block_fallback": 1,
+    "safety:preserve_exact": 2,
+    "whole-word": 1
+  }
+}
