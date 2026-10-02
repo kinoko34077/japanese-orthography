@@ -76,7 +76,10 @@
           if (!diagnostics) throw new Error("diagnostic contract not loaded");
           const raw = lastResults.get(message.resultId);
           if (!raw) throw new Error("detail requested for a result that is no longer current; convert again");
-          return { type: "detail", requestId: message.requestId, detail: await diagnostics.expandDetail(p, raw, message.detailRef) };
+          const detail = `${message.detailRef}`.startsWith("u:")
+            ? await diagnostics.expandUnitDetail(p, lexicalFor.get(p), raw, message.detailRef)
+            : await diagnostics.expandDetail(p, raw, message.detailRef);
+          return { type: "detail", requestId: message.requestId, detail };
         }
         throw new TypeError(`unknown message type ${message?.type}`);
       } catch (error) {

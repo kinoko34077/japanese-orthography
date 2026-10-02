@@ -127,6 +127,10 @@ textarea {
 .diag-conditional::before { content: "◆"; }
 .diag-unresolved { background: var(--unresolved-bg); color: var(--unresolved-fg); border-bottom: 2px wavy var(--unresolved-fg); }
 .diag-unresolved::before { content: "!"; font-weight: 700; }
+/* recognized-but-unchanged unit (辞書情報表示): neutral, no certainty colour or symbol */
+.diag.lexeme { background: transparent; color: inherit; border-bottom: 1px dotted var(--muted); }
+.diag.lexeme::before { content: none; }
+.badge.lexeme { border: 1px dotted var(--muted); }
 /* selection/focus is an outline, never a colour change, so it cannot be confused with certainty */
 .diag[aria-pressed="true"] { outline: 3px solid var(--focus); outline-offset: 1px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 10px 0 0; }

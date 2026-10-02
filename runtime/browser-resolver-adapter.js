@@ -366,11 +366,13 @@
         }
       }
     }
-    // deterministic character rendering outside lexical units (identity-independent, as in v1)
+    // deterministic character rendering outside lexical units that already resolved an output (inside
+    // them the resolver applied the same safe map, so a character candidate would only be redundant)
+    const unitOutputs = candidates.filter((c) => c.origin === "resolver");
     for (const [start, end] of charBoundaries) {
       const ch = text.slice(start, end);
       const rule = safeRules.get(ch);
-      if (rule && !rubies.some((r) => start < r.end && end > r.start)) candidates.push({ start, end, output: rule.from[0], policy: "anywhere", origin: "rule", ref: rule.id, rule });
+      if (rule && !rubies.some((r) => start < r.end && end > r.start) && !unitOutputs.some((c) => start >= c.start && end <= c.end)) candidates.push({ start, end, output: rule.from[0], policy: "anywhere", origin: "rule", ref: rule.id, rule });
     }
 
     // Analysis DAG: kanji-bearing lexical units plus every unit that proposes an output. Kana-only
@@ -402,7 +404,7 @@
       readingSource: unit.reading?.source ?? null,
       lexicalOrigin: unit.lexicalOrigin ?? "unknown",
       morphology: unit.morphology ? { partOfSpeech: [...(unit.morphology.partOfSpeech ?? [])].filter((p) => p !== "*"), conjugationType: unit.morphology.conjugationType ?? null, conjugationForm: unit.morphology.conjugationForm ?? null } : null,
-      lexicalCandidates: (unit.lexicalCandidates ?? []).map((c) => ({ lexicalIdentity: c.lexicalIdentity, surface: c.surface ?? null, reading: c.reading ?? null })),
+      lexicalCandidates: (unit.lexicalCandidates ?? []).map((c) => ({ lexicalIdentity: c.lexicalIdentity, lexemeId: c.lexemeId ?? null, surface: c.surface ?? null, reading: c.reading ?? null, inflection: c.inflection ?? null })),
       historical: {
         route: h.route ?? null,
         kana: h.kana ?? null,

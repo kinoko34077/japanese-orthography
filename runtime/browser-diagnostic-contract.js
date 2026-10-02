@@ -60,12 +60,42 @@
         candidateCount: new Set([...span.winners, ...span.blocked, ...span.contextual].map((c) => c.output)).size,
         ruleCount: [...span.winners, ...span.blocked].filter((c) => c.origin === "rule").length,
         reasonCodes: reasonCodes(span),
-        changed: span.renderedText !== span.sourceText
+        changed: span.renderedText !== span.sourceText,
+        // #196 H: recognition is reported separately from certainty and change
+        recognized: Boolean(span.winners[0]?.unit || span.blocked.some((b) => b.unit) || span.winners.length || span.contextual.length),
+        resolved: (span.winners[0]?.unit?.kind ?? span.blocked.find((b) => b.unit)?.unit?.kind) === "resolved"
       };
     });
     const counts = { unique: 0, conditional: 0, unresolved: 0 };
     for (const s of spans) counts[s.certainty] += 1;
-    return { profileId: raw.profileId, renderedText: raw.renderedText, offsetUnit: raw.offsetUnit, spans, counts, lexicalMatchCount: raw.lexicalMatchCount };
+    const units = inspectableUnits(raw, spans);
+    return {
+      profileId: raw.profileId, renderedText: raw.renderedText, offsetUnit: raw.offsetUnit, spans, counts, lexicalMatchCount: raw.lexicalMatchCount,
+      units, recognizedCount: units.length + spans.filter((s) => s.recognized).length, renderMode: raw.renderMode ?? "plain"
+    };
+  };
+
+  /**
+   * Recognized-but-unchanged lexical units for inspection (#196 H): units outside every reported span,
+   * chosen longest-first left to right for display only (no semantic decision). They carry no
+   * certainty: `recognized` is not `resolved`, and neither is `changed`.
+   */
+  const inspectableUnits = (raw, spans) => {
+    if (!Array.isArray(raw.units)) return [];
+    const ordered = raw.units.map((u, index) => ({ ...u, index }))
+      .filter((u) => !spans.some((s) => u.start < s.end && u.end > s.start) && u.unit && (u.unit.lexicalIdentity || u.unit.lexicalCandidates.length))
+      .sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+    const chosen = [];
+    for (const u of ordered) if (!chosen.some((c) => u.start < c.end && u.end > c.start)) chosen.push(u);
+    // rendered offsets: unchanged text shifts by the length change of every span before it
+    return chosen.map((u) => {
+      const delta = spans.filter((s) => s.end <= u.start).reduce((n, s) => n + (s.renderedEnd - s.renderedStart) - (s.end - s.start), 0);
+      return {
+        detailRef: `u:${u.index}`, start: u.start, end: u.end, renderedStart: u.start + delta, renderedEnd: u.end + delta, sourceText: u.surface,
+        recognized: true, resolved: u.unit.kind === "resolved", changed: false,
+        lexicalIdentity: u.unit.lexicalIdentity, reading: u.unit.reading, candidateCount: u.unit.lexicalCandidates.length || (u.unit.lexicalIdentity ? 1 : 0)
+      };
+    });
   };
 
   const ruleIndexCache = new WeakMap();
@@ -152,7 +182,7 @@
       lexicalIdentity: lexicalCandidates.length === 1 ? lexicalCandidates[0] : null,
       lexicalCandidates: lexicalCandidates.sort(),
       readings: { modern: readings.modern.sort(), historical: readings.historical.sort() },
-      morphologyContext: { available: false, note: "貼り付けた文章には品詞・活用・文脈の情報がありません。文脈によって表記が変わる語は確定しません。" },
+      morphologyContext: morphologyContextOf(span.winners[0]?.unit ?? span.blocked.find((b) => b.unit)?.unit ?? null),
       basis: accepted[0]?.basis ?? null,
       ruleChain: accepted.flatMap((c) => c.ruleChain),
       acceptedCandidates: accepted,
@@ -168,5 +198,77 @@
     };
   };
 
-  return { summarize, expandDetail, certaintyOf, CERTAINTY };
+  function morphologyContextOf(unit) {
+    if (unit?.morphology) {
+      return {
+        available: true, partOfSpeech: [...unit.morphology.partOfSpeech], conjugationType: unit.morphology.conjugationType, conjugationForm: unit.morphology.conjugationForm,
+        note: "辞書の品詞・活用情報です（文脈の意味までは判断しません）。文脈によって表記が変わる語は確定しません。"
+      };
+    }
+    return { available: false, note: "この箇所には品詞・活用の情報がありません。文脈によって表記が変わる語は確定しません。" };
+  }
+
+  /**
+   * Inspection payload for a recognized unit `u:<index>` (#196 H): lexical identity, forms, readings,
+   * morphology and candidates from the lexical layer, provenance of the unit's own facts (lazy).
+   */
+  const expandUnitDetail = async (pack, lexical, raw, detailRef) => {
+    const match = /^u:(\d+)$/u.exec(`${detailRef}`);
+    const unit = match && raw.units?.[Number(match[1])];
+    if (!unit) throw new RangeError(`unknown unit detailRef ${detailRef}`);
+    const u = unit.unit;
+    const identities = [...new Set([...(u.lexicalIdentity ? [u.lexicalIdentity] : []), ...u.lexicalCandidates.map((c) => c.lexicalIdentity)])];
+    // lexeme records of those identities, found through the same surface / reading / base-form routes
+    const keys = [...new Set([unit.surface, ...u.lexicalCandidates.map((c) => c.inflection?.baseSurface).filter(Boolean)])];
+    const found = new Map();
+    for (const key of keys) {
+      for (const c of [...await lexical.lookupSurface(key), ...await lexical.lookupReading(key)]) if (identities.includes(c.lexicalIdentity) && !found.has(c.lexicalIdentity)) found.set(c.lexicalIdentity, c.lexemeId);
+    }
+    const lexemes = [];
+    for (const identity of identities) {
+      const id = found.get(identity);
+      if (id === undefined) { lexemes.push({ lexicalIdentity: identity, forms: [], readings: { modern: [], historical: [] }, morphology: [] }); continue; }
+      const lexeme = await lexical.getLexeme(id);
+      lexemes.push({
+        lexicalIdentity: identity,
+        lemma: lexeme.headSurface ?? lexeme.headReading,
+        forms: lexeme.forms.map((f) => ({ surface: f.surface, flags: f.flags })),
+        readings: {
+          modern: [...new Set(lexeme.readings.filter((r) => r.period === "modern").map((r) => r.reading))],
+          historical: lexeme.readings.filter((r) => r.period === "historical").map((r) => ({ surface: r.surface, reading: r.reading, route: r.route }))
+        },
+        morphology: lexeme.morphologyIds.map((m) => lexical.getMorphology(m)).map((m) => ({ source: m.source, partOfSpeech: m.partOfSpeech, conjugationType: m.conjugationType, conjugationForm: m.conjugationForm, reading: m.reading }))
+      });
+    }
+    // provenance of the facts keyed by this surface (lazy detail shards)
+    const sourceRefs = new Set();
+    const evidenceRefs = new Set();
+    for (const m of (await pack.findMatches(raw.sourceText, unit.start)).filter((x) => x.end === unit.end)) {
+      for (const f of m.facts) {
+        const detail = await pack.loadDetail(f.detailRef);
+        if (!detail.lexicalRefs.length || detail.lexicalRefs.some((r) => identities.includes(r))) {
+          for (const s of detail.sourceRefs) sourceRefs.add(s);
+          for (const e of detail.evidenceRefs) evidenceRefs.add(e);
+        }
+      }
+    }
+    const policy = pack.getProfilePolicy(raw.profileId);
+    return {
+      kind: "unit", detailRef: String(detailRef),
+      range: { start: unit.start, end: unit.end, offsetUnit: raw.offsetUnit },
+      sourceText: unit.surface,
+      recognition: { recognized: true, resolved: u.kind === "resolved", changed: unit.outputs.length > 0 },
+      lexicalIdentity: u.lexicalIdentity, reading: u.reading, readingSource: u.readingSource, lexicalOrigin: u.lexicalOrigin,
+      morphologyContext: morphologyContextOf(u),
+      inflection: u.lexicalCandidates.find((c) => c.inflection)?.inflection ?? null,
+      lexemes,
+      candidateForms: unit.outputs,
+      historical: u.historical,
+      provenance: { sourceRefs: [...sourceRefs].sort(), evidenceRefs: [...evidenceRefs].sort() },
+      profileEffects: { profileId: raw.profileId, period: policy.policy.period ?? null, disabledRuleIds: policy.policy.disabledRuleIds ?? [] },
+      renderMode: raw.renderMode ?? "plain"
+    };
+  };
+
+  return { summarize, expandDetail, expandUnitDetail, certaintyOf, CERTAINTY };
 });
