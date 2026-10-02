@@ -51,6 +51,27 @@
     "profile.modern": { "ja": "現代表記", "en": "Modern", "short": "歴史的な表記を現代の表記に直します。" },
     "profile.historical": { "ja": "歴史的表記", "en": "Historical", "short": "現代の表記を、出典に基づく歴史的な表記（旧字体・歴史的仮名遣い）に戻します。" },
     "profile.kinotch-fixed": { "ja": "KiNoTch表記", "en": "KiNoTch", "short": "歴史的表記に加えて、KiNoTch 独自の表記選択（例: こと → ヿ）を使います。" },
-    "range": { "ja": "位置", "en": "range (UTF-16)", "short": "原文と結果の中での文字位置です（UTF-16 単位）。" }
+    "range": { "ja": "位置", "en": "range (UTF-16)", "short": "原文と結果の中での文字位置です（UTF-16 単位）。" },
+    "recognition": { "ja": "認識状態", "en": "recognition", "short": "辞書でこの語を認識したか、語が一つに確定したか、表記を変えたかを分けて示します。変更がなくても辞書の情報を確認できます。" },
+    "recognition.recognized": { "ja": "辞書で認識", "en": "recognized", "short": "辞書にある語として認識しました（確度の色は付けません）。" },
+    "recognition.resolved": { "ja": "語が一つに確定", "en": "resolved", "short": "当てはまる辞書上の語が一つに決まりました。" },
+    "recognition.changed": { "ja": "表記を変更", "en": "changed", "short": "変換で表記が変わりました。" },
+    "lexicalForms": { "ja": "表記形", "en": "lexical forms", "short": "辞書にあるこの語の書き方の一覧です。" },
+    "formFlag.ateji": { "ja": "当て字", "en": "ateji", "short": "音や意味を借りた当て字の表記です。" },
+    "formFlag.rK": { "ja": "まれな漢字表記", "en": "rarely used kanji form", "short": "辞書でまれな表記とされています。" },
+    "formFlag.iK": { "ja": "不規則な漢字表記", "en": "irregular kanji usage", "short": "辞書で不規則な表記とされています。" },
+    "formFlag.oK": { "ja": "古い漢字表記", "en": "outdated kanji", "short": "辞書で古い表記とされています。" },
+    "formFlag.io": { "ja": "不規則な送り仮名", "en": "irregular okurigana", "short": "辞書で不規則な送り仮名とされています。" },
+    "formFlag.sK": { "ja": "検索用の表記", "en": "search-only form", "short": "検索用にだけ載っている表記です。" },
+    "morphology": { "ja": "品詞・活用", "en": "morphology", "short": "辞書の品詞と活用の種類・活用形です。" },
+    "inflection": { "ja": "活用", "en": "inflection", "short": "活用した形を辞書の見出し語に戻した結果です。" },
+    "route.native": { "ja": "和語の歴史的仮名遣い", "en": "native", "short": "和語の歴史的仮名遣いの出典による読みです。" },
+    "route.sino": { "ja": "字音仮名遣い", "en": "sino", "short": "漢字の音読み（字音仮名遣い）の出典・規則による読みです。" },
+    "renderMode": { "ja": "出力形式", "en": "output format", "short": "変換結果の書き出し方です（ルビの有無）。プロファイルとは別に選べます。" },
+    "renderMode.plain": { "ja": "通常（ルビなし）", "en": "plain", "short": "ルビを付けずに出力します。ルビ付きで入力した箇所は、その形のまま出力します。" },
+    "renderMode.ruby-whole-explicit": { "ja": "語全体にルビ", "en": "whole-word Ruby", "short": "｜學校《がくかう》のように、語全体に歴史的仮名遣いのルビを付けます。" },
+    "renderMode.ruby-whole-implicit": { "ja": "語全体にルビ（縦線なし）", "en": "whole-word Ruby (implicit)", "short": "學校《がくかう》の形でルビを付けます。" },
+    "renderMode.ruby-components-explicit": { "ja": "部分ルビ", "en": "component Ruby", "short": "構成する漢字ごとにルビを付けます。情報がなければ語全体に付けます。" },
+    "renderMode.ruby-components-implicit": { "ja": "部分ルビ（縦線なし）", "en": "component Ruby (implicit)", "short": "縦線なしで漢字ごとにルビを付けます。" }
   }
 }

@@ -17,18 +17,33 @@
   const CERTAINTY_CLASS = { unique: "diag-unique", conditional: "diag-conditional", unresolved: "diag-unresolved" };
   const CERTAINTY_TEXT = { unique: "✓ 一意確定", conditional: "◆ 条件付き確定", unresolved: "! 未解決" };
 
-  /** Result HTML: rendered text with one focusable, labelled element per diagnostic span. */
-  const renderResultHtml = (result) => {
+  /**
+   * Result HTML: rendered text with one focusable, labelled element per diagnostic span. With
+   * `inspect` (辞書情報表示, #196 H) recognized-but-unchanged units are also focusable, with a
+   * neutral affordance that carries no certainty colour.
+   */
+  const renderResultHtml = (result, options = {}) => {
     let html = "";
     let at = 0;
     const text = result.renderedText;
-    for (const span of result.spans) {
-      html += escapeHtml(text.slice(at, span.renderedStart));
-      const label = `${CERTAINTY_TEXT[span.certainty]}：「${span.sourceText}」→「${span.renderedText}」`;
-      html += `<mark class="diag ${CERTAINTY_CLASS[span.certainty]}" role="button" tabindex="0" aria-pressed="false"`
-        + ` data-ref="${escapeHtml(span.detailRef)}" data-certainty="${span.certainty}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">`
-        + `${escapeHtml(text.slice(span.renderedStart, span.renderedEnd))}</mark>`;
-      at = span.renderedEnd;
+    const marks = [
+      ...result.spans.map((span) => ({ kind: "span", item: span })),
+      ...(options.inspect ? (result.units ?? []).map((unit) => ({ kind: "unit", item: unit })) : [])
+    ].sort((a, b) => a.item.renderedStart - b.item.renderedStart);
+    for (const { kind, item } of marks) {
+      if (item.renderedStart < at) continue;
+      html += escapeHtml(text.slice(at, item.renderedStart));
+      const body = escapeHtml(text.slice(item.renderedStart, item.renderedEnd));
+      if (kind === "span") {
+        const label = `${CERTAINTY_TEXT[item.certainty]}：「${item.sourceText}」→「${item.renderedText}」`;
+        html += `<mark class="diag ${CERTAINTY_CLASS[item.certainty]}" role="button" tabindex="0" aria-pressed="false"`
+          + ` data-ref="${escapeHtml(item.detailRef)}" data-certainty="${item.certainty}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${body}</mark>`;
+      } else {
+        const label = `辞書情報：「${item.sourceText}」（${item.resolved ? "語が確定" : `候補 ${item.candidateCount} 件`}・変更なし）`;
+        html += `<span class="diag lexeme" role="button" tabindex="0" aria-pressed="false" data-ref="${escapeHtml(item.detailRef)}"`
+          + ` aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${body}</span>`;
+      }
+      at = item.renderedEnd;
     }
     html += escapeHtml(text.slice(at));
     return html || '<p class="muted">（結果は空です）</p>';
@@ -85,6 +100,35 @@
       + "</dl>";
   };
 
+  /** Inspector for a recognized unit (#196 H): what the dictionary knows, even when nothing changed. */
+  const renderUnitDetailHtml = (terms, detail) => {
+    const row = (key, value) => `<dt>${terms.labelHtml(key)}</dt><dd>${value}</dd>`;
+    const yesNo = (v) => (v ? "はい" : "いいえ");
+    const r = detail.recognition;
+    const morph = detail.morphologyContext;
+    const lexemeHtml = (l) => `<code>${escapeHtml(l.lexicalIdentity)}</code>`
+      + `<br>${escapeHtml(terms.term("lexicalForms").ja)}: ${l.forms.length ? l.forms.map((f) => `${escapeHtml(f.surface)}${f.flags.filter((x) => x !== "listed").map((x) => `<span class="hint">［${escapeHtml(terms.term(`formFlag.${x}`).ja)}］</span>`).join("")}`).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("readings.modern").ja)}: ${l.readings.modern.length ? l.readings.modern.map(escapeHtml).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("readings.historical").ja)}: ${l.readings.historical.length ? l.readings.historical.map((h) => `${escapeHtml(h.surface ?? "")}《${escapeHtml(h.reading)}》${h.route ? `（${escapeHtml(terms.term(`route.${h.route}`).ja)}）` : ""}`).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("morphology").ja)}: ${l.morphology.length ? l.morphology.map((m) => escapeHtml([m.partOfSpeech.join("・"), m.conjugationType, m.conjugationForm].filter(Boolean).join(" / "))).join("；") : "—"}`;
+    return `<p><span class="badge lexeme">${escapeHtml(terms.term("recognition.recognized").ja)}</span> 「${escapeHtml(detail.sourceText)}」</p>`
+      + `<p class="muted">${escapeHtml(terms.term("recognition").short)}</p>`
+      + "<dl>"
+      + row("recognition", `${escapeHtml(terms.term("recognition.resolved").ja)}: ${yesNo(r.resolved)} ／ ${escapeHtml(terms.term("recognition.changed").ja)}: ${yesNo(r.changed)}`)
+      + row("lexicalIdentity", detail.lexicalIdentity ? `<code>${escapeHtml(detail.lexicalIdentity)}</code>` : '<span class="muted">一つに決まりません</span>')
+      + row("lexicalCandidates", list(detail.lexemes, (l) => lexemeHtml(l)))
+      + row("readings", detail.reading ? escapeHtml(detail.reading) : '<span class="muted">一つに決まりません</span>')
+      + row("morphologyContext", morph.available ? escapeHtml([morph.partOfSpeech.join("・"), morph.conjugationType, morph.conjugationForm].filter(Boolean).join(" / ")) : escapeHtml(morph.note))
+      + row("inflection", detail.inflection ? `${escapeHtml(detail.inflection.baseSurface)}（${escapeHtml(detail.inflection.conjugationForm)}）` : '<span class="muted">なし</span>')
+      + row("candidates", list(detail.candidateForms))
+      + row("readings.historical", detail.historical?.kana ? escapeHtml(detail.historical.kana) : '<span class="muted">なし</span>')
+      + row("provenance", `${escapeHtml(terms.term("provenance.sourceRefs").ja)}: ${list(detail.provenance.sourceRefs)}${escapeHtml(terms.term("provenance.evidenceRefs").ja)}: ${list(detail.provenance.evidenceRefs)}`)
+      + row("profileEffects", `${escapeHtml(terms.term(`profile.${detail.profileEffects.profileId}`).ja)}（時代: ${escapeHtml(detail.profileEffects.period ?? "—")}）`)
+      + row("renderMode", escapeHtml(terms.term(`renderMode.${detail.renderMode}`).ja))
+      + row("range", `原文 ${detail.range.start}–${detail.range.end}`)
+      + "</dl>";
+  };
+
   const renderPolicyHtml = (terms, policySection, profileId) => {
     const p = policySection?.policy ?? {};
     return `<dl><dt>プロファイル</dt><dd>${escapeHtml(terms.term(`profile.${profileId}`).ja)} — ${escapeHtml(terms.term(`profile.${profileId}`).short)}</dd>`
@@ -134,7 +178,7 @@
       $("detail-body").innerHTML = '<p class="muted">詳細を読み込み中…</p>';
       try {
         const reply = await client.detail(current.requestId, ref);
-        $("detail-body").innerHTML = renderDetailHtml(terms, reply.detail);
+        $("detail-body").innerHTML = reply.detail.kind === "unit" ? renderUnitDetailHtml(terms, reply.detail) : renderDetailHtml(terms, reply.detail);
         terms.bindHelp($("detail-body"));
       } catch (error) {
         $("detail-body").innerHTML = `<p class="muted">詳細を表示できませんでした: ${escapeHtml(error.message)}</p>`;
@@ -148,7 +192,7 @@
         const reply = await client.transform(text, profile(), renderMode());
         if (reply.stale) return;
         current = reply;
-        $("result").innerHTML = renderResultHtml(reply.result);
+        $("result").innerHTML = renderResultHtml(reply.result, { inspect: $("inspect")?.checked });
         $("summary").innerHTML = renderSummaryHtml(reply.result);
         $("copy").disabled = false;
         $("detail").hidden = true;
@@ -217,6 +261,9 @@
     };
 
     $("convert").addEventListener("click", convert);
+    $("inspect")?.addEventListener("change", () => {
+      if (current) $("result").innerHTML = renderResultHtml(current.result, { inspect: $("inspect").checked });
+    });
     for (const radio of doc.querySelectorAll('input[name="renderMode"]')) radio.addEventListener("change", () => convert());
     for (const radio of doc.querySelectorAll('input[name="profile"]')) radio.addEventListener("change", () => { loadPolicy().then((ok) => ok && convert()); });
     let timer = null;
@@ -251,5 +298,5 @@
     start();
   };
 
-  return { renderResultHtml, renderSummaryHtml, renderDetailHtml, renderPolicyHtml, copyText, boot, CERTAINTY_TEXT };
+  return { renderResultHtml, renderSummaryHtml, renderDetailHtml, renderPolicyHtml, renderUnitDetailHtml, copyText, boot, CERTAINTY_TEXT };
 });
