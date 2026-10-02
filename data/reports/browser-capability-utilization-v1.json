@@ -1,0 +1,1409 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-capability-utilization",
+  "owner": "japanese-orthography#196 A",
+  "packDigest": "dd49a99ebd535793a0ff3501a275199f03f466925d5707766363fbb94e205993",
+  "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
+  "canonical": {
+    "facts": 555284,
+    "rules": 199,
+    "bindings": 2000,
+    "factsByKindAndV1Route": {
+      "form_relation": {
+        "total": 7359,
+        "transform_candidate": 7324,
+        "lookup_only": 23,
+        "safety_constraint": 3,
+        "context_required_only": 9
+      },
+      "literal_form": {
+        "total": 229114,
+        "lookup_only": 229114
+      },
+      "literal_reading": {
+        "total": 318811,
+        "lookup_only": 318811
+      }
+    },
+    "rulesByClassAndV1Route": {
+      "diachronic": {
+        "total": 177,
+        "not_executed": 177
+      },
+      "orthographic": {
+        "total": 10,
+        "char_rule": 5,
+        "not_executed": 5
+      },
+      "phonological": {
+        "total": 4,
+        "not_executed": 4
+      },
+      "render": {
+        "total": 8,
+        "not_executed": 7,
+        "exact_token_rule": 1
+      }
+    },
+    "lexicalIdentities": {
+      "total": 218850,
+      "storedInPack": 218850,
+      "withExecutableFact": 551,
+      "storedButNotExecutable": 218299
+    },
+    "readings": {
+      "distinctLiteralReadings": 231963,
+      "reachableAsLookupKey": 68772,
+      "readingIndexInV1": false,
+      "note": "v1 keys facts by surface (else reading); there is no reading -> lexeme -> forms route, so a kana reading only reaches facts that happen to be keyed by that exact string."
+    }
+  },
+  "probes": {
+    "eagerBytes": 359842,
+    "profiles": [
+      "modern",
+      "historical",
+      "kinotch-fixed"
+    ],
+    "rows": [
+      {
+        "probeId": "surface:学校",
+        "profileId": "modern",
+        "text": "学校",
+        "covers": [
+          "surface",
+          "historical_kanji"
+        ],
+        "renderedText": "学校",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 9,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 9,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122608,
+          "total": 482450
+        }
+      },
+      {
+        "probeId": "surface:学校",
+        "profileId": "historical",
+        "text": "学校",
+        "covers": [
+          "surface",
+          "historical_kanji"
+        ],
+        "renderedText": "學校",
+        "changed": true,
+        "lexicalMatches": 3,
+        "reachedFacts": 9,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 9,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "rule": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "学:applied:學"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122608,
+          "total": 482450
+        }
+      },
+      {
+        "probeId": "surface:学校",
+        "profileId": "kinotch-fixed",
+        "text": "学校",
+        "covers": [
+          "surface",
+          "historical_kanji"
+        ],
+        "renderedText": "學校",
+        "changed": true,
+        "lexicalMatches": 3,
+        "reachedFacts": 9,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 9,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "rule": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "学:applied:學"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122608,
+          "total": 482450
+        }
+      },
+      {
+        "probeId": "reading:がっこう",
+        "profileId": "modern",
+        "text": "がっこう",
+        "covers": [
+          "reading"
+        ],
+        "renderedText": "がっこう",
+        "changed": false,
+        "lexicalMatches": 7,
+        "reachedFacts": 7,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 7,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 256612,
+          "total": 616454
+        }
+      },
+      {
+        "probeId": "reading:がっこう",
+        "profileId": "historical",
+        "text": "がっこう",
+        "covers": [
+          "reading"
+        ],
+        "renderedText": "がくかう",
+        "changed": true,
+        "lexicalMatches": 7,
+        "reachedFacts": 7,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_reading": 6
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 6,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "がっこう:applied:がくかう"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 256612,
+          "total": 616454
+        }
+      },
+      {
+        "probeId": "reading:がっこう",
+        "profileId": "kinotch-fixed",
+        "text": "がっこう",
+        "covers": [
+          "reading"
+        ],
+        "renderedText": "がくかう",
+        "changed": true,
+        "lexicalMatches": 7,
+        "reachedFacts": 7,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_reading": 6
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 6,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "がっこう:applied:がくかう"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 256612,
+          "total": 616454
+        }
+      },
+      {
+        "probeId": "surface:今日",
+        "profileId": "modern",
+        "text": "今日",
+        "covers": [
+          "surface",
+          "jukujikun"
+        ],
+        "renderedText": "今日",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 15,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 182936,
+          "total": 542778
+        }
+      },
+      {
+        "probeId": "surface:今日",
+        "profileId": "historical",
+        "text": "今日",
+        "covers": [
+          "surface",
+          "jukujikun"
+        ],
+        "renderedText": "今日",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 15,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 182936,
+          "total": 542778
+        }
+      },
+      {
+        "probeId": "surface:今日",
+        "profileId": "kinotch-fixed",
+        "text": "今日",
+        "covers": [
+          "surface",
+          "jukujikun"
+        ],
+        "renderedText": "今日",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 15,
+        "reachedFactsByKind": {
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 182936,
+          "total": 542778
+        }
+      },
+      {
+        "probeId": "reading:ドイツ",
+        "profileId": "modern",
+        "text": "ドイツ",
+        "covers": [
+          "reading",
+          "candidate_set"
+        ],
+        "renderedText": "ドイツ",
+        "changed": false,
+        "lexicalMatches": 2,
+        "reachedFacts": 2,
+        "reachedFactsByKind": {
+          "literal_reading": 2
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 2,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 224320,
+          "total": 584162
+        }
+      },
+      {
+        "probeId": "reading:ドイツ",
+        "profileId": "historical",
+        "text": "ドイツ",
+        "covers": [
+          "reading",
+          "candidate_set"
+        ],
+        "renderedText": "ドイツ",
+        "changed": false,
+        "lexicalMatches": 2,
+        "reachedFacts": 2,
+        "reachedFactsByKind": {
+          "literal_reading": 2
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 2,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 224320,
+          "total": 584162
+        }
+      },
+      {
+        "probeId": "reading:ドイツ",
+        "profileId": "kinotch-fixed",
+        "text": "ドイツ",
+        "covers": [
+          "reading",
+          "candidate_set"
+        ],
+        "renderedText": "ドイツ",
+        "changed": false,
+        "lexicalMatches": 2,
+        "reachedFacts": 2,
+        "reachedFactsByKind": {
+          "literal_reading": 2
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 2,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 9,
+          "total": 16
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 224320,
+          "total": 584162
+        }
+      },
+      {
+        "probeId": "reading:みる",
+        "profileId": "modern",
+        "text": "みる",
+        "covers": [
+          "reading",
+          "homophone"
+        ],
+        "renderedText": "みる",
+        "changed": false,
+        "lexicalMatches": 1,
+        "reachedFacts": 1,
+        "reachedFactsByKind": {
+          "literal_reading": 1
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 1,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 131464,
+          "total": 491306
+        }
+      },
+      {
+        "probeId": "reading:みる",
+        "profileId": "historical",
+        "text": "みる",
+        "covers": [
+          "reading",
+          "homophone"
+        ],
+        "renderedText": "みる",
+        "changed": false,
+        "lexicalMatches": 1,
+        "reachedFacts": 1,
+        "reachedFactsByKind": {
+          "literal_reading": 1
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 1,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 131464,
+          "total": 491306
+        }
+      },
+      {
+        "probeId": "reading:みる",
+        "profileId": "kinotch-fixed",
+        "text": "みる",
+        "covers": [
+          "reading",
+          "homophone"
+        ],
+        "renderedText": "みる",
+        "changed": false,
+        "lexicalMatches": 1,
+        "reachedFacts": 1,
+        "reachedFactsByKind": {
+          "literal_reading": 1
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 1,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 131464,
+          "total": 491306
+        }
+      },
+      {
+        "probeId": "surface:分かる",
+        "profileId": "modern",
+        "text": "分かる",
+        "covers": [
+          "surface",
+          "profile_style"
+        ],
+        "renderedText": "分かる",
+        "changed": false,
+        "lexicalMatches": 4,
+        "reachedFacts": 8,
+        "reachedFactsByKind": {
+          "literal_form": 2,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 8,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 254680,
+          "total": 614522
+        }
+      },
+      {
+        "probeId": "surface:分かる",
+        "profileId": "historical",
+        "text": "分かる",
+        "covers": [
+          "surface",
+          "profile_style"
+        ],
+        "renderedText": "分かる",
+        "changed": false,
+        "lexicalMatches": 4,
+        "reachedFacts": 8,
+        "reachedFactsByKind": {
+          "literal_form": 2,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 8,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 254680,
+          "total": 614522
+        }
+      },
+      {
+        "probeId": "surface:分かる",
+        "profileId": "kinotch-fixed",
+        "text": "分かる",
+        "covers": [
+          "surface",
+          "profile_style"
+        ],
+        "renderedText": "分かる",
+        "changed": false,
+        "lexicalMatches": 4,
+        "reachedFacts": 8,
+        "reachedFactsByKind": {
+          "literal_form": 2,
+          "literal_reading": 6
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 8,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 12,
+          "total": 19
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 254680,
+          "total": 614522
+        }
+      },
+      {
+        "probeId": "surface:台風",
+        "profileId": "modern",
+        "text": "台風",
+        "covers": [
+          "surface",
+          "contextual"
+        ],
+        "renderedText": "台風",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 14,
+        "reachedFactsByKind": {
+          "form_relation": 3,
+          "literal_form": 3,
+          "literal_reading": 8
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 14,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 119804,
+          "total": 479646
+        }
+      },
+      {
+        "probeId": "surface:台風",
+        "profileId": "historical",
+        "text": "台風",
+        "covers": [
+          "surface",
+          "contextual"
+        ],
+        "renderedText": "台風",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 14,
+        "reachedFactsByKind": {
+          "form_relation": 3,
+          "literal_form": 3,
+          "literal_reading": 8
+        },
+        "promotedFacts": 2,
+        "lookupOnlyReachedFacts": 11,
+        "contextualFacts": 1,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 2
+        },
+        "enteredArbitration": 2,
+        "accepted": 0,
+        "blocked": 2,
+        "blockedByReason": {
+          "crosses_lexical_boundary": 2
+        },
+        "unresolved": 0,
+        "spanStates": [
+          "台風:context_required:台風"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 119804,
+          "total": 479646
+        }
+      },
+      {
+        "probeId": "surface:台風",
+        "profileId": "kinotch-fixed",
+        "text": "台風",
+        "covers": [
+          "surface",
+          "contextual"
+        ],
+        "renderedText": "台風",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 14,
+        "reachedFactsByKind": {
+          "form_relation": 3,
+          "literal_form": 3,
+          "literal_reading": 8
+        },
+        "promotedFacts": 2,
+        "lookupOnlyReachedFacts": 11,
+        "contextualFacts": 1,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 2
+        },
+        "enteredArbitration": 2,
+        "accepted": 0,
+        "blocked": 2,
+        "blockedByReason": {
+          "crosses_lexical_boundary": 2
+        },
+        "unresolved": 0,
+        "spanStates": [
+          "台風:context_required:台風"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 119804,
+          "total": 479646
+        }
+      },
+      {
+        "probeId": "surface:装丁",
+        "profileId": "modern",
+        "text": "装丁",
+        "covers": [
+          "surface",
+          "candidate_set"
+        ],
+        "renderedText": "装丁",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 10,
+        "reachedFactsByKind": {
+          "form_relation": 2,
+          "literal_form": 3,
+          "literal_reading": 5
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 10,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122488,
+          "total": 482330
+        }
+      },
+      {
+        "probeId": "surface:装丁",
+        "profileId": "historical",
+        "text": "装丁",
+        "covers": [
+          "surface",
+          "candidate_set"
+        ],
+        "renderedText": "装丁",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 10,
+        "reachedFactsByKind": {
+          "form_relation": 2,
+          "literal_form": 3,
+          "literal_reading": 5
+        },
+        "promotedFacts": 2,
+        "lookupOnlyReachedFacts": 8,
+        "contextualFacts": 0,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 2
+        },
+        "enteredArbitration": 2,
+        "accepted": 0,
+        "blocked": 2,
+        "blockedByReason": {
+          "conflicting_productive_outputs": 2
+        },
+        "unresolved": 1,
+        "spanStates": [
+          "装丁:unresolved:装丁"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122488,
+          "total": 482330
+        }
+      },
+      {
+        "probeId": "surface:装丁",
+        "profileId": "kinotch-fixed",
+        "text": "装丁",
+        "covers": [
+          "surface",
+          "candidate_set"
+        ],
+        "renderedText": "装丁",
+        "changed": false,
+        "lexicalMatches": 3,
+        "reachedFacts": 10,
+        "reachedFactsByKind": {
+          "form_relation": 2,
+          "literal_form": 3,
+          "literal_reading": 5
+        },
+        "promotedFacts": 2,
+        "lookupOnlyReachedFacts": 8,
+        "contextualFacts": 0,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 2
+        },
+        "enteredArbitration": 2,
+        "accepted": 0,
+        "blocked": 2,
+        "blockedByReason": {
+          "conflicting_productive_outputs": 2
+        },
+        "unresolved": 1,
+        "spanStates": [
+          "装丁:unresolved:装丁"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 6,
+          "total": 13
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 122488,
+          "total": 482330
+        }
+      },
+      {
+        "probeId": "ruby:学校",
+        "profileId": "modern",
+        "text": "｜学校《がっこう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜学校《がっこう》",
+        "changed": false,
+        "lexicalMatches": 10,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 16,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 463984,
+          "total": 823826
+        }
+      },
+      {
+        "probeId": "ruby:学校",
+        "profileId": "historical",
+        "text": "｜学校《がっこう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜學校《がくかう》",
+        "changed": true,
+        "lexicalMatches": 10,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 1,
+          "rule": 1
+        },
+        "enteredArbitration": 2,
+        "accepted": 2,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "学:applied:學",
+          "がっこう:applied:がくかう"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 463984,
+          "total": 823826
+        }
+      },
+      {
+        "probeId": "ruby:学校",
+        "profileId": "kinotch-fixed",
+        "text": "｜学校《がっこう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜學校《がくかう》",
+        "changed": true,
+        "lexicalMatches": 10,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 12
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 2,
+        "candidatesByOrigin": {
+          "fact": 1,
+          "rule": 1
+        },
+        "enteredArbitration": 2,
+        "accepted": 2,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "学:applied:學",
+          "がっこう:applied:がくかう"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 463984,
+          "total": 823826
+        }
+      },
+      {
+        "probeId": "ruby:今日",
+        "profileId": "modern",
+        "text": "｜今日《きょう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜今日《きょう》",
+        "changed": false,
+        "lexicalMatches": 6,
+        "reachedFacts": 18,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 14
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 18,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 460068,
+          "total": 819910
+        }
+      },
+      {
+        "probeId": "ruby:今日",
+        "profileId": "historical",
+        "text": "｜今日《きょう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜今日《けふ》",
+        "changed": true,
+        "lexicalMatches": 6,
+        "reachedFacts": 18,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 14
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 17,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "きょう:applied:けふ"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 460068,
+          "total": 819910
+        }
+      },
+      {
+        "probeId": "ruby:今日",
+        "profileId": "kinotch-fixed",
+        "text": "｜今日《きょう》",
+        "covers": [
+          "ruby"
+        ],
+        "renderedText": "｜今日《けふ》",
+        "changed": true,
+        "lexicalMatches": 6,
+        "reachedFacts": 18,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 3,
+          "literal_reading": 14
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 17,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "きょう:applied:けふ"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 24,
+          "total": 31
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 460068,
+          "total": 819910
+        }
+      },
+      {
+        "probeId": "mixed:unknown",
+        "profileId": "modern",
+        "text": "abc 😀 溶接 𠮷野家 zzz",
+        "covers": [
+          "unknown",
+          "ascii",
+          "emoji",
+          "surrogate"
+        ],
+        "renderedText": "abc 😀 溶接 𠮷野家 zzz",
+        "changed": false,
+        "lexicalMatches": 4,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 4,
+          "literal_reading": 11
+        },
+        "promotedFacts": 0,
+        "lookupOnlyReachedFacts": 16,
+        "contextualFacts": 0,
+        "candidates": 0,
+        "candidatesByOrigin": {},
+        "enteredArbitration": 0,
+        "accepted": 0,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 18,
+          "total": 25
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 370352,
+          "total": 730194
+        }
+      },
+      {
+        "probeId": "mixed:unknown",
+        "profileId": "historical",
+        "text": "abc 😀 溶接 𠮷野家 zzz",
+        "covers": [
+          "unknown",
+          "ascii",
+          "emoji",
+          "surrogate"
+        ],
+        "renderedText": "abc 😀 熔接 𠮷野家 zzz",
+        "changed": true,
+        "lexicalMatches": 4,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 4,
+          "literal_reading": 11
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "溶接:applied:熔接"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 18,
+          "total": 25
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 370352,
+          "total": 730194
+        }
+      },
+      {
+        "probeId": "mixed:unknown",
+        "profileId": "kinotch-fixed",
+        "text": "abc 😀 溶接 𠮷野家 zzz",
+        "covers": [
+          "unknown",
+          "ascii",
+          "emoji",
+          "surrogate"
+        ],
+        "renderedText": "abc 😀 熔接 𠮷野家 zzz",
+        "changed": true,
+        "lexicalMatches": 4,
+        "reachedFacts": 16,
+        "reachedFactsByKind": {
+          "form_relation": 1,
+          "literal_form": 4,
+          "literal_reading": 11
+        },
+        "promotedFacts": 1,
+        "lookupOnlyReachedFacts": 15,
+        "contextualFacts": 0,
+        "candidates": 1,
+        "candidatesByOrigin": {
+          "fact": 1
+        },
+        "enteredArbitration": 1,
+        "accepted": 1,
+        "blocked": 0,
+        "blockedByReason": {},
+        "unresolved": 0,
+        "spanStates": [
+          "溶接:applied:熔接"
+        ],
+        "sectionRequests": {
+          "eager": 7,
+          "onDemand": 18,
+          "total": 25
+        },
+        "transferredBytes": {
+          "eager": 359842,
+          "onDemand": 370352,
+          "total": 730194
+        }
+      }
+    ],
+    "distinctFactsReached": 83,
+    "distinctFactsPromoted": 7,
+    "distinctFactsAccepted": 3
+  },
+  "gaps": [
+    "reading/kana input does not reach lexeme forms (no reading index / lexeme join)",
+    "Ruby syntax is not parsed: base and ruby text are rewritten independently as plain characters (no Ruby evidence, no late render)",
+    "literal_form / literal_reading facts are lookup/detail data only, never transform inputs",
+    "morphology is not available to the browser planner",
+    "KiNoTch profile executes exact-token rules only (no style overlay such as 分かる -> 分る)"
+  ]
+}

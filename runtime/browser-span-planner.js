@@ -77,7 +77,7 @@
    * Plan and convert `text` under `profileId`. Returns the rendered text, the per-occurrence spans
    * (UTF-16 offsets), and the raw arbitration decisions the diagnostic layer (unit E) classifies.
    */
-  const planAndTransform = async (pack, text, profileId) => {
+  const planAndTransform = async (pack, text, profileId, options = {}) => {
     const policySection = pack.getProfilePolicy(profileId);
     const policy = policySection.policy;
     const historicalTarget = policy.period === "historical";
@@ -195,7 +195,16 @@
       lexicalMatchCount: matches.length, candidateCount: candidates.length,
       // blocked candidates outside any reported span are ordinary non-applications (e.g. a lexical
       // boundary the relation does not fit); kept for diagnostics, never shown as changes
-      quietlyBlocked: decision.blocked.filter((b) => !merged.some((r) => b.candidate.start < r.end && b.candidate.end > r.start)).map((b) => ({ ...byKey.get(b.candidate.key), reason: b.reason }))
+      quietlyBlocked: decision.blocked.filter((b) => !merged.some((r) => b.candidate.start < r.end && b.candidate.end > r.start)).map((b) => ({ ...byKey.get(b.candidate.key), reason: b.reason })),
+      // opt-in measurement seam (#196 A): what was looked up, promoted and decided. No effect on output.
+      ...(options.trace ? { trace: {
+        matchedFacts: matches.flatMap((m) => m.facts.map((f) => ({ factIndex: f.factIndex, kind: f.kind, start: m.start, end: m.end }))),
+        candidates: candidates.map((c) => ({ key: c.key, origin: c.origin, ref: c.ref, factIndex: c.fact?.factIndex ?? null, start: c.start, end: c.end, output: c.output, policy: c.policy })),
+        contextual: contextual.map((c) => ({ factIndex: c.fact.factIndex, start: c.start, end: c.end, output: c.output })),
+        accepted: decision.accepted.map((a) => a.key),
+        blocked: decision.blocked.map((b) => ({ key: b.candidate.key, reason: b.reason })),
+        unresolved: decision.unresolved.map((u) => ({ start: u.start, end: u.end, reasons: u.reasons }))
+      } } : {})
     };
   };
 
