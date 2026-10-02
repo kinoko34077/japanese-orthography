@@ -24,8 +24,8 @@ export const SITE_RUNTIME_MODULES = [
   'browser-transform-worker.js'
 ];
 
-/** `pack: 'v2'` builds the BrowserPack v2 (resolver) site for local preview; Pages stays on v1 until #196 J. */
-export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_OUT), pack: 'v1' | 'v2' = 'v1'): Promise<{ outDir: string; packDigest: string; files: number }> {
+/** #196 J: the site ships BrowserPack v2 (resolver path); `pack: 'v1'` (`--v1`) keeps the v1 build available until a separate cleanup. */
+export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_OUT), pack: 'v1' | 'v2' = 'v2'): Promise<{ outDir: string; packDigest: string; files: number }> {
   await rm(outDir, { recursive: true, force: true });
   await mkdir(resolve(outDir, 'runtime'), { recursive: true });
   await mkdir(resolve(outDir, 'browser-pack'), { recursive: true });
@@ -51,6 +51,6 @@ export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_
 
 if (process.argv[1]?.endsWith('build-site.ts')) {
   const rootDir = resolve(process.env.ORTHOGRAPHY_ROOT ?? process.cwd());
-  const result = await buildSite(rootDir, resolve(rootDir, SITE_OUT), process.argv.includes('--v2') ? 'v2' : 'v1');
+  const result = await buildSite(rootDir, resolve(rootDir, SITE_OUT), process.argv.includes('--v1') ? 'v1' : 'v2');
   console.log(`site built in ${result.outDir}: ${result.files} files, pack ${result.packDigest}`);
 }
