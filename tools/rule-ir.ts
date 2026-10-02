@@ -31,7 +31,8 @@ export type RuleDirection = typeof RULE_DIRECTIONS[number];
 export const RULE_SCOPES = ['exact-surface', 'exact-reading', 'whole-token', 'symbol', 'anywhere'] as const;
 export type RuleScope = typeof RULE_SCOPES[number];
 
-export interface IRBranch { output: string; candidate: boolean; canonicalId: string }
+/** `lexicalRefs`: the lexemes this output belongs to (provenance / inspection), never an applicability test. */
+export interface IRBranch { output: string; candidate: boolean; canonicalId: string; lexicalRefs?: string[] }
 
 export interface IRRule {
   /** stable IR id (derived from the canonical ids it was compiled from) */
@@ -44,6 +45,7 @@ export interface IRRule {
   input: string;
   /** one branch per alternative; several branches = candidates, never a silent winner */
   branches: IRBranch[];
+  /** applicability scope: the rule applies only where these lexemes / symbols are in play */
   lexicalScope: string[];
   predicate: { context?: string; usage?: string; period?: string; constraint?: string } | null;
   origin: KnowledgeOrigin;
@@ -90,11 +92,14 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
       const stage: RuleStage = kana ? 'diachronic' : constraint ? 'semantic' : 'orthographic';
       const evidenceType = tags.find((t) => !t.startsWith('context:') && t !== 'candidate') ?? 'form_relation';
       // one relation, two directed exact rules: modern -> historical, historical -> modern
+      // only a context constraint binds a relation to its lexemes (accepted adapter semantics, #196 D);
+      // otherwise the lexemes are provenance of the output branch
+      const scoped = constraint ? [...f.lexicalRefs] : [];
       for (const [direction, input, output] of [['to-historical', f.target, f.surface], ['to-modern', f.surface, f.target]] as const) {
-        add(`${kind}|${direction}|${scope}|${input}|${constraint ?? ''}|${f.lexicalRefs.join(',')}`, () => ({
+        add(`${kind}|${direction}|${scope}|${input}|${constraint ?? ''}|${scoped.join(',')}`, () => ({
           ruleId: '', kind, stage, direction, channel: kana ? 'reading' : 'surface', scope, input,
-          lexicalScope: [...f.lexicalRefs], predicate: constraint ? { constraint } : null, origin, enabledBy: null, dependsOn: [], evidenceType
-        }), { output, candidate, canonicalId: f.id });
+          lexicalScope: scoped, predicate: constraint ? { constraint } : null, origin, enabledBy: null, dependsOn: [], evidenceType
+        }), { output, candidate, canonicalId: f.id, lexicalRefs: [...f.lexicalRefs] });
       }
     } else if (f.kind === 'literal_reading' && f.reading !== undefined) {
       const historical = f.periodRefs?.includes('period:historical-kana') ?? false;
@@ -109,9 +114,7 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
         add(`exact|reconstruct|${f.reading}`, () => ({
           ruleId: '', kind: 'exact', stage: 'lexical', direction: 'reconstruct', channel: 'reading', scope: 'exact-reading', input: f.reading!,
           lexicalScope: [], predicate: null, origin, enabledBy: null, dependsOn: [], evidenceType: 'lexical_reading'
-        }), { output: f.surface, candidate: false, canonicalId: f.id });
-        const rule = grouped.get(`exact|reconstruct|${f.reading}`)!;
-        for (const ref of f.lexicalRefs) if (!rule.lexicalScope.includes(ref)) rule.lexicalScope.push(ref);
+        }), { output: f.surface, candidate: false, canonicalId: f.id, lexicalRefs: [...f.lexicalRefs] });
       }
     }
   }
