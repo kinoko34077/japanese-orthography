@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1",
+  "kind": "rule-program-summary",
+  "owner": "japanese-orthography#211 E (spec #208 §8)",
+  "irDigest": "dde49df2326a26dcfc536f1171c3a2b0ae259cdb9692372643b3138c282f316e",
+  "programs": 182174,
+  "directPrograms": 179523,
+  "bytecodePrograms": 2651,
+  "codeWords": 14158,
+  "predicates": 10,
+  "mechanisms": 4,
+  "lexemeSets": 613,
+  "sequences": 408151,
+  "indexKeys": 180021,
+  "sections": {
+    "programs": {
+      "bytes": 6120864,
+      "gzipBytes": 2737314
+    },
+    "pool": {
+      "bytes": 5506752,
+      "gzipBytes": 2629946
+    },
+    "lexemeSets": {
+      "bytes": 4944,
+      "gzipBytes": 3308
+    }
+  },
+  "digest": "3f10f1be939979226495f915bb86eb522e10aea75a4d7494f47c0b6cb891bba4"
+}
