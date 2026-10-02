@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1",
+  "kind": "official-source-snapshots",
+  "owner": "japanese-orthography#211 H (spec #208 §5)",
+  "acquisition": {
+    "authorizedBy": "Human (KiNoTch.) in session, 2026-10-03",
+    "retrievedAt": "2026-10-03",
+    "note": "Each version is an independent snapshot; a later version never overwrites an earlier one."
+  },
+  "license": {
+    "name": "文部科学省ウェブサイト利用規約 (applies to bunka.go.jp content)",
+    "url": "https://www.mext.go.jp/b_menu/1351168.htm",
+    "summary": "free use, reproduction and modification with source attribution; compatible with CC BY 4.0",
+    "attribution": "出典：文化庁ウェブサイト（各資料のURL）。本リポジトリのテキスト抽出・構造化データは同資料を基に作成。"
+  },
+  "sources": [
+    {
+      "sourceId": "bunka/ijidokun-1972",
+      "period": "1972",
+      "title": "「異字同訓」の漢字の用法",
+      "issuer": "国語審議会漢字部会（総会参考資料）",
+      "issued": "1972-06-28",
+      "url": "https://www.bunka.go.jp/kokugo_nihongo/sisaku/joho/joho/kijun/sanko/yoho/pdf/yoho.pdf",
+      "file": "yoho-1972.pdf",
+      "bytes": 445913,
+      "sha256": "d5b2ba3cbecfe314a770443919c1b4d2fbabd98890b168b1a41ba96f6bc2e0fa",
+      "extraction": {
+        "tool": "pdftotext 4.00 (-layout -enc UTF-8), CR removed",
+        "file": "yoho-1972.txt",
+        "sha256": "533f1df4b137453abc4c091e8c0789fbaef3c46e5325dafaf92339a85d053277"
+      }
+    },
+    {
+      "sourceId": "bunka/ijidokun-2014",
+      "period": "2014",
+      "title": "「異字同訓」の漢字の使い分け例（報告）",
+      "issuer": "文化審議会国語分科会",
+      "issued": "2014-02-21",
+      "url": "https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/ijidokun_140221.pdf",
+      "file": "ijidokun-2014.pdf",
+      "bytes": 924697,
+      "sha256": "57ad033db96d0d035992c5cc0ffd2703db16ef2e84ccdbdff92d6851c7c0d3fb",
+      "extraction": {
+        "tool": "pdftotext 4.00 (-layout -enc UTF-8), CR removed",
+        "file": "ijidokun-2014.txt",
+        "sha256": "ca7ca30b472a9a54428213e1cafbdc4777166ac91d5760ed4c5f089788f19bad"
+      },
+      "scope": "main table only (items 001–133); the reprinted 1972 table and the 2010 additions in its reference material are not parsed from this snapshot"
+    }
+  ]
+}
