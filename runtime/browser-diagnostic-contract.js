@@ -146,6 +146,27 @@
     };
   };
 
+  /**
+   * Evidence recovered lazily from the cold evidence map (#211 G): canonical id -> source records,
+   * dispositions, snapshots, period, and the Programs (with their human-readable type) compiled from it.
+   */
+  const evidenceFor = async (pack, canonicalId) => {
+    if (!pack.hasEvidence || !canonicalId) return null;
+    const entry = await pack.loadEvidence(canonicalId);
+    if (!entry) return null;
+    const programs = [];
+    for (const id of entry.programs.slice(0, 8)) programs.push(await pack.loadProgramEvidence(id));
+    return { ...entry, programs };
+  };
+  const withEvidence = async (pack, candidate) => {
+    const id = candidate.fact?.id ?? candidate.rule?.id ?? null;
+    const facts = candidate.relationFacts ?? [];
+    const evidence = id ? await evidenceFor(pack, id) : null;
+    const relationEvidence = [];
+    for (const f of facts) relationEvidence.push(await evidenceFor(pack, f.id));
+    return evidence || relationEvidence.some(Boolean) ? { ...candidate, evidence: evidence ?? relationEvidence.find(Boolean) } : candidate;
+  };
+
   /** Full inspection payload for one span (`detailRef` from the summary). */
   const expandDetail = async (pack, raw, detailRef) => {
     const span = raw.spans[Number(detailRef)];
@@ -165,9 +186,9 @@
       }
     }
     const accepted = [];
-    for (const w of span.winners) accepted.push(await describeCandidate(pack, w, true));
+    for (const w of span.winners) accepted.push(await withEvidence(pack, await describeCandidate(pack, w, true)));
     const rejected = [];
-    for (const b of span.blocked) rejected.push(await describeCandidate(pack, b, false));
+    for (const b of span.blocked) rejected.push(await withEvidence(pack, await describeCandidate(pack, b, false)));
     for (const c of span.contextual) rejected.push({ ...(await describeCandidate(pack, { ...c, origin: "fact", ref: c.fact.detailRef }, false)), reason: "context_required" });
     const summary = summarize({ ...raw, spans: [span] }).spans[0];
     return {

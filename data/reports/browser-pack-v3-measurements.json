@@ -2,11 +2,11 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "222b7ed4a561203ea987325915c7ad6858ad80aca8ca4a0fa8e80d4df73b33ca",
-  "sections": 1905,
+  "packDigest": "17ac2182b926b9d2a5df883a2e4c96e55c828ddc1c0f97984a7a99dc5c9959dd",
+  "sections": 1726,
   "sizes": {
-    "total": 115650776,
-    "totalGzip": 48303017,
+    "total": 157056684,
+    "totalGzip": 61408160,
     "byLoading": {
       "eager": {
         "sections": 10,
@@ -14,14 +14,14 @@
         "gzipBytes": 162822
       },
       "lazy": {
-        "sections": 328,
-        "bytes": 27276256,
-        "gzipBytes": 8600862
+        "sections": 477,
+        "bytes": 72080512,
+        "gzipBytes": 24232221
       },
       "on-demand": {
-        "sections": 1567,
-        "bytes": 87947860,
-        "gzipBytes": 39539333
+        "sections": 1239,
+        "bytes": 84549512,
+        "gzipBytes": 37013117
       }
     },
     "byKind": {
@@ -34,6 +34,11 @@
         "sections": 328,
         "bytes": 27276256,
         "gzipBytes": 8600862
+      },
+      "evidence-map": {
+        "sections": 137,
+        "bytes": 42444868,
+        "gzipBytes": 14377440
       },
       "knowledge-bundle": {
         "sections": 328,
@@ -70,10 +75,10 @@
         "bytes": 1714,
         "gzipBytes": 871
       },
-      "provenance-index": {
-        "sections": 328,
-        "bytes": 3398348,
-        "gzipBytes": 2526216
+      "program-evidence": {
+        "sections": 12,
+        "bytes": 2359388,
+        "gzipBytes": 1253919
       },
       "reading-index": {
         "sections": 409,
@@ -115,22 +120,22 @@
         "requests": 10,
         "bytes": 426660,
         "gzipBytes": 163880,
-        "openMs": 96
+        "openMs": 129
       },
       "coldFirstResult": {
         "requests": 66,
         "bytes": 3561188,
         "gzipBytes": 1587794,
-        "ms": 531
+        "ms": 714
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 13
+        "ms": 43
       },
-      "detailLatencyMs": 4,
-      "unitDetailLatencyMs": 83,
-      "residentArrayBufferBytes": 6255284,
-      "jsHeapDeltaBytes": 15723768,
+      "detailLatencyMs": 55,
+      "unitDetailLatencyMs": 197,
+      "residentArrayBufferBytes": 6937856,
+      "jsHeapDeltaBytes": 15717600,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -141,22 +146,22 @@
         "requests": 10,
         "bytes": 426660,
         "gzipBytes": 163880,
-        "openMs": 45
+        "openMs": 65
       },
       "coldFirstResult": {
         "requests": 148,
         "bytes": 7790020,
         "gzipBytes": 3459765,
-        "ms": 738
+        "ms": 1202
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 34
+        "ms": 56
       },
-      "detailLatencyMs": 5,
-      "unitDetailLatencyMs": 31,
+      "detailLatencyMs": 16,
+      "unitDetailLatencyMs": 43,
       "residentArrayBufferBytes": 8933312,
-      "jsHeapDeltaBytes": 14339456,
+      "jsHeapDeltaBytes": 14348912,
       "spans": 7,
       "inspectableUnits": 23
     }

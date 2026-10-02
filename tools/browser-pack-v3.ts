@@ -4,6 +4,9 @@ import type { BrowserPackBuild } from './browser-pack-compiler.ts';
 import { encodeBundle, encodeSection, type ColumnInput } from './browser-pack-encoding.ts';
 import { BROWSER_PACK_V3_COMPILER_VERSION, browserPackSectionId, sealBrowserPackManifest, type BrowserPackManifestV1, type BrowserPackSectionDescriptor } from './browser-pack-model.ts';
 import type { SymbolRegistry } from './symbol-registry.ts';
+import { evidenceLayer } from './evidence-map.ts';
+import type { OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
+import type { RuleIR } from './rule-ir.ts';
 
 // #208 §7 / §9 — #211 F: BrowserPack v3 = the v2 pack with every hot string column symbol-encoded.
 //
@@ -73,11 +76,23 @@ export const registrySection = (registry: SymbolRegistry) => encodeSection([
   { name: 'tombstones', kind: 'scalar', values: registry.tombstones }
 ]);
 
-export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry): BrowserPackBuild {
+export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry, options: { evidence?: { graph: OrthographyKnowledgeGraph; ir: RuleIR } } = {}): BrowserPackBuild {
   const files = new Map<string, Uint8Array>();
   const sections: BrowserPackSectionDescriptor[] = [];
-  for (const s of v2.manifest.sections) {
-    const body = v2.files.get(s.path)!;
+  // cold evidence sections (#211 G) are built v2-style, then transcoded with everything else
+  const extra: Array<{ s: BrowserPackSectionDescriptor; body: Uint8Array }> = [];
+  if (options.evidence) {
+    evidenceLayer(options.evidence.ir)({
+      graph: options.evidence.graph,
+      add: (kind, body, x = {}) => {
+        const sectionId = browserPackSectionId(kind, { shard: x.shard, profileId: x.profileId });
+        extra.push({ body, s: { sectionId, kind, path: `${sectionId.replace(/[@/]/g, '-')}.bin`, encoding: 'binary-columnar', loading: 'lazy', byteLength: body.byteLength, sha256: sha(body), ...(x.rowCount !== undefined ? { rowCount: x.rowCount } : {}), ...(x.shard ? { shard: x.shard } : {}) } });
+        return sectionId;
+      }
+    });
+  }
+  const sources = [...v2.manifest.sections.filter((s) => s.kind !== 'provenance-index').map((s) => ({ s, body: v2.files.get(s.path)! })), ...extra];
+  for (const { s, body } of sources) {
     let next = body;
     if (s.encoding === 'binary-columnar') next = encodeSection(transcodeColumns(decodeSection(body), registry));
     else if (s.encoding === 'binary-bundle') {
@@ -107,7 +122,9 @@ export async function assertV3Equivalent(v2: BrowserPackBuild, v3: BrowserPackBu
   const { summarize, expandDetail } = require('../runtime/browser-diagnostic-contract.js');
   const open = async (b: BrowserPackBuild) => { const pack = await openBrowserPack(b.manifest, async (s: { path: string }) => b.files.get(s.path)!); return { pack, lexical: createBrowserLexicalRuntime(pack) }; };
   const [a, b] = [await open(v2), await open(v3)];
-  const same = (x: unknown, y: unknown) => JSON.stringify(x) === JSON.stringify(y);
+  // v3 adds the recovered cold evidence (#211 G) to details; everything else must be identical
+  const strip = (x: unknown): unknown => JSON.parse(JSON.stringify(x, (k, v) => (k === 'evidence' ? undefined : v)));
+  const same = (x: unknown, y: unknown) => JSON.stringify(strip(x)) === JSON.stringify(strip(y));
   let compared = 0;
   for (const profile of profiles) for (const mode of ['plain', 'ruby-whole-explicit']) for (const text of texts) {
     const [ra, rb] = [await transformWithResolver(a.pack, a.lexical, text, profile, { renderMode: mode }), await transformWithResolver(b.pack, b.lexical, text, profile, { renderMode: mode })];

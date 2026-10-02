@@ -2,9 +2,9 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "222b7ed4a561203ea987325915c7ad6858ad80aca8ca4a0fa8e80d4df73b33ca",
-  "totalBytes": 115650776,
-  "classTotalBytes": 115650776,
+  "packDigest": "17ac2182b926b9d2a5df883a2e4c96e55c828ddc1c0f97984a7a99dc5c9959dd",
+  "totalBytes": 157056684,
+  "classTotalBytes": 157056684,
   "classes": {
     "bundle-container": {
       "sections": 328,
@@ -14,6 +14,16 @@
       "symbolTokenBytes": 0,
       "integerBytes": 0,
       "overheadBytes": 142694,
+      "jsonBytes": 0
+    },
+    "evidence-map": {
+      "sections": 137,
+      "bytes": 42444868,
+      "unicodeStringBytes": 3715863,
+      "stringOffsetBytes": 1806664,
+      "symbolTokenBytes": 15137498,
+      "integerBytes": 21740791,
+      "overheadBytes": 44052,
       "jsonBytes": 0
     },
     "knowledge-facts": {
@@ -96,14 +106,24 @@
       "overheadBytes": 0,
       "jsonBytes": 1714
     },
+    "program-evidence": {
+      "sections": 12,
+      "bytes": 2359388,
+      "unicodeStringBytes": 797,
+      "stringOffsetBytes": 180,
+      "symbolTokenBytes": 294,
+      "integerBytes": 2355866,
+      "overheadBytes": 2251,
+      "jsonBytes": 0
+    },
     "provenance-evidence": {
-      "sections": 656,
-      "bytes": 30674604,
+      "sections": 328,
+      "bytes": 27276256,
       "unicodeStringBytes": 1830838,
       "stringOffsetBytes": 1040488,
       "symbolTokenBytes": 8388998,
-      "integerBytes": 19305855,
-      "overheadBytes": 108425,
+      "integerBytes": 15930153,
+      "overheadBytes": 85779,
       "jsonBytes": 0
     },
     "rules-bindings": {
@@ -130,19 +150,19 @@
   "textualPayload": {
     "occurrences": {
       "orthographic": {
-        "count": 2150969,
-        "bytes": 30913453
+        "count": 2150974,
+        "bytes": 30913468
       },
       "identifier": {
-        "count": 1160606,
-        "bytes": 35839291
+        "count": 2169332,
+        "bytes": 62852503
       }
     },
-    "distinctStrings": 929942,
+    "distinctStrings": 1496805,
     "distinctOrthographicStrings": 477344,
-    "occurrenceBytes": 66752744,
-    "distinctBytes": 17380929,
-    "duplicateBytes": 49371815,
+    "occurrenceBytes": 93765971,
+    "distinctBytes": 41158281,
+    "duplicateBytes": 52607690,
     "note": "string occurrences are counted per shard-local pool entry; duplicateBytes is what one pack-wide pool would save before any Symbol encoding"
   },
   "orthographicAtoms": {

@@ -10,6 +10,8 @@ import { encodeSection } from '../tools/browser-pack-encoding.ts';
 import { HISTORICAL_PROFILE, KINOTCH_PROFILE, MODERN_PROFILE } from '../tools/orthography-policy.ts';
 import { SYMBOL_REGISTRY, type SymbolRegistry } from '../tools/symbol-registry.ts';
 import { adapterFixture } from './fixtures/browser-pack-fixture.ts';
+import { canonicalizeOrthographyKnowledge } from '../tools/orthography-knowledge-model.ts';
+import { compileRuleIR } from '../tools/rule-ir.ts';
 
 // #211 F — BrowserPack v3: symbol-encoded hot string columns, same semantics as v2.
 const require = createRequire(import.meta.url);
@@ -23,7 +25,7 @@ const registry = JSON.parse(await readFile(new URL(`../${SYMBOL_REGISTRY}`, impo
 const v2 = compileBrowserPack(adapterFixture(), [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
 });
-const v3 = transcodeToV3(v2, registry);
+const v3 = transcodeToV3(v2, registry, { evidence: { graph: canonicalizeOrthographyKnowledge(adapterFixture()), ir: compileRuleIR(adapterFixture()) } });
 const open = async (build: typeof v2) => {
   const pack = await openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!);
   return { pack, lexical: createBrowserLexicalRuntime(pack) };
@@ -40,7 +42,8 @@ test('symbol-encoded columns restore every string exactly (orthographic atoms, A
 test('the v3 manifest validates: same sections as v2 plus an eager symbol registry, compiler version 3', () => {
   const m = validateBrowserPackManifest(JSON.parse(JSON.stringify(v3.manifest)));
   assert.equal(m.compilerVersion, '3');
-  assert.deepEqual(m.sections.filter((s) => s.kind !== 'symbol-registry').map((s) => s.sectionId).sort(), v2.manifest.sections.map((s) => s.sectionId).sort());
+  const v3Only = new Set(['symbol-registry', 'evidence-map', 'program-evidence']);
+  assert.deepEqual(m.sections.filter((s) => !v3Only.has(s.kind)).map((s) => s.sectionId).sort(), v2.manifest.sections.filter((s) => s.kind !== 'provenance-index').map((s) => s.sectionId).sort());
   assert.equal(m.sections.find((s) => s.kind === 'symbol-registry')!.loading, 'eager');
   assert.notEqual(m.packDigest, v2.manifest.packDigest);
 });
@@ -54,7 +57,8 @@ test('v3 converts, diagnoses and inspects exactly like v2 (every profile, render
         const [ra, rb] = [await transformWithResolver(a.pack, a.lexical, text, profile, { renderMode: mode }), await transformWithResolver(b.pack, b.lexical, text, profile, { renderMode: mode })];
         assert.deepEqual(summarize(rb), summarize(ra), `${profile}/${mode}/${text}`);
         assert.deepEqual(rb.units ?? null, ra.units ?? null, `${profile}/${mode}/${text} units`);
-        for (const span of ra.spans.keys()) assert.deepEqual(await expandDetail(b.pack, rb, String(span)), await expandDetail(a.pack, ra, String(span)));
+        const strip = (x: unknown) => JSON.parse(JSON.stringify(x, (k, v) => (k === 'evidence' ? undefined : v)));
+        for (const span of ra.spans.keys()) assert.deepEqual(strip(await expandDetail(b.pack, rb, String(span))), await expandDetail(a.pack, ra, String(span)));
         for (const unit of summarize(ra).units) assert.deepEqual(await expandUnitDetail(b.pack, b.lexical, rb, unit.detailRef), await expandUnitDetail(a.pack, a.lexical, ra, unit.detailRef));
       }
     }
@@ -80,6 +84,8 @@ test('the committed v3 lock and reports show the accepted pack shrinking without
   assert.equal(m3.canonicalGraphSha256, m2.canonicalGraphSha256, 'same canonical knowledge');
   assert.equal(c3.packDigest, m3.packDigest);
   assert.equal(x3.packDigest, m3.packDigest);
-  assert.ok(c3.totals.bytes < c2.totals.bytes && c3.totals.gzipBytes < c2.totals.gzipBytes);
+  // the hot pack (what a conversion can fetch) shrinks; cold evidence (#211 G) is lazy and separate
+  const hot = (c: any) => c.byLoading.eager.bytes + c.byLoading['on-demand'].bytes;
+  assert.ok(hot(c3) < hot(c2));
   assert.ok(x3.runs.short.coldFirstResult.bytes < x2.runs.short.coldFirstResult.bytes);
 });

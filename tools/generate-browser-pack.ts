@@ -12,6 +12,8 @@ import { BROWSER_RESOLVER_PARITY_REPORT, browserCoreParity } from './browser-res
 import { assertV3Equivalent, transcodeToV3 } from './browser-pack-v3.ts';
 import { SYMBOL_REGISTRY, type SymbolRegistry } from './symbol-registry.ts';
 import { CAPABILITY_PROBES } from './measure-browser-capability-utilization.ts';
+import { compileRuleIR } from './rule-ir.ts';
+import { canonicalizeOrthographyKnowledge } from './orthography-knowledge-model.ts';
 import { normalizeCheckoutText } from './verification-text.ts';
 
 // BrowserPack B (#185 B): build the pack from the accepted v2 knowledge.
@@ -31,7 +33,9 @@ export const BROWSER_PACK_V3_COMPILED_REPORT = 'data/reports/browser-pack-v3-com
 /** BrowserPack v3 (#211 F): the v2 build transcoded to symbol-encoded hot strings. */
 export async function buildAcceptedBrowserPackV3(rootDir: string, graph?: AcceptedGraph): Promise<BrowserPackBuild> {
   const registry = JSON.parse(await readFile(resolve(rootDir, SYMBOL_REGISTRY), 'utf8')) as SymbolRegistry;
-  return transcodeToV3(await buildAcceptedBrowserPackV2(rootDir, graph), registry);
+  const g = graph ?? (await normalizeAcceptedOrthographySources(rootDir)).graph;
+  const fullGraph = withProfileRules(g);
+  return transcodeToV3(await buildAcceptedBrowserPackV2(rootDir, g), registry, { evidence: { graph: canonicalizeOrthographyKnowledge(fullGraph), ir: compileRuleIR(fullGraph) } });
 }
 const PROFILES = [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE];
 
@@ -126,7 +130,8 @@ if (process.argv[1]?.endsWith('generate-browser-pack.ts')) {
   }
   // #211 F: BrowserPack v3 (symbol-encoded hot strings) must be semantically identical to v2
   const registry = JSON.parse(await readFile(resolve(rootDir, SYMBOL_REGISTRY), 'utf8')) as SymbolRegistry;
-  const v3 = transcodeToV3(v2, registry);
+  const fullGraph = withProfileRules(graph);
+  const v3 = transcodeToV3(v2, registry, { evidence: { graph: canonicalizeOrthographyKnowledge(fullGraph), ir: compileRuleIR(fullGraph) } });
   await emit(rootDir, v3, BROWSER_PACK_V3_DIR, BROWSER_PACK_V3_MANIFEST, BROWSER_PACK_V3_COMPILED_REPORT, check);
   const compared = await assertV3Equivalent(v2, v3, CAPABILITY_PROBES.map((p) => p.text));
   console.log(`BrowserPack v3 ≡ v2 on ${compared} probe conversions`);
