@@ -241,7 +241,11 @@
         if (typeof candidate.reading !== "string") return null;
         // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
         // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
-        if (sino && candidate.lexicalOrigin !== "native" && candidate.lexicalOrigin !== "loan" && !candidate.inflection && Array.from(surface).every((ch) => HAN.test(ch))) {
+        const sinoScope = sino && !candidate.inflection && Array.from(surface).every((ch) => HAN.test(ch));
+        const sinoEvidenceUnavailable = sinoScope && candidate.lexicalOrigin !== "sino"
+          ? { status: "unavailable", diagnostic: "sino_evidence_unavailable", evidenceRefs: [] }
+          : null;
+        if (sinoScope && candidate.lexicalOrigin === "sino") {
           const reconstructed = sino.reconstructWord(surface, candidate.reading);
           if (reconstructed?.status === "resolved") {
             return {
@@ -262,7 +266,7 @@
         }
         const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
         if (candidateReadings.length) return { status: "candidates", route: "native", readings: candidateReadings, evidenceRefs: [`surface:${surface}`] };
-        return null;
+        return sinoEvidenceUnavailable;
       },
       historicalSurfaceLookup: (surface) => {
         if (policy.period !== "historical") return null;
@@ -463,7 +467,8 @@
         contextualCandidates: [...(h.contextualKanji?.candidates ?? [])],
         deterministicKanji: h.deterministicKanji ? { source: h.deterministicKanji.source, target: h.deterministicKanji.target } : null,
         candidateReadings: [...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])],
-        evidenceRefs: [...(h.evidenceRefs ?? [])]
+        evidenceRefs: [...(h.evidenceRefs ?? [])],
+        diagnostic: h.diagnostic ?? null
       }
     };
   }

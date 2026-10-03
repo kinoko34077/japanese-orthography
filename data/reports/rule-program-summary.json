@@ -6,16 +6,16 @@
   "programs": 182087,
   "directPrograms": 179512,
   "bytecodePrograms": 2575,
-  "codeWords": 13747,
-  "predicates": 10,
+  "codeWords": 17743,
+  "predicates": 2009,
   "mechanisms": 4,
   "lexemeSets": 537,
   "sequences": 408151,
   "indexKeys": 179949,
   "sections": {
     "programs": {
-      "bytes": 6119828,
-      "gzipBytes": 2737359
+      "bytes": 6135812,
+      "gzipBytes": 2741434
     },
     "pool": {
       "bytes": 5506752,
@@ -26,5 +26,5 @@
       "gzipBytes": 2915
     }
   },
-  "digest": "90d56d47e0aefe0500323345b2c60450f544fff5fccb7421cb0d132621c0b0d1"
+  "digest": "67141f3ccb3c22a613e5ac00bfe3beb51927668f256122a3b9b4d2afc5b25384"
 }
