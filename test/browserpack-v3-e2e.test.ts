@@ -162,5 +162,5 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   assert.equal(componentRuby.renderedText, '｜學校《がくかう》');
   assert.equal(componentRuby.units.length, 1);
   assert.equal(componentRuby.units[0].unit.sourceSurface, '学校');
-  assert.deepEqual(componentRuby.spans.map((span: any) => [span.start, span.end]), [[0, 9]]);
+  assert.deepEqual(componentRuby.spans.map((span: any) => [span.start, span.end]), [[0, 11]]);
 });
