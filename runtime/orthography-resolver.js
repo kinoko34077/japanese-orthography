@@ -491,6 +491,7 @@
         displayReading: displayReadingForCandidate(candidate, reading.modernSurface),
         lexicalOrigin: candidate.lexicalOrigin ?? "unknown",
         morphology: candidate.morphology ?? null,
+        inflection: candidate.inflection ?? null,
         components,
         viableBindingIds: candidate.viableBindingIds ?? [],
         historical: historicalResolution.historical,
