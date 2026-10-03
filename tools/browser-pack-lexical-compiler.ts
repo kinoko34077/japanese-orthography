@@ -51,7 +51,7 @@ export interface LexemeModel {
   readonly headReading: string | null;
   readonly morphologyIds: number[];
   readonly forms: Array<{ surface: string; flags: number; factIndex: number }>;
-  readonly readings: Array<{ surface: string | null; reading: string; basisReading: string | null; period: number; route: number; candidate: boolean; factIndex: number }>;
+  readonly readings: Array<{ surface: string | null; reading: string; basisReading: string | null; displayPriority: string[]; period: number; route: number; candidate: boolean; factIndex: number }>;
 }
 
 export interface LexicalModel {
@@ -156,9 +156,9 @@ export function buildLexicalModel(graph: OrthographyKnowledgeGraph, morphology: 
         const historical = fact.periodRefs?.includes('period:historical-kana') ?? false;
         const modern = fact.periodRefs?.includes('period:modern') ?? !historical;
         const candidate = fact.tags?.includes('candidate') ?? false;
-        if (modern) lexeme.readings.push({ surface: fact.surface ?? null, reading: fact.reading, basisReading: null, period: READING_PERIODS.modern, route: 0, candidate, factIndex });
+        if (modern) lexeme.readings.push({ surface: fact.surface ?? null, reading: fact.reading, basisReading: null, displayPriority: [...(fact.displayPriority ?? [])], period: READING_PERIODS.modern, route: 0, candidate, factIndex });
         if (historical) lexeme.readings.push({
-          surface: fact.surface ?? null, reading: fact.reading, basisReading: fact.basisReading ?? null,
+          surface: fact.surface ?? null, reading: fact.reading, basisReading: fact.basisReading ?? null, displayPriority: [],
           period: READING_PERIODS.historical, route: routeOf(fact.sourceRefs), candidate, factIndex
         });
       }
@@ -169,7 +169,7 @@ export function buildLexicalModel(graph: OrthographyKnowledgeGraph, morphology: 
   const post = (index: Map<string, Set<number>>, key: string, id: number) => { let set = index.get(key); if (!set) index.set(key, (set = new Set())); set.add(id); };
   lexemes.forEach((lexeme, id) => {
     lexeme.forms.sort((a, b) => cmp(a.surface, b.surface) || a.factIndex - b.factIndex);
-    lexeme.readings.sort((a, b) => cmp(a.surface ?? '', b.surface ?? '') || a.period - b.period || cmp(a.reading, b.reading) || cmp(a.basisReading ?? '', b.basisReading ?? '') || Number(a.candidate) - Number(b.candidate) || a.factIndex - b.factIndex);
+    lexeme.readings.sort((a, b) => cmp(a.surface ?? '', b.surface ?? '') || a.period - b.period || cmp(a.reading, b.reading) || cmp(a.basisReading ?? '', b.basisReading ?? '') || cmp(a.displayPriority.join('\u0000'), b.displayPriority.join('\u0000')) || Number(a.candidate) - Number(b.candidate) || a.factIndex - b.factIndex);
     for (const form of lexeme.forms) post(surfaceIndex, form.surface, id);
     for (const reading of lexeme.readings) {
       if (reading.surface !== null) post(surfaceIndex, reading.surface, id);
@@ -211,10 +211,14 @@ function partitionIndex(index: Map<string, number[]>, budget: number, postingByt
  */
 export function postingPayload(kind: 'surface' | 'reading', key: string, lexeme: LexemeModel) {
   const uniqSorted = (values: Array<string | null>) => [...new Set(values.filter((v): v is string => v !== null))].sort(cmp);
+  const modernPriority = lexeme.readings
+    .filter((r) => r.period === READING_PERIODS.modern && (kind === 'surface' ? r.surface === key : r.reading === key))
+    .map((r) => ({ reading: r.reading, priorities: [...r.displayPriority] }))
+    .sort((a, b) => cmp(a.reading, b.reading) || cmp(a.priorities.join('\u0000'), b.priorities.join('\u0000')));
   if (kind === 'surface') {
     const historical = lexeme.readings.filter((r) => r.period === READING_PERIODS.historical && r.surface === key);
     return {
-      modern: uniqSorted(lexeme.readings.filter((r) => r.period === READING_PERIODS.modern && r.surface === key).map((r) => r.reading)),
+      modern: uniqSorted(lexeme.readings.filter((r) => r.period === READING_PERIODS.modern && r.surface === key).map((r) => r.reading)), modernPriority,
       historical: historical.map((r) => r.reading), route: historical.map((r) => r.route), historicalFact: historical.map((r) => r.factIndex),
       historicalBasis: historical.map((r) => r.basisReading), historicalCandidate: historical.map((r) => r.candidate),
       morphology: lexeme.morphologyIds
@@ -222,7 +226,7 @@ export function postingPayload(kind: 'surface' | 'reading', key: string, lexeme:
   }
   return {
     modern: uniqSorted(lexeme.readings.filter((r) => r.reading === key).map((r) => r.surface)), // carrier surfaces of this reading
-    historical: [] as string[], route: [] as number[], historicalFact: [] as number[], historicalBasis: [] as Array<string | null>, historicalCandidate: [] as boolean[],
+    historical: [] as string[], route: [] as number[], historicalFact: [] as number[], historicalBasis: [] as Array<string | null>, historicalCandidate: [] as boolean[], modernPriority,
     morphology: lexeme.morphologyIds
   };
 }
@@ -240,7 +244,7 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
       const indexKind = kindIndex === 0 ? 'surface' : 'reading';
       const payloadBytes = (key: string, id: number) => {
         const p = postingPayload(indexKind, key, model.lexemes[id]!);
-        return 8 + model.lexemes[id]!.lexicalIdentity.length * 3 + (p.modern.length + p.historical.length * 5 + p.morphology.length) * 4;
+      return 8 + model.lexemes[id]!.lexicalIdentity.length * 3 + (p.modern.length + p.modernPriority.length * 3 + p.historical.length * 5 + p.morphology.length) * 4;
       };
       const shards = partitionIndex(index, options.indexShardBudgetBytes ?? 64 * 1024, payloadBytes);
       shards.forEach((entries, i) => {
@@ -255,6 +259,7 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
           { name: 'lexemes', kind: 'list', values: entries.map(([, ids]) => ids) },
           { name: 'pIdentity', kind: 'scalar', values: postings.map(({ id }) => s.id(model.lexemes[id]!.lexicalIdentity)) },
           { name: 'pModern', kind: 'list', values: postings.map(({ p }) => p.modern.map((v) => s.id(v))) },
+          { name: 'pDisplayPriority', kind: 'list', values: postings.map(({ p }) => p.modernPriority.flatMap((v) => [s.id(v.reading), v.priorities.length, ...v.priorities.map((priority) => s.id(priority))])) },
           // historical readings as (reading, route, factIndex, basisReading, candidate) tuples
           ...(indexKind === 'surface' ? [{ name: 'pHistorical', kind: 'list' as const, values: postings.map(({ p }) => p.historical.flatMap((v, i) => [s.id(v), p.route[i]!, p.historicalFact[i]!, s.id(p.historicalBasis[i] ?? null), p.historicalCandidate[i] ? 1 : 0])) }] : []),
           { name: 'pMorphology', kind: 'list', values: postings.map(({ p }) => p.morphology) }
@@ -292,6 +297,7 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
         { name: 'route', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.route)) },
         { name: 'basisReading', kind: 'list', values: rows.map((l) => l.readings.map((x) => r.id(x.basisReading))) },
         { name: 'candidate', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.candidate ? 1 : 0)) },
+        { name: 'displayPriority', kind: 'list', values: rows.map((l) => l.readings.flatMap((x) => [r.id(x.reading), x.displayPriority.length, ...x.displayPriority.map((priority) => r.id(priority))])) },
         { name: 'factIndex', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.factIndex)) }
       ]), { shard, rowCount: rows.length, requires: [tableId] });
       directoryRow(2, i, shard.from, shard.to, rows.length, 0);
@@ -381,16 +387,25 @@ export function readLexicalLayer(build: BrowserPackBuild) {
       const rt = [...readings.list('route', row)] as number[];
       const rb = [...readings.list('basisReading', row)] as number[];
       const rc = [...readings.list('candidate', row)] as number[];
+      const rPriority = [...readings.list('displayPriority', row)] as number[];
       const rf = [...readings.list('factIndex', row)] as number[];
-      if (formFlags.length !== formSurfaces.length || formFacts.length !== formSurfaces.length || rr.length !== rs.length || rp.length !== rs.length || rt.length !== rs.length || rb.length !== rs.length || rc.length !== rs.length || rf.length !== rs.length) throw new Error(`lexeme ${identity}: ragged form/reading rows`);
       const str = (sec: any, id: number) => { const s = sec.string('strings', id); if (s === undefined) throw new Error(`lexeme ${identity}: dangling string id ${id}`); return s as string; };
+      const priorityByReading = new Map<string, string[]>();
+      for (let i = 0; i < rPriority.length;) {
+        const reading = str(readings, rPriority[i++]!);
+        const count = rPriority[i++]!;
+        const priorities = rPriority.slice(i, i + count).map((id) => str(readings, id));
+        i += count;
+        priorityByReading.set(reading, [...new Set([...(priorityByReading.get(reading) ?? []), ...priorities])].sort(cmp));
+      }
+      if (formFlags.length !== formSurfaces.length || formFacts.length !== formSurfaces.length || rr.length !== rs.length || rp.length !== rs.length || rt.length !== rs.length || rb.length !== rs.length || rc.length !== rs.length || rf.length !== rs.length) throw new Error(`lexeme ${identity}: ragged form/reading rows`);
       const head = lexemeHead(identity);
       lexemes.push({
         lexicalIdentity: identity, headSurface: head.surface, headReading: head.reading, morphologyIds,
         forms: formSurfaces.map((id, i) => ({ surface: str(forms, id), flags: formFlags[i]!, factIndex: formFacts[i]! })),
         readings: rs.map((id, i) => ({
           surface: id === 0 ? null : str(readings, id), reading: str(readings, rr[i]!),
-          basisReading: rb[i] === 0 ? null : str(readings, rb[i]!), period: rp[i]!, route: rt[i]!,
+          basisReading: rb[i] === 0 ? null : str(readings, rb[i]!), displayPriority: priorityByReading.get(str(readings, rr[i]!)) ?? [], period: rp[i]!, route: rt[i]!,
           candidate: rc[i] === 1, factIndex: rf[i]!
         }))
       });

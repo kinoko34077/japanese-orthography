@@ -66,6 +66,36 @@
     };
   };
 
+  const candidateReadings = (candidate) => {
+    const readings = Array.isArray(candidate?.modernReadings) ? candidate.modernReadings.filter(Boolean) : [];
+    return readings.length > 0 ? [...new Set(readings)] : (candidate?.reading ? [candidate.reading] : []);
+  };
+
+  const displayReadingForCandidates = (candidates) => {
+    const list = Array.isArray(candidates) ? candidates : [];
+    const readings = [...new Set(list.flatMap(candidateReadings))];
+    const preferred = [...new Set(list.flatMap((candidate) => {
+      const preferences = Array.isArray(candidate?.displayReadingPreferences)
+        ? candidate.displayReadingPreferences
+        : candidate?.displayPriority?.length && candidate?.reading
+          ? [{ reading: candidate.reading, priorities: candidate.displayPriority }]
+          : [];
+      return preferences.filter((entry) => Array.isArray(entry?.priorities) && entry.priorities.length > 0).map((entry) => entry.reading);
+    }))].filter((reading) => readings.includes(reading));
+    if (preferred.length === 1) return { value: preferred[0], source: "jmdict-re-pri" };
+    if (readings.length === 1) return { value: readings[0], source: "lexical-consensus" };
+    return null;
+  };
+
+  const displayReadingForCandidate = (candidate, reading) => {
+    const value = reading ?? (candidateReadings(candidate).length === 1 ? candidateReadings(candidate)[0] : null);
+    if (!value) return null;
+    const priorities = Array.isArray(candidate?.displayReadingPreferences)
+      ? candidate.displayReadingPreferences.find((entry) => entry.reading === value)?.priorities ?? []
+      : candidate?.displayPriority ?? [];
+    return priorities.length > 0 ? { value, source: "jmdict-re-pri" } : { value, source: "lexical" };
+  };
+
   const unresolvedUnit = (evidence, candidates = []) => ({
     kind: candidates.length > 1 ? "candidates" : "unresolved",
     sourceText: evidence.sourceText,
@@ -75,6 +105,7 @@
       modernSurface: evidence.wholeRuby?.reading ?? null,
       source: evidence.wholeRuby ? "ruby-word" : "unknown"
     },
+    displayReading: displayReadingForCandidates(candidates),
     lexicalOrigin: "unknown",
     morphology: null,
     components: [],
@@ -100,7 +131,8 @@
       }
       return {
         ...component,
-        readingSource: matches ? "ruby-component" : "lexical"
+        readingSource: matches ? "ruby-component" : "lexical",
+        ...(matches ? { rubyReading: explicit.reading } : {})
       };
     });
   };
@@ -449,6 +481,7 @@
         lexicalIdentity: candidate.lexicalIdentity ?? null,
         lemma: candidate.lemma ?? null,
         reading,
+        displayReading: displayReadingForCandidate(candidate, reading.modernSurface),
         lexicalOrigin: candidate.lexicalOrigin ?? "unknown",
         morphology: candidate.morphology ?? null,
         components,
@@ -524,29 +557,32 @@
       const mode = options.mode ?? "plain";
       const surface = unit?.historical?.surface ?? unit?.sourceSurface ?? unit?.sourceText ?? "";
       const historicalKana = unit?.historical?.kana ?? null;
-      if (mode === "plain" || !historicalKana) {
+      const displayReading = unit?.displayReading?.value ?? unit?.reading?.modernSurface ?? null;
+      const rubyReading = historicalKana ?? displayReading;
+      if (mode === "plain" || !rubyReading) {
         return surface;
       }
 
       if (mode === "ruby-whole-explicit") {
-        return `｜${surface}《${historicalKana}》`;
+        return `｜${surface}《${rubyReading}》`;
       }
       if (mode === "ruby-whole-implicit") {
-        return `${surface}《${historicalKana}》`;
+        return `${surface}《${rubyReading}》`;
       }
 
       const components = Array.isArray(unit.components) ? unit.components : [];
-      const componentRuby = components.map((component) => {
+      const completeComponents = components.length > 0 && components.every((component) => Boolean(component.historicalKana ?? component.lexicalReading));
+      const componentRuby = completeComponents ? components.map((component) => {
         const componentSurface = component.renderedSurface ?? component.surface ?? "";
         const componentKana = component.historicalKana ?? component.lexicalReading ?? null;
         return componentKana ? `${componentSurface}《${componentKana}》` : componentSurface;
-      }).join("");
+      }).join("") : "";
 
       if (mode === "ruby-components-explicit") {
-        return componentRuby ? `｜${componentRuby}` : `｜${surface}《${historicalKana}》`;
+        return componentRuby ? `｜${componentRuby}` : `｜${surface}《${rubyReading}》`;
       }
       if (mode === "ruby-components-implicit") {
-        return componentRuby || `${surface}《${historicalKana}》`;
+        return componentRuby || `${surface}《${rubyReading}》`;
       }
 
       return surface;

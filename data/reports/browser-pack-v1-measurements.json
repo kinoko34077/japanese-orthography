@@ -7,19 +7,19 @@
   "compilerVersion": "1",
   "baseline": {
     "source": "data/reports/orthography-v2-measurements.json",
-    "canonicalGraphSha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
-    "canonicalGraphBytes": 162309510,
-    "hotArtifactBytes": 63767216,
-    "hotArtifactGzipBytes": 9805539,
-    "hotInflateMs": 17382,
-    "hotInflateHeapMb": 976
+    "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+    "canonicalGraphBytes": 163815755,
+    "hotArtifactBytes": 66026079,
+    "hotArtifactGzipBytes": 9909402,
+    "hotInflateMs": 16871,
+    "hotInflateHeapMb": 993
   },
   "counts": {
     "facts": 561488,
     "rules": 203,
     "bindings": 2000,
     "sources": 28,
-    "strings": 939477
+    "strings": 939533
   },
   "candidate": {
     "sections": [
@@ -27,16 +27,16 @@
         "sectionId": "string-pool",
         "kind": "string-pool",
         "loading": "on-demand",
-        "rowCount": 939477,
-        "bytes": 27088781,
+        "rowCount": 939533,
+        "bytes": 27089235,
         "columns": [
           {
             "name": "utf8",
             "width": 1,
-            "elements": 23330869
+            "elements": 23331099
           }
         ],
-        "gzipBytes": 4942441
+        "gzipBytes": 4942753
       },
       {
         "sectionId": "facts",
@@ -299,7 +299,7 @@
       }
     ],
     "eagerBytes": 44881,
-    "onDemandBytes": 59161993,
+    "onDemandBytes": 59162447,
     "lazyBytes": 3695040,
     "shardPlan": {
       "targetShardBytes": 262144,
@@ -308,8 +308,8 @@
           "sectionId": "string-pool",
           "kind": "string-pool",
           "loading": "on-demand",
-          "bytes": 27088781,
-          "rowCount": 939477,
+          "bytes": 27089235,
+          "rowCount": 939533,
           "shardCount": 104,
           "rowsPerShard": 9034
         },
@@ -359,31 +359,31 @@
       "sectionBytesResident": 44883,
       "alignmentPaddingBytes": 2,
       "views": 28,
-      "openMs": 0.402,
+      "openMs": 0.234,
       "viewObjectHeapMb": 0.1
     },
     "measuredFullyResident": {
-      "declaredBytes": 62901914,
-      "sectionBytesResident": 62901919,
-      "alignmentPaddingBytes": 5,
+      "declaredBytes": 62902368,
+      "sectionBytesResident": 62902371,
+      "alignmentPaddingBytes": 3,
       "views": 56,
-      "openMs": 0.084,
+      "openMs": 0.941,
       "viewObjectHeapMb": 0
     }
   },
   "reduction": {
-    "totalVsHotArtifactBytes": 0.9864,
-    "eagerVsHotArtifactBytes": 0.000704,
+    "totalVsHotArtifactBytes": 0.9527,
+    "eagerVsHotArtifactBytes": 0.00068,
     "fullyResidentHeapVsHotInflateHeap": 0
   },
   "findings": [
     {
-      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 62901914 bytes against the 63767216-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 62901919-byte ArrayBuffer, against the 976 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 44881 bytes — and never by the encoding choice.",
+      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 62902368 bytes against the 66026079-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 62902371-byte ArrayBuffer, against the 993 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 44881 bytes — and never by the encoding choice.",
       "evidence": "candidate.sections, candidate.measuredOpen, candidate.measuredFullyResident, baseline.hotInflateHeapMb",
       "consequence": "unit B must compile sharded on-demand knowledge sections plus a small eager shard directory; a fully eager pack is not admissible"
     },
     {
-      "finding": "Two sections dominate: the string pool at 27088781 bytes (4942441 gzipped) and the facts table at 25946164 bytes, together 84.3% of the pack. Both scale with the 561488 normalized v2 facts, which are overwhelmingly JMdict forms and readings.",
+      "finding": "Two sections dominate: the string pool at 27089235 bytes (4942753 gzipped) and the facts table at 25946164 bytes, together 84.3% of the pack. Both scale with the 561488 normalized v2 facts, which are overwhelmingly JMdict forms and readings.",
       "evidence": "candidate.sections[string-pool], candidate.sections[facts], counts.facts",
       "consequence": "the shard key must partition these two together; sharding anything else first moves no meaningful bytes"
     },

@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization",
   "owner": "japanese-orthography#196 A",
-  "packDigest": "50b188e79d43ebb6d07950936df7eee9064c52041233a48d5cb35721bf04f3df",
+  "packDigest": "d88ad330cea31708773affe42f6040394dfd1f2648fcb682fbfdf54de877eead",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
   "canonical": {
     "facts": 561488,

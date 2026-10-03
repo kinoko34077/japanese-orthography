@@ -28,6 +28,7 @@
     "facts.surface": "string|-1",
     "facts.reading": "string|-1",
     "facts.basisReading": "string|-1",
+    "facts.displayPriority": "string[]|-1",
     "facts.target": "string|-1",
     "facts.lexicalRefs": "string[]",
     "facts.tags": "string[]|-1",
@@ -121,6 +122,7 @@
       const surface = str(F.surface[i]);
       const reading = str(F.reading[i]);
       const basisReading = str(F.basisReading[i]);
+      const displayPriority = strs(F.displayPriority[i]);
       const target = str(F.target[i]);
       fact.id = F.id[i] === -1 ? `fact:${k}:${surface ?? ""}|${reading ?? ""}|${target ?? ""}` : s[F.id[i]];
       fact.kind = k;
@@ -128,6 +130,7 @@
       put(fact, "surface", surface);
       put(fact, "reading", reading);
       put(fact, "basisReading", basisReading);
+      put(fact, "displayPriority", displayPriority);
       put(fact, "target", target);
       put(fact, "tags", strs(F.tags[i]));
       put(fact, "periodRefs", strs(F.periodRefs[i]));

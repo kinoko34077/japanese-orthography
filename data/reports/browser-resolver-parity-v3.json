@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "kind": "browser-resolver-parity",
   "owner": "japanese-orthography#196 D",
-  "packDigest": "4f41dd7a6b64af1aa42d7b84682e86157018ffb28cce35bb43f77b31e96a4d75",
+  "packDigest": "097e75614728d9b64966afd8b97498ca6e077ed0dbd23ad63dcfd629300fd23e",
   "differenceKinds": {
     "lexicon-granularity": "core lexicon has one candidate per UniDic conjugation row of the same lemma, so the core unit is `candidates`; the browser resolves the one JMdict lexeme (same headword)",
     "browser-wider-lexicon": "the browser lexicon (JMdict) has further lexemes for the same input; the core identity is among the browser candidates and nothing is selected",
@@ -82,7 +82,7 @@
         "historicalSurface": "颱風",
         "disposition": "AUTO",
         "plain": "颱風",
-        "rubyWhole": "颱風"
+        "rubyWhole": "｜颱風《たいふう》"
       },
       "browser": {
         "kind": "resolved",
@@ -105,8 +105,7 @@
       },
       "difference": "browser-sino-reconstruction",
       "fieldsDiffering": [
-        "historicalKana",
-        "rubyWhole"
+        "historicalKana"
       ]
     },
     {
@@ -179,7 +178,7 @@
         "historicalSurface": "思う",
         "disposition": "CANDIDATES",
         "plain": "思う",
-        "rubyWhole": "思う"
+        "rubyWhole": "｜思う《おもう》"
       },
       "browser": {
         "kind": "resolved",
@@ -193,7 +192,7 @@
         "historicalSurface": "思ふ",
         "disposition": "AUTO",
         "plain": "思ふ",
-        "rubyWhole": "思ふ",
+        "rubyWhole": "｜思ふ《おもう》",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -243,7 +242,7 @@
         "historicalSurface": "買ふ",
         "disposition": "AUTO",
         "plain": "買ふ",
-        "rubyWhole": "買ふ",
+        "rubyWhole": "｜買ふ《かう》",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -298,7 +297,7 @@
         "historicalSurface": "合う",
         "disposition": "CANDIDATES",
         "plain": "合ふ",
-        "rubyWhole": "合ふ",
+        "rubyWhole": "｜合ふ《あう》",
         "historicalRoute": null
       },
       "difference": "unbound-relation",
@@ -325,7 +324,7 @@
         "historicalSurface": "味わおう",
         "disposition": "SOURCE_REVIEW",
         "plain": "味わおう",
-        "rubyWhole": "味わおう"
+        "rubyWhole": "｜味わおう《あじわおう》"
       },
       "browser": {
         "kind": "resolved",
@@ -347,7 +346,8 @@
       },
       "difference": "browser-canonical-relations",
       "fieldsDiffering": [
-        "disposition"
+        "disposition",
+        "rubyWhole"
       ]
     },
     {
@@ -414,7 +414,7 @@
         "historicalSurface": "今日",
         "disposition": "SOURCE_REVIEW",
         "plain": "今日",
-        "rubyWhole": "今日"
+        "rubyWhole": "｜今日《きょう》"
       },
       "browser": {
         "kind": "resolved",
