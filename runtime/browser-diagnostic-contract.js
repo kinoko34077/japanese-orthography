@@ -240,7 +240,7 @@
     const u = unit.unit;
     const identities = [...new Set([...(u.lexicalIdentity ? [u.lexicalIdentity] : []), ...u.lexicalCandidates.map((c) => c.lexicalIdentity)])];
     // lexeme records of those identities, found through the same surface / reading / base-form routes
-    const keys = [...new Set([unit.surface, ...u.lexicalCandidates.map((c) => c.inflection?.baseSurface).filter(Boolean)])];
+    const keys = [...new Set([unit.surface, u.inflection?.baseSurface, ...u.lexicalCandidates.map((c) => c.inflection?.baseSurface).filter(Boolean)].filter(Boolean))];
     const found = new Map();
     for (const key of keys) {
       for (const c of [...await lexical.lookupSurface(key), ...await lexical.lookupReading(key)]) if (identities.includes(c.lexicalIdentity) && !found.has(c.lexicalIdentity)) found.set(c.lexicalIdentity, c.lexemeId);
@@ -281,7 +281,7 @@
       recognition: { recognized: true, resolved: u.kind === "resolved", changed: unit.outputs.length > 0 },
       lexicalIdentity: u.lexicalIdentity, reading: u.reading, readingSource: u.readingSource, lexicalOrigin: u.lexicalOrigin,
       morphologyContext: morphologyContextOf(u),
-      inflection: u.lexicalCandidates.find((c) => c.inflection)?.inflection ?? null,
+      inflection: u.inflection ?? u.lexicalCandidates.find((c) => c.inflection)?.inflection ?? null,
       lexemes,
       candidateForms: unit.outputs,
       historical: u.historical,

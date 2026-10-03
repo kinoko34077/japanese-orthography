@@ -98,6 +98,23 @@ test('word-level reconstruction aligns readings and preserves ambiguity', async 
   assert.equal(runtime.reconstructWord('学ぶ', 'まなぶ'), null);
 });
 
+test('R3 #234: unmatched reading material never acquires arbitrary component ownership', async () => {
+  const runtime = await sinoRuntime();
+  const opaque = runtime.reconstructWord('日本企業', 'にほんきぎょう');
+  assert.equal(opaque.status, 'resolved');
+  assert.deepEqual(plain(opaque.components.map((component: any) => component.surface)), ['日本企', '業']);
+  assert.ok(!opaque.components.some((component: any) => component.surface === '本' || component.surface === '企'));
+  assert.equal(opaque.components[0].evidenceRefs.length, 0);
+
+  const valid = runtime.reconstructWord('企業', 'きぎょう');
+  assert.equal(valid.status, 'resolved');
+  assert.deepEqual(plain(valid.components.map((component: any) => [component.surface, component.modernReading, component.historicalReading])), [
+    ['企', 'き', 'き'], ['業', 'ぎょう', 'げふ']
+  ]);
+  assert.equal(valid.components[0].evidenceRefs.length, 0);
+  assert.ok(valid.components[1].evidenceRefs.length > 0);
+});
+
 test('resolver bundle uses the 4.6E artifact while identity relations keep precedence', async () => {
   const [lexicalSource, nativeSlice, sinoSlice, contextualBindingSlice, contextualManifest, contextualTaiPack, safeCharacterSlice] = await Promise.all([
     json('data/lexical/sources/unidic-cwj-202512-first-slice.json'),

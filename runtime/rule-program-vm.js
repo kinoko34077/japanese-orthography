@@ -67,6 +67,15 @@
 
     const satisfies = (pred, context) => {
       if (!pred) return true;
+      // Binding instances with the same symbol/input form a contextual candidate group. An
+      // omitted context asks for the complete group; an explicit context selects exactly one
+      // member (including the unqualified/null member) and never lets the unqualified member
+      // leak into a qualified query (#246).
+      if (pred.bindingGroup) {
+        if (context === undefined) return true;
+        const selectedContext = context === null ? null : (context?.usage ?? null);
+        if ((pred.bindingContext || null) !== selectedContext) return false;
+      }
       if (pred.constraint && !(context?.constraints ?? []).includes(pred.constraint)) return false;
       if (pred.usage && context?.usage !== pred.usage) return false;
       if (pred.period && context?.period !== pred.period) return false;

@@ -21,7 +21,7 @@
     "facts": 561488,
     "rules": 198,
     "bindings": 2000,
-    "sha256": "d010fe4ba01079211d1d2f4850fc7a4a81ce396caf3fb43feb0f1417ec7ab58b"
+    "sha256": "7a04e80fa45c4fef1bb7a0e9b0f4989055373d2038e1ade24d82560d7bb0d13e"
   },
   "bySource": {
     "derivation/kana-conventions": {

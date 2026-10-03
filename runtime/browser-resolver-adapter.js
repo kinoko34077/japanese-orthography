@@ -63,12 +63,12 @@
   // itself (as in v1); their lexical candidates are recorded for diagnostics only. The modern
   // (restoration) direction is unchanged in this unit and still runs on the v1 planner.
 
-  if (!planner || typeof planner.assemble !== "function" || !OrthographyResolver?.createResolver) {
-    throw new Error("BrowserResolverAdapter requires BrowserSpanPlanner and OrthographyResolver");
-  }
-  const KANA = /^[ぁ-ゟ゠-ヿ]+$/u;
-  const isKana = (text) => KANA.test(text);
-  const RUBY_MODES = new Set(["plain", "ruby-whole-explicit", "ruby-whole-implicit", "ruby-components-explicit", "ruby-components-implicit"]);
+    if (!planner || typeof planner.assemble !== "function" || !OrthographyResolver?.createResolver) {
+      throw new Error("BrowserResolverAdapter requires BrowserSpanPlanner and OrthographyResolver");
+    }
+    const KANA = /^[ぁ-ゟ゠-ヿ]+$/u;
+    const isKana = (text) => KANA.test(text);
+    const RUBY_MODES = new Set(["plain", "ruby-whole-explicit", "ruby-whole-implicit", "ruby-components-explicit", "ruby-components-implicit"]);
 
   const uniq = (values) => [...new Set(values)];
 
@@ -93,15 +93,29 @@
       spans.push({ start: at, end: at + length, base: segment.base, reading: segment.ruby, explicit, source: text.slice(at, at + length) });
       at += length;
     }
-    return at === text.length ? spans : [];
+    if (at !== text.length) return [];
+    const grouped = [];
+    for (const span of spans) {
+      const previous = grouped[grouped.length - 1];
+      if (previous && previous.end === span.start) {
+        previous.end = span.end;
+        previous.base += span.base;
+        previous.reading += span.reading;
+        previous.source = text.slice(previous.start, previous.end);
+        previous.explicit = previous.explicit || span.explicit;
+      } else {
+        grouped.push({ ...span });
+      }
+    }
+    return grouped;
   };
 
   const transformWithResolver = async (pack, lexical, text, profileId, options = {}) => {
     const policy = pack.getProfilePolicy(profileId).policy;
-    if (policy.period !== "historical") {
+    const renderMode = options.renderMode ?? "plain";
+    if (policy.period !== "historical" && renderMode === "plain") {
       return { ...(await planner.planAndTransform(pack, text, profileId, options)), engine: "restoration" };
     }
-    const renderMode = options.renderMode ?? "plain";
     if (!RUBY_MODES.has(renderMode)) throw new RangeError(`unknown render mode ${renderMode}`);
     await Promise.all([pack.prepare(text), lexical.prepare(text, { reading: true })]);
 
@@ -109,7 +123,9 @@
     const inflected = new Map(); // inflected surface -> lexical candidates (one per base reading)
     const inflectedSites = [];
     if (Inflection) {
-      const sites = Inflection.scan(text, 6).filter((site) => HAN.test(site.baseSurface) || isKana(text.slice(site.start, site.end)));
+      const stemLimit = lexical.maxKeyLength?.surface;
+      if (!Number.isInteger(stemLimit) || stemLimit < 1) throw new Error("BrowserResolverAdapter: lexical surface maxKeyLength is required for deinflection");
+      const sites = Inflection.scan(text, stemLimit).filter((site) => HAN.test(site.baseSurface) || isKana(text.slice(site.start, site.end)));
       const surfaceBases = uniq(sites.filter((x) => HAN.test(x.baseSurface)).map((x) => x.baseSurface));
       const readingBases = uniq(sites.filter((x) => !HAN.test(x.baseSurface)).map((x) => x.baseSurface));
       await Promise.all([lexical.prepareKeys(surfaceBases, "surface"), lexical.prepareKeys(readingBases, "reading")]);
@@ -198,7 +214,8 @@
         safeRules.set(r.to[0], r);
       }
     }
-    const applySafe = (surface) => Array.from(surface).map((c) => safeKanjiMap[c] ?? c).join("");
+    const activeSafeKanjiMap = policy.period === "historical" ? safeKanjiMap : {};
+    const applyActiveSafe = (surface) => Array.from(surface).map((c) => activeSafeKanjiMap[c] ?? c).join("");
 
     // ---- resolver over pack-derived lookups ----------------------------------------------------------
     const lexicalCandidates = (surface) => [
@@ -206,11 +223,12 @@
       ...(inflected.get(surface) ?? [])
     ];
     const sino = sinoFor(pack);
-    const kanaHistorical = (reading) => uniq(facts(reading).filter(kanaRelation).map((f) => f.surface));
+    const kanaHistorical = (reading) => policy.period === "historical" ? uniq(facts(reading).filter(kanaRelation).map((f) => f.surface)) : [];
     const resolver = OrthographyResolver.createResolver({
       lexicalLookup: lexicalCandidates,
       readingLookup: (reading) => lexical.lookupReadingSync(reading),
       historicalLookup: (candidate, surface) => {
+        if (policy.period !== "historical") return null;
         const bound = (candidate.historicalReadings ?? []).filter((h) =>
           h.surface === surface && (h.basisReading == null || h.basisReading === candidate.reading)
         );
@@ -225,7 +243,11 @@
         if (typeof candidate.reading !== "string") return null;
         // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
         // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
-        if (sino && candidate.lexicalOrigin !== "native" && candidate.lexicalOrigin !== "loan" && !candidate.inflection && Array.from(surface).every((ch) => HAN.test(ch))) {
+        const sinoScope = sino && !candidate.inflection && Array.from(surface).every((ch) => HAN.test(ch));
+        const sinoEvidenceUnavailable = sinoScope && candidate.lexicalOrigin !== "sino"
+          ? { status: "unavailable", diagnostic: "sino_evidence_unavailable", evidenceRefs: [] }
+          : null;
+        if (sinoScope && candidate.lexicalOrigin === "sino") {
           const reconstructed = sino.reconstructWord(surface, candidate.reading);
           if (reconstructed?.status === "resolved") {
             return {
@@ -246,9 +268,11 @@
         }
         const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
         if (candidateReadings.length) return { status: "candidates", route: "native", readings: candidateReadings, evidenceRefs: [`surface:${surface}`] };
-        return null;
+        if (candidate.inflection) return { status: "unavailable", diagnostic: "historical_inflection_evidence_unavailable", evidenceRefs: [] };
+        return sinoEvidenceUnavailable;
       },
       historicalSurfaceLookup: (surface) => {
+        if (policy.period !== "historical") return null;
         if (lexical.lookupSurfaceSync(surface).length) return null; // the identity route decides
         const rows = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
         const admitted = uniq(rows.filter((f) => !f.candidate).map((f) => f.reading));
@@ -259,7 +283,7 @@
       },
       contextualRelations: relations,
       contextualSafety: safety,
-      safeKanjiMap
+      safeKanjiMap: activeSafeKanjiMap
     });
 
     // ---- lexical units --------------------------------------------------------------------------------
@@ -337,7 +361,7 @@
         const h = resolved.historical;
         if (resolved.kind === "resolved" && h.disposition !== "PRESERVE") {
           outputs = h.disposition === "CANDIDATES"
-            ? uniq((h.contextualKanji.candidates.length ? h.contextualKanji.candidates : [h.surface]).map(applySafe))
+              ? uniq((h.contextualKanji.candidates.length ? h.contextualKanji.candidates : [h.surface]).map(applyActiveSafe))
               .flatMap((s) => (renderMode === "plain" || !(h.sinoCandidates || h.nativeCandidates) ? [s] : uniq([...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])]).map((k) => resolver.render({ ...resolved, historical: { ...h, surface: s, kana: k } }, { mode: renderMode }))))
             : [resolver.render(resolved, { mode: renderMode })];
         } else if (resolved.kind !== "resolved" && h.disposition !== "PRESERVE") {
@@ -345,7 +369,15 @@
           // lexeme, and deterministic character rendering. It never selects among the candidates.
           const global = uniq(relations.filter((r) => r.match === surface && r.lexicalBindingIds.length === 0).map((r) => r.target));
           const preserved = safety.some((x) => x.match === surface);
-          outputs = preserved ? [] : (global.length ? global : [surface]).map(applySafe);
+          if (!preserved && renderMode !== "plain" && resolved.displayReading?.value) {
+            const displaySurfaces = global.length ? global.map(applyActiveSafe) : [surface];
+            outputs = displaySurfaces.map((displaySurface) => resolver.render({
+              ...resolved,
+              historical: { ...h, surface: displaySurface }
+            }, { mode: renderMode }));
+          } else {
+            outputs = preserved ? [] : (global.length ? global : [surface]).map(applyActiveSafe);
+          }
         }
       }
       outputs = uniq(outputs.filter((o) => o !== surface));
@@ -428,6 +460,7 @@
       readingSource: unit.reading?.source ?? null,
       lexicalOrigin: unit.lexicalOrigin ?? "unknown",
       morphology: unit.morphology ? { partOfSpeech: [...(unit.morphology.partOfSpeech ?? [])].filter((p) => p !== "*"), conjugationType: unit.morphology.conjugationType ?? null, conjugationForm: unit.morphology.conjugationForm ?? null } : null,
+      inflection: unit.inflection ?? null,
       lexicalCandidates: (unit.lexicalCandidates ?? []).map((c) => ({ lexicalIdentity: c.lexicalIdentity, lexemeId: c.lexemeId ?? null, surface: c.surface ?? null, reading: c.reading ?? null, inflection: c.inflection ?? null })),
       historical: {
         route: h.route ?? null,
@@ -438,7 +471,8 @@
         contextualCandidates: [...(h.contextualKanji?.candidates ?? [])],
         deterministicKanji: h.deterministicKanji ? { source: h.deterministicKanji.source, target: h.deterministicKanji.target } : null,
         candidateReadings: [...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])],
-        evidenceRefs: [...(h.evidenceRefs ?? [])]
+        evidenceRefs: [...(h.evidenceRefs ?? [])],
+        diagnostic: h.diagnostic ?? null
       }
     };
   }

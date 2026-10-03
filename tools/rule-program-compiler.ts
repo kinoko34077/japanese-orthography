@@ -101,10 +101,16 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
         if (set === undefined) { set = lexemeSets.length; lexemeSets.push(ids); lexemeSetId.set(key, set); }
         code.push(OP.TEST_LEXSET, set);
       }
-      if (r.predicate) {
-        const key = JSON.stringify(r.predicate);
+      const bindingGroup = r.ruleId.startsWith('binding:')
+        ? `binding:${JSON.stringify([r.stage, r.direction, r.channel, r.input, r.lexicalScope.filter((x) => x.startsWith('symbol:')).sort()])}`
+        : null;
+      const predicate = bindingGroup
+        ? { ...(r.predicate ?? {}), bindingGroup, bindingContext: r.predicate?.usage ?? '' }
+        : r.predicate;
+      if (predicate) {
+        const key = JSON.stringify(predicate);
         let p = predicateId.get(key);
-        if (p === undefined) { p = predicates.length; predicates.push({ ...r.predicate } as Record<string, string>); predicateId.set(key, p); }
+        if (p === undefined) { p = predicates.length; predicates.push({ ...predicate } as Record<string, string>); predicateId.set(key, p); }
         code.push(OP.TEST_PRED, p);
       }
       if (r.kind === 'preserve') code.push(OP.PRESERVE);

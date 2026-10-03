@@ -13,6 +13,7 @@ const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
 const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
+const { expandUnitDetail } = require('../runtime/browser-diagnostic-contract.js');
 const Inflection = require('../runtime/browser-inflection.js');
 
 const P = { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] };
@@ -30,8 +31,11 @@ const graph = (() => {
   const g = adapterFixture();
   g.facts.push(
     ...lexeme('lexeme:味わう/あじわう', '味わう', 'あじわう'), ...lexeme('lexeme:書く/かく', '書く', 'かく'),
+    ...lexeme('lexeme:超長複合語動詞/ちょうちょうふくごうごどうし', '超長複合語動詞', 'ちょうちょうふくごうごどうし'),
     ...lexeme('lexeme:円周/えんしゅう', '円周', 'えんしゅう'), ...lexeme('lexeme:法律/ほうりつ', '法律', 'ほうりつ'),
-    ...lexeme('lexeme:海松/みる', '海松', 'みる'), ...lexeme('lexeme:勉強/べんきょう', '勉強', 'べんきょう')
+    ...lexeme('lexeme:海松/みる', '海松', 'みる'), ...lexeme('lexeme:勉強/べんきょう', '勉強', 'べんきょう'),
+    { id: 'fact:literal_reading:味わった|あじはった|native-inflected', kind: 'literal_reading' as const, lexicalRefs: [], surface: '味わった', reading: 'あじはった', periodRefs: ['period:historical-kana'], sourceRefs: ['intake/phase46d-native-kana'], evidenceRefs: ['phase46d-kkh-kana:kana-jisyo:L170'], tags: ['historical_kana_native'] },
+    { id: 'fact:form_relation:あじはった||あじわった', kind: 'form_relation' as const, lexicalRefs: [], surface: 'あじはった', target: 'あじわった', periodRefs: ['period:historical-kana'], tags: ['historical_kana_native'], sourceRefs: ['intake/phase46d-native-kana'], evidenceRefs: ['phase46d-kkh-kana:kana-jisyo:L170'] }
   );
   g.rules.push(sinoRule('ゑん', 'えん'), sinoRule('しう', 'しゅう'), sinoRule('はふ', 'ほう'), sinoRule('ほふ', 'ほう'), sinoRule('りつ', 'りつ'),
     { id: 'rule:char:圓>円', class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: ['圓'], to: ['円'], dependencies: [], predicate: { channel: 'surface' }, ...P });
@@ -39,9 +43,10 @@ const graph = (() => {
   return canonicalizeOrthographyKnowledge(g);
 })();
 const jm = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: null }];
+const sinoMorphology = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'unidic', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: 'sino' }];
 const morphology = new Map<string, LexicalMorphologyRow[]>([
-  ['lexeme:味わう/あじわう', jm(['v5u', 'vt'])], ['lexeme:書く/かく', jm(['v5k', 'vt'])], ['lexeme:見る/みる', jm(['v1', 'vt'])], ['lexeme:診る/みる', jm(['v1', 'vt'])],
-  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', jm(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])]
+  ['lexeme:味わう/あじわう', jm(['v5u', 'vt'])], ['lexeme:書く/かく', jm(['v5k', 'vt'])], ['lexeme:超長複合語動詞/ちょうちょうふくごうごどうし', jm(['vs'])], ['lexeme:見る/みる', jm(['v1', 'vt'])], ['lexeme:診る/みる', jm(['v1', 'vt'])],
+  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', sinoMorphology(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])]
 ]);
 const build = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ morphology, lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
@@ -92,8 +97,42 @@ test('Sino component reconstruction uses the accepted reconstructor over canonic
   const { raw, unit } = await whole('円周', 'ruby-whole-explicit');
   assert.equal(raw.renderedText, '｜圓周《ゑんしう》');
   assert.deepEqual([unit.historical.route, unit.historical.kana, unit.historical.disposition], ['sino', 'ゑんしう', 'AUTO']);
+
+  const unknownOrigin = await whole('法律', 'ruby-whole-explicit');
+  assert.equal(unknownOrigin.raw.renderedText, '｜法律《ほうりつ》');
+  assert.notEqual(unknownOrigin.unit.historical.route, 'sino');
+  assert.deepEqual(unknownOrigin.unit.historical.candidateReadings, []);
+  assert.equal(unknownOrigin.unit.historical.diagnostic, 'sino_evidence_unavailable');
+
   // 法 (ほう) keeps the accepted はふ | ほふ ambiguity without usage context: candidates, no winner
-  const law = await whole('法律', 'ruby-whole-explicit');
-  assert.deepEqual([law.unit.historical.disposition, law.unit.historical.candidateReadings], ['CANDIDATES', ['はふりつ', 'ほふりつ']]);
-  assert.ok(law.raw.spans.every((s: any) => s.state !== 'applied'), 'no candidate is applied');
+});
+
+test('R4 #226 derives the deinflection scan bound from BrowserPack lexical capability', async () => {
+  const { unit } = await whole('超長複合語動詞した');
+  assert.deepEqual([unit?.kind, unit?.lexicalIdentity, unit?.reading], ['resolved', 'lexeme:超長複合語動詞/ちょうちょうふくごうごどうし', 'ちょうちょうふくごうごどうしした']);
+});
+
+test('R4 #240 keeps base lexeme and inflection evidence on a resolved unit', async () => {
+  const { raw, unit } = await whole('味わおう');
+  assert.equal(unit.lexicalIdentity, 'lexeme:味わう/あじわう');
+  assert.deepEqual(unit.inflection, {
+    baseSurface: '味わう', baseReading: 'あじわう', rule: 'おう', conjugationClass: 'v5u', conjugationForm: '意志推量形'
+  });
+  const unitIndex = raw.units.findIndex((candidate: any) => candidate.start === 0 && candidate.end === '味わおう'.length);
+  const detail = await expandUnitDetail(pack, lexical, raw, `u:${unitIndex}`);
+  assert.equal(detail.inflection.baseSurface, '味わう');
+  assert.ok(detail.lexemes.some((lexeme: any) => lexeme.lexicalIdentity === 'lexeme:味わう/あじわう' && lexeme.forms.some((form: any) => form.surface === '味わう')));
+  assert.ok(detail.lexemes.some((lexeme: any) => lexeme.morphology.some((row: any) => row.partOfSpeech.includes('v5u'))));
+});
+
+test('R4 #239 only projects historical inflection when the pack carries native evidence', async () => {
+  const sourced = await whole('味わった', 'ruby-whole-explicit');
+  assert.equal(sourced.unit.historical.route, 'native');
+  assert.equal(sourced.unit.historical.kana, 'あじはった');
+  assert.equal(sourced.unit.historical.disposition, 'AUTO');
+  assert.equal(sourced.raw.renderedText, '｜味わった《あじはった》');
+
+  const unsourced = await whole('勉強した');
+  assert.equal(unsourced.unit.historical.diagnostic, 'historical_inflection_evidence_unavailable');
+  assert.equal(unsourced.unit.historical.disposition, 'SOURCE_REVIEW');
 });

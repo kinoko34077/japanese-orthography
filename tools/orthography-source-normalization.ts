@@ -61,7 +61,7 @@ class GraphBuilder {
 
   // Text equality is not always assertion identity (#250 R1). Callers supply assertionKey only
   // where source-scoped metadata/provenance would otherwise smear across lexical assertions.
-  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; basisReading?: string | undefined; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[]; assertionKey?: string | undefined; origin?: 'project_defined' }, sourceId: string, evidence: string[]) {
+  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; basisReading?: string | undefined; displayPriority?: string[] | undefined; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[]; assertionKey?: string | undefined; origin?: 'project_defined' }, sourceId: string, evidence: string[]) {
     const baseId = `fact:${spec.kind}:${spec.surface ?? ''}|${spec.reading ?? ''}|${spec.target ?? ''}`;
     const id = spec.assertionKey ? `${baseId}|@${spec.assertionKey}` : baseId;
     let fact = this.facts.get(id);
@@ -71,6 +71,7 @@ class GraphBuilder {
         ...(spec.surface !== undefined ? { surface: spec.surface } : {}),
         ...(spec.reading !== undefined ? { reading: spec.reading } : {}),
         ...(spec.basisReading !== undefined ? { basisReading: spec.basisReading } : {}),
+        ...(spec.displayPriority?.length ? { displayPriority: [...new Set(spec.displayPriority)] } : {}),
         ...(spec.target !== undefined ? { target: spec.target } : {})
       };
       this.facts.set(id, fact);
@@ -79,6 +80,7 @@ class GraphBuilder {
     }
     this.mergeRefs(fact, sourceId, evidence);
     if (spec.basisReading !== undefined) fact.basisReading = spec.basisReading;
+    if (spec.displayPriority?.length) fact.displayPriority = [...new Set([...(fact.displayPriority ?? []), ...spec.displayPriority])];
     fact.lexicalRefs = [...new Set([...fact.lexicalRefs, ...(spec.lexicalRefs ?? [])])];
     if (spec.tags?.length) fact.tags = [...new Set([...(fact.tags ?? []), ...spec.tags])];
     if (spec.origin) fact.origin = spec.origin;
@@ -177,12 +179,12 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       for (const r of entry.r) {
         if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
         const readingAssertion = (readingOwners.get(`${k.t}\u0000${r.t}`)?.size ?? 0) > 1 ? `jmdict-reading:${lexeme}` : undefined;
-        targets.push(b.fact({ kind: 'literal_reading', surface: k.t, reading: r.t, lexicalRefs: [lexeme], periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
+        targets.push(b.fact({ kind: 'literal_reading', surface: k.t, reading: r.t, lexicalRefs: [lexeme], displayPriority: r.pri, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
       }
     }
     if (!entry.k?.length) for (const r of entry.r) {
       const readingAssertion = (readingOwners.get(`\u0000${r.t}`)?.size ?? 0) > 1 ? `jmdict-reading:${lexeme}` : undefined;
-      targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
+     targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, displayPriority: r.pri, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
     }
     b.dispose(recordId, 'literal_fact', targets);
   }

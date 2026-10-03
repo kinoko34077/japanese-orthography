@@ -49,6 +49,8 @@ export interface OrthographyFact extends OriginMetadata {
   reading?: string;
   /** Modern reading this historical-reading assertion is based on, when the source identifies it. */
   basisReading?: string;
+  /** Source-backed display-priority labels for a modern reading (for Ruby decoration only). */
+  displayPriority?: string[];
   /** relation target for form_relation / reading_relation / render_equivalence */
   target?: string;
   sourceRefs: string[];
@@ -128,7 +130,7 @@ export function canonicalizeOrthographyKnowledge(graph: OrthographyKnowledgeGrap
     kind: graph.kind,
     lexicalNamespaceId: graph.lexicalNamespaceId,
     sources: [...graph.sources].map(sortKeys).sort((a, b) => cmp(sourceIdOf(a), sourceIdOf(b))),
-    facts: byId(graph.facts.map((f) => refs(f as unknown as Record<string, unknown>, ['lexicalRefs', 'sourceRefs', 'evidenceRefs', 'periodRefs', 'tags', 'derivedFrom']) as unknown as OrthographyFact)),
+    facts: byId(graph.facts.map((f) => refs(f as unknown as Record<string, unknown>, ['lexicalRefs', 'sourceRefs', 'evidenceRefs', 'periodRefs', 'tags', 'displayPriority', 'derivedFrom']) as unknown as OrthographyFact)),
     rules: byId(graph.rules.map((r) => refs(r as unknown as Record<string, unknown>, ['dependencies', 'sourceRefs', 'evidenceRefs', 'derivedFrom']) as unknown as OrthographyRule)),
     bindings: byId(graph.bindings.map((b) => refs(b as unknown as Record<string, unknown>, ['lexicalRefs', 'contextRefs', 'sourceRefs', 'evidenceRefs']) as unknown as OrthographyRuleBinding)),
     dispositions: [...graph.dispositions]

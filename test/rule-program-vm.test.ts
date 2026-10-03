@@ -62,17 +62,26 @@ test('context/semantic candidates: みる -> 見る / 観る / 診る … stay c
   for (const form of ['見る?', '観る?', '診る?']) assert.ok(out.includes(form), form);
 });
 
-test('productive chain: はふ -> ほう through a binding instance (CALL into the reusable node); usage selects ほふ', () => {
+test('productive chain: binding groups preserve omitted, null, qualified, and unrelated context semantics', () => {
   const programsFor = lookup('diachronic', 'to-historical', 'reading', 'ほう');
   const law = symbolizer.idOf('法');
-  const run = (context?: Record<string, unknown>) => programsFor.map((p) => vm.run(p, { profileId: 'historical', symbol: law, context })).filter((r) => r.edges.length);
+  const omitted = Symbol('omitted');
+  const run = (context: Record<string, unknown> | null | typeof omitted = omitted) => programsFor.map((p) => vm.run(p, {
+    profileId: 'historical', symbol: law, ...(context === omitted ? {} : { context })
+  })).filter((r) => r.edges.length);
   const plain = run();
   const bindingRuns = plain.filter((r) => evidenceOf(r.trace)[0]!.startsWith('binding:'));
-  // each edge carries its program path: the binding instance, then the reusable node it called
-  assert.deepEqual(bindingRuns.map((r) => evidenceOf(r.edges[0]!.programs)), [['binding:sino:法:はふ>ほう@none', 'rule:sino:はふ>ほう']]);
-  assert.deepEqual(outputs(bindingRuns[0]!), ['はふ']);
+  assert.deepEqual(bindingRuns.map((r) => outputs(r)).flat().sort(), ['はふ', 'ほふ']);
+  assert.deepEqual(bindingRuns.map((r) => evidenceOf(r.edges[0]!.programs)).sort(), [
+    ['binding:sino:法:はふ>ほう@none', 'rule:sino:はふ>ほう'],
+    ['binding:sino:法:ほふ>ほう@仏教用語', 'rule:sino:ほふ>ほう']
+  ].sort());
+  const unqualified = run(null).filter((r) => evidenceOf(r.trace)[0]!.startsWith('binding:'));
+  assert.deepEqual(unqualified.map((r) => outputs(r)).flat(), ['はふ']);
   const buddhist = run({ usage: '仏教用語' }).filter((r) => evidenceOf(r.trace)[0]!.startsWith('binding:'));
-  assert.deepEqual(buddhist.map((r) => outputs(r)).flat().sort(), ['はふ', 'ほふ'], 'with usage both bindings apply: the ambiguity is kept, not resolved by the VM');
+  assert.deepEqual(buddhist.map((r) => outputs(r)).flat(), ['ほふ']);
+  const otherContext = run({ usage: '未知' }).filter((r) => evidenceOf(r.trace)[0]!.startsWith('binding:'));
+  assert.equal(otherContext.length, 0);
   const other = programsFor.map((p) => vm.run(p, { profileId: 'historical', symbol: symbolizer.idOf('学') })).filter((r) => r.edges.length && evidenceOf(r.trace)[0]!.startsWith('binding:'));
   assert.equal(other.length, 0, 'a binding never applies to another character');
 });

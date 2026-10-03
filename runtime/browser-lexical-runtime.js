@@ -109,7 +109,18 @@
               reading: str(tuples[i]), route: ROUTES[tuples[i + 1]] ?? null, factIndex: tuples[i + 2],
               basisReading: tuples[i + 3] === 0 ? null : str(tuples[i + 3]), candidate: tuples[i + 4] === 1
             });
-            return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern: [...body.list("pModern", at)].map(str), historical };
+            const modern = [...body.list("pModern", at)].map(str);
+            const priorityTuples = [...body.list("pDisplayPriority", at)];
+            const displayReadingPreferences = [];
+            for (let i = 0; i < priorityTuples.length;) {
+              const reading = str(priorityTuples[i++]);
+              const count = priorityTuples[i++];
+              const priorities = priorityTuples.slice(i, i + count).map(str);
+              i += count;
+              displayReadingPreferences.push({ reading, priorities });
+            }
+            return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern, displayReadingPreferences, historical };
+            return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern, displayReadingPreferences, historical };
           }))
         });
       }
@@ -151,6 +162,15 @@
       const rRoute = [...shard.readings.list("route", row)];
       const rBasis = [...shard.readings.list("basisReading", row)];
       const rCandidate = [...shard.readings.list("candidate", row)];
+      const rPriority = [...shard.readings.list("displayPriority", row)];
+      const priorityByReading = new Map();
+      for (let i = 0; i < rPriority.length;) {
+        const reading = rs(rPriority[i++]);
+        const count = rPriority[i++];
+        const priorities = rPriority.slice(i, i + count).map((id) => rs(id));
+        i += count;
+        priorityByReading.set(reading, [...new Set([...(priorityByReading.get(reading) ?? []), ...priorities])].sort(compareText));
+      }
       for (const m of t.list("morphology", row)) if (m >= morphologies.length) throw new Error(`BrowserLexicalRuntime: dangling morphology id ${m}`);
       return {
         lexemeId: id,
@@ -164,7 +184,7 @@
           factIndex: formFact[i]
         })),
         readings: rSurface.map((sid, i) => ({
-          surface: rs(sid), reading: rs(rReading[i]), basisReading: rs(rBasis[i]),
+          surface: rs(sid), reading: rs(rReading[i]), basisReading: rs(rBasis[i]), displayPriority: priorityByReading.get(rs(rReading[i])) ?? [],
           period: PERIODS[rPeriod[i]], route: ROUTES[rRoute[i]] ?? null,
           candidate: rCandidate[i] === 1, factIndex: rFact[i]
         }))
@@ -202,12 +222,18 @@
       }
       const modernReadings = resolvedSurface === null ? (viaReading ? [viaReading] : []) : modernFor(resolvedSurface);
       const reading = viaReading !== undefined ? viaReading : chooseReading(lexeme.headReading, modernReadings);
+      const displayReadingPreferences = [...new Map(lexeme.readings
+        .filter((r) => r.period === "modern" && (resolvedSurface === null || r.surface === resolvedSurface))
+        .map((r) => [r.reading, [...r.displayPriority]]))]
+        .map(([value, priorities]) => ({ reading: value, priorities }));
       const morphologyRow = chooseMorphologyRow(lexeme.morphologyIds, reading, resolvedSurface);
       return {
         lexicalIdentity: lexeme.lexicalIdentity,
         lemma: lexeme.headSurface ?? lexeme.headReading,
         surface: resolvedSurface,
         reading,
+        displayPriority: displayReadingPreferences.find((entry) => entry.reading === reading)?.priorities ?? [],
+        displayReadingPreferences,
         lexicalReading: lexeme.headReading,
         modernReadings,
         historicalReadings: historical.map((r) => ({
@@ -250,6 +276,8 @@
         lemma: head.surface ?? head.reading,
         surface,
         reading,
+        displayPriority: posting.displayReadingPreferences.find((entry) => entry.reading === reading)?.priorities ?? [],
+        displayReadingPreferences: posting.displayReadingPreferences,
         lexicalReading: head.reading,
         modernReadings: [...modernReadings],
         historicalReadings: kind === "surface" ? posting.historical.map((h) => ({
@@ -289,13 +317,13 @@
     const lookupSurfaceSync = (surface) => candidatesOf("surface", `${surface ?? ""}`, entryForSync("surface", `${surface ?? ""}`));
     const lookupReadingSync = (reading) => candidatesOf("reading", `${reading ?? ""}`, entryForSync("reading", `${reading ?? ""}`));
     /** Re-derive a candidate for one specific modern reading (per-reading candidates, like UniDic rows). */
-    const withReading = (c, reading) => {
+      const withReading = (c, reading) => {
       const row = chooseMorphologyRow(c.morphologyIds, reading, c.surface);
       const historicalReadings = (c.historicalReadings ?? []).filter((h) =>
         h.basisReading === null ? c.modernReadings.length <= 1 : h.basisReading === reading
       );
       return {
-        ...c, reading, modernReadings: [reading], historicalReadings,
+        ...c, reading, modernReadings: [reading], displayPriority: (c.displayReadingPreferences ?? []).find((entry) => entry.reading === reading)?.priorities ?? [], historicalReadings,
         morphology: morphologyOf(row), lexicalOrigin: row?.lexicalOrigin ?? "unknown"
       };
     };
