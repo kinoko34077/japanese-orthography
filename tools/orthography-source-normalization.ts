@@ -184,7 +184,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     }
     if (!entry.k?.length) for (const r of entry.r) {
       const readingAssertion = (readingOwners.get(`\u0000${r.t}`)?.size ?? 0) > 1 ? `jmdict-reading:${lexeme}` : undefined;
-      targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, displayPriority: r.pri, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
+     targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, displayPriority: r.pri, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
     }
     b.dispose(recordId, 'literal_fact', targets);
   }

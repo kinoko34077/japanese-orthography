@@ -120,6 +120,7 @@
               displayReadingPreferences.push({ reading, priorities });
             }
             return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern, displayReadingPreferences, historical };
+            return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern, displayReadingPreferences, historical };
           }))
         });
       }
