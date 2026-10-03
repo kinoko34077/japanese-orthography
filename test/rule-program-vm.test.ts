@@ -111,6 +111,7 @@ test('multi-step: 学校 -> 學校 -> ｜學校《がくかう》 through progra
   const reading = vm.run(readingProgram, { profileId: 'historical', lexemes: new Set([lexemeIds.get('lexeme:学校/がっこう')!]) });
   steps.push(...evidenceOf(reading.trace));
   assert.equal(vm.run(readingProgram, { profileId: 'historical', lexemes: new Set([lexemeIds.get('lexeme:楽校/がっこう')!]) }).edges.length, 0, 'lexeme-scoped');
+  assert.equal(vm.run(readingProgram, { profileId: 'historical', lexemes: new Set([lexemeIds.get('lexeme:学校/がっこう')!, lexemeIds.get('lexeme:楽校/がっこう')!]) }).edges.length, 0, 'partial unresolved hypotheses stay blocked');
   // render stage (late Ruby render)
   const rendered = `｜${surface}《${reading.edges[0]!.output}》`;
   assert.equal(surface, '學校');

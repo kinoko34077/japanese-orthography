@@ -21,10 +21,22 @@
       "bytes": 5506752,
       "gzipBytes": 2629946
     },
+    "index": {
+      "bytes": 2708064,
+      "gzipBytes": 1441367
+    },
+    "predicates": {
+      "bytes": 194040,
+      "gzipBytes": 14901
+    },
     "lexemeSets": {
-      "bytes": 4336,
-      "gzipBytes": 2915
+      "bytes": 4900,
+      "gzipBytes": 2946
+    },
+    "meta": {
+      "bytes": 292,
+      "gzipBytes": 198
     }
   },
-  "digest": "67141f3ccb3c22a613e5ac00bfe3beb51927668f256122a3b9b4d2afc5b25384"
+  "digest": "1b2d67a8397e8c1214f0349bf22848d4ece040670232e2b2bcfb271976d042c1"
 }

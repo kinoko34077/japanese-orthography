@@ -35,7 +35,7 @@
    *             direct(i): boolean, outputs(i): Uint32Array, flags(i): Uint8Array }
    * predicates: array of { constraint?, usage?, period? } (index = predId)
    */
-  const createRuleVM = ({ programs, pool, predicates = [], profileBits = {}, lexemeSets = [], mechanismCount = Infinity }) => {
+  const createRuleVM = ({ programs, pool, predicates = [], profileBits = {}, lexemeSets = [], lexemeSetModes = [], mechanismCount = Infinity }) => {
     const MAX_DEPTH = 16;
 
     const verify = () => {
@@ -107,7 +107,15 @@
         if (op === OP.END) break;
         if (op === OP.TEST_PROFILE) { if (!(arg & (profileBits[state.profileId] ?? 0))) return { edges: [], preserved: false, trace }; }
         else if (op === OP.TEST_SYMBOL) { if (state.symbol !== arg) return { edges: [], preserved: false, trace }; }
-        else if (op === OP.TEST_LEXSET) { if (!(lexemeSets[arg] ?? []).some((l) => state.lexemes?.has(l))) return { edges: [], preserved: false, trace }; }
+        else if (op === OP.TEST_LEXSET) {
+          const allowed = new Set(lexemeSets[arg] ?? []);
+          const hypotheses = state.lexemes ? [...state.lexemes] : [];
+          const mode = lexemeSetModes[arg] ?? "all";
+          const matches = mode === "some" ? hypotheses.some((l) => allowed.has(l))
+            : mode === "none" ? hypotheses.every((l) => !allowed.has(l))
+            : hypotheses.length > 0 && hypotheses.every((l) => allowed.has(l));
+          if (!matches) return { edges: [], preserved: false, trace };
+        }
         else if (op === OP.MECH) mechanisms.push(arg);
         else if (op === OP.TEST_PRED) { if (!satisfies(predicates[arg], state.context)) return { edges: [], preserved: false, trace }; }
         else if (op === OP.CALL) { const r = run(arg, state, depth + 1, trace); edges.push(...r.edges); preserved = preserved || r.preserved; }

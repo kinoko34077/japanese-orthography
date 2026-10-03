@@ -3,13 +3,13 @@
   if (!isCommonJs && typeof importScripts === "function" && typeof root.BrowserSpanPlanner === "undefined") {
     // dedicated Worker: load the runtime modules next to this script
     importScripts("browser-pack-binary.js", "browser-pack-runtime.js", "occurrence-arbitration.js", "browser-span-planner.js", "browser-diagnostic-contract.js", "browser-section-fetcher.js",
-      "transform-shared.js", "orthography-resolver.js", "browser-lexical-runtime.js", "browser-inflection.js", "historical-sino-runtime.js", "browser-resolver-adapter.js");
+      "transform-shared.js", "orthography-resolver.js", "browser-lexical-runtime.js", "browser-inflection.js", "historical-sino-runtime.js", "browser-resolver-adapter.js", "symbol-registry-runtime.js", "sequence-pool-runtime.js", "rule-program-vm.js", "browser-program-runtime.js");
   }
   const deps = isCommonJs
     ? { runtime: require("./browser-pack-runtime.js"), planner: require("./browser-span-planner.js"), diagnostics: safeRequire("./browser-diagnostic-contract.js"), fetcher: safeRequire("./browser-section-fetcher.js"),
-      lexicalRuntime: safeRequire("./browser-lexical-runtime.js"), adapter: safeRequire("./browser-resolver-adapter.js") }
+      lexicalRuntime: safeRequire("./browser-lexical-runtime.js"), adapter: safeRequire("./browser-resolver-adapter.js"), programRuntime: safeRequire("./browser-program-runtime.js") }
     : { runtime: root.BrowserPackRuntime, planner: root.BrowserSpanPlanner, diagnostics: root.BrowserDiagnosticContract, fetcher: root.BrowserSectionFetcher,
-      lexicalRuntime: root.BrowserLexicalRuntime, adapter: root.BrowserResolverAdapter };
+      lexicalRuntime: root.BrowserLexicalRuntime, adapter: root.BrowserResolverAdapter, programRuntime: root.BrowserProgramRuntime };
   function safeRequire(path) { try { return require(path); } catch { return null; } }
   const api = factory(deps);
   if (isCommonJs) module.exports = api;
@@ -17,7 +17,7 @@
   if (!isCommonJs && typeof root.addEventListener === "function" && typeof importScripts === "function") api.attachToWorkerScope(root);
 })(typeof globalThis !== "undefined" ? globalThis : this, function (deps) {
   "use strict";
-  const { runtime, planner, diagnostics, fetcher, lexicalRuntime, adapter } = deps;
+  const { runtime, planner, diagnostics, fetcher, lexicalRuntime, adapter, programRuntime } = deps;
 
   // Worker-side transform service (#185 D/E). The pack is opened once per service and reused for every
   // request. Only plain, compact JSON crosses the worker boundary; the pack, its TypedArray views and
@@ -45,6 +45,12 @@
     // BrowserPack v2 (lexical layer present): the accepted resolver via the adapter (#196 D);
     // a v1 pack keeps the v1 planner, so the published site is unaffected until the J cutover
     const lexicalFor = new WeakMap();
+    const programFor = new WeakMap();
+    const programForPack = async (p) => {
+      if (!programRuntime || typeof p.hasSection !== "function" || !p.hasSection("sequence-pool")) return null;
+      if (!programFor.has(p)) programFor.set(p, programRuntime.createBrowserProgramRuntime(p));
+      return programFor.get(p);
+    };
     const transform = async (p, text, profileId, renderMode) => {
       if (adapter && lexicalRuntime && typeof p.hasSection === "function" && p.hasSection("lexical-directory")) {
         if (!lexicalFor.has(p)) lexicalFor.set(p, lexicalRuntime.createBrowserLexicalRuntime(p));
@@ -66,10 +72,15 @@
           const p = await pack();
           const started = Date.now();
           const raw = await transform(p, `${message.text ?? ""}`, message.profileId, message.renderMode);
+          const hot = await programForPack(p);
+          // Keep the accepted legacy adapter as the output authority until R6 parity is accepted,
+          // but execute the new hot VM beside it and expose its actual ProgramIds for audit.
+          const programTrace = hot ? hot.traceText(`${message.text ?? ""}`, message.profileId) : null;
+          if (programTrace) raw.programTrace = programTrace;
           lastResults.clear();
           lastResults.set(message.requestId, raw);
           const result = diagnostics ? diagnostics.summarize(raw) : { renderedText: raw.renderedText, spans: raw.spans.map(plainSpan), offsetUnit: raw.offsetUnit };
-          return { type: "result", requestId: message.requestId, result, elapsedMs: Date.now() - started };
+          return { type: "result", requestId: message.requestId, result: { ...result, ...(programTrace ? { programTrace } : {}) }, elapsedMs: Date.now() - started };
         }
         if (message?.type === "detail") {
           const p = await pack();
