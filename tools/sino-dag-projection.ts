@@ -149,9 +149,27 @@ export function createSinoDagRuntime(graph: EntityGraph) {
     };
     walk(0, 0, '', []);
     if (overflow || results.size === 0) return null;
-    const readings = [...results.keys()].sort();
+    // Keep the derived DAG aligned with the accepted runtime: consecutive reading material
+    // without table evidence is one opaque block, not per-character ownership (#234).
+    const coalesceOpaque = (components: Component[]) => {
+      const merged: Component[] = [];
+      for (const component of components) {
+        const opaque = component.evidenceRefs.length === 0;
+        const previous = merged[merged.length - 1];
+        if (opaque && previous && previous.evidenceRefs.length === 0) {
+          previous.surface += component.surface;
+          previous.modernReading += component.modernReading;
+          previous.historicalReading += component.historicalReading;
+        } else {
+          merged.push({ ...component, evidenceRefs: [...component.evidenceRefs] });
+        }
+      }
+      return merged;
+    };
+    const evidencedResults = [...results.entries()].map(([historical, components]) => [historical, coalesceOpaque(components)] as const);
+    const readings = evidencedResults.map(([historical]) => historical).sort();
     if (readings.length > 1) return { status: 'candidates', historicalReadings: readings };
-    const components = results.get(readings[0]!)!;
+    const components = evidencedResults.find(([historical]) => historical === readings[0])![1];
     return {
       status: 'resolved', historicalReading: readings[0]!, components,
       evidenceRefs: uniqueSorted(components.flatMap((c) => c.evidenceRefs)),
