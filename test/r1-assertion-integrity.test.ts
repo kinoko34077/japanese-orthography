@@ -88,6 +88,32 @@ test('R1: JMdict sense restrictions scope executable POS to form/reading', () =>
   assert.ok(kashaku.pos.includes('vs'));
 });
 
+test('R4 #247: every restricted JMdict entry emits only sense-allowed form/reading POS rows', () => {
+  const restricted = intake.extract.filter((entry) => entry.s.some((sense) => Boolean(sense.stagk?.length || sense.stagr?.length)));
+  assert.equal(restricted.length, 1253);
+  for (const entry of restricted) {
+    const expected: string[] = [];
+    const add = (surface: string | null, reading: string) => {
+      const pos = [...new Set(entry.s
+        .filter((sense) => (!sense.stagk?.length || (surface !== null && sense.stagk.includes(surface))) && (!sense.stagr?.length || sense.stagr.includes(reading)))
+        .flatMap((sense) => sense.pos ?? []))].sort();
+      if (pos.length) expected.push(`${surface ?? ''}\u0000${reading}\u0000${pos.join(',')}`);
+    };
+    if (entry.k?.length) {
+      for (const k of entry.k) for (const reading of entry.r) {
+        if (reading.nokanji || (reading.restr && !reading.restr.includes(k.t))) continue;
+        add(k.t, reading.t);
+      }
+    } else {
+      for (const reading of entry.r) add(null, reading.t);
+    }
+    const actual = ([...jmdictLexemeMorphology([entry]).values()][0] ?? [])
+      .map((row) => `${row.surface ?? ''}\u0000${row.reading}\u0000${row.pos.join(',')}`)
+      .sort();
+    assert.deepEqual(actual, expected.sort(), `restricted JMdict entry ${entry.seq}`);
+  }
+});
+
 const P = { sourceRefs: ['src:r1'], evidenceRefs: ['ev:r1'] };
 const miniGraph = withProfileRules({
   schemaVersion: '2', kind: 'japanese-orthography-knowledge-graph', lexicalNamespaceId: 'r1',

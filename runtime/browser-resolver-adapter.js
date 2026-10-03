@@ -123,7 +123,9 @@
     const inflected = new Map(); // inflected surface -> lexical candidates (one per base reading)
     const inflectedSites = [];
     if (Inflection) {
-      const sites = Inflection.scan(text, 6).filter((site) => HAN.test(site.baseSurface) || isKana(text.slice(site.start, site.end)));
+      const stemLimit = lexical.maxKeyLength?.surface;
+      if (!Number.isInteger(stemLimit) || stemLimit < 1) throw new Error("BrowserResolverAdapter: lexical surface maxKeyLength is required for deinflection");
+      const sites = Inflection.scan(text, stemLimit).filter((site) => HAN.test(site.baseSurface) || isKana(text.slice(site.start, site.end)));
       const surfaceBases = uniq(sites.filter((x) => HAN.test(x.baseSurface)).map((x) => x.baseSurface));
       const readingBases = uniq(sites.filter((x) => !HAN.test(x.baseSurface)).map((x) => x.baseSurface));
       await Promise.all([lexical.prepareKeys(surfaceBases, "surface"), lexical.prepareKeys(readingBases, "reading")]);
@@ -266,6 +268,7 @@
         }
         const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
         if (candidateReadings.length) return { status: "candidates", route: "native", readings: candidateReadings, evidenceRefs: [`surface:${surface}`] };
+        if (candidate.inflection) return { status: "unavailable", diagnostic: "historical_inflection_evidence_unavailable", evidenceRefs: [] };
         return sinoEvidenceUnavailable;
       },
       historicalSurfaceLookup: (surface) => {
@@ -457,6 +460,7 @@
       readingSource: unit.reading?.source ?? null,
       lexicalOrigin: unit.lexicalOrigin ?? "unknown",
       morphology: unit.morphology ? { partOfSpeech: [...(unit.morphology.partOfSpeech ?? [])].filter((p) => p !== "*"), conjugationType: unit.morphology.conjugationType ?? null, conjugationForm: unit.morphology.conjugationForm ?? null } : null,
+      inflection: unit.inflection ?? null,
       lexicalCandidates: (unit.lexicalCandidates ?? []).map((c) => ({ lexicalIdentity: c.lexicalIdentity, lexemeId: c.lexemeId ?? null, surface: c.surface ?? null, reading: c.reading ?? null, inflection: c.inflection ?? null })),
       historical: {
         route: h.route ?? null,
