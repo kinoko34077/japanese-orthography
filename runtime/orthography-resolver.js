@@ -237,8 +237,9 @@
     const historicalDecision = candidate && typeof config.historicalLookup === "function"
       ? config.historicalLookup(candidate, sourceSurface)
       : null;
+    const diagnostic = historicalDecision?.diagnostic ?? null;
     const sinoCandidates = historicalDecision?.status === "candidates" ? historicalDecision : null;
-    const identityRelation = sinoCandidates ? null : historicalDecision;
+    const identityRelation = sinoCandidates || historicalDecision?.status === "unavailable" ? null : historicalDecision;
     const identityAllowed = !identityRelation?.requiresMorphology || candidate?.morphology != null;
     const acceptedIdentityRelation = identityAllowed ? identityRelation : null;
     const surfaceDecision = !acceptedIdentityRelation && !sinoCandidates && typeof config.historicalSurfaceLookup === "function"
@@ -285,7 +286,8 @@
           deterministicKanji: null,
           surface: sourceSurface,
           disposition: "PRESERVE",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          ...(diagnostic ? { diagnostic } : {})
         }
       };
     }
@@ -300,7 +302,8 @@
           deterministicKanji: null,
           surface: sourceSurface,
           disposition: "CANDIDATES",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          ...(diagnostic ? { diagnostic } : {})
         }
       };
     }
@@ -315,7 +318,8 @@
           deterministicKanji: null,
           surface: contextualKanji.target,
           disposition: "AUTO",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          ...(diagnostic ? { diagnostic } : {})
         }
       };
     }
@@ -331,7 +335,8 @@
           surface: sourceSurface,
           disposition: "CANDIDATES",
           evidenceRefs: [...(sinoCandidates.evidenceRefs ?? [])],
-          sinoCandidates: { readings: [...(sinoCandidates.readings ?? [])] }
+          sinoCandidates: { readings: [...(sinoCandidates.readings ?? [])] },
+          ...(diagnostic ? { diagnostic } : {})
         }
       };
     }
@@ -347,7 +352,8 @@
           surface: surfaceDecision?.surface ?? sourceSurface,
           disposition: "CANDIDATES",
           evidenceRefs: [...(surfaceDecision?.evidenceRefs ?? [])],
-          nativeCandidates
+          nativeCandidates,
+          ...(diagnostic ? { diagnostic } : {})
         }
       };
     }
@@ -371,7 +377,8 @@
         deterministicKanji,
         surface: renderedSurface,
         disposition: acceptedRelation || deterministicKanji ? "AUTO" : "SOURCE_REVIEW",
-        evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])]
+        evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+        ...(diagnostic ? { diagnostic } : {})
       }
     };
   };

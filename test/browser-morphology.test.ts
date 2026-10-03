@@ -39,9 +39,10 @@ const graph = (() => {
   return canonicalizeOrthographyKnowledge(g);
 })();
 const jm = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: null }];
+const sinoMorphology = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'unidic', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: 'sino' }];
 const morphology = new Map<string, LexicalMorphologyRow[]>([
   ['lexeme:味わう/あじわう', jm(['v5u', 'vt'])], ['lexeme:書く/かく', jm(['v5k', 'vt'])], ['lexeme:見る/みる', jm(['v1', 'vt'])], ['lexeme:診る/みる', jm(['v1', 'vt'])],
-  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', jm(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])]
+  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', sinoMorphology(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])]
 ]);
 const build = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ morphology, lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
@@ -92,8 +93,12 @@ test('Sino component reconstruction uses the accepted reconstructor over canonic
   const { raw, unit } = await whole('円周', 'ruby-whole-explicit');
   assert.equal(raw.renderedText, '｜圓周《ゑんしう》');
   assert.deepEqual([unit.historical.route, unit.historical.kana, unit.historical.disposition], ['sino', 'ゑんしう', 'AUTO']);
+
+  const unknownOrigin = await whole('法律', 'ruby-whole-explicit');
+  assert.equal(unknownOrigin.raw.renderedText, '｜法律《ほうりつ》');
+  assert.notEqual(unknownOrigin.unit.historical.route, 'sino');
+  assert.deepEqual(unknownOrigin.unit.historical.candidateReadings, []);
+  assert.equal(unknownOrigin.unit.historical.diagnostic, 'sino_evidence_unavailable');
+
   // 法 (ほう) keeps the accepted はふ | ほふ ambiguity without usage context: candidates, no winner
-  const law = await whole('法律', 'ruby-whole-explicit');
-  assert.deepEqual([law.unit.historical.disposition, law.unit.historical.candidateReadings], ['CANDIDATES', ['はふりつ', 'ほふりつ']]);
-  assert.ok(law.raw.spans.every((s: any) => s.state !== 'applied'), 'no candidate is applied');
 });

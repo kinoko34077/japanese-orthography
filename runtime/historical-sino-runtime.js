@@ -307,9 +307,28 @@
       walk(0, 0, [], []);
 
       if (overflow || results.size === 0) return null;
-      const readings = [...results.keys()].sort();
+      // A run of reading material with no table evidence is an opaque block, not ownership
+      // evidence for each character at the current traversal position (#234). Coalesce it before
+      // rendering so a traversal fallback cannot manufacture Ruby such as 本《ほ》企《んき》.
+      const coalesceOpaque = (components) => {
+        const merged = [];
+        for (const component of components) {
+          const opaque = !Array.isArray(component.evidenceRefs) || component.evidenceRefs.length === 0;
+          const previous = merged[merged.length - 1];
+          if (opaque && previous && previous.evidenceRefs.length === 0) {
+            previous.surface += component.surface;
+            previous.modernReading += component.modernReading;
+            previous.historicalReading += component.historicalReading;
+          } else {
+            merged.push({ ...component, evidenceRefs: [...(component.evidenceRefs ?? [])] });
+          }
+        }
+        return merged;
+      };
+      const evidencedResults = [...results.entries()].map(([historical, components]) => [historical, coalesceOpaque(components)]);
+      const readings = evidencedResults.map(([historical]) => historical).sort();
       if (readings.length > 1) return { status: "candidates", historicalReadings: readings };
-      const components = results.get(readings[0]);
+      const components = evidencedResults.find(([historical]) => historical === readings[0])[1];
       const resolved = {
         status: "resolved",
         historicalReading: readings[0],
