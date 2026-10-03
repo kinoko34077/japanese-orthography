@@ -79,6 +79,15 @@ test('hot artifacts preserve historical reading basis assertions', () => {
   assert.equal(inflated.graph.facts.find((fact) => fact.id === 'fact:literal_reading:鼻血|はなぢ|')?.basisReading, 'はなじ');
 });
 
+test('hot artifacts preserve modern display-priority assertions', () => {
+  const graph = fixture();
+  graph.facts.find((fact) => fact.id === 'fact:literal_reading:鼻血|はなぢ|')!.displayPriority = ['news1', 'ichi1'];
+  const artifact = buildOrthographyHotArtifact(graph, MODERN_PROFILE);
+  const inflated = inflateHotArtifact(artifact);
+  assert.deepEqual(inflated.graph.facts.find((fact) => fact.id === 'fact:literal_reading:鼻血|はなぢ|')?.displayPriority, ['ichi1', 'news1']);
+  assert.doesNotThrow(() => inflateOrVerifyHotArtifact(artifact));
+});
+
 test('corruption and schema drift fail closed (TS and VM-loaded runtime)', async () => {
   const artifact = buildOrthographyHotArtifact(fixture(), MODERN_PROFILE);
   assert.doesNotThrow(() => inflateOrVerifyHotArtifact(artifact));

@@ -2,18 +2,18 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "4f41dd7a6b64af1aa42d7b84682e86157018ffb28cce35bb43f77b31e96a4d75",
-  "canonicalGraphSha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
+  "packDigest": "097e75614728d9b64966afd8b97498ca6e077ed0dbd23ad63dcfd629300fd23e",
+  "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
   "totals": {
-    "sections": 1732,
-    "bytes": 161469932,
-    "gzipBytes": 61843875
+    "sections": 1836,
+    "bytes": 168902964,
+    "gzipBytes": 65253298
   },
   "byLoading": {
     "eager": {
       "sections": 10,
-      "bytes": 530632,
-      "gzipBytes": 212099
+      "bytes": 534936,
+      "gzipBytes": 214505
     },
     "lazy": {
       "sections": 480,
@@ -21,9 +21,9 @@
       "gzipBytes": 24482170
     },
     "on-demand": {
-      "sections": 1242,
-      "bytes": 87373384,
-      "gzipBytes": 37149606
+      "sections": 1346,
+      "bytes": 94802112,
+      "gzipBytes": 40556623
     }
   },
   "byKind": {
@@ -54,8 +54,8 @@
     },
     "lexeme-readings": {
       "sections": 54,
-      "bytes": 16997232,
-      "gzipBytes": 6166645
+      "bytes": 19358596,
+      "gzipBytes": 7373958
     },
     "lexeme-table": {
       "sections": 54,
@@ -64,8 +64,8 @@
     },
     "lexical-directory": {
       "sections": 1,
-      "bytes": 32188,
-      "gzipBytes": 18383
+      "bytes": 36492,
+      "gzipBytes": 20789
     },
     "morphology-table": {
       "sections": 1,
@@ -83,9 +83,9 @@
       "gzipBytes": 1255034
     },
     "reading-index": {
-      "sections": 409,
-      "bytes": 19261328,
-      "gzipBytes": 8279321
+      "sections": 468,
+      "bytes": 21976988,
+      "gzipBytes": 9287394
     },
     "rules": {
       "sections": 1,
@@ -98,9 +98,9 @@
       "gzipBytes": 7868
     },
     "surface-index": {
-      "sections": 341,
-      "bytes": 17917532,
-      "gzipBytes": 7390245
+      "sections": 386,
+      "bytes": 20269236,
+      "gzipBytes": 8581876
     },
     "symbol-registry": {
       "sections": 1,
