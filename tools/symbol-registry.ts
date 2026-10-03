@@ -78,6 +78,14 @@ const byFrequency = (stats: Map<string, AtomStats>) => (a: string, b: string) =>
 };
 const prefixDigest = (atoms: readonly string[], size: number) => createHash('sha256').update(JSON.stringify(atoms.slice(0, size))).digest('hex');
 
+/** Semantic identity of the registry, independent of its binary section layout. */
+export function symbolRegistryDigest(registry: Pick<SymbolRegistry, 'atoms' | 'tombstones' | 'generations'>): string {
+  const generation = registry.generations[registry.generations.length - 1]?.generation ?? 0;
+  return createHash('sha256').update(JSON.stringify({
+    schemaVersion: '1', generation, atoms: [...registry.atoms], tombstones: [...registry.tombstones].sort((a, b) => a - b)
+  })).digest('hex');
+}
+
 export function initialRegistry(stats: Map<string, AtomStats>): SymbolRegistry {
   const atoms = [...stats.keys()].sort(byFrequency(stats));
   return {

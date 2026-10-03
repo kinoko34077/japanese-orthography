@@ -24,6 +24,13 @@
     evidenceRefs: []
   });
 
+  const historicalMetadata = (relation) => ({
+    ...(relation?.basis ? { basis: relation.basis } : {}),
+    sourceRefs: [...(relation?.sourceRefs ?? [])],
+    canonicalIds: [...(relation?.canonicalIds ?? [])],
+    evidenceRefs: [...(relation?.evidenceRefs ?? [])]
+  });
+
   const normalizeInputEvidence = (input) => {
     const sourceText = `${input ?? ""}`;
     const parseRubySegments = TransformShared?.parseRubySegments;
@@ -252,7 +259,8 @@
           surface: surfaceDecision.surface ?? sourceSurface,
           requiresMorphology: false,
           requiredMorphology: null,
-          evidenceRefs: [...(surfaceDecision.evidenceRefs ?? [])]
+          evidenceRefs: [...(surfaceDecision.evidenceRefs ?? [])],
+          ...historicalMetadata(surfaceDecision)
         }
       : null;
     const acceptedRelation = acceptedIdentityRelation ?? surfaceRelation;
@@ -286,7 +294,8 @@
           deterministicKanji: null,
           surface: sourceSurface,
           disposition: "PRESERVE",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? []), ...historicalMetadata(acceptedRelation).evidenceRefs],
+          ...historicalMetadata(acceptedRelation),
           ...(diagnostic ? { diagnostic } : {})
         }
       };
@@ -302,7 +311,8 @@
           deterministicKanji: null,
           surface: sourceSurface,
           disposition: "CANDIDATES",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? []), ...historicalMetadata(acceptedRelation).evidenceRefs],
+          ...historicalMetadata(acceptedRelation),
           ...(diagnostic ? { diagnostic } : {})
         }
       };
@@ -318,7 +328,8 @@
           deterministicKanji: null,
           surface: contextualKanji.target,
           disposition: "AUTO",
-          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+          evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? []), ...historicalMetadata(acceptedRelation).evidenceRefs],
+          ...historicalMetadata(acceptedRelation),
           ...(diagnostic ? { diagnostic } : {})
         }
       };
@@ -334,7 +345,8 @@
           deterministicKanji: null,
           surface: sourceSurface,
           disposition: "CANDIDATES",
-          evidenceRefs: [...(sinoCandidates.evidenceRefs ?? [])],
+          evidenceRefs: [...(sinoCandidates.evidenceRefs ?? []), ...historicalMetadata(sinoCandidates).evidenceRefs],
+          ...historicalMetadata(sinoCandidates),
           sinoCandidates: { readings: [...(sinoCandidates.readings ?? [])] },
           ...(diagnostic ? { diagnostic } : {})
         }
@@ -351,7 +363,8 @@
           deterministicKanji: null,
           surface: surfaceDecision?.surface ?? sourceSurface,
           disposition: "CANDIDATES",
-          evidenceRefs: [...(surfaceDecision?.evidenceRefs ?? [])],
+          evidenceRefs: [...(surfaceDecision?.evidenceRefs ?? []), ...historicalMetadata(surfaceDecision).evidenceRefs],
+          ...historicalMetadata(surfaceDecision),
           nativeCandidates,
           ...(diagnostic ? { diagnostic } : {})
         }
@@ -377,7 +390,8 @@
         deterministicKanji,
         surface: renderedSurface,
         disposition: acceptedRelation || deterministicKanji ? "AUTO" : "SOURCE_REVIEW",
-        evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? [])],
+        evidenceRefs: [...(acceptedRelation?.evidenceRefs ?? []), ...historicalMetadata(acceptedRelation).evidenceRefs],
+        ...historicalMetadata(acceptedRelation),
         ...(diagnostic ? { diagnostic } : {})
       }
     };
@@ -404,12 +418,14 @@
           surface: decision.surface ?? evidence.baseSurface,
           disposition: "CANDIDATES",
           evidenceRefs: [...(decision.evidenceRefs ?? [])],
+          ...historicalMetadata(decision),
           nativeCandidates: {
             surfaces: [...(decision.surfaceCandidates ?? [])],
             readings: [...(decision.readingCandidates ?? [])]
           }
         },
-        evidenceRefs: [...(decision.evidenceRefs ?? [])]
+        evidenceRefs: [...(decision.evidenceRefs ?? [])],
+        ...historicalMetadata(decision)
       };
     }
 

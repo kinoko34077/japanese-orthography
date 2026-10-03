@@ -122,9 +122,9 @@
       }
       const unit = candidate.unit ?? null;
       return {
-        ...base, kind: "resolver_unit", basis: unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver",
+        ...base, kind: "resolver_unit", basis: unit?.historical?.basis ?? (unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver"),
         authority: candidate.authority ?? "source_rule", ruleChain: [], unit, relationFacts: facts,
-        provenance: { sourceRefs: [...new Set(facts.flatMap((f) => f.sourceRefs))].sort(), evidenceRefs: [...new Set([...facts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort() }
+        provenance: { sourceRefs: [...new Set([...facts.flatMap((f) => f.sourceRefs), ...(unit?.historical?.sourceRefs ?? [])])].sort(), evidenceRefs: [...new Set([...facts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort(), canonicalIds: [...new Set([...facts.map((f) => f.id), ...(unit?.historical?.canonicalIds ?? [])])].sort() }
       };
     }
     if (candidate.origin === "rule") {
@@ -150,21 +150,25 @@
    * Evidence recovered lazily from the cold evidence map (#211 G): canonical id -> source records,
    * dispositions, snapshots, period, and the Programs (with their human-readable type) compiled from it.
    */
-  const evidenceFor = async (pack, canonicalId) => {
+  const evidenceFor = async (pack, canonicalId, options = {}) => {
     if (!pack.hasEvidence || !canonicalId) return null;
     const entry = await pack.loadEvidence(canonicalId);
     if (!entry) return null;
+    const programIds = [...(entry.programs ?? [])];
+    const programOffset = Number.isInteger(options.programOffset) && options.programOffset >= 0 ? options.programOffset : 0;
+    const programPageSize = Number.isInteger(options.programPageSize) && options.programPageSize > 0 ? options.programPageSize : 8;
     const programs = [];
-    for (const id of entry.programs.slice(0, 8)) programs.push(await pack.loadProgramEvidence(id));
-    return { ...entry, programs };
+    for (const id of programIds.slice(programOffset, programOffset + programPageSize)) programs.push(await pack.loadProgramEvidence(id));
+    return { ...entry, programIds, programCount: programIds.length, programOffset, programPageSize, programs, programsTruncated: programOffset + programs.length < programIds.length };
   };
   const withEvidence = async (pack, candidate) => {
-    const id = candidate.fact?.id ?? candidate.rule?.id ?? null;
+    const ids = [...new Set([candidate.fact?.id, candidate.rule?.id, ...(candidate.provenance?.canonicalIds ?? [])].filter(Boolean))];
     const facts = candidate.relationFacts ?? [];
-    const evidence = id ? await evidenceFor(pack, id) : null;
+    const evidences = [];
+    for (const id of ids) evidences.push(await evidenceFor(pack, id));
     const relationEvidence = [];
     for (const f of facts) relationEvidence.push(await evidenceFor(pack, f.id));
-    return evidence || relationEvidence.some(Boolean) ? { ...candidate, evidence: evidence ?? relationEvidence.find(Boolean) } : candidate;
+    return evidences.some(Boolean) || relationEvidence.some(Boolean) ? { ...candidate, evidence: evidences.find(Boolean) ?? relationEvidence.find(Boolean) } : candidate;
   };
 
   /** Full inspection payload for one span (`detailRef` from the summary). */
@@ -291,5 +295,5 @@
     };
   };
 
-  return { summarize, expandDetail, expandUnitDetail, certaintyOf, CERTAINTY };
+  return { summarize, expandDetail, expandUnitDetail, evidenceFor, certaintyOf, CERTAINTY };
 });

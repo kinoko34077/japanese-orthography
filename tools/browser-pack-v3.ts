@@ -3,8 +3,10 @@ import { createRequire } from 'node:module';
 import type { BrowserPackBuild } from './browser-pack-compiler.ts';
 import { encodeBundle, encodeSection, type ColumnInput } from './browser-pack-encoding.ts';
 import { BROWSER_PACK_V3_COMPILER_VERSION, browserPackSectionId, sealBrowserPackManifest, type BrowserPackManifestV1, type BrowserPackSectionDescriptor } from './browser-pack-model.ts';
-import type { SymbolRegistry } from './symbol-registry.ts';
-import { evidenceLayer } from './evidence-map.ts';
+import { symbolRegistryDigest, type SymbolRegistry } from './symbol-registry.ts';
+import { buildEvidence, evidenceAggregateDigest, evidenceLayer } from './evidence-map.ts';
+import { EVIDENCE_SCHEMA_VERSION } from './evidence-map.ts';
+import { RULE_PROGRAM_COMPILER_VERSION, RULE_PROGRAM_FORMAT_VERSION, RULE_PROGRAM_ISA_VERSION, ruleProgramDigest } from './rule-program-compiler.ts';
 import type { OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
 import type { RuleIR } from './rule-ir.ts';
 
@@ -72,25 +74,26 @@ function transcodeColumns(section: any, registry: SymbolRegistry): ColumnInput[]
 }
 
 export const registrySection = (registry: SymbolRegistry) => encodeSection([
+  { name: 'generation', kind: 'scalar', values: [registry.generations[registry.generations.length - 1]?.generation ?? 0] },
   { name: 'atoms', kind: 'strings', values: registry.atoms },
   { name: 'tombstones', kind: 'scalar', values: registry.tombstones }
 ]);
 
 export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry, options: { evidence?: { graph: OrthographyKnowledgeGraph; ir: RuleIR } } = {}): BrowserPackBuild {
+  if (!options.evidence) throw new Error('BrowserPack v3 requires an evidence identity input');
   const files = new Map<string, Uint8Array>();
   const sections: BrowserPackSectionDescriptor[] = [];
   // cold evidence sections (#211 G) are built v2-style, then transcoded with everything else
   const extra: Array<{ s: BrowserPackSectionDescriptor; body: Uint8Array }> = [];
-  if (options.evidence) {
-    evidenceLayer(options.evidence.ir)({
+  const evidence = buildEvidence(options.evidence.graph, options.evidence.ir);
+  evidenceLayer(options.evidence.ir, { built: evidence })({
       graph: options.evidence.graph,
       add: (kind, body, x = {}) => {
         const sectionId = browserPackSectionId(kind, { shard: x.shard, profileId: x.profileId });
         extra.push({ body, s: { sectionId, kind, path: `${sectionId.replace(/[@/]/g, '-')}.bin`, encoding: 'binary-columnar', loading: 'lazy', byteLength: body.byteLength, sha256: sha(body), ...(x.rowCount !== undefined ? { rowCount: x.rowCount } : {}), ...(x.shard ? { shard: x.shard } : {}) } });
         return sectionId;
       }
-    });
-  }
+  });
   const sources = [...v2.manifest.sections.filter((s) => s.kind !== 'provenance-index').map((s) => ({ s, body: v2.files.get(s.path)! })), ...extra];
   for (const { s, body } of sources) {
     let next = body;
@@ -107,7 +110,11 @@ export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry, op
   files.set('symbol-registry.bin', reg);
   sections.push({ sectionId, kind: 'symbol-registry', path: 'symbol-registry.bin', encoding: 'binary-columnar', loading: 'eager', byteLength: reg.byteLength, sha256: sha(reg), rowCount: registry.atoms.length });
   const { packDigest: _ignored, ...rest } = v2.manifest as BrowserPackManifestV1;
-  const manifest = sealBrowserPackManifest({ ...rest, compilerVersion: BROWSER_PACK_V3_COMPILER_VERSION, sections });
+  const manifest = sealBrowserPackManifest({ ...rest, compilerVersion: BROWSER_PACK_V3_COMPILER_VERSION, sections,
+    symbolRegistry: { generation: registry.generations[registry.generations.length - 1]?.generation ?? 0, digest: symbolRegistryDigest(registry) },
+    ruleRuntime: { isaVersion: RULE_PROGRAM_ISA_VERSION, compilerVersion: RULE_PROGRAM_COMPILER_VERSION, programFormatVersion: RULE_PROGRAM_FORMAT_VERSION, programDigest: ruleProgramDigest(options.evidence.ir) },
+    evidence: { schemaVersion: EVIDENCE_SCHEMA_VERSION, aggregateDigest: evidenceAggregateDigest(evidence.entries, evidence.programs) }
+  });
   return { manifest, files };
 }
 

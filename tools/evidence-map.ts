@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { BrowserPackLayerContext } from './browser-pack-compiler.ts';
 import { encodeSection } from './browser-pack-encoding.ts';
 import type { BrowserPackShardDescriptor } from './browser-pack-model.ts';
@@ -18,6 +19,7 @@ import { RULE_KINDS, RULE_STAGES, type RuleIR } from './rule-ir.ts';
 // anything else fails the build closed.
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+export const EVIDENCE_SCHEMA_VERSION = '1';
 
 export interface EvidenceEntry {
   canonicalId: string;
@@ -29,7 +31,29 @@ export interface EvidenceEntry {
   programs: number[];
 }
 
-export function buildEvidence(graph: OrthographyKnowledgeGraph, ir: RuleIR) {
+export interface EvidenceBuild {
+  entries: EvidenceEntry[];
+  programs: Array<{ ruleId: string; evidenceType: string; stage: string; kind: string; canonicalIds: string[] }>;
+}
+
+/** Semantic evidence identity; it does not include shard sizes, paths, or fetch order. */
+export function evidenceAggregateDigest(entries: readonly EvidenceEntry[], programs: EvidenceBuild['programs']): string {
+  const normalizedEntries = [...entries].sort((a, b) => cmp(a.canonicalId, b.canonicalId)).map((e) => ({
+    ...e,
+    sourceRecords: [...e.sourceRecords].sort(cmp),
+    dispositions: [...e.dispositions].sort(cmp),
+    sourceSnapshots: [...e.sourceSnapshots].sort(cmp),
+    periodRefs: [...e.periodRefs].sort(cmp),
+    programs: [...e.programs].sort((a, b) => a - b)
+  }));
+  return createHash('sha256').update(JSON.stringify({
+    schemaVersion: EVIDENCE_SCHEMA_VERSION,
+    entries: normalizedEntries,
+    programs: programs.map((p) => ({ ...p, canonicalIds: [...p.canonicalIds].sort(cmp) }))
+  })).digest('hex');
+}
+
+export function buildEvidence(graph: OrthographyKnowledgeGraph, ir: RuleIR): EvidenceBuild {
   const ledger = new Map<string, Array<{ record: string; disposition: string }>>();
   for (const d of graph.dispositions) for (const t of d.targetIds) ledger.set(t, [...(ledger.get(t) ?? []), { record: d.sourceRecordId, disposition: d.disposition }]);
   const sources = new Set(graph.sources.map((s) => String(s.sourceId)));
@@ -73,9 +97,9 @@ export function buildEvidence(graph: OrthographyKnowledgeGraph, ir: RuleIR) {
 const pad = (n: number) => String(n).padStart(8, '0');
 
 /** Pack layer emitting the lazy evidence sections (v3). */
-export function evidenceLayer(ir: RuleIR, options: { entriesPerShard?: number; programsPerShard?: number } = {}) {
+export function evidenceLayer(ir: RuleIR, options: { entriesPerShard?: number; programsPerShard?: number; built?: EvidenceBuild } = {}) {
   return ({ graph, add }: BrowserPackLayerContext): void => {
-    const { entries, programs } = buildEvidence(graph, ir);
+    const { entries, programs } = options.built ?? buildEvidence(graph, ir);
     // evidence id = row of the canonical-id-sorted evidence map (shards are contiguous id ranges)
     const evidenceId = new Map(entries.map((e, i) => [e.canonicalId, i]));
     const strings = () => { const values = ['']; const ids = new Map<string, number>(); return { values, id: (s: string) => { let i = ids.get(s); if (i === undefined) { i = values.length; values.push(s); ids.set(s, i); } return i; } }; };

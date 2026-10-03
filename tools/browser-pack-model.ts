@@ -140,6 +140,10 @@ export interface BrowserPackManifestV1 {
   readonly profiles: readonly BrowserPackProfileDescriptor[];
   readonly sections: readonly BrowserPackSectionDescriptor[];
   readonly runtimeContract: { readonly schemaVersion: string; readonly externalOffsetUnit: string };
+  /** v3 semantic identity locks required by #208 §14. */
+  readonly symbolRegistry?: { readonly generation: number; readonly digest: string };
+  readonly ruleRuntime?: { readonly isaVersion: string; readonly compilerVersion: string; readonly programFormatVersion: string; readonly programDigest: string };
+  readonly evidence?: { readonly schemaVersion: string; readonly aggregateDigest: string };
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -259,6 +263,19 @@ export function validateBrowserPackManifest(manifest: unknown): BrowserPackManif
   if (typeof candidate.lexicalNamespaceId !== 'string' || candidate.lexicalNamespaceId === '') throw new Error('lexicalNamespaceId must be a non-empty string');
   if (candidate.runtimeContract?.schemaVersion !== BROWSER_PACK_SCHEMA_VERSION) throw new Error(`unsupported runtime contract schemaVersion ${String(candidate.runtimeContract?.schemaVersion)}`);
   if (candidate.runtimeContract.externalOffsetUnit !== BROWSER_PACK_EXTERNAL_OFFSET_UNIT) throw new Error(`unsupported external offset unit ${String(candidate.runtimeContract.externalOffsetUnit)}`);
+  if (candidate.compilerVersion === BROWSER_PACK_V3_COMPILER_VERSION) {
+    const registry = candidate.symbolRegistry;
+    if (!registry || !Number.isInteger(registry.generation) || registry.generation < 1) throw new Error('symbol registry identity must declare a positive generation');
+    assertDigest(registry.digest, 'symbol registry identity digest');
+    const ruleRuntime = candidate.ruleRuntime;
+    if (!ruleRuntime || typeof ruleRuntime.isaVersion !== 'string' || ruleRuntime.isaVersion === '' || typeof ruleRuntime.compilerVersion !== 'string' || ruleRuntime.compilerVersion === '' || typeof ruleRuntime.programFormatVersion !== 'string' || ruleRuntime.programFormatVersion === '') throw new Error('rule runtime identity must declare ISA, compiler, and program-format versions');
+    assertDigest(ruleRuntime.programDigest, 'rule runtime program digest');
+    const evidence = candidate.evidence;
+    if (!evidence || evidence.schemaVersion !== '1') throw new Error('evidence identity must declare schemaVersion 1');
+    assertDigest(evidence.aggregateDigest, 'evidence identity aggregate digest');
+  } else if (candidate.symbolRegistry !== undefined || candidate.ruleRuntime !== undefined || candidate.evidence !== undefined) {
+    throw new Error(`v3 identity locks are not part of compiler version ${candidate.compilerVersion}`);
+  }
   if (!Array.isArray(candidate.sections) || candidate.sections.length === 0) throw new Error('manifest must declare sections');
   if (!Array.isArray(candidate.profiles) || candidate.profiles.length === 0) throw new Error('manifest must declare at least one profile');
 

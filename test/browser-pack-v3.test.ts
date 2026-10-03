@@ -42,10 +42,26 @@ test('symbol-encoded columns restore every string exactly (orthographic atoms, A
 test('the v3 manifest validates: same sections as v2 plus an eager symbol registry, compiler version 3', () => {
   const m = validateBrowserPackManifest(JSON.parse(JSON.stringify(v3.manifest)));
   assert.equal(m.compilerVersion, '3');
+  assert.ok(m.symbolRegistry!.generation >= 1);
+  assert.match(m.symbolRegistry!.digest, /^[0-9a-f]{64}$/u);
+  assert.match(m.ruleRuntime!.programDigest, /^[0-9a-f]{64}$/u);
+  assert.match(m.evidence!.aggregateDigest, /^[0-9a-f]{64}$/u);
   const v3Only = new Set(['symbol-registry', 'evidence-map', 'program-evidence']);
   assert.deepEqual(m.sections.filter((s) => !v3Only.has(s.kind)).map((s) => s.sectionId).sort(), v2.manifest.sections.filter((s) => s.kind !== 'provenance-index').map((s) => s.sectionId).sort());
   assert.equal(m.sections.find((s) => s.kind === 'symbol-registry')!.loading, 'eager');
   assert.notEqual(m.packDigest, v2.manifest.packDigest);
+});
+
+test('R5 #248 v3 validation fails closed when an artifact identity lock is missing', () => {
+  const missing = JSON.parse(JSON.stringify(v3.manifest));
+  delete missing.symbolRegistry;
+  assert.throws(() => validateBrowserPackManifest(missing), /symbol registry identity/);
+});
+
+test('R5 #248 browser runtime rejects an incompatible Rule runtime identity before opening sections', async () => {
+  const missing = JSON.parse(JSON.stringify(v3.manifest));
+  missing.ruleRuntime.isaVersion = 'rule-program-isa-unknown';
+  await assert.rejects(() => openBrowserPack(missing, async (s: { path: string }) => v3.files.get(s.path)!), /Rule runtime identity/);
 });
 
 test('v3 converts, diagnoses and inspects exactly like v2 (every profile, render mode and detail)', async () => {
