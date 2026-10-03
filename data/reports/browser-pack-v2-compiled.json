@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-compiled",
   "owner": "japanese-orthography#196 B",
-  "packDigest": "4e95b70d91cc25d33beffbd74558bdfba7a2057e4ed6f922ef136fa4c4ddf782",
-  "canonicalGraphSha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+  "packDigest": "3cac8bf80c70d175978934b8ed49a5025032aa7315b0c17282d3c0364b2c0505",
+  "canonicalGraphSha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
   "totals": {
-    "sections": 1904,
-    "bytes": 136729044,
-    "gzipBytes": 51036839
+    "sections": 1911,
+    "bytes": 141223596,
+    "gzipBytes": 51400183
   },
   "byLoading": {
     "eager": {
       "sections": 9,
-      "bytes": 414800,
-      "gzipBytes": 119417
+      "bytes": 532236,
+      "gzipBytes": 172587
     },
     "lazy": {
-      "sections": 328,
-      "bytes": 29117688,
-      "gzipBytes": 8554170
+      "sections": 330,
+      "bytes": 30636420,
+      "gzipBytes": 8701912
     },
     "on-demand": {
-      "sections": 1567,
-      "bytes": 107196556,
-      "gzipBytes": 42363252
+      "sections": 1572,
+      "bytes": 110054940,
+      "gzipBytes": 42525684
     }
   },
   "byKind": {
@@ -33,39 +33,39 @@
       "gzipBytes": 56976
     },
     "detail-shard": {
-      "sections": 328,
-      "bytes": 29117688,
-      "gzipBytes": 8554170
+      "sections": 330,
+      "bytes": 30636420,
+      "gzipBytes": 8701912
     },
     "knowledge-bundle": {
-      "sections": 328,
-      "bytes": 20837392,
-      "gzipBytes": 9074423
+      "sections": 330,
+      "bytes": 20919400,
+      "gzipBytes": 9108605
     },
     "lexeme-forms": {
       "sections": 54,
       "bytes": 7734256,
-      "gzipBytes": 3580942
+      "gzipBytes": 3583076
     },
     "lexeme-readings": {
       "sections": 54,
-      "bytes": 16740212,
-      "gzipBytes": 6441577
+      "bytes": 19408776,
+      "gzipBytes": 6483910
     },
     "lexeme-table": {
       "sections": 54,
-      "bytes": 11057316,
-      "gzipBytes": 3745035
+      "bytes": 11066692,
+      "gzipBytes": 3751833
     },
     "lexical-directory": {
       "sections": 1,
-      "bytes": 40188,
-      "gzipBytes": 20799
+      "bytes": 39472,
+      "gzipBytes": 20733
     },
     "morphology-table": {
       "sections": 1,
-      "bytes": 10204,
-      "gzipBytes": 4534
+      "bytes": 128616,
+      "gzipBytes": 57877
     },
     "profile-policy": {
       "sections": 3,
@@ -73,14 +73,14 @@
       "gzipBytes": 871
     },
     "provenance-index": {
-      "sections": 328,
-      "bytes": 3398348,
-      "gzipBytes": 2526216
+      "sections": 330,
+      "bytes": 3434760,
+      "gzipBytes": 2553088
     },
     "reading-index": {
       "sections": 409,
-      "bytes": 24808608,
-      "gzipBytes": 8905564
+      "bytes": 24844200,
+      "gzipBytes": 8930423
     },
     "rules": {
       "sections": 1,
@@ -89,13 +89,13 @@
     },
     "shard-directory": {
       "sections": 1,
-      "bytes": 15700,
-      "gzipBytes": 9778
+      "bytes": 15440,
+      "gzipBytes": 9671
     },
     "surface-index": {
-      "sections": 340,
-      "bytes": 22620424,
-      "gzipBytes": 8089495
+      "sections": 341,
+      "bytes": 22646856,
+      "gzipBytes": 8114749
     },
     "terminology": {
       "sections": 1,

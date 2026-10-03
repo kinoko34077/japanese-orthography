@@ -103,13 +103,15 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
       }
     } else if (f.kind === 'literal_reading' && f.reading !== undefined) {
       const historical = f.periodRefs?.includes('period:historical-kana') ?? false;
+      const modern = f.periodRefs?.includes('period:modern') ?? !historical;
       if (historical && f.surface !== undefined) {
-        // the historical reading of a written form: one-step exact rule, Ruby output
+        // historical reading assertion: one-step exact rule, preserving candidate authority
         add(`exact|to-historical|reading|${f.surface}|${f.lexicalRefs.join(',')}`, () => ({
           ruleId: '', kind: 'exact', stage: 'diachronic', direction: 'to-historical', channel: 'reading', scope: 'exact-surface', input: f.surface!,
           lexicalScope: [...f.lexicalRefs], predicate: null, origin, enabledBy: null, dependsOn: [], evidenceType: tags[0] ?? 'historical_reading'
         }), { output: f.reading, candidate, canonicalId: f.id });
-      } else if (!historical && f.surface !== undefined) {
+      }
+      if (modern && f.surface !== undefined) {
         // dictionary mapping as an exact rule: a modern reading reconstructs its written forms (ドイツ -> 独逸 / 独乙)
         add(`exact|reconstruct|${f.reading}`, () => ({
           ruleId: '', kind: 'exact', stage: 'lexical', direction: 'reconstruct', channel: 'reading', scope: 'exact-reading', input: f.reading!,

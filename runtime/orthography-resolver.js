@@ -138,28 +138,29 @@
     const eligibleRelations = matchingRelations.filter((entry) => bindingEligible(entry, candidate));
     const targets = [];
     for (const relation of eligibleRelations) {
-      if (!targets.includes(relation.target)) {
-        targets.push(relation.target);
-      }
+      if (!targets.includes(relation.target)) targets.push(relation.target);
     }
+    if (targets.length === 0) return emptyContextualDecision();
 
-    if (targets.length === 0) {
-      return emptyContextualDecision();
+    // Candidate evidence never becomes admitted merely because filtering leaves one spelling.
+    const admittedRelations = eligibleRelations.filter((entry) => entry.candidate !== true);
+    const admittedTargets = [];
+    for (const relation of admittedRelations) {
+      if (!admittedTargets.includes(relation.target)) admittedTargets.push(relation.target);
     }
-
-    const hasGlobalRelation = eligibleRelations.some((entry) => relationBindingIds(entry).length === 0);
+    const hasGlobalRelation = admittedRelations.some((entry) => relationBindingIds(entry).length === 0);
     const coversAllViableBindings = hasGlobalRelation || (
       viable.length > 0 && viable.every((bindingId) => (
-        eligibleRelations.some((entry) => relationBindingIds(entry).includes(bindingId))
+        admittedRelations.some((entry) => relationBindingIds(entry).includes(bindingId))
       ))
     );
 
-    if (targets.length === 1 && coversAllViableBindings) {
+    if (admittedTargets.length === 1 && coversAllViableBindings) {
       return {
         status: "resolved",
-        target: targets[0],
+        target: admittedTargets[0],
         candidates: targets,
-        relationIds: eligibleRelations.map((entry) => entry.id).filter(Boolean)
+        relationIds: admittedRelations.map((entry) => entry.id).filter(Boolean)
       };
     }
 

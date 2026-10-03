@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "17ac2182b926b9d2a5df883a2e4c96e55c828ddc1c0f97984a7a99dc5c9959dd",
-  "canonicalGraphSha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+  "packDigest": "4f41dd7a6b64af1aa42d7b84682e86157018ffb28cce35bb43f77b31e96a4d75",
+  "canonicalGraphSha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
   "totals": {
-    "sections": 1726,
-    "bytes": 157056684,
-    "gzipBytes": 61408160
+    "sections": 1732,
+    "bytes": 161469932,
+    "gzipBytes": 61843875
   },
   "byLoading": {
     "eager": {
       "sections": 10,
-      "bytes": 426660,
-      "gzipBytes": 162822
+      "bytes": 530632,
+      "gzipBytes": 212099
     },
     "lazy": {
-      "sections": 477,
-      "bytes": 72080512,
-      "gzipBytes": 24232221
+      "sections": 480,
+      "bytes": 73565916,
+      "gzipBytes": 24482170
     },
     "on-demand": {
-      "sections": 1239,
-      "bytes": 84549512,
-      "gzipBytes": 37013117
+      "sections": 1242,
+      "bytes": 87373384,
+      "gzipBytes": 37149606
     }
   },
   "byKind": {
@@ -33,44 +33,44 @@
       "gzipBytes": 64085
     },
     "detail-shard": {
-      "sections": 328,
-      "bytes": 27276256,
-      "gzipBytes": 8600862
+      "sections": 330,
+      "bytes": 28303412,
+      "gzipBytes": 8743205
     },
     "evidence-map": {
-      "sections": 137,
-      "bytes": 42444868,
-      "gzipBytes": 14377440
+      "sections": 138,
+      "bytes": 42901636,
+      "gzipBytes": 14483931
     },
     "knowledge-bundle": {
-      "sections": 328,
-      "bytes": 18252576,
-      "gzipBytes": 8436816
+      "sections": 330,
+      "bytes": 18339024,
+      "gzipBytes": 8473188
     },
     "lexeme-forms": {
       "sections": 54,
       "bytes": 6888400,
-      "gzipBytes": 3417119
+      "gzipBytes": 3418983
     },
     "lexeme-readings": {
       "sections": 54,
-      "bytes": 14328512,
-      "gzipBytes": 6125267
+      "bytes": 16997232,
+      "gzipBytes": 6166645
     },
     "lexeme-table": {
       "sections": 54,
-      "bytes": 7960492,
-      "gzipBytes": 3414386
+      "bytes": 7969868,
+      "gzipBytes": 3421224
     },
     "lexical-directory": {
       "sections": 1,
-      "bytes": 32664,
-      "gzipBytes": 18577
+      "bytes": 32188,
+      "gzipBytes": 18383
     },
     "morphology-table": {
       "sections": 1,
-      "bytes": 10684,
-      "gzipBytes": 4791
+      "bytes": 115292,
+      "gzipBytes": 54363
     },
     "profile-policy": {
       "sections": 3,
@@ -79,13 +79,13 @@
     },
     "program-evidence": {
       "sections": 12,
-      "bytes": 2359388,
-      "gzipBytes": 1253919
+      "bytes": 2360868,
+      "gzipBytes": 1255034
     },
     "reading-index": {
       "sections": 409,
-      "bytes": 19227284,
-      "gzipBytes": 8255245
+      "bytes": 19261328,
+      "gzipBytes": 8279321
     },
     "rules": {
       "sections": 1,
@@ -94,13 +94,13 @@
     },
     "shard-directory": {
       "sections": 1,
-      "bytes": 12896,
-      "gzipBytes": 7969
+      "bytes": 12736,
+      "gzipBytes": 7868
     },
     "surface-index": {
-      "sections": 340,
-      "bytes": 17892248,
-      "gzipBytes": 7364284
+      "sections": 341,
+      "bytes": 17917532,
+      "gzipBytes": 7390245
     },
     "symbol-registry": {
       "sections": 1,

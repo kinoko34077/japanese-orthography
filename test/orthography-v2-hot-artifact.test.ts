@@ -20,7 +20,7 @@ function fixture(): OrthographyKnowledgeGraph {
   const g = withProfileRules(kanaConventionGraph());
   g.sources.push({ sourceId: 'src:fixture' });
   g.facts.push(
-    { id: 'fact:literal_reading:鼻血|はなぢ|', kind: 'literal_reading', lexicalRefs: ['lexeme:鼻血/はなぢ'], surface: '鼻血', reading: 'はなぢ', periodRefs: ['period:historical-kana'], ...prov },
+    { id: 'fact:literal_reading:鼻血|はなぢ|', kind: 'literal_reading', lexicalRefs: ['lexeme:鼻血/はなぢ'], surface: '鼻血', reading: 'はなぢ', basisReading: 'はなじ', periodRefs: ['period:historical-kana'], ...prov },
     { id: 'fact:literal_form:独逸||', kind: 'literal_form', lexicalRefs: ['lexeme:独逸/ドイツ'], surface: '独逸', tags: ['ateji'], ...prov },
     { id: 'fact:literal_reading:井戸|ゐど|', kind: 'literal_reading', lexicalRefs: [], surface: '井戸', reading: 'ゐど', periodRefs: ['period:historical-kana'], sourceRefs: ['src:fixture'], evidenceRefs: ['ev:other'] }
   );
@@ -71,6 +71,12 @@ test('hot items map back to canonical source and evidence ids', () => {
   assert.deepEqual(provenanceOf(artifact, 'fact', index), { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:other'] });
   const ruleIndex = inflated.graph.rules.findIndex((r) => r.id === 'rule:kana:yotsugana-di');
   assert.deepEqual(provenanceOf(artifact, 'rule', ruleIndex).evidenceRefs, ['naikaku-kokuji-1986-gendai-kanazukai']);
+});
+
+test('hot artifacts preserve historical reading basis assertions', () => {
+  const artifact = buildOrthographyHotArtifact(fixture(), MODERN_PROFILE);
+  const inflated = inflateHotArtifact(artifact);
+  assert.equal(inflated.graph.facts.find((fact) => fact.id === 'fact:literal_reading:鼻血|はなぢ|')?.basisReading, 'はなじ');
 });
 
 test('corruption and schema drift fail closed (TS and VM-loaded runtime)', async () => {

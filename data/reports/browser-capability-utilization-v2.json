@@ -2,10 +2,10 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization-v2",
   "owner": "japanese-orthography#196 J",
-  "packDigest": "4e95b70d91cc25d33beffbd74558bdfba7a2057e4ed6f922ef136fa4c4ddf782",
+  "packDigest": "3cac8bf80c70d175978934b8ed49a5025032aa7315b0c17282d3c0364b2c0505",
   "oracle": {
     "report": "data/reports/browser-capability-utilization-v1.json",
-    "packDigest": "e59b64e88b0bf278bd7048d99ae325117a81a257be894f6f87fecc1741216f0f"
+    "packDigest": "50b188e79d43ebb6d07950936df7eee9064c52041233a48d5cb35721bf04f3df"
   },
   "rows": [
     {
@@ -34,16 +34,16 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 122760
+        "eager": 532236,
+        "onDemand": 123864
       },
       "v1": {
         "renderedText": "学校",
         "changed": false,
-        "reachedFacts": 9,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 122608
+        "transferredBytes": 123712
       }
     },
     {
@@ -81,16 +81,16 @@
         "onDemand": 9
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 542576
+        "eager": 532236,
+        "onDemand": 562340
       },
       "v1": {
         "renderedText": "學校",
         "changed": true,
-        "reachedFacts": 9,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 122608
+        "transferredBytes": 123712
       }
     },
     {
@@ -128,16 +128,16 @@
         "onDemand": 9
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 542576
+        "eager": 532236,
+        "onDemand": 562340
       },
       "v1": {
         "renderedText": "學校",
         "changed": true,
-        "reachedFacts": 9,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 122608
+        "transferredBytes": 123712
       }
     },
     {
@@ -165,16 +165,16 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 256936
+        "eager": 532236,
+        "onDemand": 256248
       },
       "v1": {
         "renderedText": "がっこう",
         "changed": false,
-        "reachedFacts": 7,
+        "reachedFacts": 8,
         "promotedFacts": 0,
         "sectionRequests": 12,
-        "transferredBytes": 256612
+        "transferredBytes": 255936
       }
     },
     {
@@ -211,16 +211,16 @@
         "onDemand": 12
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 786656
+        "eager": 532236,
+        "onDemand": 787228
       },
       "v1": {
         "renderedText": "がくかう",
         "changed": true,
-        "reachedFacts": 7,
+        "reachedFacts": 8,
         "promotedFacts": 1,
         "sectionRequests": 12,
-        "transferredBytes": 256612
+        "transferredBytes": 255936
       }
     },
     {
@@ -257,16 +257,16 @@
         "onDemand": 12
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 786656
+        "eager": 532236,
+        "onDemand": 787228
       },
       "v1": {
         "renderedText": "がくかう",
         "changed": true,
-        "reachedFacts": 7,
+        "reachedFacts": 8,
         "promotedFacts": 1,
         "sectionRequests": 12,
-        "transferredBytes": 256612
+        "transferredBytes": 255936
       }
     },
     {
@@ -292,19 +292,19 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 3
+        "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 183176
+        "eager": 532236,
+        "onDemand": 122176
       },
       "v1": {
         "renderedText": "今日",
         "changed": false,
-        "reachedFacts": 15,
+        "reachedFacts": 19,
         "promotedFacts": 0,
-        "sectionRequests": 9,
-        "transferredBytes": 182936
+        "sectionRequests": 6,
+        "transferredBytes": 122012
       }
     },
     {
@@ -339,19 +339,19 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 20
+        "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1236368
+        "eager": 532236,
+        "onDemand": 1197564
       },
       "v1": {
         "renderedText": "今日",
         "changed": false,
-        "reachedFacts": 15,
+        "reachedFacts": 19,
         "promotedFacts": 0,
-        "sectionRequests": 9,
-        "transferredBytes": 182936
+        "sectionRequests": 6,
+        "transferredBytes": 122012
       }
     },
     {
@@ -386,19 +386,19 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 20
+        "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1236368
+        "eager": 532236,
+        "onDemand": 1197564
       },
       "v1": {
         "renderedText": "今日",
         "changed": false,
-        "reachedFacts": 15,
+        "reachedFacts": 19,
         "promotedFacts": 0,
-        "sectionRequests": 9,
-        "transferredBytes": 182936
+        "sectionRequests": 6,
+        "transferredBytes": 122012
       }
     },
     {
@@ -427,8 +427,8 @@
         "onDemand": 3
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 224552
+        "eager": 532236,
+        "onDemand": 223144
       },
       "v1": {
         "renderedText": "ドイツ",
@@ -436,7 +436,7 @@
         "reachedFacts": 2,
         "promotedFacts": 0,
         "sectionRequests": 9,
-        "transferredBytes": 224320
+        "transferredBytes": 222912
       }
     },
     {
@@ -474,8 +474,8 @@
         "onDemand": 10
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 642140
+        "eager": 532236,
+        "onDemand": 642884
       },
       "v1": {
         "renderedText": "ドイツ",
@@ -483,7 +483,7 @@
         "reachedFacts": 2,
         "promotedFacts": 0,
         "sectionRequests": 9,
-        "transferredBytes": 224320
+        "transferredBytes": 222912
       }
     },
     {
@@ -521,8 +521,8 @@
         "onDemand": 10
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 642140
+        "eager": 532236,
+        "onDemand": 642884
       },
       "v1": {
         "renderedText": "ドイツ",
@@ -530,7 +530,7 @@
         "reachedFacts": 2,
         "promotedFacts": 0,
         "sectionRequests": 9,
-        "transferredBytes": 224320
+        "transferredBytes": 222912
       }
     },
     {
@@ -559,8 +559,8 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 131616
+        "eager": 532236,
+        "onDemand": 132272
       },
       "v1": {
         "renderedText": "みる",
@@ -568,7 +568,7 @@
         "reachedFacts": 1,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 131464
+        "transferredBytes": 132112
       }
     },
     {
@@ -606,8 +606,8 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 536032
+        "eager": 532236,
+        "onDemand": 535324
       },
       "v1": {
         "renderedText": "みる",
@@ -615,7 +615,7 @@
         "reachedFacts": 1,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 131464
+        "transferredBytes": 132112
       }
     },
     {
@@ -653,8 +653,8 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 536032
+        "eager": 532236,
+        "onDemand": 535324
       },
       "v1": {
         "renderedText": "みる",
@@ -662,7 +662,7 @@
         "reachedFacts": 1,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 131464
+        "transferredBytes": 132112
       }
     },
     {
@@ -691,16 +691,16 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 254992
+        "eager": 532236,
+        "onDemand": 257208
       },
       "v1": {
         "renderedText": "分かる",
         "changed": false,
-        "reachedFacts": 8,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 12,
-        "transferredBytes": 254680
+        "transferredBytes": 256892
       }
     },
     {
@@ -738,16 +738,16 @@
         "onDemand": 13
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 807820
+        "eager": 532236,
+        "onDemand": 829228
       },
       "v1": {
         "renderedText": "分かる",
         "changed": false,
-        "reachedFacts": 8,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 12,
-        "transferredBytes": 254680
+        "transferredBytes": 256892
       }
     },
     {
@@ -785,16 +785,16 @@
         "onDemand": 13
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 807820
+        "eager": 532236,
+        "onDemand": 829228
       },
       "v1": {
         "renderedText": "分る",
         "changed": true,
-        "reachedFacts": 8,
+        "reachedFacts": 10,
         "promotedFacts": 0,
         "sectionRequests": 12,
-        "transferredBytes": 254680
+        "transferredBytes": 256892
       }
     },
     {
@@ -823,16 +823,16 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 119960
+        "eager": 532236,
+        "onDemand": 120152
       },
       "v1": {
         "renderedText": "台風",
         "changed": false,
-        "reachedFacts": 14,
+        "reachedFacts": 19,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 119804
+        "transferredBytes": 119992
       }
     },
     {
@@ -870,16 +870,16 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1231484
+        "eager": 532236,
+        "onDemand": 1255348
       },
       "v1": {
         "renderedText": "台風",
         "changed": false,
-        "reachedFacts": 14,
+        "reachedFacts": 19,
         "promotedFacts": 2,
         "sectionRequests": 6,
-        "transferredBytes": 119804
+        "transferredBytes": 119992
       }
     },
     {
@@ -917,16 +917,16 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1231484
+        "eager": 532236,
+        "onDemand": 1255348
       },
       "v1": {
         "renderedText": "台風",
         "changed": false,
-        "reachedFacts": 14,
+        "reachedFacts": 19,
         "promotedFacts": 2,
         "sectionRequests": 6,
-        "transferredBytes": 119804
+        "transferredBytes": 119992
       }
     },
     {
@@ -955,16 +955,16 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 122640
+        "eager": 532236,
+        "onDemand": 122256
       },
       "v1": {
         "renderedText": "装丁",
         "changed": false,
-        "reachedFacts": 10,
+        "reachedFacts": 13,
         "promotedFacts": 0,
         "sectionRequests": 6,
-        "transferredBytes": 122488
+        "transferredBytes": 122092
       }
     },
     {
@@ -1002,16 +1002,16 @@
         "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 855756
+        "eager": 532236,
+        "onDemand": 872936
       },
       "v1": {
         "renderedText": "装丁",
         "changed": false,
-        "reachedFacts": 10,
+        "reachedFacts": 13,
         "promotedFacts": 2,
         "sectionRequests": 6,
-        "transferredBytes": 122488
+        "transferredBytes": 122092
       }
     },
     {
@@ -1049,16 +1049,16 @@
         "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 855756
+        "eager": 532236,
+        "onDemand": 872936
       },
       "v1": {
         "renderedText": "装丁",
         "changed": false,
-        "reachedFacts": 10,
+        "reachedFacts": 13,
         "promotedFacts": 2,
         "sectionRequests": 6,
-        "transferredBytes": 122488
+        "transferredBytes": 122092
       }
     },
     {
@@ -1086,16 +1086,16 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 464608
+        "eager": 532236,
+        "onDemand": 458120
       },
       "v1": {
         "renderedText": "｜学校《がっこう》",
         "changed": false,
-        "reachedFacts": 16,
+        "reachedFacts": 18,
         "promotedFacts": 0,
         "sectionRequests": 24,
-        "transferredBytes": 463984
+        "transferredBytes": 457504
       }
     },
     {
@@ -1132,16 +1132,16 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1279236
+        "eager": 532236,
+        "onDemand": 1252212
       },
       "v1": {
         "renderedText": "｜學校《がくかう》",
         "changed": true,
-        "reachedFacts": 16,
+        "reachedFacts": 18,
         "promotedFacts": 1,
         "sectionRequests": 24,
-        "transferredBytes": 463984
+        "transferredBytes": 457504
       }
     },
     {
@@ -1178,16 +1178,16 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1279236
+        "eager": 532236,
+        "onDemand": 1252212
       },
       "v1": {
         "renderedText": "｜學校《がくかう》",
         "changed": true,
-        "reachedFacts": 16,
+        "reachedFacts": 18,
         "promotedFacts": 1,
         "sectionRequests": 24,
-        "transferredBytes": 463984
+        "transferredBytes": 457504
       }
     },
     {
@@ -1212,19 +1212,19 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 8
+        "onDemand": 7
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 460696
+        "eager": 532236,
+        "onDemand": 392968
       },
       "v1": {
         "renderedText": "｜今日《きょう》",
         "changed": false,
-        "reachedFacts": 18,
+        "reachedFacts": 23,
         "promotedFacts": 0,
-        "sectionRequests": 24,
-        "transferredBytes": 460068
+        "sectionRequests": 21,
+        "transferredBytes": 392420
       }
     },
     {
@@ -1258,19 +1258,19 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 28
+        "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1728692
+        "eager": 532236,
+        "onDemand": 1640956
       },
       "v1": {
         "renderedText": "｜今日《けふ》",
         "changed": true,
-        "reachedFacts": 18,
+        "reachedFacts": 23,
         "promotedFacts": 1,
-        "sectionRequests": 24,
-        "transferredBytes": 460068
+        "sectionRequests": 21,
+        "transferredBytes": 392420
       }
     },
     {
@@ -1304,19 +1304,19 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 28
+        "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1728692
+        "eager": 532236,
+        "onDemand": 1640956
       },
       "v1": {
         "renderedText": "｜今日《けふ》",
         "changed": true,
-        "reachedFacts": 18,
+        "reachedFacts": 23,
         "promotedFacts": 1,
-        "sectionRequests": 24,
-        "transferredBytes": 460068
+        "sectionRequests": 21,
+        "transferredBytes": 392420
       }
     },
     {
@@ -1347,16 +1347,16 @@
         "onDemand": 6
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 370808
+        "eager": 532236,
+        "onDemand": 369608
       },
       "v1": {
         "renderedText": "abc 😀 溶接 𠮷野家 zzz",
         "changed": false,
-        "reachedFacts": 16,
+        "reachedFacts": 25,
         "promotedFacts": 0,
         "sectionRequests": 18,
-        "transferredBytes": 370352
+        "transferredBytes": 369148
       }
     },
     {
@@ -1384,19 +1384,19 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 24
+        "onDemand": 25
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1499400
+        "eager": 532236,
+        "onDemand": 1584884
       },
       "v1": {
         "renderedText": "abc 😀 熔接 𠮷野家 zzz",
         "changed": true,
-        "reachedFacts": 16,
+        "reachedFacts": 25,
         "promotedFacts": 1,
         "sectionRequests": 18,
-        "transferredBytes": 370352
+        "transferredBytes": 369148
       }
     },
     {
@@ -1424,19 +1424,19 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 9,
-        "onDemand": 24
+        "onDemand": 25
       },
       "transferredBytes": {
-        "eager": 414800,
-        "onDemand": 1499400
+        "eager": 532236,
+        "onDemand": 1584884
       },
       "v1": {
         "renderedText": "abc 😀 熔接 𠮷野家 zzz",
         "changed": true,
-        "reachedFacts": 16,
+        "reachedFacts": 25,
         "promotedFacts": 1,
         "sectionRequests": 18,
-        "transferredBytes": 370352
+        "transferredBytes": 369148
       }
     }
   ],

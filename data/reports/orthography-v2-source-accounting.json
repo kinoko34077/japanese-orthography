@@ -18,10 +18,10 @@
   },
   "graph": {
     "sources": 28,
-    "facts": 555284,
+    "facts": 561488,
     "rules": 198,
     "bindings": 2000,
-    "sha256": "d9187c8165d351becb6e9ac6802db80c796614fc9831e9a88150f1eac144e919"
+    "sha256": "d010fe4ba01079211d1d2f4850fc7a4a81ce396caf3fb43feb0f1417ec7ab58b"
   },
   "bySource": {
     "derivation/kana-conventions": {

@@ -118,9 +118,14 @@
         const kana = !HAN.test(site.baseSurface);
         const bases = kana ? lexical.lookupReadingSync(site.baseSurface) : lexical.lookupSurfaceSync(site.baseSurface);
         for (const base of bases) {
-          const pos = base.morphologyCandidates.filter((m) => m.source === "jmdict").flatMap((m) => m.partOfSpeech);
-          if (!Inflection.admits(pos, site.rule)) continue;
           for (const baseReading of (base.modernReadings.length ? base.modernReadings : [base.reading]).filter(Boolean)) {
+            const jmdictRows = base.morphologyCandidates.filter((m) =>
+              m.source === "jmdict" &&
+              (m.surface === null || m.surface === base.surface) &&
+              (m.reading === null || m.reading === baseReading)
+            );
+            const pos = jmdictRows.flatMap((m) => m.partOfSpeech);
+            if (!Inflection.admits(pos, site.rule)) continue;
             const reading = Inflection.inflectReading(baseReading, site.rule);
             if (!reading) continue;
             const unidic = base.morphologyCandidates.filter((m) => m.source === "unidic" && m.reading === baseReading);
@@ -206,12 +211,17 @@
       lexicalLookup: lexicalCandidates,
       readingLookup: (reading) => lexical.lookupReadingSync(reading),
       historicalLookup: (candidate, surface) => {
-        const bound = (candidate.historicalReadings ?? []).filter((h) => h.surface === surface);
-        const readings = uniq(bound.map((h) => h.reading));
-        if (readings.length === 1) {
-          return { route: bound[0].route ?? "native", reading: readings[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
+        const bound = (candidate.historicalReadings ?? []).filter((h) =>
+          h.surface === surface && (h.basisReading == null || h.basisReading === candidate.reading)
+        );
+        const admitted = bound.filter((h) => !h.candidate);
+        const admittedReadings = uniq(admitted.map((h) => h.reading));
+        if (admittedReadings.length === 1) {
+          return { route: admitted[0].route ?? "native", reading: admittedReadings[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: uniq(admitted.map((h) => `fact#${h.factIndex}`)) };
         }
-        if (readings.length > 1) return { status: "candidates", route: bound[0].route ?? "native", readings, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
+        if (admittedReadings.length > 1) return { status: "candidates", route: admitted[0].route ?? "native", readings: admittedReadings, evidenceRefs: uniq(admitted.map((h) => `fact#${h.factIndex}`)) };
+        const boundCandidates = uniq(bound.map((h) => h.reading));
+        if (boundCandidates.length) return { status: "candidates", route: bound[0].route ?? "native", readings: boundCandidates, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
         if (typeof candidate.reading !== "string") return null;
         // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
         // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
@@ -228,16 +238,23 @@
         }
         // surface-keyed historical reading, accepted only when the native kana relation of the
         // candidate's own modern reading names the same historical kana (two sources agree)
-        const surfaceReadings = uniq(facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface).map((f) => f.reading));
-        const agreed = surfaceReadings.filter((r) => kanaHistorical(candidate.reading).includes(r));
-        if (agreed.length !== 1) return null;
-        return { route: "native", reading: agreed[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: [`surface:${surface}`, `kana:${candidate.reading}>${agreed[0]}`] };
+        const surfaceFacts = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
+        const admittedSurfaceReadings = uniq(surfaceFacts.filter((f) => !f.candidate).map((f) => f.reading));
+        const agreed = admittedSurfaceReadings.filter((r) => kanaHistorical(candidate.reading).includes(r));
+        if (agreed.length === 1) {
+          return { route: "native", reading: agreed[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: [`surface:${surface}`, `kana:${candidate.reading}>${agreed[0]}`] };
+        }
+        const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
+        if (candidateReadings.length) return { status: "candidates", route: "native", readings: candidateReadings, evidenceRefs: [`surface:${surface}`] };
+        return null;
       },
       historicalSurfaceLookup: (surface) => {
         if (lexical.lookupSurfaceSync(surface).length) return null; // the identity route decides
-        const readings = uniq(facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface).map((f) => f.reading));
-        if (readings.length === 1) return { status: "resolved", route: "native", reading: readings[0], surface, evidenceRefs: [`surface:${surface}`] };
-        if (readings.length > 1) return { status: "candidates", route: "native", surfaceCandidates: [surface], readingCandidates: readings, evidenceRefs: [`surface:${surface}`] };
+        const rows = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
+        const admitted = uniq(rows.filter((f) => !f.candidate).map((f) => f.reading));
+        if (admitted.length === 1) return { status: "resolved", route: "native", reading: admitted[0], surface, evidenceRefs: [`surface:${surface}`] };
+        const readings = uniq(rows.map((f) => f.reading));
+        if (readings.length) return { status: "candidates", route: "native", surfaceCandidates: [surface], readingCandidates: readings, evidenceRefs: [`surface:${surface}`] };
         return null;
       },
       contextualRelations: relations,

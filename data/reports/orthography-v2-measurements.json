@@ -4,38 +4,38 @@
   "owner": "japanese-orthography#172",
   "note": "Sizes/digests are deterministic real compiled data; performance values are informational observations (machine-dependent). The v2 canonical graph holds all normalized sources (JMdict forms/readings, Phase-4.6 literal facts, shared rules, bindings) and is a different content set from the Phase-4.8 lexical entity graph.",
   "canonicalGraph": {
-    "sha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
-    "bytes": 160694610,
-    "gzipBytes": 13397403,
+    "sha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
+    "bytes": 162309510,
+    "gzipBytes": 13470198,
     "ledgerDispositions": 257632
   },
   "counts": {
-    "facts": 555284,
+    "facts": 561488,
     "rules": 203,
     "bindings": 2000,
     "sources": 28
   },
   "hotArtifacts": {
     "modern": {
-      "bytes": 60966649,
-      "gzipBytes": 9691077,
-      "contentDigest": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+      "bytes": 63767216,
+      "gzipBytes": 9805539,
+      "contentDigest": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
       "profileDigest": "81550baef6409f30c7160f503cfb6e4991d1c50352bc37e2fdbc633c82185446",
-      "projectedFacts": 2253
+      "projectedFacts": 2438
     },
     "historical": {
-      "bytes": 60968676,
-      "gzipBytes": 9692197,
-      "contentDigest": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+      "bytes": 63769273,
+      "gzipBytes": 9806963,
+      "contentDigest": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
       "profileDigest": "e29f816624fce000557cc0c0c94b62cf00a2b5b4e3cdab99089a767f1bc37162",
-      "projectedFacts": 2253
+      "projectedFacts": 2438
     },
     "kinotch": {
-      "bytes": 60968449,
-      "gzipBytes": 9692051,
-      "contentDigest": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+      "bytes": 63769046,
+      "gzipBytes": 9806824,
+      "contentDigest": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
       "profileDigest": "23d6433664cd24264d35f891c035c62a19a4c890eb7dd1fbaaee42d8f931c617",
-      "projectedFacts": 2253
+      "projectedFacts": 2438
     }
   },
   "baseline": {
@@ -48,9 +48,9 @@
   },
   "performanceObserved": {
     "node": "v26.10.0",
-    "hotStartupMs": 7592,
-    "hotHeapDeltaMb": 965,
-    "projectionsPerSecond": 2658,
-    "restorationsPerSecond": 1261
+    "hotStartupMs": 17382,
+    "hotHeapDeltaMb": 976,
+    "projectionsPerSecond": 1169,
+    "restorationsPerSecond": 642
   }
 }

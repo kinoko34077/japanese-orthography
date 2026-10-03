@@ -59,20 +59,26 @@ class GraphBuilder {
     target.evidenceRefs = [...new Set([...target.evidenceRefs, ...evidence])];
   }
 
-  // Identical normalized facts are stored once; every contributing source/evidence ref is kept.
-  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[]; origin?: 'project_defined' }, sourceId: string, evidence: string[]) {
-    const id = `fact:${spec.kind}:${spec.surface ?? ''}|${spec.reading ?? ''}|${spec.target ?? ''}`;
+  // Text equality is not always assertion identity (#250 R1). Callers supply assertionKey only
+  // where source-scoped metadata/provenance would otherwise smear across lexical assertions.
+  fact(spec: { kind: OrthographyFactKind; surface?: string; reading?: string; basisReading?: string | undefined; target?: string; lexicalRefs?: string[]; tags?: string[] | undefined; periodRefs?: string[]; assertionKey?: string | undefined; origin?: 'project_defined' }, sourceId: string, evidence: string[]) {
+    const baseId = `fact:${spec.kind}:${spec.surface ?? ''}|${spec.reading ?? ''}|${spec.target ?? ''}`;
+    const id = spec.assertionKey ? `${baseId}|@${spec.assertionKey}` : baseId;
     let fact = this.facts.get(id);
     if (!fact) {
       fact = {
         id, kind: spec.kind, lexicalRefs: [], sourceRefs: [], evidenceRefs: [],
         ...(spec.surface !== undefined ? { surface: spec.surface } : {}),
         ...(spec.reading !== undefined ? { reading: spec.reading } : {}),
+        ...(spec.basisReading !== undefined ? { basisReading: spec.basisReading } : {}),
         ...(spec.target !== undefined ? { target: spec.target } : {})
       };
       this.facts.set(id, fact);
+    } else if (spec.basisReading !== undefined && fact.basisReading !== undefined && fact.basisReading !== spec.basisReading) {
+      throw new Error(`conflicting basisReading for ${id}: ${fact.basisReading} / ${spec.basisReading}`);
     }
     this.mergeRefs(fact, sourceId, evidence);
+    if (spec.basisReading !== undefined) fact.basisReading = spec.basisReading;
     fact.lexicalRefs = [...new Set([...fact.lexicalRefs, ...(spec.lexicalRefs ?? [])])];
     if (spec.tags?.length) fact.tags = [...new Set([...(fact.tags ?? []), ...spec.tags])];
     if (spec.origin) fact.origin = spec.origin;
@@ -122,36 +128,64 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
   const jm = b.source(`jmdict/${jmAccounting.createdDate}`, { path: 'data/lexical/sources/jmdict/2026-10-01', license: 'CC-BY-SA-4.0', role: 'lexical-identity' });
   const keys = lexemeKeys(extract);
   const lexemesByForm = new Map<string, string[]>();
+  const formOwners = new Map<string, Set<string>>();
+  const readingOwners = new Map<string, Set<string>>();
+  const modernReadingsByForm = new Map<string, Set<string>>();
+  const lexemesByFormReading = new Map<string, Set<string>>();
+  const addOwner = (index: Map<string, Set<string>>, key: string, lexeme: string) => {
+    const set = index.get(key) ?? new Set<string>();
+    set.add(lexeme);
+    index.set(key, set);
+  };
   for (const entry of extract) {
     const lexeme = `lexeme:${keys.get(entry.seq)!}`;
-    for (const k of entry.k ?? []) lexemesByForm.set(k.t, [...(lexemesByForm.get(k.t) ?? []), lexeme]);
+    for (const k of entry.k ?? []) {
+      lexemesByForm.set(k.t, [...(lexemesByForm.get(k.t) ?? []), lexeme]);
+      addOwner(formOwners, k.t, lexeme);
+      for (const r of entry.r) {
+        if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
+        const key = `${k.t}\u0000${r.t}`;
+        addOwner(readingOwners, key, lexeme);
+        addOwner(lexemesByFormReading, key, lexeme);
+        const readings = modernReadingsByForm.get(k.t) ?? new Set<string>();
+        readings.add(r.t);
+        modernReadingsByForm.set(k.t, readings);
+      }
+    }
+    if (!entry.k?.length) for (const r of entry.r) addOwner(readingOwners, `\u0000${r.t}`, lexeme);
   }
+  const lexicalRefsFor = (form: string | undefined) => (form ? lexemesByForm.get(form) ?? [] : []);
+  const lexicalRefsForReading = (form: string | undefined, reading: string | undefined) =>
+    form && reading ? [...(lexemesByFormReading.get(`${form}\u0000${reading}`) ?? [])] : [];
+  const soleModernReading = (form: string | undefined) => {
+    const readings = form ? modernReadingsByForm.get(form) : undefined;
+    return readings?.size === 1 ? [...readings][0] : undefined;
+  };
+  const historicalAssertionKey = (form: string | undefined, reading: string, basisReading: string | undefined) =>
+    basisReading !== undefined || Boolean(form && modernReadingsByForm.get(form)?.has(reading))
+      ? `historical:${basisReading ?? 'unbound'}`
+      : undefined;
+
   for (const entry of extract) {
     const recordId = b.record(jm, String(entry.seq));
     const lexeme = `lexeme:${keys.get(entry.seq)!}`;
     const evidence = [`jmdict:${jmAccounting.createdDate}:seq:${entry.seq}`];
     const targets: string[] = [];
     for (const k of entry.k ?? []) {
-      targets.push(b.fact({ kind: 'literal_form', surface: k.t, lexicalRefs: [lexeme], tags: k.inf, periodRefs: MODERN }, jm, evidence));
+      const formAssertion = (formOwners.get(k.t)?.size ?? 0) > 1 ? `jmdict-form:${lexeme}` : undefined;
+      targets.push(b.fact({ kind: 'literal_form', surface: k.t, lexicalRefs: [lexeme], tags: k.inf, periodRefs: MODERN, assertionKey: formAssertion }, jm, evidence));
       for (const r of entry.r) {
         if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
-        targets.push(b.fact({ kind: 'literal_reading', surface: k.t, reading: r.t, lexicalRefs: [lexeme], periodRefs: MODERN }, jm, evidence));
+        const readingAssertion = (readingOwners.get(`${k.t}\u0000${r.t}`)?.size ?? 0) > 1 ? `jmdict-reading:${lexeme}` : undefined;
+        targets.push(b.fact({ kind: 'literal_reading', surface: k.t, reading: r.t, lexicalRefs: [lexeme], periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
       }
     }
-    if (!entry.k?.length) for (const r of entry.r) targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, periodRefs: MODERN }, jm, evidence));
+    if (!entry.k?.length) for (const r of entry.r) {
+      const readingAssertion = (readingOwners.get(`\u0000${r.t}`)?.size ?? 0) > 1 ? `jmdict-reading:${lexeme}` : undefined;
+      targets.push(b.fact({ kind: 'literal_reading', reading: r.t, lexicalRefs: [lexeme], tags: r.inf, periodRefs: MODERN, assertionKey: readingAssertion }, jm, evidence));
+    }
     b.dispose(recordId, 'literal_fact', targets);
   }
-  const lexicalRefsFor = (form: string | undefined) => (form ? lexemesByForm.get(form) ?? [] : []);
-  // A historical reading names its written form, not its modern reading: it is tied to the form's
-  // lexemes only when JMdict gives that form exactly one modern reading (#154 A1, #170).
-  const modernReadingsByForm = new Map<string, Set<string>>();
-  for (const entry of extract) for (const k of entry.k ?? []) for (const r of entry.r) {
-    if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
-    const set = modernReadingsByForm.get(k.t) ?? new Set<string>();
-    set.add(r.t);
-    modernReadingsByForm.set(k.t, set);
-  }
-  const readingLexicalRefsFor = (form: string | undefined) => (form && modernReadingsByForm.get(form)?.size === 1 ? lexicalRefsFor(form) : []);
 
   // --- Phase-4.6 intake (record-level authority over the pinned raw sources) --------------------
   for (const file of INTAKE_FILES) {
@@ -183,9 +217,25 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       const tags = [r.responsibility, ...(candidate ? ['candidate'] : [])];
       const lexicalRefs = lexicalRefsFor(r.modernSurface);
       const targets: string[] = [];
-      if (r.historicalReading) targets.push(b.fact({ kind: 'literal_reading', surface: r.modernSurface, reading: r.historicalReading, lexicalRefs: readingLexicalRefsFor(r.modernSurface), tags, periodRefs: HISTORICAL }, sourceId, evidence));
+      const basisReading = typeof r.modernReading === 'string' && r.modernReading ? r.modernReading : soleModernReading(r.modernSurface);
+      const readingRefs = basisReading ? lexicalRefsForReading(r.modernSurface, basisReading) : [];
+      if (r.historicalReading) targets.push(b.fact({
+        kind: 'literal_reading', surface: r.modernSurface, reading: r.historicalReading, basisReading,
+        lexicalRefs: readingRefs, tags, periodRefs: HISTORICAL,
+        assertionKey: historicalAssertionKey(r.modernSurface, r.historicalReading, basisReading)
+      }, sourceId, evidence));
       if (r.historicalSurface) targets.push(b.fact({ kind: 'form_relation', surface: r.historicalSurface, target: r.modernSurface, lexicalRefs, tags, periodRefs: HISTORICAL }, sourceId, evidence));
-      for (const alt of r.alternatives ?? []) targets.push(b.fact({ kind: 'form_relation', surface: alt, target: r.modernSurface, lexicalRefs, tags: [...tags, 'candidate'], periodRefs: HISTORICAL }, sourceId, evidence));
+      for (const alt of r.alternatives ?? []) {
+        if (file === 'phase46d-native-kana' && r.sourceRef !== 'phase46d-kkh-kana') {
+          targets.push(b.fact({
+            kind: 'literal_reading', surface: r.modernSurface, reading: alt, basisReading,
+            lexicalRefs: readingRefs, tags: [...tags, 'candidate'], periodRefs: HISTORICAL,
+            assertionKey: historicalAssertionKey(r.modernSurface, alt, basisReading)
+          }, sourceId, evidence));
+        } else {
+          targets.push(b.fact({ kind: 'form_relation', surface: alt, target: r.modernSurface, lexicalRefs, tags: [...tags, 'candidate'], periodRefs: HISTORICAL }, sourceId, evidence));
+        }
+      }
       if (targets.length === 0) throw new Error(`${recordId}: admitted record carries no orthographic payload`);
       b.dispose(recordId, 'literal_fact', targets);
     }
@@ -235,8 +285,14 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
       const targets: string[] = [];
       if (r.historicalSurface) targets.push(b.fact({ kind: 'form_relation', surface: r.historicalSurface, target: r.surface, lexicalRefs: lexicalRefsFor(r.surface), tags: ['kkh'], periodRefs: HISTORICAL }, sourceId, evidence));
       if (r.historicalReading) {
-        const wholeWord = Boolean(r.modernReading);
-        targets.push(b.fact({ kind: 'literal_reading', surface: r.surface, reading: r.historicalReading, lexicalRefs: wholeWord ? lexicalRefsFor(r.surface).filter((l) => l.endsWith(`/${r.modernReading}`) || l.includes(`/${r.modernReading}#`)) : [], tags: [wholeWord ? 'whole-word' : 'component-jion'], periodRefs: HISTORICAL }, sourceId, evidence));
+        const basisReading = typeof r.modernReading === 'string' && r.modernReading ? r.modernReading : undefined;
+        const wholeWord = basisReading !== undefined;
+        targets.push(b.fact({
+          kind: 'literal_reading', surface: r.surface, reading: r.historicalReading, basisReading,
+          lexicalRefs: wholeWord ? lexicalRefsForReading(r.surface, basisReading) : [],
+          tags: [wholeWord ? 'whole-word' : 'component-jion'], periodRefs: HISTORICAL,
+          assertionKey: historicalAssertionKey(r.surface, r.historicalReading, basisReading)
+        }, sourceId, evidence));
       }
       b.dispose(recordId, 'literal_fact', targets);
     }
