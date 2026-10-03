@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1",
+  "kind": "browser-ruby-acceptance",
+  "owner": "japanese-orthography#225",
+  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
+  "source": {
+    "jmdictSnapshot": "2026-10-01",
+    "jmdictExtractSha256": "96a0e8874fe075ad61ee580f006aad6a5a4fcd3e6956fc2495c0d7e739fe8651",
+    "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01"
+  },
+  "baseline": {
+    "lexicalIdentities": 218850,
+    "forms": 233560,
+    "readings": 318924,
+    "distinctWrittenSurfaces": 229114
+  },
+  "modernSurfaceReadings": {
+    "exactlyOneRestrictionValidReading": 212992,
+    "multipleRestrictionValidReadings": 16062,
+    "zeroRestrictionValidReadings": 60,
+    "sourcePriorityOnUniqueReading": 212992
+  },
+  "entryShape": {
+    "kanaOnlyOrNoKanjiLexemes": 43122,
+    "hanSurfacesEligibleForSafeWholeWordRuby": 211907,
+    "unresolvedOrCandidateSurfacesWithoutSafeRuby": 15086
+  },
+  "historical": {
+    "surfacesWithHistoricalReading": 538,
+    "surfacesWithReconstructedHistoricalReading": 538,
+    "surfacesWithModernFallbackOnly": 211369
+  },
+  "rubyOutputCoverage": {
+    "profiles": [
+      "modern",
+      "historical",
+      "kinotch-fixed"
+    ],
+    "corpusCases": 14,
+    "profileCases": 42,
+    "sourceClasses": [
+      "lexical-modern",
+      "historical-native",
+      "historical-sino",
+      "candidate-display",
+      "protected-or-unchanged"
+    ]
+  },
+  "corpus": [
+    {
+      "id": "adult-suffix",
+      "text": "大人層",
+      "purpose": "whole-word priority display; no per-character decomposition",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "necessary",
+      "text": "必要",
+      "purpose": "whole-word lexical reading and component fallback",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "market-property",
+      "text": "市場特性",
+      "purpose": "adjacent and overlapping segmentation; ambiguous market is fail-closed",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "publishers",
+      "text": "出版各社",
+      "purpose": "compound plus suffix segmentation",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "japan-company",
+      "text": "日本企業",
+      "purpose": "Sino whole-word path and opaque component boundary",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "service",
+      "text": "サービス",
+      "purpose": "KKH loanword source/profile behavior",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "same-reading-homograph",
+      "text": "どん底",
+      "purpose": "reading consensus without lexical winner",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "ambiguous-reading",
+      "text": "市場",
+      "purpose": "multiple modern readings stay unresolved",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "candidate-reading",
+      "text": "阿呆",
+      "purpose": "candidate readings remain candidate; no storage-order winner",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "zero-permitted-reading",
+      "text": "少し宛",
+      "purpose": "JMdict restriction leaves no invented head reading",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "modern-historical",
+      "text": "南風",
+      "purpose": "multi-reading historical basis does not cross-apply",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "multi-reading-lexeme",
+      "text": "狩人",
+      "purpose": "multi-reading lexeme stays candidate",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "component-ruby",
+      "text": "｜学《がく》校《こう》",
+      "purpose": "component Ruby is one protected lexical unit",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "protected-unknown",
+      "text": "abc 😀 𠮷 ｜学校《がっこう》",
+      "purpose": "ASCII, emoji, unknown and protected Ruby preservation",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    }
+  ]
+}
