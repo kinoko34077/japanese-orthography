@@ -7,7 +7,7 @@
   },
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "76a70bd062da7d6c760269ef444be985c8ba9272838180bd373b0cb8db5c8c87",
+  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -26060,6 +26060,56 @@
       }
     },
     {
+      "byteLength": 4900,
+      "encoding": "binary-columnar",
+      "kind": "rule-lexeme-sets",
+      "loading": "on-demand",
+      "path": "rule-lexeme-sets.bin",
+      "rowCount": 537,
+      "sectionId": "rule-lexeme-sets",
+      "sha256": "b81db7056189ddef81bdda173347254dcfd0954ceed1bcbb05e42698642b17d2"
+    },
+    {
+      "byteLength": 194040,
+      "encoding": "binary-columnar",
+      "kind": "rule-predicates",
+      "loading": "on-demand",
+      "path": "rule-predicates.bin",
+      "rowCount": 2009,
+      "sectionId": "rule-predicates",
+      "sha256": "39e6d23ad4d85af75cce4092971bce7f9ea8766fffb1917bc5c21f0b58375f03"
+    },
+    {
+      "byteLength": 2708064,
+      "encoding": "binary-columnar",
+      "kind": "rule-program-index",
+      "loading": "on-demand",
+      "path": "rule-program-index.bin",
+      "rowCount": 179949,
+      "sectionId": "rule-program-index",
+      "sha256": "1ad879e007ae4133e459134aed233e7651cc9f1683042e56539d88fd4ac29cfc"
+    },
+    {
+      "byteLength": 6135812,
+      "encoding": "binary-columnar",
+      "kind": "rule-programs",
+      "loading": "on-demand",
+      "path": "rule-programs.bin",
+      "rowCount": 182087,
+      "sectionId": "rule-programs",
+      "sha256": "ff8d2514196e5a37a3e5850cc13404323872aaee262bbe981ee8775dbcacdf05"
+    },
+    {
+      "byteLength": 292,
+      "encoding": "binary-columnar",
+      "kind": "rule-runtime-meta",
+      "loading": "on-demand",
+      "path": "rule-runtime-meta.bin",
+      "rowCount": 1,
+      "sectionId": "rule-runtime-meta",
+      "sha256": "feefca46cb4f55046808a76e8eb9c97e978bfd467d6776924db581f290651190"
+    },
+    {
       "byteLength": 110092,
       "encoding": "binary-columnar",
       "kind": "rules",
@@ -26068,6 +26118,16 @@
       "rowCount": 203,
       "sectionId": "rules",
       "sha256": "7b68f6203609716c0db0142cb8127b99464cf938c10e2f6fff82b2277b14f55d"
+    },
+    {
+      "byteLength": 5506752,
+      "encoding": "binary-columnar",
+      "kind": "sequence-pool",
+      "loading": "on-demand",
+      "path": "sequence-pool.bin",
+      "rowCount": 408151,
+      "sectionId": "sequence-pool",
+      "sha256": "d81d561a28a8b90a1bfa58cee40cc3d5836b5364c31b59468b68a3bd507b88c3"
     },
     {
       "byteLength": 12736,

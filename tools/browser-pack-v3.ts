@@ -6,7 +6,7 @@ import { BROWSER_PACK_V3_COMPILER_VERSION, browserPackSectionId, sealBrowserPack
 import { symbolRegistryDigest, type SymbolRegistry } from './symbol-registry.ts';
 import { buildEvidence, evidenceAggregateDigest, evidenceLayer } from './evidence-map.ts';
 import { EVIDENCE_SCHEMA_VERSION } from './evidence-map.ts';
-import { RULE_PROGRAM_COMPILER_VERSION, RULE_PROGRAM_FORMAT_VERSION, RULE_PROGRAM_ISA_VERSION, ruleProgramDigest } from './rule-program-compiler.ts';
+import { compilePrograms, programSections, RULE_PROGRAM_COMPILER_VERSION, RULE_PROGRAM_FORMAT_VERSION, RULE_PROGRAM_ISA_VERSION, ruleProgramDigest } from './rule-program-compiler.ts';
 import type { OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
 import type { RuleIR } from './rule-ir.ts';
 
@@ -86,6 +86,12 @@ export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry, op
   // cold evidence sections (#211 G) are built v2-style, then transcoded with everything else
   const extra: Array<{ s: BrowserPackSectionDescriptor; body: Uint8Array }> = [];
   const evidence = buildEvidence(options.evidence.graph, options.evidence.ir);
+  const lexicalRefs = [...new Set(options.evidence.graph.facts
+    .filter((fact) => fact.kind === 'literal_form' || fact.kind === 'literal_reading')
+    .flatMap((fact) => fact.lexicalRefs))].sort();
+  const lexemeIdOf = new Map(lexicalRefs.map((ref, id) => [ref, id]));
+  const programs = compilePrograms(options.evidence.ir, registry, (ref) => lexemeIdOf.get(ref) ?? null);
+  const hot = programSections(programs);
   evidenceLayer(options.evidence.ir, { built: evidence })({
       graph: options.evidence.graph,
       add: (kind, body, x = {}) => {
@@ -105,6 +111,18 @@ export function transcodeToV3(v2: BrowserPackBuild, registry: SymbolRegistry, op
     files.set(s.path, next);
     sections.push({ ...s, byteLength: next.byteLength, sha256: sha(next) });
   }
+  const addHot = (kind: 'sequence-pool' | 'rule-programs' | 'rule-program-index' | 'rule-predicates' | 'rule-lexeme-sets' | 'rule-runtime-meta', body: Uint8Array, rowCount: number | undefined) => {
+    const sectionId = browserPackSectionId(kind, {});
+    const path = `${sectionId}.bin`;
+    files.set(path, body);
+    sections.push({ sectionId, kind, path, encoding: 'binary-columnar', loading: 'on-demand', byteLength: body.byteLength, sha256: sha(body), ...(rowCount === undefined ? {} : { rowCount }) });
+  };
+  addHot('sequence-pool', hot.pool, programs.pool.sequences.length);
+  addHot('rule-programs', hot.programs, programs.count);
+  addHot('rule-program-index', hot.index, programs.index.size);
+  addHot('rule-predicates', hot.predicates, programs.predicates.length);
+  addHot('rule-lexeme-sets', hot.lexemeSets, programs.lexemeSets.length);
+  addHot('rule-runtime-meta', hot.meta, 1);
   const reg = registrySection(registry);
   const sectionId = browserPackSectionId('symbol-registry', {});
   files.set('symbol-registry.bin', reg);

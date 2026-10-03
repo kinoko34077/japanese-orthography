@@ -49,6 +49,7 @@ export interface CompiledPrograms {
   predicates: Array<Record<string, string>>;
   mechanisms: string[];
   lexemeSets: number[][];
+  lexemeSetModes: Array<'all' | 'some' | 'none'>;
   profileBits: Record<string, number>;
   pool: ReturnType<typeof buildSequencePool>;
   /** `${stage}|${direction}|${channel}|${inputSeq}` -> ProgramIds */
@@ -71,10 +72,11 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
   const predicateId = new Map<string, number>();
   const mechanisms: string[] = [];
   const lexemeSets: number[][] = [];
+  const lexemeSetModes: Array<'all' | 'some' | 'none'> = [];
   const lexemeSetId = new Map<string, number>();
   const out: CompiledPrograms = {
     count: ir.rules.length, kind: [], stage: [], direction: [], channel: [], scope: [], inputs: [], direct: [], outputs: [], flags: [], code: [],
-    evidence: [], predicates, mechanisms, lexemeSets, profileBits, pool, index: new Map()
+    evidence: [], predicates, mechanisms, lexemeSets, lexemeSetModes, profileBits, pool, index: new Map()
   };
   const enumOf = <T extends string>(values: readonly T[], v: T) => { const i = values.indexOf(v); if (i < 0) throw new Error(`unknown enum value ${v}`); return i; };
 
@@ -109,9 +111,13 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
       if (lexemes.length) {
         const ids = lexemes.map(lexemeIdOf).filter((x): x is number => x !== null).sort((a, b) => a - b);
         // a scope naming no known lexeme can never match: keep the test (fail closed), with an empty set
-        const key = ids.join(',');
+        // An unresolved lexical span is a hypothesis set. The safe default is `all`: a
+        // lexeme-scoped rule may run only when every surviving hypothesis is in its scope.
+        // This prevents a rule from silently applying to one member of an unresolved set.
+        const mode = 'all' as const;
+        const key = `${mode}:${ids.join(',')}`;
         let set = lexemeSetId.get(key);
-        if (set === undefined) { set = lexemeSets.length; lexemeSets.push(ids); lexemeSetId.set(key, set); }
+        if (set === undefined) { set = lexemeSets.length; lexemeSets.push(ids); lexemeSetModes.push(mode); lexemeSetId.set(key, set); }
         code.push(OP.TEST_LEXSET, set);
       }
       const bindingGroup = r.ruleId.startsWith('binding:')
@@ -148,13 +154,47 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
 
 /** Hot binary sections of a compiled program set (no type-name strings; integers only). */
 export function programSections(p: CompiledPrograms) {
+  const bytesOf = (value: string) => [...new TextEncoder().encode(value)];
   const programs = encodeSection([
     { name: 'kind', kind: 'scalar', values: p.kind }, { name: 'stage', kind: 'scalar', values: p.stage }, { name: 'direction', kind: 'scalar', values: p.direction },
     { name: 'channel', kind: 'scalar', values: p.channel }, { name: 'scope', kind: 'scalar', values: p.scope }, { name: 'direct', kind: 'scalar', values: p.direct.map(Number) },
     { name: 'inputs', kind: 'list', values: p.inputs }, { name: 'outputs', kind: 'list', values: p.outputs }, { name: 'flags', kind: 'list', values: p.flags },
     { name: 'code', kind: 'list', values: p.code }
   ]);
-  return { programs, pool: p.pool.section, lexemeSets: encodeSection([{ name: 'lexemes', kind: 'list', values: p.lexemeSets }]) };
+  const indexRows = [...p.index.entries()].map(([key, programs]) => {
+    const [stage, direction, channel, input] = key.split('|');
+    return { stage: RULE_STAGES.indexOf(stage as typeof RULE_STAGES[number]), direction: RULE_DIRECTIONS.indexOf(direction as typeof RULE_DIRECTIONS[number]), channel: CHANNELS.indexOf(channel as typeof CHANNELS[number]), input: Number(input), programs };
+  }).sort((a, b) => a.stage - b.stage || a.direction - b.direction || a.channel - b.channel || a.input - b.input);
+  const predicates = encodeSection([
+    { name: 'bindingGroup', kind: 'list', values: p.predicates.map((x) => bytesOf(x.bindingGroup ?? '')) },
+    { name: 'bindingContext', kind: 'list', values: p.predicates.map((x) => bytesOf(x.bindingContext ?? '')) },
+    { name: 'constraint', kind: 'list', values: p.predicates.map((x) => bytesOf(x.constraint ?? '')) },
+    { name: 'usage', kind: 'list', values: p.predicates.map((x) => bytesOf(x.usage ?? '')) },
+    { name: 'period', kind: 'list', values: p.predicates.map((x) => bytesOf(x.period ?? '')) },
+    { name: 'sense', kind: 'list', values: p.predicates.map((x) => bytesOf(x.sense ?? '')) }
+  ]);
+  const meta = encodeSection([
+    { name: 'profileIds', kind: 'list', values: PROFILE_IDS.map(bytesOf) },
+    { name: 'profileBits', kind: 'scalar', values: PROFILE_IDS.map((profile) => p.profileBits[profile] ?? 0) },
+    { name: 'mechanisms', kind: 'list', values: p.mechanisms.map(bytesOf) }
+  ]);
+  return {
+    programs,
+    pool: p.pool.section,
+    index: encodeSection([
+      { name: 'stage', kind: 'scalar', values: indexRows.map((x) => x.stage) },
+      { name: 'direction', kind: 'scalar', values: indexRows.map((x) => x.direction) },
+      { name: 'channel', kind: 'scalar', values: indexRows.map((x) => x.channel) },
+      { name: 'input', kind: 'scalar', values: indexRows.map((x) => x.input) },
+      { name: 'programs', kind: 'list', values: indexRows.map((x) => x.programs) }
+    ]),
+    predicates,
+    lexemeSets: encodeSection([
+      { name: 'lexemes', kind: 'list', values: p.lexemeSets },
+      { name: 'mode', kind: 'scalar', values: p.lexemeSetModes.map((mode) => ({ all: 0, some: 1, none: 2 }[mode])) }
+    ]),
+    meta
+  };
 }
 
 /** Runtime view over the compiled program arrays (the same accessors the binary sections give). */
@@ -167,7 +207,7 @@ export function programView(p: CompiledPrograms) {
 
 export function createVM(p: CompiledPrograms, registry: SymbolRegistry) {
   const pool = createSequencePool(decodeSection(p.pool.section), registry.atoms);
-  return createRuleVM({ programs: programView(p), pool, predicates: p.predicates, profileBits: p.profileBits, lexemeSets: p.lexemeSets, mechanismCount: p.mechanisms.length });
+  return createRuleVM({ programs: programView(p), pool, predicates: p.predicates, profileBits: p.profileBits, lexemeSets: p.lexemeSets, lexemeSetModes: p.lexemeSetModes, mechanismCount: p.mechanisms.length });
 }
 
 export function summarizePrograms(p: CompiledPrograms, ir: RuleIR) {
@@ -182,8 +222,8 @@ export function summarizePrograms(p: CompiledPrograms, ir: RuleIR) {
     bytecodePrograms: p.direct.filter((d) => !d).length,
     codeWords, predicates: p.predicates.length, mechanisms: p.mechanisms.length, lexemeSets: p.lexemeSets.length,
     sequences: p.pool.sequences.length, indexKeys: p.index.size,
-    sections: { programs: size(s.programs), pool: size(s.pool), lexemeSets: size(s.lexemeSets) },
-    digest: createHash('sha256').update(s.programs).update(s.pool).update(s.lexemeSets).digest('hex')
+    sections: { programs: size(s.programs), pool: size(s.pool), index: size(s.index), predicates: size(s.predicates), lexemeSets: size(s.lexemeSets), meta: size(s.meta) },
+    digest: createHash('sha256').update(s.programs).update(s.pool).update(s.index).update(s.predicates).update(s.lexemeSets).update(s.meta).digest('hex')
   };
 }
 

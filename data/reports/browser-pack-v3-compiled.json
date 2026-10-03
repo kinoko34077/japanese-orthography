@@ -2,12 +2,12 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "76a70bd062da7d6c760269ef444be985c8ba9272838180bd373b0cb8db5c8c87",
+  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
   "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
   "totals": {
-    "sections": 1836,
-    "bytes": 168903000,
-    "gzipBytes": 65253347
+    "sections": 1842,
+    "bytes": 183452860,
+    "gzipBytes": 72084139
   },
   "byLoading": {
     "eager": {
@@ -21,9 +21,9 @@
       "gzipBytes": 24482170
     },
     "on-demand": {
-      "sections": 1346,
-      "bytes": 94802112,
-      "gzipBytes": 40556623
+      "sections": 1352,
+      "bytes": 109351972,
+      "gzipBytes": 47387415
     }
   },
   "byKind": {
@@ -87,10 +87,40 @@
       "bytes": 21976988,
       "gzipBytes": 9287394
     },
+    "rule-lexeme-sets": {
+      "sections": 1,
+      "bytes": 4900,
+      "gzipBytes": 2946
+    },
+    "rule-predicates": {
+      "sections": 1,
+      "bytes": 194040,
+      "gzipBytes": 14901
+    },
+    "rule-program-index": {
+      "sections": 1,
+      "bytes": 2708064,
+      "gzipBytes": 1441367
+    },
+    "rule-programs": {
+      "sections": 1,
+      "bytes": 6135812,
+      "gzipBytes": 2741434
+    },
+    "rule-runtime-meta": {
+      "sections": 1,
+      "bytes": 292,
+      "gzipBytes": 198
+    },
     "rules": {
       "sections": 1,
       "bytes": 110092,
       "gzipBytes": 31329
+    },
+    "sequence-pool": {
+      "sections": 1,
+      "bytes": 5506752,
+      "gzipBytes": 2629946
     },
     "shard-directory": {
       "sections": 1,

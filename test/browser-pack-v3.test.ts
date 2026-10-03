@@ -46,7 +46,7 @@ test('the v3 manifest validates: same sections as v2 plus an eager symbol regist
   assert.match(m.symbolRegistry!.digest, /^[0-9a-f]{64}$/u);
   assert.match(m.ruleRuntime!.programDigest, /^[0-9a-f]{64}$/u);
   assert.match(m.evidence!.aggregateDigest, /^[0-9a-f]{64}$/u);
-  const v3Only = new Set(['symbol-registry', 'evidence-map', 'program-evidence']);
+  const v3Only = new Set(['symbol-registry', 'evidence-map', 'program-evidence', 'sequence-pool', 'rule-programs', 'rule-program-index', 'rule-predicates', 'rule-lexeme-sets', 'rule-runtime-meta']);
   assert.deepEqual(m.sections.filter((s) => !v3Only.has(s.kind)).map((s) => s.sectionId).sort(), v2.manifest.sections.filter((s) => s.kind !== 'provenance-index').map((s) => s.sectionId).sort());
   assert.equal(m.sections.find((s) => s.kind === 'symbol-registry')!.loading, 'eager');
   assert.notEqual(m.packDigest, v2.manifest.packDigest);
@@ -100,8 +100,12 @@ test('the committed v3 lock and reports show the accepted pack shrinking without
   assert.equal(m3.canonicalGraphSha256, m2.canonicalGraphSha256, 'same canonical knowledge');
   assert.equal(c3.packDigest, m3.packDigest);
   assert.equal(x3.packDigest, m3.packDigest);
-  // the hot pack (what a conversion can fetch) shrinks; cold evidence (#211 G) is lazy and separate
-  const hot = (c: any) => c.byLoading.eager.bytes + c.byLoading['on-demand'].bytes;
+  // The legacy v3 hot payload still shrinks; R6 adds a separate on-demand executor payload.
+  // Cold evidence (#211 G) remains lazy and separate from both measurements.
+  const executorKinds = ['sequence-pool', 'rule-programs', 'rule-program-index', 'rule-predicates', 'rule-lexeme-sets', 'rule-runtime-meta'];
+  const executorBytes = (c: any) => executorKinds.reduce((n, kind) => n + (c.byKind[kind]?.bytes ?? 0), 0);
+  const hot = (c: any) => c.byLoading.eager.bytes + c.byLoading['on-demand'].bytes - executorBytes(c);
   assert.ok(hot(c3) < hot(c2));
+  assert.ok(executorBytes(c3) > 0);
   assert.ok(x3.runs.short.coldFirstResult.bytes < x2.runs.short.coldFirstResult.bytes);
 });
