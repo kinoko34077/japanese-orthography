@@ -110,22 +110,22 @@
         "requests": 9,
         "bytes": 537752,
         "gzipBytes": 176057,
-        "openMs": 167
+        "openMs": 127
       },
       "coldFirstResult": {
         "requests": 68,
         "bytes": 4302000,
         "gzipBytes": 1748228,
-        "ms": 836
+        "ms": 838
       },
       "warmRepeat": {
         "requests": 0,
         "ms": 23
       },
-      "detailLatencyMs": 13,
-      "unitDetailLatencyMs": 186,
+      "detailLatencyMs": 8,
+      "unitDetailLatencyMs": 157,
       "residentArrayBufferBytes": 7949092,
-      "jsHeapDeltaBytes": 12362872,
+      "jsHeapDeltaBytes": 12297416,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -136,22 +136,22 @@
         "requests": 9,
         "bytes": 537752,
         "gzipBytes": 176057,
-        "openMs": 149
+        "openMs": 96
       },
       "coldFirstResult": {
         "requests": 142,
         "bytes": 8888024,
         "gzipBytes": 3567615,
-        "ms": 1331
+        "ms": 1275
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 59
+        "ms": 65
       },
       "detailLatencyMs": 7,
-      "unitDetailLatencyMs": 49,
+      "unitDetailLatencyMs": 47,
       "residentArrayBufferBytes": 10378568,
-      "jsHeapDeltaBytes": 10037880,
+      "jsHeapDeltaBytes": 10039680,
       "spans": 7,
       "inspectableUnits": 23
     }

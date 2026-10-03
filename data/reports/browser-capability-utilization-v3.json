@@ -2,10 +2,10 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization-v3",
   "owner": "japanese-orthography#211 I",
-  "packDigest": "4f41dd7a6b64af1aa42d7b84682e86157018ffb28cce35bb43f77b31e96a4d75",
+  "packDigest": "097e75614728d9b64966afd8b97498ca6e077ed0dbd23ad63dcfd629300fd23e",
   "oracle": {
     "report": "data/reports/browser-capability-utilization-v1.json",
-    "packDigest": "50b188e79d43ebb6d07950936df7eee9064c52041233a48d5cb35721bf04f3df"
+    "packDigest": "d88ad330cea31708773affe42f6040394dfd1f2648fcb682fbfdf54de877eead"
   },
   "rows": [
     {
@@ -34,7 +34,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 109288
       },
       "v1": {
@@ -81,8 +81,8 @@
         "onDemand": 9
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 476956
+        "eager": 534936,
+        "onDemand": 443044
       },
       "v1": {
         "renderedText": "學校",
@@ -128,8 +128,8 @@
         "onDemand": 9
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 476956
+        "eager": 534936,
+        "onDemand": 443044
       },
       "v1": {
         "renderedText": "學校",
@@ -165,7 +165,7 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 224720
       },
       "v1": {
@@ -208,11 +208,11 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 12
+        "onDemand": 13
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 639292
+        "eager": 534936,
+        "onDemand": 687160
       },
       "v1": {
         "renderedText": "がくかう",
@@ -254,11 +254,11 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 12
+        "onDemand": 13
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 639292
+        "eager": 534936,
+        "onDemand": 687160
       },
       "v1": {
         "renderedText": "がくかう",
@@ -295,7 +295,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 108136
       },
       "v1": {
@@ -342,8 +342,8 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1030080
+        "eager": 534936,
+        "onDemand": 996428
       },
       "v1": {
         "renderedText": "今日",
@@ -389,8 +389,8 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1030080
+        "eager": 534936,
+        "onDemand": 996428
       },
       "v1": {
         "renderedText": "今日",
@@ -427,7 +427,7 @@
         "onDemand": 3
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 190744
       },
       "v1": {
@@ -474,8 +474,8 @@
         "onDemand": 10
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 513464
+        "eager": 534936,
+        "onDemand": 510344
       },
       "v1": {
         "renderedText": "ドイツ",
@@ -521,8 +521,8 @@
         "onDemand": 10
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 513464
+        "eager": 534936,
+        "onDemand": 510344
       },
       "v1": {
         "renderedText": "ドイツ",
@@ -559,7 +559,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 115360
       },
       "v1": {
@@ -603,11 +603,11 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 8
+        "onDemand": 7
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 429916
+        "eager": 534936,
+        "onDemand": 375548
       },
       "v1": {
         "renderedText": "みる",
@@ -650,11 +650,11 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 8
+        "onDemand": 7
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 429916
+        "eager": 534936,
+        "onDemand": 375548
       },
       "v1": {
         "renderedText": "みる",
@@ -691,7 +691,7 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 225432
       },
       "v1": {
@@ -735,11 +735,11 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 13
+        "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 685380
+        "eager": 534936,
+        "onDemand": 700716
       },
       "v1": {
         "renderedText": "分かる",
@@ -782,11 +782,11 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 13
+        "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 685380
+        "eager": 534936,
+        "onDemand": 700716
       },
       "v1": {
         "renderedText": "分る",
@@ -823,7 +823,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 106784
       },
       "v1": {
@@ -870,8 +870,8 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1087088
+        "eager": 534936,
+        "onDemand": 1055836
       },
       "v1": {
         "renderedText": "台風",
@@ -917,8 +917,8 @@
         "onDemand": 19
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1087088
+        "eager": 534936,
+        "onDemand": 1055836
       },
       "v1": {
         "renderedText": "台風",
@@ -955,7 +955,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 108056
       },
       "v1": {
@@ -1002,8 +1002,8 @@
         "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 750820
+        "eager": 534936,
+        "onDemand": 717980
       },
       "v1": {
         "renderedText": "装丁",
@@ -1049,8 +1049,8 @@
         "onDemand": 14
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 750820
+        "eager": 534936,
+        "onDemand": 717980
       },
       "v1": {
         "renderedText": "装丁",
@@ -1086,7 +1086,7 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 402048
       },
       "v1": {
@@ -1129,11 +1129,11 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 21
+        "onDemand": 22
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1023448
+        "eager": 534936,
+        "onDemand": 1073500
       },
       "v1": {
         "renderedText": "｜學校《がくかう》",
@@ -1175,11 +1175,11 @@
       "inspectableUnchangedUnits": 0,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 21
+        "onDemand": 22
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1023448
+        "eager": 534936,
+        "onDemand": 1073500
       },
       "v1": {
         "renderedText": "｜學校《がくかう》",
@@ -1215,7 +1215,7 @@
         "onDemand": 7
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 344760
       },
       "v1": {
@@ -1261,8 +1261,8 @@
         "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1364632
+        "eager": 534936,
+        "onDemand": 1361260
       },
       "v1": {
         "renderedText": "｜今日《けふ》",
@@ -1307,8 +1307,8 @@
         "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1364632
+        "eager": 534936,
+        "onDemand": 1361260
       },
       "v1": {
         "renderedText": "｜今日《けふ》",
@@ -1347,7 +1347,7 @@
         "onDemand": 6
       },
       "transferredBytes": {
-        "eager": 530632,
+        "eager": 534936,
         "onDemand": 326552
       },
       "v1": {
@@ -1384,11 +1384,11 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 25
+        "onDemand": 24
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1348736
+        "eager": 534936,
+        "onDemand": 1258796
       },
       "v1": {
         "renderedText": "abc 😀 熔接 𠮷野家 zzz",
@@ -1424,11 +1424,11 @@
       "inspectableUnchangedUnits": 1,
       "sectionRequests": {
         "eager": 10,
-        "onDemand": 25
+        "onDemand": 24
       },
       "transferredBytes": {
-        "eager": 530632,
-        "onDemand": 1348736
+        "eager": 534936,
+        "onDemand": 1258796
       },
       "v1": {
         "renderedText": "abc 😀 熔接 𠮷野家 zzz",

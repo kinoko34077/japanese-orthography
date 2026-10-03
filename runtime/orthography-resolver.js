@@ -558,7 +558,9 @@
       const surface = unit?.historical?.surface ?? unit?.sourceSurface ?? unit?.sourceText ?? "";
       const historicalKana = unit?.historical?.kana ?? null;
       const displayReading = unit?.displayReading?.value ?? unit?.reading?.modernSurface ?? null;
-      const rubyReading = historicalKana ?? displayReading;
+      // A modern-only unit may expose its lexical reading as Ruby, but a historical
+      // route with no admitted historical kana must not invent a modern Ruby fallback.
+      const rubyReading = historicalKana ?? (unit?.historical?.route ? null : displayReading);
       if (mode === "plain" || !rubyReading) {
         return surface;
       }
