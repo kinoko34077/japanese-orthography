@@ -29,6 +29,10 @@
   const DIRECTIONALITIES = ["forward_only", "reverse_traversable", "forward_infer_reverse"];
   const LOSSINESS = ["lossless", "many_to_one", "one_to_many", "contextual"];
   const FLAGS = { historical: 1, modern: 2, candidate: 4, contextual: 8, safety: 16, ateji: 32 };
+  const V3_EVIDENCE_SCHEMA_VERSION = "1";
+  const V3_RULE_ISA_VERSION = "rule-program-isa-v1";
+  const V3_RULE_FORMAT_VERSION = "rule-program-format-v1";
+  const V3_RULE_COMPILER_VERSION = "rule-program-compiler-v1";
 
   const compareText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
   const sortKeys = (value) => {
@@ -44,6 +48,22 @@
   };
   const sha256 = async (bytes) => toHex(await subtle().digest("SHA-256", bytes));
   const utf8 = new TextEncoder();
+
+  const assertDigest = (value, label) => {
+    if (typeof value !== "string" || !/^[0-9a-f]{64}$/u.test(value)) throw new TypeError(`${label} must be a sha256 hex digest`);
+  };
+  const validateV3Identity = (manifest) => {
+    if (manifest.compilerVersion !== "3") return;
+    const registry = manifest.symbolRegistry;
+    if (!registry || !Number.isInteger(registry.generation) || registry.generation < 1) throw new TypeError("BrowserPack: symbol registry identity is missing or incompatible");
+    assertDigest(registry.digest, "BrowserPack: symbol registry identity digest");
+    const runtime = manifest.ruleRuntime;
+    if (!runtime || runtime.isaVersion !== V3_RULE_ISA_VERSION || runtime.programFormatVersion !== V3_RULE_FORMAT_VERSION || runtime.compilerVersion !== V3_RULE_COMPILER_VERSION) throw new TypeError("BrowserPack: Rule runtime identity is missing or incompatible");
+    assertDigest(runtime.programDigest, "BrowserPack: rule runtime program digest");
+    const evidence = manifest.evidence;
+    if (!evidence || evidence.schemaVersion !== V3_EVIDENCE_SCHEMA_VERSION) throw new TypeError("BrowserPack: evidence identity is missing or incompatible");
+    assertDigest(evidence.aggregateDigest, "BrowserPack: evidence aggregate digest");
+  };
 
   // Same canonical identity as tools/browser-pack-model.ts browserPackIdentity().
   const packIdentity = async (manifest) => {
@@ -61,6 +81,7 @@
     if (manifest.runtimeContract?.schemaVersion !== SCHEMA_VERSION || manifest.runtimeContract?.externalOffsetUnit !== OFFSET_UNIT) {
       throw new TypeError("Unsupported BrowserPack runtime contract");
     }
+    validateV3Identity(manifest);
     if (typeof sectionProvider !== "function") throw new TypeError("openBrowserPack requires a section provider");
     if ((await packIdentity(manifest)) !== manifest.packDigest) throw new Error("BrowserPack manifest digest mismatch");
 
@@ -100,6 +121,14 @@
       const registry = await fetchVerified("symbol-registry");
       const atoms = [];
       for (let i = 0; i < registry.rowCount("atoms"); i += 1) atoms.push(registry.string("atoms", i));
+      if (manifest.compilerVersion === "3") {
+        const generation = registry.value("generation", 0);
+        if (generation !== manifest.symbolRegistry.generation) throw new Error("BrowserPack: Symbol Registry generation mismatch");
+        const tombstones = registry.rowCount("tombstones") ? Array.from(registry.columns.tombstones.values) : [];
+        const identity = JSON.stringify({ schemaVersion: "1", generation, atoms, tombstones: [...tombstones].sort((a, b) => a - b) });
+        const digest = await sha256(utf8.encode(identity));
+        if (digest !== manifest.symbolRegistry.digest) throw new Error("BrowserPack: Symbol Registry semantic identity mismatch");
+      }
       decodeOptions = { atoms };
       loadedEager.set("symbol-registry", registry);
     }

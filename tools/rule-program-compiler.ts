@@ -25,8 +25,21 @@ const { decodeSection } = require('../runtime/browser-pack-binary.js');
 const { createSequencePool } = require('../runtime/sequence-pool-runtime.js');
 
 export const RULE_PROGRAM_SUMMARY = 'data/reports/rule-program-summary.json';
+export const RULE_PROGRAM_ISA_VERSION = 'rule-program-isa-v1';
+export const RULE_PROGRAM_FORMAT_VERSION = 'rule-program-format-v1';
+export const RULE_PROGRAM_COMPILER_VERSION = 'rule-program-compiler-v1';
 export const PROFILE_IDS = ['modern', 'historical', 'kinotch-fixed'] as const;
 export const CHANNELS = ['surface', 'reading'] as const;
+
+/** Semantic identity of the Rule Program input, independent of pack sharding and section bytes. */
+export function ruleProgramDigest(ir: RuleIR): string {
+  return createHash('sha256').update(JSON.stringify({
+    isaVersion: RULE_PROGRAM_ISA_VERSION,
+    formatVersion: RULE_PROGRAM_FORMAT_VERSION,
+    compilerVersion: RULE_PROGRAM_COMPILER_VERSION,
+    irDigest: ir.digest
+  })).digest('hex');
+}
 
 export interface CompiledPrograms {
   count: number;

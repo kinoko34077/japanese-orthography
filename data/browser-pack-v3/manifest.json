@@ -1,9 +1,13 @@
 {
   "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
   "compilerVersion": "3",
+  "evidence": {
+    "aggregateDigest": "9992b7291de1739b452c5835c57433653552d7800520e26b6a3d2650f0c3d4fb",
+    "schemaVersion": "1"
+  },
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "097e75614728d9b64966afd8b97498ca6e077ed0dbd23ad63dcfd629300fd23e",
+  "packDigest": "76a70bd062da7d6c760269ef444be985c8ba9272838180bd373b0cb8db5c8c87",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -21,6 +25,12 @@
       "profileId": "modern"
     }
   ],
+  "ruleRuntime": {
+    "compilerVersion": "rule-program-compiler-v1",
+    "isaVersion": "rule-program-isa-v1",
+    "programDigest": "60ff096730d3b7fcf22e6c351f48f817f80e8ad52f549843298ad1961875a4fc",
+    "programFormatVersion": "rule-program-format-v1"
+  },
   "runtimeContract": {
     "externalOffsetUnit": "utf16-code-unit",
     "schemaVersion": "1"
@@ -32632,14 +32642,14 @@
       }
     },
     {
-      "byteLength": 45704,
+      "byteLength": 45740,
       "encoding": "binary-columnar",
       "kind": "symbol-registry",
       "loading": "eager",
       "path": "symbol-registry.bin",
       "rowCount": 6520,
       "sectionId": "symbol-registry",
-      "sha256": "7f60d7fdbf45c475024bd62179e3d9e348c1e38704f9ece532f62ab2a464b554"
+      "sha256": "8af6304f18362dcd09486466943cd7d5a7bf7b2f7795bd1d548e35ffec77c10d"
     },
     {
       "byteLength": 11974,
@@ -32651,5 +32661,9 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "817f7eda140e68f42df0c240941eb4035a3c3c0900c9baa34f6dd30ecec37c31"
+  "sourceSetDigest": "817f7eda140e68f42df0c240941eb4035a3c3c0900c9baa34f6dd30ecec37c31",
+  "symbolRegistry": {
+    "digest": "360af312e92abaeb38029de3339a7a51c994853b94ac10df0f9924d5f06c0745",
+    "generation": 1
+  }
 }

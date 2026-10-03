@@ -27,15 +27,27 @@
       const context = binding.contextRefs.find((r) => r.startsWith("context:usage:"))?.slice("context:usage:".length) ?? null;
       const character = symbol.slice("symbol:".length);
       const key = JSON.stringify([character, rule.to[0], context]);
-      const entry = grouped.get(key) ?? { character, modernReading: rule.to[0], context, historicalReadings: [], evidenceRefs: [] };
+      const entry = grouped.get(key) ?? { character, modernReading: rule.to[0], context, historicalReadings: [], evidenceRefs: [], sourceRefs: [], canonicalIds: [] };
       if (!entry.historicalReadings.includes(rule.from[0])) entry.historicalReadings.push(rule.from[0]);
-      for (const ref of binding.evidenceRefs) if (!entry.evidenceRefs.includes(ref)) entry.evidenceRefs.push(ref);
+      for (const ref of [...binding.evidenceRefs, ...rule.evidenceRefs]) if (!entry.evidenceRefs.includes(ref)) entry.evidenceRefs.push(ref);
+      for (const ref of [...binding.sourceRefs, ...rule.sourceRefs]) if (!entry.sourceRefs.includes(ref)) entry.sourceRefs.push(ref);
+      for (const id of [binding.id, rule.id]) if (!entry.canonicalIds.includes(id)) entry.canonicalIds.push(id);
       grouped.set(key, entry);
     }
     const relations = [...grouped.values()];
     const reconstructor = relations.length && HistoricalSino?.createSinoComponentReconstructor ? HistoricalSino.createSinoComponentReconstructor(relations) : null;
-    sinoReconstructors.set(pack, reconstructor);
-    return reconstructor;
+    const metadataFor = (components) => {
+      const metadata = { sourceRefs: [], evidenceRefs: [], canonicalIds: [] };
+      for (const component of components ?? []) {
+        const entry = grouped.get(JSON.stringify([component.surface, component.modernReading, null]));
+        if (!entry) continue;
+        for (const key of ['sourceRefs', 'evidenceRefs', 'canonicalIds']) for (const value of entry[key]) if (!metadata[key].includes(value)) metadata[key].push(value);
+      }
+      return metadata;
+    };
+    const result = { reconstructWord: (...args) => reconstructor?.reconstructWord(...args) ?? null, metadataFor };
+    sinoReconstructors.set(pack, result);
+    return result;
   };
 
   // Browser resolver adapter (#196 D). The accepted OrthographyResolver is the single semantic
@@ -185,6 +197,13 @@
       if ((f.contextual || f.safety) && !details.has(f.detailRef)) details.set(f.detailRef, pack.loadDetail(f.detailRef));
     }
     for (const [ref, promise] of details) details.set(ref, await promise);
+    // Historical lexical readings carry only a fact index in the hot lexical layer. Load the
+    // corresponding detail rows now so diagnostics can retain literal source identity without
+    // changing the enumerable lexical candidate shape.
+    for (const m of factMatches) for (const f of m.facts) {
+      if (f.historical && !details.has(f.detailRef)) details.set(f.detailRef, pack.loadDetail(f.detailRef));
+    }
+    for (const [ref, promise] of details) details.set(ref, await promise);
 
     const kanjiRelation = (f) => f.kind === "form_relation" && f.viaTarget && f.surface !== f.target && !(isKana(f.surface) && isKana(f.target));
     const kanaRelation = (f) => f.kind === "form_relation" && f.viaTarget && f.surface !== f.target && isKana(f.surface) && isKana(f.target) && f.historical;
@@ -223,6 +242,27 @@
       ...(inflected.get(surface) ?? [])
     ];
     const sino = sinoFor(pack);
+    const historicalFactMetadata = (candidate, surface) => {
+      const metadata = { sourceRefs: [], evidenceRefs: [], canonicalIds: [] };
+      const readings = new Set((candidate.historicalReadings ?? []).filter((h) => h.surface === surface).map((h) => `${h.reading}|${h.factIndex}`));
+      for (const fact of facts(surface).filter((f) => f.historical && readings.has(`${f.reading}|${f.factIndex}`))) {
+        const detail = details.get(fact.detailRef);
+        if (!detail) continue;
+        for (const key of ['sourceRefs', 'evidenceRefs']) for (const value of detail[key]) if (!metadata[key].includes(value)) metadata[key].push(value);
+        if (!metadata.canonicalIds.includes(detail.factId)) metadata.canonicalIds.push(detail.factId);
+      }
+      return metadata;
+    };
+    const surfaceFactMetadata = (surface, readings) => {
+      const metadata = { sourceRefs: [], evidenceRefs: [], canonicalIds: [] };
+      for (const fact of facts(surface).filter((f) => f.kind === 'literal_reading' && f.historical && readings.includes(f.reading))) {
+        const detail = details.get(fact.detailRef);
+        if (!detail) continue;
+        for (const key of ['sourceRefs', 'evidenceRefs']) for (const value of detail[key]) if (!metadata[key].includes(value)) metadata[key].push(value);
+        if (!metadata.canonicalIds.includes(detail.factId)) metadata.canonicalIds.push(detail.factId);
+      }
+      return metadata;
+    };
     const kanaHistorical = (reading) => policy.period === "historical" ? uniq(facts(reading).filter(kanaRelation).map((f) => f.surface)) : [];
     const resolver = OrthographyResolver.createResolver({
       lexicalLookup: lexicalCandidates,
@@ -234,12 +274,13 @@
         );
         const admitted = bound.filter((h) => !h.candidate);
         const admittedReadings = uniq(admitted.map((h) => h.reading));
+        const literalMetadata = historicalFactMetadata(candidate, surface);
         if (admittedReadings.length === 1) {
-          return { route: admitted[0].route ?? "native", reading: admittedReadings[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: uniq(admitted.map((h) => `fact#${h.factIndex}`)) };
+          return { route: admitted[0].route ?? "native", basis: "literal_whole_word", reading: admittedReadings[0], surface, requiresMorphology: false, requiredMorphology: null, ...literalMetadata, evidenceRefs: uniq([...admitted.map((h) => `fact#${h.factIndex}`), ...literalMetadata.evidenceRefs]) };
         }
-        if (admittedReadings.length > 1) return { status: "candidates", route: admitted[0].route ?? "native", readings: admittedReadings, evidenceRefs: uniq(admitted.map((h) => `fact#${h.factIndex}`)) };
+        if (admittedReadings.length > 1) return { status: "candidates", route: admitted[0].route ?? "native", basis: "literal_whole_word", readings: admittedReadings, ...literalMetadata, evidenceRefs: uniq([...admitted.map((h) => `fact#${h.factIndex}`), ...literalMetadata.evidenceRefs]) };
         const boundCandidates = uniq(bound.map((h) => h.reading));
-        if (boundCandidates.length) return { status: "candidates", route: bound[0].route ?? "native", readings: boundCandidates, evidenceRefs: uniq(bound.map((h) => `fact#${h.factIndex}`)) };
+        if (boundCandidates.length) return { status: "candidates", route: bound[0].route ?? "native", basis: "literal_whole_word", readings: boundCandidates, ...literalMetadata, evidenceRefs: uniq([...bound.map((h) => `fact#${h.factIndex}`), ...literalMetadata.evidenceRefs]) };
         if (typeof candidate.reading !== "string") return null;
         // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
         // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
@@ -250,13 +291,14 @@
         if (sinoScope && candidate.lexicalOrigin === "sino") {
           const reconstructed = sino.reconstructWord(surface, candidate.reading);
           if (reconstructed?.status === "resolved") {
+            const metadata = sino.metadataFor(reconstructed.components);
             return {
-              route: "sino", reading: reconstructed.historicalReading, surface, requiresMorphology: false, requiredMorphology: null,
+              route: "sino", basis: "sino_component_reconstruction", reading: reconstructed.historicalReading, surface, requiresMorphology: false, requiredMorphology: null,
               components: reconstructed.components.map((c) => ({ lexicalIdentity: null, surface: c.surface, lexicalReading: c.modernReading, lexicalOrigin: "sino", readingClass: "on", historicalKana: c.historicalReading, evidenceRefs: c.evidenceRefs })),
-              evidenceRefs: reconstructed.evidenceRefs
+              ...metadata, evidenceRefs: uniq([...reconstructed.evidenceRefs, ...metadata.evidenceRefs])
             };
           }
-          if (reconstructed?.status === "candidates") return { status: "candidates", route: "sino", readings: reconstructed.historicalReadings, evidenceRefs: [] };
+          if (reconstructed?.status === "candidates") return { status: "candidates", route: "sino", basis: "sino_component_reconstruction", readings: reconstructed.historicalReadings, evidenceRefs: [] };
         }
         // surface-keyed historical reading, accepted only when the native kana relation of the
         // candidate's own modern reading names the same historical kana (two sources agree)
@@ -264,10 +306,11 @@
         const admittedSurfaceReadings = uniq(surfaceFacts.filter((f) => !f.candidate).map((f) => f.reading));
         const agreed = admittedSurfaceReadings.filter((r) => kanaHistorical(candidate.reading).includes(r));
         if (agreed.length === 1) {
-          return { route: "native", reading: agreed[0], surface, requiresMorphology: false, requiredMorphology: null, evidenceRefs: [`surface:${surface}`, `kana:${candidate.reading}>${agreed[0]}`] };
+          const metadata = surfaceFactMetadata(surface, [agreed[0]]);
+          return { route: "native", basis: "native_exact_surface", reading: agreed[0], surface, requiresMorphology: false, requiredMorphology: null, ...metadata, evidenceRefs: uniq([`surface:${surface}`, `kana:${candidate.reading}>${agreed[0]}`, ...metadata.evidenceRefs]) };
         }
         const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
-        if (candidateReadings.length) return { status: "candidates", route: "native", readings: candidateReadings, evidenceRefs: [`surface:${surface}`] };
+        if (candidateReadings.length) return { status: "candidates", route: "native", basis: "native_exact_surface", readings: candidateReadings, ...surfaceFactMetadata(surface, candidateReadings), evidenceRefs: [`surface:${surface}`] };
         if (candidate.inflection) return { status: "unavailable", diagnostic: "historical_inflection_evidence_unavailable", evidenceRefs: [] };
         return sinoEvidenceUnavailable;
       },
@@ -385,6 +428,8 @@
       unit.outputs = outputs;
       const relationsHere = relations.filter((r) => r.match === surface);
       const authority = resolved.historical.contextualKanji.status === "resolved" ? "literal_fact"
+        : resolved.historical.basis === "sino_component_reconstruction" ? "source_rule"
+          : resolved.historical.basis === "literal_whole_word" || resolved.historical.basis === "native_exact_surface" ? "literal_fact"
         : resolved.historical.route && resolved.historical.kana && renderMode !== "plain" ? "literal_fact"
           : relationsHere.length && !relationsHere.some((r) => r.contextual) ? "literal_fact" : "source_rule";
       for (const output of outputs) {
@@ -471,6 +516,9 @@
         contextualCandidates: [...(h.contextualKanji?.candidates ?? [])],
         deterministicKanji: h.deterministicKanji ? { source: h.deterministicKanji.source, target: h.deterministicKanji.target } : null,
         candidateReadings: [...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])],
+        basis: h.basis ?? null,
+        sourceRefs: [...(h.sourceRefs ?? [])],
+        canonicalIds: [...(h.canonicalIds ?? [])],
         evidenceRefs: [...(h.evidenceRefs ?? [])],
         diagnostic: h.diagnostic ?? null
       }

@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
 const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
-const { expandUnitDetail } = require('../runtime/browser-diagnostic-contract.js');
+const { expandDetail, expandUnitDetail } = require('../runtime/browser-diagnostic-contract.js');
 const Inflection = require('../runtime/browser-inflection.js');
 
 const P = { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] };
@@ -105,6 +105,16 @@ test('Sino component reconstruction uses the accepted reconstructor over canonic
   assert.equal(unknownOrigin.unit.historical.diagnostic, 'sino_evidence_unavailable');
 
   // 法 (ほう) keeps the accepted はふ | ほふ ambiguity without usage context: candidates, no winner
+});
+
+test('R5 #236 diagnostics distinguish Sino reconstruction from literal source facts', async () => {
+  const { raw } = await whole('円周', 'ruby-whole-explicit');
+  const detail = await expandDetail(pack, raw, '0');
+  const candidate = detail.acceptedCandidates[0];
+  assert.equal(candidate.basis, 'sino_component_reconstruction');
+  assert.equal(candidate.authority, 'source_rule');
+  assert.ok(candidate.provenance.sourceRefs.length > 0);
+  assert.ok(candidate.provenance.canonicalIds.length > 0);
 });
 
 test('R4 #226 derives the deinflection scan bound from BrowserPack lexical capability', async () => {

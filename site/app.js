@@ -70,6 +70,7 @@
     if (c.fact?.id) parts.push(`事実: <code>${escapeHtml(c.fact.id)}</code>${c.fact.sourceCandidate ? "（出典上の別案）" : ""}`);
     if (c.rule?.id) parts.push(`規則: <code>${escapeHtml(c.rule.id)}</code>`);
     if (c.provenance) parts.push(`出典: ${(c.provenance.sourceRefs ?? []).map((s) => `<code>${escapeHtml(s)}</code>`).join(" ")}`);
+    if (c.evidence?.programCount > c.evidence.programs.length) parts.push(`Program証拠: ${c.evidence.programs.length}/${c.evidence.programCount} 件（追加取得可能）`);
     return parts.join("<br>");
   };
 
