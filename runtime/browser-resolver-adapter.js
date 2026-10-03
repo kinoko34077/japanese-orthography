@@ -264,6 +264,15 @@
       return metadata;
     };
     const kanaHistorical = (reading) => policy.period === "historical" ? uniq(facts(reading).filter(kanaRelation).map((f) => f.surface)) : [];
+    const historicalSurfaceCandidateLookup = (surface) => {
+      if (policy.period !== "historical") return null;
+      const rows = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
+      const admitted = uniq(rows.filter((f) => !f.candidate).map((f) => f.reading));
+      if (admitted.length === 1) return { status: "resolved", route: "native", reading: admitted[0], surface, ...surfaceFactMetadata(surface, [admitted[0]]), evidenceRefs: [`surface:${surface}`] };
+      const readings = uniq(rows.map((f) => f.reading));
+      if (readings.length) return { status: "candidates", route: "native", surfaceCandidates: [surface], readingCandidates: readings, ...surfaceFactMetadata(surface, readings), evidenceRefs: [`surface:${surface}`] };
+      return null;
+    };
     const resolver = OrthographyResolver.createResolver({
       lexicalLookup: lexicalCandidates,
       readingLookup: (reading) => lexical.lookupReadingSync(reading),
@@ -281,6 +290,13 @@
         if (admittedReadings.length > 1) return { status: "candidates", route: admitted[0].route ?? "native", basis: "literal_whole_word", readings: admittedReadings, ...literalMetadata, evidenceRefs: uniq([...admitted.map((h) => `fact#${h.factIndex}`), ...literalMetadata.evidenceRefs]) };
         const boundCandidates = uniq(bound.map((h) => h.reading));
         if (boundCandidates.length) return { status: "candidates", route: bound[0].route ?? "native", basis: "literal_whole_word", readings: boundCandidates, ...literalMetadata, evidenceRefs: uniq([...bound.map((h) => `fact#${h.factIndex}`), ...literalMetadata.evidenceRefs]) };
+        // Surface-keyed historical candidate evidence is valid even when the lexical
+        // identity/modern reading is ambiguous. Do not discard #242 candidate rows by
+        // requiring a lexical winner before consulting the surface evidence.
+        const surfaceFacts = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
+        const admittedSurfaceReadings = uniq(surfaceFacts.filter((f) => !f.candidate).map((f) => f.reading));
+        const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
+        if (candidateReadings.length) return { status: "candidates", route: "native", basis: "native_exact_surface", readings: candidateReadings, ...surfaceFactMetadata(surface, candidateReadings), evidenceRefs: [`surface:${surface}`] };
         if (typeof candidate.reading !== "string") return null;
         // accepted 4.6E Sino component reconstruction for an all-Han surface whose whole reading
         // decomposes into on-readings of its characters (never for words UniDic marks native/loan)
@@ -302,28 +318,20 @@
         }
         // surface-keyed historical reading, accepted only when the native kana relation of the
         // candidate's own modern reading names the same historical kana (two sources agree)
-        const surfaceFacts = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
-        const admittedSurfaceReadings = uniq(surfaceFacts.filter((f) => !f.candidate).map((f) => f.reading));
         const agreed = admittedSurfaceReadings.filter((r) => kanaHistorical(candidate.reading).includes(r));
         if (agreed.length === 1) {
           const metadata = surfaceFactMetadata(surface, [agreed[0]]);
           return { route: "native", basis: "native_exact_surface", reading: agreed[0], surface, requiresMorphology: false, requiredMorphology: null, ...metadata, evidenceRefs: uniq([`surface:${surface}`, `kana:${candidate.reading}>${agreed[0]}`, ...metadata.evidenceRefs]) };
         }
-        const candidateReadings = uniq(surfaceFacts.filter((f) => f.candidate).map((f) => f.reading));
-        if (candidateReadings.length) return { status: "candidates", route: "native", basis: "native_exact_surface", readings: candidateReadings, ...surfaceFactMetadata(surface, candidateReadings), evidenceRefs: [`surface:${surface}`] };
         if (candidate.inflection) return { status: "unavailable", diagnostic: "historical_inflection_evidence_unavailable", evidenceRefs: [] };
         return sinoEvidenceUnavailable;
       },
       historicalSurfaceLookup: (surface) => {
         if (policy.period !== "historical") return null;
         if (lexical.lookupSurfaceSync(surface).length) return null; // the identity route decides
-        const rows = facts(surface).filter((f) => f.kind === "literal_reading" && f.historical && f.surface === surface);
-        const admitted = uniq(rows.filter((f) => !f.candidate).map((f) => f.reading));
-        if (admitted.length === 1) return { status: "resolved", route: "native", reading: admitted[0], surface, evidenceRefs: [`surface:${surface}`] };
-        const readings = uniq(rows.map((f) => f.reading));
-        if (readings.length) return { status: "candidates", route: "native", surfaceCandidates: [surface], readingCandidates: readings, evidenceRefs: [`surface:${surface}`] };
-        return null;
+        return historicalSurfaceCandidateLookup(surface);
       },
+      historicalSurfaceCandidateLookup,
       contextualRelations: relations,
       contextualSafety: safety,
       safeKanjiMap: activeSafeKanjiMap

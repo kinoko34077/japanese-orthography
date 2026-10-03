@@ -536,7 +536,32 @@
         return resolveSurfaceFallbackUnit(evidence, [], config);
       }
       if (candidates.length !== 1) {
-        return unresolvedUnit(evidence, candidates);
+        const unit = unresolvedUnit(evidence, candidates);
+        // A surface-keyed historical candidate is evidence for the written surface,
+        // not a lexical winner. Preserve it alongside every viable lexical candidate
+        // so ambiguous identities do not erase #242 candidate readings.
+        const surfaceLookup = config.historicalSurfaceCandidateLookup ?? config.historicalSurfaceLookup;
+        const surfaceDecision = typeof surfaceLookup === "function"
+          ? surfaceLookup(evidence.baseSurface)
+          : null;
+        if (surfaceDecision?.status !== "candidates") return unit;
+        return {
+          ...unit,
+          historical: {
+            ...unit.historical,
+            route: surfaceDecision.route ?? "native",
+            surface: surfaceDecision.surface ?? evidence.baseSurface,
+            disposition: "CANDIDATES",
+            sourceRefs: [...(surfaceDecision.sourceRefs ?? [])],
+            canonicalIds: [...(surfaceDecision.canonicalIds ?? [])],
+            evidenceRefs: [...(surfaceDecision.evidenceRefs ?? [])],
+            nativeCandidates: {
+              surfaces: [...(surfaceDecision.surfaceCandidates ?? [])],
+              readings: [...(surfaceDecision.readingCandidates ?? [])]
+            }
+          },
+          evidenceRefs: [...(surfaceDecision.evidenceRefs ?? [])]
+        };
       }
 
       const candidate = candidates[0];
