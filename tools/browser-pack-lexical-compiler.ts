@@ -37,7 +37,9 @@ export interface LexicalMorphologyRow {
   readonly pos: readonly string[];
   readonly conjugationType: string | null;
   readonly conjugationForm: string | null;
-  /** Reading this row belongs to (UniDic rows; JMdict POS rows are reading-independent). */
+  /** Optional written-form scope. Null means the row applies to every form of the lexeme. */
+  readonly surface?: string | null;
+  /** Optional reading scope. Null means the row applies to every reading of the lexeme. */
   readonly reading: string | null;
   /** UniDic goshu as the accepted LexicalOrigin vocabulary; null for JMdict rows. */
   readonly lexicalOrigin: string | null;
@@ -49,7 +51,7 @@ export interface LexemeModel {
   readonly headReading: string | null;
   readonly morphologyIds: number[];
   readonly forms: Array<{ surface: string; flags: number; factIndex: number }>;
-  readonly readings: Array<{ surface: string | null; reading: string; period: number; route: number; factIndex: number }>;
+  readonly readings: Array<{ surface: string | null; reading: string; basisReading: string | null; period: number; route: number; candidate: boolean; factIndex: number }>;
 }
 
 export interface LexicalModel {
@@ -60,7 +62,7 @@ export interface LexicalModel {
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
-const morphologyKey = (m: LexicalMorphologyRow) => JSON.stringify([m.source, m.pos, m.conjugationType, m.conjugationForm, m.reading, m.lexicalOrigin]);
+const morphologyKey = (m: LexicalMorphologyRow) => JSON.stringify([m.source, m.pos, m.conjugationType, m.conjugationForm, m.surface ?? null, m.reading, m.lexicalOrigin]);
 const routeOf = (sourceRefs: readonly string[]) => (sourceRefs.some((r) => r.startsWith('historical/sino') || r.startsWith('intake/phase46e')) ? 2 : sourceRefs.some((r) => r.startsWith('historical/native') || r.startsWith('intake/phase46d')) ? 1 : 0);
 const katakanaToHiragana = (text: string) => text.replace(/[ァ-ヶ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
 
@@ -75,8 +77,29 @@ export function jmdictLexemeMorphology(extract: readonly JmdictEntry[]): Map<str
   const keys = lexemeKeys(extract);
   const out = new Map<string, LexicalMorphologyRow[]>();
   for (const entry of extract) {
-    const pos = [...new Set(entry.s.flatMap((s) => s.pos ?? []))].sort(cmp);
-    if (pos.length) out.set(`lexeme:${keys.get(entry.seq)!}`, [{ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: null }]);
+    const ref = `lexeme:${keys.get(entry.seq)!}`;
+    const restricted = entry.s.some((s) => Boolean(s.stagk?.length || s.stagr?.length));
+    if (!restricted) {
+      const pos = [...new Set(entry.s.flatMap((s) => s.pos ?? []))].sort(cmp);
+      if (pos.length) out.set(ref, [{ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, surface: null, reading: null, lexicalOrigin: null }]);
+      continue;
+    }
+    const rows: LexicalMorphologyRow[] = [];
+    const add = (surface: string | null, reading: string) => {
+      const pos = [...new Set(entry.s
+        .filter((s) => (!s.stagk?.length || (surface !== null && s.stagk.includes(surface))) && (!s.stagr?.length || s.stagr.includes(reading)))
+        .flatMap((s) => s.pos ?? []))].sort(cmp);
+      if (pos.length) rows.push({ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, surface, reading, lexicalOrigin: null });
+    };
+    if (entry.k?.length) {
+      for (const k of entry.k) for (const r of entry.r) {
+        if (r.nokanji || (r.restr && !r.restr.includes(k.t))) continue;
+        add(k.t, r.t);
+      }
+    } else {
+      for (const r of entry.r) add(null, r.t);
+    }
+    if (rows.length) out.set(ref, rows);
   }
   return out;
 }
@@ -90,7 +113,7 @@ export function unidicLexemeMorphology(slice: UniDicSourceSlice, lexicalIdentiti
     const row: LexicalMorphologyRow = {
       source: 'unidic', pos: r.pos.filter((p) => p !== '*'),
       conjugationType: r.cType === '*' ? null : r.cType, conjugationForm: r.cForm === '*' ? null : r.cForm,
-      reading: katakanaToHiragana(r.kanaBase), lexicalOrigin: UNIDIC_ORIGINS[r.goshu] ?? 'unknown'
+      surface: r.orthBase, reading: katakanaToHiragana(r.kanaBase), lexicalOrigin: UNIDIC_ORIGINS[r.goshu] ?? 'unknown'
     };
     out.set(ref, [...(out.get(ref) ?? []), row]);
   }
@@ -116,7 +139,7 @@ export function buildLexicalModel(graph: OrthographyKnowledgeGraph, morphology: 
     for (const row of morphology.get(ref) ?? []) {
       const key = morphologyKey(row);
       let id = morphologyId.get(key);
-      if (id === undefined) { id = morphologies.length; morphologies.push({ ...row, pos: [...row.pos] }); morphologyId.set(key, id); }
+      if (id === undefined) { id = morphologies.length; morphologies.push({ ...row, surface: row.surface ?? null, pos: [...row.pos] }); morphologyId.set(key, id); }
       ids.add(id);
     }
     return { lexicalIdentity: ref, headSurface: head.surface, headReading: head.reading, morphologyIds: [...ids].sort((a, b) => a - b), forms: [], readings: [] };
@@ -130,8 +153,14 @@ export function buildLexicalModel(graph: OrthographyKnowledgeGraph, morphology: 
         for (const tag of fact.tags ?? []) if (tag in FORM_FLAGS && tag !== 'listed') flags |= FORM_FLAGS[tag as keyof typeof FORM_FLAGS];
         lexeme.forms.push({ surface: fact.surface, flags, factIndex });
       } else if (fact.kind === 'literal_reading' && fact.reading !== undefined) {
-        const period = fact.periodRefs?.includes('period:historical-kana') ? READING_PERIODS.historical : READING_PERIODS.modern;
-        lexeme.readings.push({ surface: fact.surface ?? null, reading: fact.reading, period, route: period === READING_PERIODS.historical ? routeOf(fact.sourceRefs) : 0, factIndex });
+        const historical = fact.periodRefs?.includes('period:historical-kana') ?? false;
+        const modern = fact.periodRefs?.includes('period:modern') ?? !historical;
+        const candidate = fact.tags?.includes('candidate') ?? false;
+        if (modern) lexeme.readings.push({ surface: fact.surface ?? null, reading: fact.reading, basisReading: null, period: READING_PERIODS.modern, route: 0, candidate, factIndex });
+        if (historical) lexeme.readings.push({
+          surface: fact.surface ?? null, reading: fact.reading, basisReading: fact.basisReading ?? null,
+          period: READING_PERIODS.historical, route: routeOf(fact.sourceRefs), candidate, factIndex
+        });
       }
     }
   });
@@ -140,7 +169,7 @@ export function buildLexicalModel(graph: OrthographyKnowledgeGraph, morphology: 
   const post = (index: Map<string, Set<number>>, key: string, id: number) => { let set = index.get(key); if (!set) index.set(key, (set = new Set())); set.add(id); };
   lexemes.forEach((lexeme, id) => {
     lexeme.forms.sort((a, b) => cmp(a.surface, b.surface) || a.factIndex - b.factIndex);
-    lexeme.readings.sort((a, b) => cmp(a.surface ?? '', b.surface ?? '') || a.period - b.period || cmp(a.reading, b.reading) || a.factIndex - b.factIndex);
+    lexeme.readings.sort((a, b) => cmp(a.surface ?? '', b.surface ?? '') || a.period - b.period || cmp(a.reading, b.reading) || cmp(a.basisReading ?? '', b.basisReading ?? '') || Number(a.candidate) - Number(b.candidate) || a.factIndex - b.factIndex);
     for (const form of lexeme.forms) post(surfaceIndex, form.surface, id);
     for (const reading of lexeme.readings) {
       if (reading.surface !== null) post(surfaceIndex, reading.surface, id);
@@ -187,12 +216,13 @@ export function postingPayload(kind: 'surface' | 'reading', key: string, lexeme:
     return {
       modern: uniqSorted(lexeme.readings.filter((r) => r.period === READING_PERIODS.modern && r.surface === key).map((r) => r.reading)),
       historical: historical.map((r) => r.reading), route: historical.map((r) => r.route), historicalFact: historical.map((r) => r.factIndex),
+      historicalBasis: historical.map((r) => r.basisReading), historicalCandidate: historical.map((r) => r.candidate),
       morphology: lexeme.morphologyIds
     };
   }
   return {
     modern: uniqSorted(lexeme.readings.filter((r) => r.reading === key).map((r) => r.surface)), // carrier surfaces of this reading
-    historical: [] as string[], route: [] as number[], historicalFact: [] as number[],
+    historical: [] as string[], route: [] as number[], historicalFact: [] as number[], historicalBasis: [] as Array<string | null>, historicalCandidate: [] as boolean[],
     morphology: lexeme.morphologyIds
   };
 }
@@ -210,7 +240,7 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
       const indexKind = kindIndex === 0 ? 'surface' : 'reading';
       const payloadBytes = (key: string, id: number) => {
         const p = postingPayload(indexKind, key, model.lexemes[id]!);
-        return 8 + model.lexemes[id]!.lexicalIdentity.length * 3 + (p.modern.length + p.historical.length * 3 + p.morphology.length) * 4;
+        return 8 + model.lexemes[id]!.lexicalIdentity.length * 3 + (p.modern.length + p.historical.length * 5 + p.morphology.length) * 4;
       };
       const shards = partitionIndex(index, options.indexShardBudgetBytes ?? 64 * 1024, payloadBytes);
       shards.forEach((entries, i) => {
@@ -225,8 +255,8 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
           { name: 'lexemes', kind: 'list', values: entries.map(([, ids]) => ids) },
           { name: 'pIdentity', kind: 'scalar', values: postings.map(({ id }) => s.id(model.lexemes[id]!.lexicalIdentity)) },
           { name: 'pModern', kind: 'list', values: postings.map(({ p }) => p.modern.map((v) => s.id(v))) },
-          // historical readings of this surface as (reading, route, factIndex) triplets; surface index only
-          ...(indexKind === 'surface' ? [{ name: 'pHistorical', kind: 'list' as const, values: postings.map(({ p }) => p.historical.flatMap((v, i) => [s.id(v), p.route[i]!, p.historicalFact[i]!])) }] : []),
+          // historical readings as (reading, route, factIndex, basisReading, candidate) tuples
+          ...(indexKind === 'surface' ? [{ name: 'pHistorical', kind: 'list' as const, values: postings.map(({ p }) => p.historical.flatMap((v, i) => [s.id(v), p.route[i]!, p.historicalFact[i]!, s.id(p.historicalBasis[i] ?? null), p.historicalCandidate[i] ? 1 : 0])) }] : []),
           { name: 'pMorphology', kind: 'list', values: postings.map(({ p }) => p.morphology) }
         ]), { shard, rowCount: entries.length });
         directoryRow(kindIndex, i, shard.from, shard.to, entries.length, Math.max(...entries.map(([key]) => key.length)));
@@ -260,6 +290,8 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
         { name: 'reading', kind: 'list', values: rows.map((l) => l.readings.map((x) => r.id(x.reading))) },
         { name: 'period', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.period)) },
         { name: 'route', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.route)) },
+        { name: 'basisReading', kind: 'list', values: rows.map((l) => l.readings.map((x) => r.id(x.basisReading))) },
+        { name: 'candidate', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.candidate ? 1 : 0)) },
         { name: 'factIndex', kind: 'list', values: rows.map((l) => l.readings.map((x) => x.factIndex)) }
       ]), { shard, rowCount: rows.length, requires: [tableId] });
       directoryRow(2, i, shard.from, shard.to, rows.length, 0);
@@ -273,6 +305,7 @@ export function lexicalLayer(options: LexicalLayerOptions = {}) {
         { name: 'pos', kind: 'list', values: model.morphologies.map((m) => m.pos.map((p) => s.id(p))) },
         { name: 'conjugationType', kind: 'scalar', values: model.morphologies.map((m) => s.id(m.conjugationType)) },
         { name: 'conjugationForm', kind: 'scalar', values: model.morphologies.map((m) => s.id(m.conjugationForm)) },
+        { name: 'surface', kind: 'scalar', values: model.morphologies.map((m) => s.id(m.surface ?? null)) },
         { name: 'reading', kind: 'scalar', values: model.morphologies.map((m) => s.id(m.reading)) },
         { name: 'lexicalOrigin', kind: 'scalar', values: model.morphologies.map((m) => s.id(m.lexicalOrigin)) }
       ]), { rowCount: model.morphologies.length });
@@ -322,7 +355,7 @@ export function readLexicalLayer(build: BrowserPackBuild) {
     morphologies.push({
       source, pos: [...morph.list('pos', i)].map((id: number) => { const s = morph.string('strings', id); if (s === undefined) throw new Error(`morphology ${i}: dangling pos string`); return s; }),
       conjugationType: strings(morph, 'conjugationType', i), conjugationForm: strings(morph, 'conjugationForm', i),
-      reading: strings(morph, 'reading', i), lexicalOrigin: strings(morph, 'lexicalOrigin', i)
+      surface: strings(morph, 'surface', i), reading: strings(morph, 'reading', i), lexicalOrigin: strings(morph, 'lexicalOrigin', i)
     });
   }
   const lexemeShards = sections.filter((s) => s.kind === 'lexeme-table').sort((a, b) => a.shard!.index - b.shard!.index);
@@ -346,14 +379,20 @@ export function readLexicalLayer(build: BrowserPackBuild) {
       const rr = [...readings.list('reading', row)] as number[];
       const rp = [...readings.list('period', row)] as number[];
       const rt = [...readings.list('route', row)] as number[];
+      const rb = [...readings.list('basisReading', row)] as number[];
+      const rc = [...readings.list('candidate', row)] as number[];
       const rf = [...readings.list('factIndex', row)] as number[];
-      if (formFlags.length !== formSurfaces.length || formFacts.length !== formSurfaces.length || rr.length !== rs.length || rp.length !== rs.length || rt.length !== rs.length || rf.length !== rs.length) throw new Error(`lexeme ${identity}: ragged form/reading rows`);
+      if (formFlags.length !== formSurfaces.length || formFacts.length !== formSurfaces.length || rr.length !== rs.length || rp.length !== rs.length || rt.length !== rs.length || rb.length !== rs.length || rc.length !== rs.length || rf.length !== rs.length) throw new Error(`lexeme ${identity}: ragged form/reading rows`);
       const str = (sec: any, id: number) => { const s = sec.string('strings', id); if (s === undefined) throw new Error(`lexeme ${identity}: dangling string id ${id}`); return s as string; };
       const head = lexemeHead(identity);
       lexemes.push({
         lexicalIdentity: identity, headSurface: head.surface, headReading: head.reading, morphologyIds,
         forms: formSurfaces.map((id, i) => ({ surface: str(forms, id), flags: formFlags[i]!, factIndex: formFacts[i]! })),
-        readings: rs.map((id, i) => ({ surface: id === 0 ? null : str(readings, id), reading: str(readings, rr[i]!), period: rp[i]!, route: rt[i]!, factIndex: rf[i]! }))
+        readings: rs.map((id, i) => ({
+          surface: id === 0 ? null : str(readings, id), reading: str(readings, rr[i]!),
+          basisReading: rb[i] === 0 ? null : str(readings, rb[i]!), period: rp[i]!, route: rt[i]!,
+          candidate: rc[i] === 1, factIndex: rf[i]!
+        }))
       });
     }
   }

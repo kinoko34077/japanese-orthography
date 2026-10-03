@@ -75,6 +75,7 @@
         partOfSpeech: [...morph.list("pos", i)].map((id) => morph.string("strings", id)),
         conjugationType: s(morph.value("conjugationType", i)),
         conjugationForm: s(morph.value("conjugationForm", i)),
+        surface: s(morph.value("surface", i)),
         reading: s(morph.value("reading", i)),
         lexicalOrigin: s(morph.value("lexicalOrigin", i))
       }));
@@ -101,10 +102,13 @@
             const at = first + j;
             const morphologyIds = [...body.list("pMorphology", at)];
             for (const m of morphologyIds) if (m >= morphologies.length) throw new Error(`BrowserLexicalRuntime: dangling morphology id ${m}`);
-            const triplets = kind === "surface" ? [...body.list("pHistorical", at)] : [];
-            if (triplets.length % 3 !== 0) throw new Error("BrowserLexicalRuntime: malformed historical posting");
+            const tuples = kind === "surface" ? [...body.list("pHistorical", at)] : [];
+            if (tuples.length % 5 !== 0) throw new Error("BrowserLexicalRuntime: malformed historical posting");
             const historical = [];
-            for (let i = 0; i < triplets.length; i += 3) historical.push({ reading: str(triplets[i]), route: ROUTES[triplets[i + 1]] ?? null, factIndex: triplets[i + 2] });
+            for (let i = 0; i < tuples.length; i += 5) historical.push({
+              reading: str(tuples[i]), route: ROUTES[tuples[i + 1]] ?? null, factIndex: tuples[i + 2],
+              basisReading: tuples[i + 3] === 0 ? null : str(tuples[i + 3]), candidate: tuples[i + 4] === 1
+            });
             return { lexemeId, lexicalIdentity: str(body.value("pIdentity", at)), morphologyIds, modern: [...body.list("pModern", at)].map(str), historical };
           }))
         });
@@ -145,6 +149,8 @@
       const rPeriod = [...shard.readings.list("period", row)];
       const rFact = [...shard.readings.list("factIndex", row)];
       const rRoute = [...shard.readings.list("route", row)];
+      const rBasis = [...shard.readings.list("basisReading", row)];
+      const rCandidate = [...shard.readings.list("candidate", row)];
       for (const m of t.list("morphology", row)) if (m >= morphologies.length) throw new Error(`BrowserLexicalRuntime: dangling morphology id ${m}`);
       return {
         lexemeId: id,
@@ -157,24 +163,29 @@
           flags: Object.keys(FORM_FLAGS).filter((name) => (formFlags[i] & FORM_FLAGS[name]) !== 0),
           factIndex: formFact[i]
         })),
-        readings: rSurface.map((sid, i) => ({ surface: rs(sid), reading: rs(rReading[i]), period: PERIODS[rPeriod[i]], route: ROUTES[rRoute[i]] ?? null, factIndex: rFact[i] }))
+        readings: rSurface.map((sid, i) => ({
+          surface: rs(sid), reading: rs(rReading[i]), basisReading: rs(rBasis[i]),
+          period: PERIODS[rPeriod[i]], route: ROUTES[rRoute[i]] ?? null,
+          candidate: rCandidate[i] === 1, factIndex: rFact[i]
+        }))
       };
     };
 
     // morphology for a candidate: the unique UniDic row of that reading (the accepted resolver's
     // morphology source), else the unique JMdict POS row; several rows of the deciding source stay
     // unresolved (`null`). A UniDic row of another reading never applies.
-    const chooseMorphologyRow = (ids, reading) => {
+    const chooseMorphologyRow = (ids, reading, surface) => {
       const rows = ids.map((id) => morphologies[id]);
-      const unidic = rows.filter((m) => m.source === "unidic" && (reading === null || reading === undefined || m.reading === reading));
+      const inScope = (m) => (m.surface === null || m.surface === surface) && (m.reading === null || m.reading === reading);
+      const unidic = rows.filter((m) => m.source === "unidic" && inScope(m));
       if (unidic.length) return unidic.length === 1 ? unidic[0] : null;
-      const jmdict = rows.filter((m) => m.source === "jmdict");
+      const jmdict = rows.filter((m) => m.source === "jmdict" && inScope(m));
       return jmdict.length === 1 ? jmdict[0] : null;
     };
     const morphologyOf = (row) => row && { partOfSpeech: [...row.partOfSpeech], conjugationType: row.conjugationType, conjugationForm: row.conjugationForm, source: row.source };
     // same rule as the accepted LexicalRuntime.chooseReading: single reading, else the lemma's own
     const chooseReading = (headReading, modernReadings) => {
-      if (modernReadings.length === 0) return headReading ?? null;
+      if (modernReadings.length === 0) return null;
       if (modernReadings.length === 1) return modernReadings[0];
       return modernReadings.includes(headReading) ? headReading : null;
     };
@@ -191,7 +202,7 @@
       }
       const modernReadings = resolvedSurface === null ? (viaReading ? [viaReading] : []) : modernFor(resolvedSurface);
       const reading = viaReading !== undefined ? viaReading : chooseReading(lexeme.headReading, modernReadings);
-      const morphologyRow = chooseMorphologyRow(lexeme.morphologyIds, reading);
+      const morphologyRow = chooseMorphologyRow(lexeme.morphologyIds, reading, resolvedSurface);
       return {
         lexicalIdentity: lexeme.lexicalIdentity,
         lemma: lexeme.headSurface ?? lexeme.headReading,
@@ -199,7 +210,10 @@
         reading,
         lexicalReading: lexeme.headReading,
         modernReadings,
-        historicalReadings: historical.map((r) => ({ surface: r.surface, reading: r.reading, route: r.route, factIndex: r.factIndex })),
+        historicalReadings: historical.map((r) => ({
+          surface: r.surface, reading: r.reading, basisReading: r.basisReading,
+          route: r.route, candidate: r.candidate, factIndex: r.factIndex
+        })),
         lexicalOrigin: morphologyRow?.lexicalOrigin ?? "unknown",
         morphology: morphologyOf(morphologyRow),
         morphologyCandidates: lexeme.morphologyIds.map((id) => ({ ...morphologies[id], partOfSpeech: [...morphologies[id].partOfSpeech] })),
@@ -230,7 +244,7 @@
       } else {
         reading = chooseReading(head.reading, modernReadings);
       }
-      const morphologyRow = chooseMorphologyRow(posting.morphologyIds, reading);
+      const morphologyRow = chooseMorphologyRow(posting.morphologyIds, reading, surface);
       return {
         lexicalIdentity: posting.lexicalIdentity,
         lemma: head.surface ?? head.reading,
@@ -238,7 +252,10 @@
         reading,
         lexicalReading: head.reading,
         modernReadings: [...modernReadings],
-        historicalReadings: kind === "surface" ? posting.historical.map((h) => ({ surface: key, reading: h.reading, route: h.route, factIndex: h.factIndex })) : [],
+        historicalReadings: kind === "surface" ? posting.historical.map((h) => ({
+          surface: key, reading: h.reading, basisReading: h.basisReading,
+          route: h.route, candidate: h.candidate, factIndex: h.factIndex
+        })) : [],
         lexicalOrigin: morphologyRow?.lexicalOrigin ?? "unknown",
         morphology: morphologyOf(morphologyRow),
         morphologyCandidates: posting.morphologyIds.map((id) => ({ ...morphologies[id], partOfSpeech: [...morphologies[id].partOfSpeech] })),
@@ -273,8 +290,14 @@
     const lookupReadingSync = (reading) => candidatesOf("reading", `${reading ?? ""}`, entryForSync("reading", `${reading ?? ""}`));
     /** Re-derive a candidate for one specific modern reading (per-reading candidates, like UniDic rows). */
     const withReading = (c, reading) => {
-      const row = chooseMorphologyRow(c.morphologyIds, reading);
-      return { ...c, reading, modernReadings: [reading], morphology: morphologyOf(row), lexicalOrigin: row?.lexicalOrigin ?? "unknown" };
+      const row = chooseMorphologyRow(c.morphologyIds, reading, c.surface);
+      const historicalReadings = (c.historicalReadings ?? []).filter((h) =>
+        h.basisReading === null ? c.modernReadings.length <= 1 : h.basisReading === reading
+      );
+      return {
+        ...c, reading, modernReadings: [reading], historicalReadings,
+        morphology: morphologyOf(row), lexicalOrigin: row?.lexicalOrigin ?? "unknown"
+      };
     };
     const lookupSurface = async (surface) => candidatesOf("surface", `${surface ?? ""}`, await entryFor("surface", `${surface ?? ""}`));
     const lookupReading = async (reading) => candidatesOf("reading", `${reading ?? ""}`, await entryFor("reading", `${reading ?? ""}`));

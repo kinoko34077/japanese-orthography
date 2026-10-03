@@ -100,6 +100,7 @@ export function buildOrthographyHotArtifact(input: OrthographyKnowledgeGraph, pr
     kind: column(graph.facts, (f) => en('factKind', f.kind)),
     surface: column(graph.facts, (f) => opt(f.surface)),
     reading: column(graph.facts, (f) => opt(f.reading)),
+    basisReading: column(graph.facts, (f) => opt(f.basisReading)),
     target: column(graph.facts, (f) => opt(f.target)),
     lexicalRefs: column(graph.facts, (f) => list(f.lexicalRefs)),
     tags: column(graph.facts, (f) => optList(f.tags)),

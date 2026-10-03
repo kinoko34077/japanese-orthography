@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v1-compiled",
   "owner": "japanese-orthography#185 B",
-  "packDigest": "e59b64e88b0bf278bd7048d99ae325117a81a257be894f6f87fecc1741216f0f",
-  "canonicalGraphSha256": "804789b5a1ec52957d8850a8708fb974ad1bd8aed43a05b4222821a4e80892f6",
+  "packDigest": "50b188e79d43ebb6d07950936df7eee9064c52041233a48d5cb35721bf04f3df",
+  "canonicalGraphSha256": "855f814c27de7524240fd8224c0d78b9a5b7d99a04ad087ee7cb7e904fd4b128",
   "totals": {
-    "sections": 1647,
-    "bytes": 82285660,
-    "gzipBytes": 26050575
+    "sections": 1657,
+    "bytes": 83139296,
+    "gzipBytes": 26158377
   },
   "byLoading": {
     "eager": {
       "sections": 7,
-      "bytes": 364408,
-      "gzipBytes": 94084
+      "bytes": 364148,
+      "gzipBytes": 93977
     },
     "lazy": {
-      "sections": 328,
-      "bytes": 57711144,
-      "gzipBytes": 14158350
+      "sections": 330,
+      "bytes": 58446740,
+      "gzipBytes": 14213315
     },
     "on-demand": {
-      "sections": 1312,
-      "bytes": 24210108,
-      "gzipBytes": 11798141
+      "sections": 1320,
+      "bytes": 24328408,
+      "gzipBytes": 11851085
     }
   },
   "byKind": {
@@ -33,19 +33,19 @@
       "gzipBytes": 56976
     },
     "detail-shard": {
-      "sections": 328,
-      "bytes": 57711144,
-      "gzipBytes": 14158350
+      "sections": 330,
+      "bytes": 58446740,
+      "gzipBytes": 14213315
     },
     "facts": {
-      "sections": 328,
-      "bytes": 7903584,
-      "gzipBytes": 3212784
+      "sections": 330,
+      "bytes": 7990520,
+      "gzipBytes": 3237369
     },
     "lexical-index": {
-      "sections": 328,
-      "bytes": 3012268,
-      "gzipBytes": 2042636
+      "sections": 330,
+      "bytes": 3023636,
+      "gzipBytes": 2050938
     },
     "profile-policy": {
       "sections": 3,
@@ -53,9 +53,9 @@
       "gzipBytes": 871
     },
     "provenance-index": {
-      "sections": 328,
-      "bytes": 3398348,
-      "gzipBytes": 2526216
+      "sections": 330,
+      "bytes": 3434760,
+      "gzipBytes": 2553088
     },
     "rules": {
       "sections": 1,
@@ -64,13 +64,13 @@
     },
     "shard-directory": {
       "sections": 1,
-      "bytes": 15700,
-      "gzipBytes": 9778
+      "bytes": 15440,
+      "gzipBytes": 9671
     },
     "string-pool": {
-      "sections": 328,
-      "bytes": 9895908,
-      "gzipBytes": 4016505
+      "sections": 330,
+      "bytes": 9879492,
+      "gzipBytes": 4009690
     },
     "terminology": {
       "sections": 1,
@@ -79,8 +79,8 @@
     }
   },
   "shards": {
-    "count": 328,
-    "largestFactsBytes": 25392
+    "count": 330,
+    "largestFactsBytes": 25564
   },
   "baseline": {
     "aReport": "data/reports/browser-pack-v1-measurements.json",

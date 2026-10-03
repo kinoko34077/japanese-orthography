@@ -47,6 +47,8 @@ export interface OrthographyFact extends OriginMetadata {
   lexicalRefs: string[];
   surface?: string;
   reading?: string;
+  /** Modern reading this historical-reading assertion is based on, when the source identifies it. */
+  basisReading?: string;
   /** relation target for form_relation / reading_relation / render_equivalence */
   target?: string;
   sourceRefs: string[];
