@@ -1,46 +1,66 @@
-# Browser runtime stabilization design
+# Browser runtime安定化設計
 
-Status: design approved in conversation; implementation remains unselected until this written specification is reviewed.
+Status: `レビュー修正案 / 実装未選択`
 
 Baseline: `main@07a1642062376fd9ea3c42df4c3cf7f40f5f1559`
 
-Owning evidence: Issues #222, #223, #227, #229, #230, #236, #244, #250, #267, and #268. The implementation order is deliberately narrower than the full issue graph:
+根拠Issue: #222, #223, #227, #229, #230, #236, #244, #250, #267, #268。
 
-1. Compile positive 字音 reading-class applicability (#268).
-2. Restore historical-Ruby authority and safe serialization (#267/#223).
-3. Separate semantic certainty, display preference, and provenance (#230/#244/#236).
-4. Cut the BrowserPack worker over to the accepted Rule Program runtime (#229).
+本設計は、公開GUI監査で確認された「canonical/source dataよりBrowser実行・表示層の不整合が大きい」という状態を、責務別に修正するための順序を定義する。
 
-The order is a dependency order. No Pages publication, BrowserPack republish, broad dictionary rediscovery, or #210 dictionary expansion is part of this design.
+実装順序:
 
-## Shared invariants
+1. #268 — 既存字音資料からpositive applicabilityをcompileする。
+2. #267/#223 — historical Ruby authorityとserializationを分離・修正する。
+3. #230/#244/#236 — semantic certainty、display preference、provenanceを分離する。
+4. #229 — BrowserPack production executionをRule Program runtimeへ実際にcutoverする。
 
-- `displayReading` is presentation data. It never authorizes a historical transformation or a lexical-identity claim.
-- A historical Ruby is emitted only from an admitted historical reading or a deterministic, source-backed reconstruction whose basis is explicit.
-- A single serialized output candidate is not semantic certainty. Lexical identity, reading, historical applicability, and output arbitration remain separately inspectable.
-- Authority labels are derived from actual basis and provenance. Empty provenance is `none`; it is never upgraded to `source_rule` by fallback.
-- Unknown origin is not positive Sino evidence. Positive applicability must be demonstrated by source-backed origin or component evidence.
-- Candidate lists and ambiguity are preserved. No storage-order or priority winner may silently become a semantic winner.
-- Legacy and Rule Program execution must be comparable until parity is accepted. The new runtime is not considered live merely because it produces an audit trace.
+この順序は依存関係に基づく。Pages公開、public BrowserPackの再公開、広範な辞書再探索、#210辞書拡張は本設計に含めない。
 
-## Phase specifications
+## 共通不変条件
+
+- `displayReading`は表示用情報であり、historical transformationやlexical identityを認可しない。
+- historical Rubyは、admitted historical readingまたはsource-backedかつ決定的なreconstructionからのみ生成する。
+- 「serializeされた出力候補が1個」はsemantic certaintyを意味しない。
+- lexical identity、reading、historical applicability、output arbitrationは独立して保持・検査する。
+- authority labelは実際のbasis/provenanceから導出する。provenanceが空なら`none`であり、fallbackで`source_rule`へ昇格させない。
+- `lexicalOrigin=unknown`だけではSino applicabilityを認可しない。source-backed originまたはsource-backed component evidenceを正に立証する。
+- candidate/ambiguityを保存する。storage orderやdisplay priorityをsemantic winnerへ昇格させない。
+- serializerのmode変更は、semantic state、authority、provenanceを変更しない。
+- Rule Program runtimeは、audit traceを生成できるだけではproduction authorityとみなさない。
+
+## Phase仕様
 
 - [Positive 字音 applicability](2026-10-04-sino-applicability-design.md)
-- [Historical Ruby authority and serialization](2026-10-04-historical-ruby-serialization-design.md)
-- [Semantic certainty and provenance](2026-10-04-semantic-certainty-provenance-design.md)
+- [Historical Ruby authority / serialization](2026-10-04-historical-ruby-serialization-design.md)
+- [Semantic certainty / provenance](2026-10-04-semantic-certainty-provenance-design.md)
 - [Browser Rule Program cutover](2026-10-04-browser-rule-program-cutover-design.md)
 
-## Cross-phase acceptance
+## Cross-phase受入条件
 
-Each phase must add RED regressions before implementation, make its focused suite GREEN, and preserve the existing full-check contract. The representative real-text corpus includes `学校`, `必要`, `必ずしも`, `東南アジア`, `好む`, `男女`, `大人層`, `市場特性`, `出版各社`, `日本企業`, `サービス`, an ambiguous lexical case, unknown/ASCII text, emoji, and protected spans.
+各Phaseは、実装前にRED regressionを追加し、focused suiteをGREENにした上で既存のfull-check contractを維持する。
 
-The end state is accepted only when:
+代表real-text corpusには最低限、`学校`, `必要`, `必ずしも`, `東南アジア`, `好む`, `男女`, `大人層`, `市場特性`, `出版各社`, `日本企業`, `サービス`, lexical ambiguity例、unknown/ASCII、emoji、protected spanを含める。
 
-- historical unknown and lexical ambiguity cannot be reported as `unique`;
-- Ruby output cannot use a modern `displayReading` as historical evidence;
-- source-backed productive reconstruction carries a non-literal basis and real provenance;
-- #268 source-backed evidence enables the intended `必要 -> ひつえう` route without making unknown-origin text Sino;
-- explicit and implicit Ruby modes preserve semantic decisions while changing only serialization;
-- the worker's production output comes from the Rule Program runtime after parity evidence, with cold/warm measurements recorded;
-- exact-head verification is performed after the final implementation commit; and
-- no deployment or publication occurs without a separate explicit authorization.
+最終受入には以下を要求する。
+
+- historical Rubyに必要なhistorical stateがunknown/unavailableなら`unique`にしない。
+- lexeme-scoped判断に必要なlexical identityが曖昧なら、そのlexeme-scoped判断を`unique`にしない。
+- lexical identityに依存しないdeterministic ruleまで一律に非`unique`へ落とさない。
+- historical Rubyがmodern `displayReading`をhistorical evidenceとして使用しない。
+- source-backed productive reconstructionがnon-literal basisと実provenanceを保持する。
+- #268のsource-backed evidenceにより`必要 / ひつよう -> ひつえう`へ到達でき、unknown-origin一般をSino扱いしない。
+- explicit/implicit Ruby modeが同じsemantic decisionを保持し、serializationのみを変える。
+- Rule Program authoritative modeではlegacy resolverのoutputをproduction semantic sourceとして使用しない。
+- workerのproduction outputがRule Program runtime由来であることをテストで証明する。
+- cold/warm測定を分離して記録する。
+- 最終実装commitのexact-head verificationを行う。
+- deploy/Pages公開は別のHuman明示承認なしに行わない。
+
+## 実装開始前の状態整合
+
+現行devflow/controlには、#229を「accepted runtime-cutover provenance / unfinished frontierではない」とする記録がある一方、現在のproduction Workerはlegacy resolver outputをauthorityとして使用し、Rule Program runtimeをaudit traceとして併走させている。
+
+また#236には過去の修正受入記録があるが、公開GUI監査で同型のauthority/certainty不整合が別経路から再現している。
+
+したがって実装開始前に、#222、#229、#236、およびdevflowのrepository controlを現在のlive evidenceへreconcileする。過去のaccepted historyは消さず、「当時受入済み」と「現在再確認された未達/再発」を区別して記録する。
