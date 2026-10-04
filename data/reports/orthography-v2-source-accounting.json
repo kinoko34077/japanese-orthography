@@ -4,24 +4,24 @@
   "owner": "japanese-orthography#166",
   "note": "Every record enumerated by a source adapter has exactly one disposition. Source files are provenance roots and are not modified.",
   "totals": {
-    "inputRecords": 263636,
-    "disposedRecords": 263636,
+    "inputRecords": 275560,
+    "disposedRecords": 275560,
     "unaccounted": 0,
     "byDisposition": {
       "literal_fact": 228384,
       "rule_definition": 26,
-      "rule_binding": 5013,
+      "rule_binding": 10975,
       "profile_policy": 419,
-      "derived_only": 28314,
+      "derived_only": 34276,
       "excluded_with_reason": 1480
     }
   },
   "graph": {
     "sources": 29,
     "facts": 561488,
-    "rules": 360,
-    "bindings": 5002,
-    "sha256": "1a83fd6533f7bdec901063bcec3097151b35a86e4efbfd3411741be19e86a02e"
+    "rules": 505,
+    "bindings": 10964,
+    "sha256": "55a07ef043c937ff6d226463f72190338970751b7bdadb3dafcddc2f1f0b394c"
   },
   "bySource": {
     "derivation/kana-conventions": {
@@ -85,7 +85,7 @@
       "rule_definition": 0,
       "rule_binding": 0,
       "profile_policy": 0,
-      "derived_only": 5003,
+      "derived_only": 10965,
       "excluded_with_reason": 0
     },
     "intake/phase46-legacy-safety": {
@@ -203,7 +203,7 @@
     "phase46e-sino-reading-class": {
       "literal_fact": 0,
       "rule_definition": 0,
-      "rule_binding": 3002,
+      "rule_binding": 8964,
       "profile_policy": 0,
       "derived_only": 0,
       "excluded_with_reason": 0
