@@ -24,8 +24,8 @@
       <fieldset class="profiles render-modes" id="render-modes" hidden>
         <legend>出力形式 <span class="hint">output</span></legend>
         <label><input type="radio" name="renderMode" value="plain" checked> 通常 <span class="hint">ルビなし</span></label>
-        <label><input type="radio" name="renderMode" value="ruby-whole-explicit"> 語全体にルビ <span class="hint">｜學校《がくかう》</span></label>
-        <label><input type="radio" name="renderMode" value="ruby-components-explicit"> 部分ルビ <span class="hint">構成要素ごと（情報がなければ語全体）</span></label>
+        <label><input type="radio" name="renderMode" value="ruby-whole-implicit"> 語全体にルビ <span class="hint">學校《がくかう》</span></label>
+        <label><input type="radio" name="renderMode" value="ruby-components-implicit"> 部分ルビ <span class="hint">構成要素ごと（安全な範囲は縦線なし）</span></label>
       </fieldset>
       <div class="actions">
         <button type="button" id="convert" class="primary">変換</button>
