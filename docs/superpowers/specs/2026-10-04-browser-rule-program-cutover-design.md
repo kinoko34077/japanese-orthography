@@ -1,44 +1,151 @@
-# Browser Rule Program cutover design (#229)
+# Browser Rule Program cutover設計 (#229)
 
-## Goal
+## 目的
 
-Make the accepted BrowserPack v3 Rule Program runtime execute production transformations instead of running beside the legacy adapter only for audit tracing, while preserving a bounded parity fallback until acceptance.
+BrowserPack v3のRule Program runtimeを、legacy adapterの横でaudit traceを作るだけの経路から、production transformationの実authorityへ切り替える。
 
-## Runtime boundary
+parity受入まではbounded compatibility pathを保持する。
 
-The worker will expose one transformation contract whose semantic result contains resolved units, spans, render metadata, diagnostics, and provenance. The legacy adapter and Rule Program VM must consume the same profile, protected-span, lexical, and source-backed inputs. The VM may use Sequence Pool IDs, Rule Program IDs, and compact indexes; source evidence remains cold-path data.
+## 責務境界
 
-During migration:
+### Worker / orchestration層が担当してよいもの
 
-1. legacy output remains available behind an explicit compatibility path;
-2. the Rule Program output is compared against legacy output and semantic metadata on the acceptance corpus;
-3. a parity gate requires matching transformed text, spans, unit boundaries, historical state, Ruby metadata, certainty, authority, and provenance class;
-4. only after the gate passes does the worker select Rule Program output as production authority;
-5. legacy removal is a later bounded change and is not bundled with the initial switch.
+- request/response
+- profile/render modeの受渡し
+- pack/version/digest検証
+- protected spanの境界管理
+- inputの一回のsymbolization開始
+- hot section/indexのロード・cache
+- execution resultのassembly
+- diagnostics/detailのlazy取得
+- legacy/VM比較modeの明示的な切替
 
-An audit trace from `traceText()` is not evidence of cutover. The test must prove that the worker response used the VM result as its output source.
+### Rule Program / hot runtimeがproduction authorityとして担当するもの
+
+accepted #208 contractに従い、少なくともproduction transformの実行判断を次の経路へ置く。
+
+```text
+Unicode input
+-> SymbolId/raw token
+-> Sequence / index lookup
+-> LexemeId / ProgramId postings
+-> direct Program または VM
+-> candidate / semantic result
+-> output SequenceId
+-> Unicode output
+```
+
+lexical/readings/context/profile/renderに必要なexecutable transformationを、legacy resolverが先に決めたoutputへ後付けする方式にしない。
+
+### VM-authoritative modeで禁止するもの
+
+- `adapter.transformWithResolver(...)`等のlegacy outputをproduction textのsourceとして使用する。
+- legacy semantic winnerをVMへ渡し、VMが追認するだけでcutoverと称する。
+- `traceText()`の成功だけをproduction cutoverの証拠にする。
+- 同一inputを不要に全体再symbolize・全stage再scanしてauditする。
+
+legacy codeをlibraryとして一部再利用する場合も、production semantic decisionをlegacy pathへ委譲していないことをテストで証明する。
+
+## Migration mode
+
+migration中は明示的に3 modeを区別する。
+
+1. `legacy-only`: 既存比較用。
+2. `parity`: legacyとRule Programを両方実行し、semantic/output差分を計測。
+3. `vm-authoritative`: Rule Program resultだけをproduction response authorityとし、legacyはproduction output生成へ参加しない。
+
+parity gateでは最低限以下を比較する。
+
+- transformed text
+- span / unit boundary
+- lexical/readings state
+- historical state
+- Ruby metadata
+- certainty
+- authority
+- provenance class/handle
+
+gate通過後にのみ`vm-authoritative`を通常production pathへする。
+
+legacy removalは別のbounded changeとし、本cutoverと同時に削除しない。
 
 ## Pack requirements
 
-The worker validates that the pack contains the required `sequence-pool`, `rule-programs`, indexes, and manifest/version metadata before enabling the VM. A missing or digest-mismatched section fails closed to the explicit compatibility path and reports a diagnostic; it does not silently claim the new runtime is active.
+WorkerはVM admission前に、必要なhot sectionを検証する。
 
-The pack digest and compiler version are carried in the acceptance evidence. No public pack regeneration or Pages publication is performed in this phase.
+- Symbol Registry
+- shared Sequence Pool
+- Program table / code
+- direct Program postings
+- surface/reading indexes
+- predicate/lexeme-set等のrequired tables
+- manifest / compiler / ISA metadata
+- digest整合
 
-## Parity corpus and measurements
+required section不足やdigest mismatch時:
 
-Run the real-text corpus from the umbrella design in plain, whole explicit/implicit Ruby, and component explicit/implicit Ruby where supported. Include protected spans, ASCII, emoji, unknown text, lexical ambiguity, source-backed literal historical facts, and productive Sino reconstruction.
+- compatibility modeが明示的に有効ならlegacyへfail closedし、その事実をdiagnosticへ出す。
+- vm-authoritativeを要求した状態では、silent legacy fallbackで「VM稼働中」と見せず明示errorにする。
 
-Measure cold initialization separately from warm transforms, including hot section loading and index/Map construction. Record legacy-only, dual/parity, and VM-authoritative timings. The goal is to remove the production double execution while retaining enough bounded comparison to detect drift.
+public pack再生成・Pages公開は本Phaseに含めない。
+
+## Hot-path条件
+
+- input symbolizationは通常1回を基本とする。
+- hot lookupの主要keyとしてUnicode full string再構成を要求しない。
+- exact one-step ruleはdirect Program postingを使用できる。
+- contextual/conditional/branching caseはVMへ残せる。
+- source URL、長いtype名、verbose evidenceはhot pathへ重複保持しない。
+- actual executed ProgramIdをtrace/provenanceへ残す。
+
+## Parity corpus / measurement
+
+umbrella designのreal-text corpusを、対応する5 render modeで検証する。
+
+含めるもの:
+
+- protected span
+- ASCII
+- emoji
+- unknown text
+- lexical ambiguity
+- source-backed literal historical fact
+- productive Sino reconstruction
+- modern/historical display境界
+
+measurementはcoldとwarmを分ける。
+
+最低限:
+
+- legacy-only
+- parity/dual
+- vm-authoritative
+- transferred bytes
+- request count
+- hot section load
+- index construction
+- first-result time
+- warm transform time
+- JS heap / ArrayBufferが取得可能なら記録
+
+現在productionで発生しているlegacy output + Rule Program auditの二重実行を、authority cutover後の通常pathから除去する。
 
 ## Required RED cases
 
-- worker output changes only when the selected runtime result changes, not merely when an audit trace is present;
-- VM and legacy agree on the semantic corpus before authority switches;
-- missing pack sections prevent VM admission and are observable;
-- VM preserves certainty/provenance distinctions from the diagnostics phase;
-- warm and cold timings are reported separately;
-- all five runtime render modes remain selectable at the worker boundary.
+- Worker responseが実際にVM resultをsourceとしていることを証明する。
+- legacy resultを意図的に変えてもvm-authoritative outputが変わらないfixtureを用意し、legacy dependencyが残っていないことを検査する。
+- VM/legacyがacceptance corpusでsemantic parityするまでauthority switchしない。
+- required hot section不足はVM admissionを拒否し、状態が観測可能。
+- VMがdiagnostics Phaseで確定したcertainty/provenance distinctionを保持する。
+- cold/warm measurementを分離して出力する。
+- 5 render modeをWorker boundaryで選択可能。
+- authoritative pathで不要な`traceText()`二重実行を行わない。
 
-## Non-goals
+## 非対象
 
-This phase does not alter canonical source data, broaden Sino applicability, change Ruby semantics, redesign the UI, deploy Pages, or delete the legacy path.
+- canonical source data変更
+- Sino applicability拡張
+- Ruby semantics変更
+- UI redesign
+- Pages deploy
+- legacy path完全削除
