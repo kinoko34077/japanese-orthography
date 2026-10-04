@@ -113,6 +113,27 @@ test('Phase B does not factor arbitrary equal non-kana edges', () => {
   assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', historicalProfile: true }), '｜A学B《AがくB》');
 });
 
+test('Phase B historical component mode falls back to admitted whole reading when only modern component readings exist', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:必要/ひつよう', 'ひつよう', {
+      components: [
+        { surface: '必', lexicalReading: 'ひつ', historicalKana: null },
+        { surface: '要', lexicalReading: 'よう', historicalKana: null }
+      ]
+    })],
+    historicalLookup: () => ({
+      route: 'sino',
+      basis: 'literal_whole_word',
+      reading: 'ひつえう',
+      surface: '必要',
+      evidenceRefs: ['ev:必要']
+    })
+  });
+  const unit = resolver.resolveUnit('必要');
+  assert.equal(resolver.render(unit, { mode: 'ruby-components-explicit', historicalProfile: true }), '｜必要《ひつえう》');
+  assert.equal(resolver.render(unit, { mode: 'ruby-components-implicit', historicalProfile: true }), '必要《ひつえう》');
+});
+
 test('R2 falls back to complete whole-word Ruby when component evidence is partial', () => {
   const resolver = createResolver({
     lexicalLookup: () => [candidate('lexeme:必要/ひつよう', 'ひつよう', {
