@@ -36,8 +36,8 @@
       "historical",
       "kinotch-fixed"
     ],
-    "corpusCases": 14,
-    "profileCases": 42,
+    "corpusCases": 19,
+    "profileCases": 57,
     "sourceClasses": [
       "lexical-modern",
       "historical-native",
@@ -48,9 +48,9 @@
   },
   "corpus": [
     {
-      "id": "adult-suffix",
-      "text": "大人層",
-      "purpose": "whole-word priority display; no per-character decomposition",
+      "id": "school",
+      "text": "学校",
+      "purpose": "source-backed historical reading and canonical implicit whole-word Ruby",
       "profiles": [
         "modern",
         "historical",
@@ -60,7 +60,57 @@
     {
       "id": "necessary",
       "text": "必要",
-      "purpose": "whole-word lexical reading and component fallback",
+      "purpose": "source-backed Sino component reconstruction and historical Ruby authority",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "must-shimo",
+      "text": "必ずしも",
+      "purpose": "safe kana suffix factorization after admitted whole historical reading",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "east-south-asia",
+      "text": "東南アジア",
+      "purpose": "Katakana suffix factorization without changing semantic authority",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "prefer",
+      "text": "好む",
+      "purpose": "inflected kana suffix factorization after historical reading resolution",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "men-women",
+      "text": "男女",
+      "purpose": "display preference must not erase lexical/historical ambiguity",
+      "profiles": [
+        "modern",
+        "historical",
+        "kinotch-fixed"
+      ]
+    },
+    {
+      "id": "adult-suffix",
+      "text": "大人層",
+      "purpose": "whole-word priority display; no per-character decomposition",
       "profiles": [
         "modern",
         "historical",
