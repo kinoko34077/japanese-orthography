@@ -53,6 +53,20 @@ test('canonical 字音 artifacts are reproducible byte-for-byte', async () => {
   }
 });
 
+test('XLSXの分類はHTMLのcatch-all根拠付きidentityだけを追加する', async () => {
+  const { artifact } = await buildPhase46eSinoArtifacts(process.cwd());
+  assert.ok(artifact.sources.some((source: any) => source.sourceId === 'phase46e-sino-reading-class'));
+  assert.deepEqual(artifact.readingClassEvidence.find((entry: any) => entry.character === '必' && entry.modernReading === 'ひつ')?.classes, ['kan_only']);
+
+  const required = artifact.componentRelations.find((relation: any) => relation.character === '必' && relation.modernReading === 'ひつ');
+  assert.deepEqual(required?.historicalReadings, ['ひつ']);
+  assert.ok(required?.evidenceRefs.some((ref: string) => ref.includes('phase46e-sino-reading-class:row:446:column:E:char:必')));
+  assert.ok(required?.evidenceRefs.some((ref: string) => ref === 'phase46e-sino-table:row:179:catch-all'));
+
+  const conflicting = artifact.componentRelations.find((relation: any) => relation.character === '姶' && relation.modernReading === 'おう');
+  assert.equal(conflicting, undefined);
+});
+
 test('every admitted table relation is exactly reproducible through the direct component API', async () => {
   const runtime = await sinoRuntime();
   const intake = await json('data/intake/phase46e-sino-kana.json');
@@ -92,8 +106,11 @@ test('word-level reconstruction aligns readings and preserves ambiguity', async 
   assert.equal(law.status, 'candidates');
   assert.deepEqual(plain(law.historicalReadings), ['はふ', 'ほふ']);
 
-  // A geminated coda whose underlying reading is not in the table cannot be guessed.
-  assert.equal(runtime.reconstructWord('仏法', 'ぶっぽう'), null);
+  // workbook由来の仏identityはpositiveだが、法は二つのhistorical候補を保持し、
+  // 保存順の勝者は選ばない。
+  assert.deepEqual(plain(runtime.reconstructWord('仏法', 'ぶっぽう')), {
+    status: 'candidates', historicalReadings: ['ぶつぱふ', 'ぶつぽふ']
+  });
   // Kana in the surface is outside the direct 字音 scope.
   assert.equal(runtime.reconstructWord('学ぶ', 'まなぶ'), null);
 });
@@ -101,17 +118,14 @@ test('word-level reconstruction aligns readings and preserves ambiguity', async 
 test('R3 #234: unmatched reading material never acquires arbitrary component ownership', async () => {
   const runtime = await sinoRuntime();
   const opaque = runtime.reconstructWord('日本企業', 'にほんきぎょう');
-  assert.equal(opaque.status, 'resolved');
-  assert.deepEqual(plain(opaque.components.map((component: any) => component.surface)), ['日本企', '業']);
-  assert.ok(!opaque.components.some((component: any) => component.surface === '本' || component.surface === '企'));
-  assert.equal(opaque.components[0].evidenceRefs.length, 0);
+  assert.equal(opaque, null);
 
   const valid = runtime.reconstructWord('企業', 'きぎょう');
   assert.equal(valid.status, 'resolved');
   assert.deepEqual(plain(valid.components.map((component: any) => [component.surface, component.modernReading, component.historicalReading])), [
     ['企', 'き', 'き'], ['業', 'ぎょう', 'げふ']
   ]);
-  assert.equal(valid.components[0].evidenceRefs.length, 0);
+  assert.ok(valid.components[0].evidenceRefs.length > 0);
   assert.ok(valid.components[1].evidenceRefs.length > 0);
 });
 

@@ -4,10 +4,12 @@ import { pathToFileURL } from 'node:url';
 import { TextDecoder } from 'node:util';
 import { buildCoverageSummary, canonicalizeAlternatives, type CoverageSummary } from './intake-accounting.ts';
 import type { IntakeBundleDocument, IntakeRecord, SourceSnapshot } from './intake-model.ts';
+import { parseSinoReadingClassWorkbook, type SinoReadingClassEntry, type SinoReadingClassParseResult } from './sino-reading-class.ts';
 import { parseSinoTableHtml, type SinoTableParseResult, type SinoTableRecord } from './sino-table-parser.ts';
 import { normalizeCheckoutText } from './verification-text.ts';
 
 export const PHASE46E_TABLE_PATH = '仮名遣等資料/字音仮名遣い表.html';
+export const PHASE46E_READING_CLASS_PATH = '仮名遣等資料/字音仮名_まとめ.xlsx';
 export const PHASE46E_INTAKE_PATH = 'data/intake/phase46e-sino-kana.json';
 export const PHASE46E_COVERAGE_REPORT_PATH = 'data/reports/phase46e-sino-kana-coverage.json';
 export const PHASE46E_ARTIFACT_PATH = 'data/historical/sino/phase46e-sino-kana.json';
@@ -21,6 +23,16 @@ export const PHASE46E_SINO_SOURCE_SNAPSHOT: SourceSnapshot = {
   path: PHASE46E_TABLE_PATH,
   blobSha: '89dd7a10ed9fd5ef12ea33b227bb513c2847818a',
   coverageRole: 'coverage-contract'
+};
+
+export const PHASE46E_READING_CLASS_SOURCE_SNAPSHOT: SourceSnapshot = {
+  sourceId: 'phase46e-sino-reading-class',
+  sourceClass: 'committed-reference',
+  repository: 'kinoko34077/japanese-orthography',
+  commit: '1af5f2dfb8825a19ec1e51cd36650a596ac61f44',
+  path: PHASE46E_READING_CLASS_PATH,
+  blobSha: '7d021eca0408f2b9e9a203c6733dacb48a1ed39f',
+  coverageRole: 'supplemental'
 };
 
 type JsonRecord = Record<string, any>;
@@ -74,12 +86,12 @@ export function buildPhase46eSinoIntake(parsed: SinoTableParseResult): IntakeBun
   return {
     schemaVersion: '1',
     kind: 'orthography_intake_bundle',
-    snapshots: [PHASE46E_SINO_SOURCE_SNAPSHOT],
+    snapshots: [PHASE46E_SINO_SOURCE_SNAPSHOT, PHASE46E_READING_CLASS_SOURCE_SNAPSHOT],
     records
   };
 }
 
-export function buildPhase46eCoverageReport(bundle: IntakeBundleDocument, parsed: SinoTableParseResult) {
+export function buildPhase46eCoverageReport(bundle: IntakeBundleDocument, parsed: SinoTableParseResult, readingClass: SinoReadingClassParseResult) {
   const summary: CoverageSummary = buildCoverageSummary({
     snapshot: PHASE46E_SINO_SOURCE_SNAPSHOT,
     discoveredRecordIds: parsed.discoveredRecordIds,
@@ -96,32 +108,70 @@ export function buildPhase46eCoverageReport(bundle: IntakeBundleDocument, parsed
       contextQualifiedRecords: bundle.records.filter((record) => record.morphology?.usage).length,
       headingReadings: parsed.headingReadings.length,
       excludedRecordIds
-    }]
+    }],
+    readingClass: {
+      sourceId: PHASE46E_READING_CLASS_SOURCE_SNAPSHOT.sourceId,
+      entries: readingClass.entries.length,
+      remainders: readingClass.remainders,
+      rowCount: readingClass.rowCount
+    }
   };
 }
 
-export function compileSinoKanaArtifact(bundle: IntakeBundleDocument, parsed: SinoTableParseResult, identitySlice: JsonRecord) {
-  const groups = new Map<string, { character: string; modernReading: string; context: string | null; historicalReadings: Set<string>; evidenceRefs: Set<string> }>();
+function relationKey(character: string, modernReading: string, context: string | null = null): string {
+  return JSON.stringify([character, modernReading, context]);
+}
+
+function classIdentityRelations(parsed: SinoTableParseResult, readingClass: SinoReadingClassParseResult): JsonRecord[] {
+  const htmlKeys = new Set(parsed.records.filter((record) => record.character).map((record) => relationKey(record.character!, record.modernReading, record.context)));
+  const catchAll = parsed.records.find((record) => record.exclusionReason === 'catch_all_statement');
+  if (!catchAll) throw new Error('Phase 4.6E catch-all authority record is missing');
+  const catchAllRef = evidenceRef(catchAll);
+  return readingClass.entries
+    .filter((entry) => entry.classes.length === 1 && !htmlKeys.has(relationKey(entry.character, entry.modernReading)))
+    .map((entry) => ({
+      character: entry.character,
+      modernReading: entry.modernReading,
+      context: null,
+      historicalReadings: [entry.modernReading],
+      readingClasses: entry.classes,
+      evidenceRefs: [...new Set([...entry.evidenceRefs, catchAllRef])].sort(compareText)
+    }));
+}
+
+export function compileSinoKanaArtifact(
+  bundle: IntakeBundleDocument,
+  parsed: SinoTableParseResult,
+  identitySlice: JsonRecord,
+  readingClass: SinoReadingClassParseResult
+) {
+  const readingClassByKey = new Map(readingClass.entries.map((entry) => [relationKey(entry.character, entry.modernReading), entry]));
+  const groups = new Map<string, { character: string; modernReading: string; context: string | null; historicalReadings: Set<string>; evidenceRefs: Set<string>; readingClasses: Set<string> }>();
   for (const record of bundle.records) {
     if (record.disposition === 'excluded_unresolved' || !record.modernSurface) continue;
     const context = record.morphology?.usage ?? null;
     const key = JSON.stringify([record.modernSurface, record.modernReading, context ?? '']);
     const group = groups.get(key) ?? {
       character: record.modernSurface, modernReading: record.modernReading!, context,
-      historicalReadings: new Set<string>(), evidenceRefs: new Set<string>()
+      historicalReadings: new Set<string>(), evidenceRefs: new Set<string>(), readingClasses: new Set<string>()
     };
     group.historicalReadings.add(record.historicalReading!);
     record.evidenceRefs.forEach((ref) => group.evidenceRefs.add(ref));
+    readingClassByKey.get(relationKey(record.modernSurface, record.modernReading!, context))?.classes.forEach((value) => group.readingClasses.add(value));
     groups.set(key, group);
   }
-  const componentRelations = [...groups.values()]
+  const explicitRelations = [...groups.values()]
     .map((group) => ({
       character: group.character,
       modernReading: group.modernReading,
       context: group.context,
       historicalReadings: [...group.historicalReadings].sort(compareText),
-      evidenceRefs: [...group.evidenceRefs].sort(compareText)
+      evidenceRefs: [...group.evidenceRefs].sort(compareText),
+      ...(group.readingClasses.size > 0 ? { readingClasses: [...group.readingClasses].sort(compareText) } : {})
     }))
+    .sort((a, b) => compareText(a.character, b.character) || compareText(a.modernReading, b.modernReading)
+      || compareText(a.context ?? '', b.context ?? ''));
+  const componentRelations = [...explicitRelations, ...classIdentityRelations(parsed, readingClass)]
     .sort((a, b) => compareText(a.character, b.character) || compareText(a.modernReading, b.modernReading)
       || compareText(a.context ?? '', b.context ?? ''));
 
@@ -129,9 +179,10 @@ export function compileSinoKanaArtifact(bundle: IntakeBundleDocument, parsed: Si
     schemaVersion: '2',
     kind: 'japanese-orthography-historical-sino-artifact',
     lexicalNamespaceId: identitySlice.lexicalNamespaceId,
-    sources: [PHASE46E_SINO_SOURCE_SNAPSHOT],
+    sources: [PHASE46E_SINO_SOURCE_SNAPSHOT, PHASE46E_READING_CLASS_SOURCE_SNAPSHOT],
     identitySlice,
     headingReadings: parsed.headingReadings,
+    readingClassEvidence: readingClass.entries,
     componentRelations
   };
 }
@@ -142,18 +193,24 @@ async function tableText(rootDir: string): Promise<string> {
   );
 }
 
+async function readingClassBytes(rootDir: string): Promise<Uint8Array> {
+  return readFile(resolve(rootDir, PHASE46E_READING_CLASS_PATH));
+}
+
 function canonicalJson(value: unknown, pretty = false): string {
   return `${pretty ? JSON.stringify(value, null, 2) : JSON.stringify(value)}\n`;
 }
 
 export async function buildPhase46eSinoArtifacts(rootDir: string) {
   const parsed = parseSinoTableHtml(await tableText(rootDir), PHASE46E_SINO_SOURCE_SNAPSHOT.sourceId);
+  const readingClass = parseSinoReadingClassWorkbook(await readingClassBytes(rootDir), PHASE46E_READING_CLASS_SOURCE_SNAPSHOT.sourceId);
   const bundle = buildPhase46eSinoIntake(parsed);
-  const coverageReport = buildPhase46eCoverageReport(bundle, parsed);
+  const coverageReport = buildPhase46eCoverageReport(bundle, parsed, readingClass);
   const identitySlice = JSON.parse(await readFile(resolve(rootDir, IDENTITY_SLICE_PATH), 'utf8')) as JsonRecord;
-  const artifact = compileSinoKanaArtifact(bundle, parsed, identitySlice);
+  const artifact = compileSinoKanaArtifact(bundle, parsed, identitySlice, readingClass);
   return {
     parsed,
+    readingClass,
     bundle,
     coverageReport,
     artifact,
