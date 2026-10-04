@@ -33,7 +33,7 @@
       "recordedAt": "japanese-orthography#139 / PR #152"
     },
     "phase46eArtifact": {
-      "bytes": 488640
+      "bytes": 6384462
     },
     "sinoDagHotTables": {
       "bytes": 66990
@@ -48,13 +48,13 @@
     "bindings": 2000
   },
   "performanceObserved": {
-    "node": "v26.10.0",
-    "hotStartupMs": 814,
-    "hotHeapDeltaMb": 109,
-    "formLookupsPerSecond": 1221615,
+    "node": "v24.21.0",
+    "hotStartupMs": 721,
+    "hotHeapDeltaMb": 140,
+    "formLookupsPerSecond": 1007690,
     "formLookupHits": 700680,
-    "formReadingLookupsPerSecond": 371632,
-    "reconstructWordsPerSecond": 135134,
-    "compactInflateMs": 15710
+    "formReadingLookupsPerSecond": 423645,
+    "reconstructWordsPerSecond": 119588,
+    "compactInflateMs": 16499
   }
 }

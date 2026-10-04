@@ -23,7 +23,44 @@ export function sinoVariants(modern: string, historical: string) {
   return deriveSinoVariants(modern, historical);
 }
 
-export interface SinoComponentRelation { character: string; modernReading: string; context: string | null; historicalReadings: string[]; evidenceRefs: string[] }
+export interface SinoComponentRelation {
+  character: string;
+  modernReading: string;
+  context: string | null;
+  historicalReadings: string[];
+  evidenceRefs: string[];
+  readingClasses?: string[];
+}
+
+/**
+ * Reading-class evidence is a positive applicability signal, not a new
+ * historical relation.  The BrowserPack keeps these rows in its compact
+ * class index; the accepted historical DAG must continue to project only the
+ * HTML/intake relations that carry historical-kana authority.
+ */
+export function isSinoReadingClassIdentityRelation(relation: SinoComponentRelation): boolean {
+  return relation.context === null
+    && relation.historicalReadings.length === 1
+    && relation.historicalReadings[0] === relation.modernReading
+    && relation.readingClasses !== undefined
+    && relation.readingClasses.length > 0
+    && relation.evidenceRefs.some((ref) => ref.startsWith('phase46e-sino-reading-class:'))
+    && relation.evidenceRefs.includes('phase46e-sino-table:row:179:catch-all');
+}
+
+export function historicalSinoRelations(relations: readonly SinoComponentRelation[]): SinoComponentRelation[] {
+  return relations
+    .filter((relation) => !isSinoReadingClassIdentityRelation(relation))
+    .map((relation) => {
+      const { readingClasses: _readingClasses, ...historical } = relation;
+      return {
+        ...historical,
+        // Class evidence remains available from the artifact/compact index, but
+        // it is not historical-DAG authority and must not alter legacy parity.
+        evidenceRefs: relation.evidenceRefs.filter((ref) => !ref.startsWith('phase46e-sino-reading-class:'))
+      };
+    });
+}
 
 const patternKey = (historical: string, modern: string) => `${historical}>${modern}`;
 const contextKey = (context: string) => `usage:${context}`;
@@ -84,7 +121,7 @@ export function createSinoDagRuntime(graph: EntityGraph) {
   const atom = (pathId: string) => strip(pathId);
   // reverse index: character -> every (modern surface form -> historical) reachable from its bindings
   const matchesByCharacter = new Map<string, Match[]>();
-  const tableForms = new Set<string>();
+  const tableFormsByCharacter = new Map<string, Set<string>>();
   for (const b of graph.bindings) {
     const list = matchesByCharacter.get(strip(b.symbol)) ?? [];
     const context = b.context === null ? null : strip(strip(b.context));
@@ -93,7 +130,9 @@ export function createSinoDagRuntime(graph: EntityGraph) {
       const base = patterns.get(id)!;
       for (const p of [base, ...(base.derivations ?? []).map((d) => patterns.get(d)!)]) {
         list.push({ modern: atom(p.to), historical: atom(p.from), context, evidence });
-        tableForms.add(atom(p.to));
+        const formsForCharacter = tableFormsByCharacter.get(strip(b.symbol)) ?? new Set<string>();
+        formsForCharacter.add(atom(p.to));
+        tableFormsByCharacter.set(strip(b.symbol), formsForCharacter);
       }
     }
     matchesByCharacter.set(strip(b.symbol), list);
@@ -121,7 +160,7 @@ export function createSinoDagRuntime(graph: EntityGraph) {
       else matches = all.filter((m) => m.context === null);
     }
     if (matches.length > 0) return matches;
-    if (tableForms.has(segment) || segment.endsWith('っ')) return [];
+    if (tableFormsByCharacter.get(character)?.has(segment) || segment.endsWith('っ')) return [];
     return [{ historical: segment, context: null, evidence: [] }];
   };
 

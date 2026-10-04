@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import { loadJmdictIntake } from '../tools/jmdict-intake.ts';
 import { validateOrthographyKnowledge } from '../tools/orthography-knowledge-model.ts';
 import { normalizeAcceptedOrthographySources } from '../tools/orthography-source-normalization.ts';
-import { createSinoDagRuntime, projectSinoDag } from '../tools/sino-dag-projection.ts';
+import { createSinoDagRuntime, historicalSinoRelations, projectSinoDag } from '../tools/sino-dag-projection.ts';
 import { deriveSinoVariants, projectSinoDagFromKnowledge, SINO_MECHANISM_RULES, sinoRelationsFromKnowledge } from '../tools/sino-rule-normalization.ts';
 import { createLexicalHistoryResolver, loadJoinSources } from '../tools/lexical-historical-join.ts';
 
@@ -25,8 +25,9 @@ function legacyRelationForms(modern: string, historical: string) {
   return out.map(([m, h, mech]) => ({ modern: m, historical: h, mechanism: mech }));
 }
 
-const sinoArtifact = JSON.parse(await readFile('data/historical/sino/phase46e-sino-kana.json', 'utf8'));
-const relations = sinoArtifact.componentRelations as { character: string; modernReading: string; context: string | null; historicalReadings: string[]; evidenceRefs: string[] }[];
+const rawSinoArtifact = JSON.parse(await readFile('data/historical/sino/phase46e-sino-kana.json', 'utf8'));
+const relations = historicalSinoRelations(rawSinoArtifact.componentRelations as { character: string; modernReading: string; context: string | null; historicalReadings: string[]; evidenceRefs: string[]; readingClasses?: string[] }[]);
+const sinoArtifact = { ...rawSinoArtifact, componentRelations: relations };
 const normalized = await normalizeAcceptedOrthographySources(process.cwd());
 const plain = (v: unknown) => JSON.parse(JSON.stringify(v ?? null));
 

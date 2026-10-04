@@ -86,6 +86,10 @@ export function sinoRelationsFromKnowledge(graph: OrthographyKnowledgeGraph): Si
   for (const binding of graph.bindings) {
     if (!binding.id.startsWith('binding:sino:')) continue;
     const rule = rules.get(binding.ruleId)!;
+    // Reading-class identity rows are compiled into the BrowserPack's compact
+    // applicability index. They are not historical-kana table relations and
+    // must not expand the accepted 4.6E DAG projection.
+    if (binding.sourceRefs.includes('phase46e-sino-reading-class')) continue;
     const character = binding.lexicalRefs.find((ref) => ref.startsWith('symbol:'))!.slice('symbol:'.length);
     const usage = binding.contextRefs?.find((ref) => ref.startsWith('context:usage:'));
     const context = usage ? usage.slice('context:usage:'.length) : null;

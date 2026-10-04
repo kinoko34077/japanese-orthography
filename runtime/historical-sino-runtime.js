@@ -196,7 +196,7 @@
 
     const relationsByCharacter = new Map();
     const formsByCharacter = new Map();
-    const tableForms = new Set();
+    const tableFormsByCharacter = new Map();
     for (const relation of componentRelations) {
       requireNonEmptyString(relation?.character, "historical Sino component character");
       requireNonEmptyString(relation?.modernReading, "historical Sino component modern reading");
@@ -218,7 +218,9 @@
             context: relation.context ?? null,
             evidenceRefs: relation.evidenceRefs
           });
-          tableForms.add(modernForm);
+          const formsForCharacter = tableFormsByCharacter.get(relation.character) ?? new Set();
+          formsForCharacter.add(modernForm);
+          tableFormsByCharacter.set(relation.character, formsForCharacter);
         }
       }
       formsByCharacter.set(relation.character, forms);
@@ -270,7 +272,7 @@
           evidenceRefs: form.evidenceRefs
         }));
       }
-      if (tableForms.has(segment) || segment.endsWith("っ")) return [];
+      if (tableFormsByCharacter.get(character)?.has(segment) || segment.endsWith("っ")) return [];
       return [{ historical: segment, context: null, evidenceRefs: [] }];
     };
 

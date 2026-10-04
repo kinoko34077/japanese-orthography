@@ -6,7 +6,7 @@ import { JMDICT_EXTRACT_FILE, JMDICT_INTAKE_DIR, loadJmdictIntake, sha256 } from
 import { compileJmdictLexicalGraph } from './jmdict-lexical-graph.ts';
 import { buildHotArtifact } from './lexical-hot-artifact.ts';
 import { compactEntityGraph, inflateEntityGraph } from './lexical-entity-graph.ts';
-import { projectSinoDag } from './sino-dag-projection.ts';
+import { historicalSinoRelations, projectSinoDag } from './sino-dag-projection.ts';
 
 export const COMPACT_RUNTIME_REPORT = 'data/reports/phase48g-compact-runtime-measurements.json';
 
@@ -16,7 +16,8 @@ export async function buildCompactRuntimeArtifacts(rootDir: string) {
   const { extract, accounting } = await loadJmdictIntake(rootDir);
   const lexical = compileJmdictLexicalGraph(extract, accounting);
   const sinoArtifactText = await readFile(resolve(rootDir, 'data/historical/sino/phase46e-sino-kana.json'), 'utf8');
-  const sinoSource = JSON.parse(sinoArtifactText);
+  const sinoArtifact = JSON.parse(sinoArtifactText);
+  const sinoSource = { ...sinoArtifact, componentRelations: historicalSinoRelations(sinoArtifact.componentRelations) };
   const sino = projectSinoDag(sinoSource.componentRelations, 'phase46e-sino-table');
   const canonicalText = JSON.stringify(lexical);
   const compact = compactEntityGraph(lexical);

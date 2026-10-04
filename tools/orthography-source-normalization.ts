@@ -323,6 +323,30 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     for (const r of sinoArtifact.componentRelations as Json[]) {
       b.dispose(b.record(sourceId, `componentRelations:${r.character}:${r.modernReading}:${r.context ?? 'none'}`), 'derived_only', [], 'generated from phase46e intake rows');
     }
+    // Phase AのXLSX分類は歴史的綴りを発明しない。HTML catch-all規則と一意な分類証拠が
+    // 両方ある場合だけcompact identity relationを認め、単体historical Sino runtimeと同じ
+    // positive evidence gateをbrowser packでも適用できるよう生成関係をgraphへ投影する。
+    const classSource = b.source('phase46e-sino-reading-class', {
+      path: '仮名遣等資料/字音仮名_まとめ.xlsx', role: 'phase46e-reading-class'
+    });
+    for (const r of sinoArtifact.componentRelations as Json[]) {
+      const evidence = (r.evidenceRefs as string[] | undefined) ?? [];
+      if (!evidence.some((ref) => ref.startsWith('phase46e-sino-reading-class:'))
+        || !evidence.includes('phase46e-sino-table:row:179:catch-all')
+        || r.context != null || r.historicalReadings?.length !== 1
+        || r.historicalReadings[0] !== r.modernReading) continue;
+      const ruleId = b.rule({
+        id: `rule:sino:${r.historicalReadings[0]}>${r.modernReading}`,
+        class: 'diachronic', directionality: 'reverse_traversable', lossiness: 'lossless',
+        from: [r.historicalReadings[0]], to: [r.modernReading], dependencies: [],
+        predicate: { channel: 'reading' }
+      }, classSource, evidence);
+      const bindingId = b.binding({
+        id: `binding:sino:${r.character}:${r.historicalReadings[0]}>${r.modernReading}@phase46e-reading-class`,
+        ruleId, lexicalRefs: [`symbol:${r.character}`]
+      }, classSource, evidence);
+      b.dispose(b.record(classSource, `identity:${r.character}:${r.modernReading}`), 'rule_binding', [bindingId]);
+    }
     const nativePath = 'data/historical/native/phase46d-native-kana.json';
     const nativeId = b.source(sourceIdFor(nativePath), { path: nativePath, role: 'generated-artifact' });
     const native = await readJson(rootDir, nativePath);

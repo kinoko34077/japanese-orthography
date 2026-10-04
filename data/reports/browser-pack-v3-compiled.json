@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
-  "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
+  "canonicalGraphSha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
   "totals": {
-    "sections": 1842,
-    "bytes": 183452860,
-    "gzipBytes": 72084139
+    "sections": 1845,
+    "bytes": 186242248,
+    "gzipBytes": 72852978
   },
   "byLoading": {
     "eager": {
       "sections": 10,
-      "bytes": 534972,
-      "gzipBytes": 214554
+      "bytes": 575004,
+      "gzipBytes": 233971
     },
     "lazy": {
-      "sections": 480,
-      "bytes": 73565916,
-      "gzipBytes": 24482170
+      "sections": 482,
+      "bytes": 74572692,
+      "gzipBytes": 24867169
     },
     "on-demand": {
-      "sections": 1352,
-      "bytes": 109351972,
-      "gzipBytes": 47387415
+      "sections": 1353,
+      "bytes": 111094552,
+      "gzipBytes": 47751838
     }
   },
   "byKind": {
@@ -38,9 +38,9 @@
       "gzipBytes": 8743205
     },
     "evidence-map": {
-      "sections": 138,
-      "bytes": 42901636,
-      "gzipBytes": 14483931
+      "sections": 140,
+      "bytes": 43770520,
+      "gzipBytes": 14824186
     },
     "knowledge-bundle": {
       "sections": 330,
@@ -79,8 +79,8 @@
     },
     "program-evidence": {
       "sections": 12,
-      "bytes": 2360868,
-      "gzipBytes": 1255034
+      "bytes": 2498760,
+      "gzipBytes": 1299778
     },
     "reading-index": {
       "sections": 468,
@@ -94,18 +94,18 @@
     },
     "rule-predicates": {
       "sections": 1,
-      "bytes": 194040,
-      "gzipBytes": 14901
+      "bytes": 1050240,
+      "gzipBytes": 74916
     },
     "rule-program-index": {
       "sections": 1,
-      "bytes": 2708064,
-      "gzipBytes": 1441367
+      "bytes": 2748228,
+      "gzipBytes": 1469145
     },
     "rule-programs": {
       "sections": 1,
-      "bytes": 6135812,
-      "gzipBytes": 2741434
+      "bytes": 6629388,
+      "gzipBytes": 2838735
     },
     "rule-runtime-meta": {
       "sections": 1,
@@ -114,18 +114,23 @@
     },
     "rules": {
       "sections": 1,
-      "bytes": 110092,
-      "gzipBytes": 31329
+      "bytes": 150124,
+      "gzipBytes": 50746
     },
     "sequence-pool": {
       "sections": 1,
-      "bytes": 5506752,
-      "gzipBytes": 2629946
+      "bytes": 5507100,
+      "gzipBytes": 2630003
     },
     "shard-directory": {
       "sections": 1,
       "bytes": 12736,
       "gzipBytes": 7868
+    },
+    "sino-component-index": {
+      "sections": 1,
+      "bytes": 352292,
+      "gzipBytes": 179272
     },
     "surface-index": {
       "sections": 386,

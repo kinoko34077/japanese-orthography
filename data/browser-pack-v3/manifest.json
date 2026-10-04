@@ -1,13 +1,13 @@
 {
-  "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+  "canonicalGraphSha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
   "compilerVersion": "3",
   "evidence": {
-    "aggregateDigest": "9992b7291de1739b452c5835c57433653552d7800520e26b6a3d2650f0c3d4fb",
+    "aggregateDigest": "41d8da9c4ba7aa7fb18ff1cff86b86dc2fb3a7f6f884f18764920b67d33baac7",
     "schemaVersion": "1"
   },
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
+  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -28,7 +28,7 @@
   "ruleRuntime": {
     "compilerVersion": "rule-program-compiler-v1",
     "isaVersion": "rule-program-isa-v1",
-    "programDigest": "60ff096730d3b7fcf22e6c351f48f817f80e8ad52f549843298ad1961875a4fc",
+    "programDigest": "5cd766cf6d2ffd636386d6736369bcc498dc1f806c093804f7b5b87417f3c751",
     "programFormatVersion": "rule-program-format-v1"
   },
   "runtimeContract": {
@@ -6651,1346 +6651,1414 @@
       }
     },
     {
-      "byteLength": 491844,
+      "byteLength": 339432,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-0.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/0",
-      "sha256": "141aea282b6d4ebf834ab38d7477273328333244e06bb19c38f6b9bde0c345ae",
+      "sha256": "484764b50b134c3d9f87128a74627bfbec1261856a0950f2fa1e0402fc10d2cf",
       "shard": {
-        "count": 138,
+        "count": 140,
         "from": "binding:sino:一:いち>いち@none",
         "index": 0,
         "key": "canonical",
-        "to": "fact:form_relation:ならふため||ならうため"
+        "to": "binding:sino:桴:ぶ>ぶ@phase46e-reading-class"
       }
     },
     {
-      "byteLength": 493072,
+      "byteLength": 333228,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-1.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/1",
-      "sha256": "07bf2b5124ed277f7ec979bee3fa07c8368e7f103f8294586c13a3b0c5b5a094",
+      "sha256": "161a2b07bdf090a60ab601873867034b536b2958cacf3d8226c31fd32975a4dd",
       "shard": {
-        "count": 138,
-        "from": "fact:form_relation:ならへ||ならえ",
+        "count": 140,
+        "from": "binding:sino:桶:つう>つう@phase46e-reading-class",
         "index": 1,
         "key": "canonical",
-        "to": "fact:form_relation:装うた||装ふた"
+        "to": "binding:sino:蟄:ちつ>ちつ@phase46e-reading-class"
       }
     },
     {
-      "byteLength": 276804,
+      "byteLength": 277460,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-10.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/10",
-      "sha256": "62ea99748537c10339cb3dc2596640a0f3aceb043e96132f43af06591d820b8f",
+      "sha256": "df5d38bfb3744d0bdddb87b6dbb50a3c0a4590c3531012818b7c5dead4f25920",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:予実管理||",
+        "count": 140,
+        "from": "fact:literal_form:一とおり||",
         "index": 10,
         "key": "canonical",
-        "to": "fact:literal_form:仕入単価||"
+        "to": "fact:literal_form:下人||"
       }
     },
     {
-      "byteLength": 337312,
+      "byteLength": 341396,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-100.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/100",
-      "sha256": "1ca39c8c0746d89ee5adaddeea1b73cccc470118387b8933e034ec8eeb3624d2",
+      "sha256": "aae1a0239b8a49d6afd4d03df390089456b0abaa918ed996aed5d1e304097118",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:巻付ける|まきつける|",
+        "count": 140,
+        "from": "fact:literal_reading:安全衛生教育|あんぜんえいせいきょういく|",
         "index": 100,
         "key": "canonical",
-        "to": "fact:literal_reading:弔慰|ちょうい|"
+        "to": "fact:literal_reading:導入部|どうにゅうぶ|"
       }
     },
     {
-      "byteLength": 332216,
+      "byteLength": 335544,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-101.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/101",
-      "sha256": "cd6fd9df9758e8b8c92bcf2b0fd360e5ef119a5eb678aadfb1f859ad9a7eab0a",
+      "sha256": "89406a5896fa93ee7e5709f15ceb49eca8272b082cd64d7a5998132d3251f721",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:弔慰金|ちょういきん|",
+        "count": 140,
+        "from": "fact:literal_reading:導出|どうしゅつ|",
         "index": 101,
         "key": "canonical",
-        "to": "fact:literal_reading:御書|ごしょ|"
+        "to": "fact:literal_reading:左右軸|さゆうじく|"
       }
     },
     {
-      "byteLength": 341000,
+      "byteLength": 336452,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-102.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/102",
-      "sha256": "0d6f74030660f7195fcd9a281409dd8190f7a1d083b1ece0a7634dc1d854079d",
+      "sha256": "fef4ceb1637648c35e79910f7586faa93b4f229e23b1ebcc2280c22eb650559f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:御曹司|おんぞうし|",
+        "count": 140,
+        "from": "fact:literal_reading:左右逆|さゆうぎゃく|",
         "index": 102,
         "key": "canonical",
-        "to": "fact:literal_reading:悪し|あし|"
+        "to": "fact:literal_reading:廃る|すたる|"
       }
     },
     {
-      "byteLength": 340204,
+      "byteLength": 332336,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-103.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/103",
-      "sha256": "500cabab5370fb7d9b2d6e3274f29e0449db9aedf569cf6e14585d3a0badeac0",
+      "sha256": "d45cf05aa34d2962804c96de9d26fef2cdb6c99fa31b8d44fc15b3f30362cfc4",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:悪しい|あしい|",
+        "count": 140,
+        "from": "fact:literal_reading:廃れる|すたれる|",
         "index": 103,
         "key": "canonical",
-        "to": "fact:literal_reading:手切れ金|てぎれきん|"
+        "to": "fact:literal_reading:従弟|じゅうてい|"
       }
     },
     {
-      "byteLength": 331596,
+      "byteLength": 339748,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-104.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/104",
-      "sha256": "f7808563acd02d1c1f326b94c6dd8dda1f010364e70d4a5507a00d5f444a100f",
+      "sha256": "f401d956b15786e80fd2bc5c4e88b7e6a11bc2ed82e587a1e33883d4a37ff715",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:手刈り|てがり|",
+        "count": 140,
+        "from": "fact:literal_reading:従文|じゅうぶん|",
         "index": 104,
         "key": "canonical",
-        "to": "fact:literal_reading:振抜く|ふりぬく|"
+        "to": "fact:literal_reading:恋情|れんじょう|"
       }
     },
     {
-      "byteLength": 334288,
+      "byteLength": 339536,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-105.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/105",
-      "sha256": "16ea8d0041f092db4c486c7fbcb29e08c032084ed2ab9ab1929f440ee77de0d7",
+      "sha256": "e5ace0520a30b54ed199e7edc9de49fc656d2882ea911d425de085c151d1f9a2",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:振捨てる|ふりすてる|",
+        "count": 140,
+        "from": "fact:literal_reading:恋愛|れんあい|",
         "index": 105,
         "key": "canonical",
-        "to": "fact:literal_reading:政治自由化|せいじじゆうか|"
+        "to": "fact:literal_reading:戯事|たわむれごと|"
       }
     },
     {
-      "byteLength": 351696,
+      "byteLength": 330988,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-106.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/106",
-      "sha256": "80de68f40379f3b2a3684067e4eaf7a7a1703409d0f3fe36bf868b3146f42b74",
+      "sha256": "299823902a17e8d9f7b84c5b3563b0dac94d7d4c7ed9867f36f6ff9d46105a63",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:政治色|せいじしょく|",
+        "count": 140,
+        "from": "fact:literal_reading:戯交わす|ざれかわす|",
         "index": 106,
         "key": "canonical",
-        "to": "fact:literal_reading:日本平和学会|にっぽんへいわがっかい|"
+        "to": "fact:literal_reading:持ち家|もちや|"
       }
     },
     {
-      "byteLength": 350704,
+      "byteLength": 329788,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-107.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/107",
-      "sha256": "dc8163fa6c6f94f93e3179111e9ca3f95cb07379f6a45225d3c958b298134002",
+      "sha256": "82ff2345723e5e0b2329b909ef0fdae5f841e61955fe8b99f3afa763c09cf171",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:日本広告学会|にっぽんこうこくがっかい|",
+        "count": 140,
+        "from": "fact:literal_reading:持ち寄り|もちより|",
         "index": 107,
         "key": "canonical",
-        "to": "fact:literal_reading:書きつける|かきつける|"
+        "to": "fact:literal_reading:支度金|したくきん|"
       }
     },
     {
-      "byteLength": 340104,
+      "byteLength": 347592,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-108.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/108",
-      "sha256": "db226cb535ed4765af37c954a4cd18bd262a4c41f5bd260a5a518e99afcf390e",
+      "sha256": "ac44fb276b6e07007061121b182affc6c722e465024280c7a570ba5274a17721",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:書きつづる|かきつづる|",
+        "count": 140,
+        "from": "fact:literal_reading:支弁|しべん|",
         "index": 108,
         "key": "canonical",
-        "to": "fact:literal_reading:東京女子大学|とうきょうじょしだいがく|"
+        "to": "fact:literal_reading:旗手|きしゅ|"
       }
     },
     {
-      "byteLength": 342004,
+      "byteLength": 358292,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-109.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/109",
-      "sha256": "3cf78d931588c8629136b9dd6a86ea14afcd8178f42a6affc29319057b7c3486",
+      "sha256": "05e1ad066cf0ceb82c0546db7d27599af81310e6880c8d30b248e8584323b24b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:東京子ども図書館|とうきょうこどもとしょかん|",
+        "count": 140,
+        "from": "fact:literal_reading:旗持|はたもち|",
         "index": 109,
         "key": "canonical",
-        "to": "fact:literal_reading:構成制御委員会|こうせいせいぎょいいんかい|"
+        "to": "fact:literal_reading:暖かい目で見守る|あたたかいめでみまもる|"
       }
     },
     {
-      "byteLength": 273908,
+      "byteLength": 276312,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-11.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/11",
-      "sha256": "1cab462490e0dc2e420e14422414f5a7c7c9333558f4ecf2938ad8454e8b8765",
+      "sha256": "b6ef74ef85d78f183a632d30a1bc597663cf7b3fc968d7f216d2f0179b50a048",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:仕入費用||",
+        "count": 140,
+        "from": "fact:literal_form:下仕事||",
         "index": 11,
         "key": "canonical",
-        "to": "fact:literal_form:作用||"
+        "to": "fact:literal_form:乙矢||"
       }
     },
     {
-      "byteLength": 339844,
+      "byteLength": 337556,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-110.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/110",
-      "sha256": "8612d00848798d81074309204b94d85fb6397265e7030f7b8b320ac79769f8f0",
+      "sha256": "50745aa6ee2ab496c28a74d75d55be2ef66c25ce4136a527ba211a97365abe98",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:構成単位|こうせいたんい|",
+        "count": 140,
+        "from": "fact:literal_reading:暖かい色|あたたかいいろ|",
         "index": 110,
         "key": "canonical",
-        "to": "fact:literal_reading:母船|ぼせん|"
+        "to": "fact:literal_reading:札割れ|ふだわれ|"
       }
     },
     {
-      "byteLength": 336860,
+      "byteLength": 342968,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-111.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/111",
-      "sha256": "c5d8f7e6718fc1bbf3189e4d287105ade79324a6cc4b30cf7090af5a3103500b",
+      "sha256": "faa7fa529fe96c2ede51fb3f831e6402b6d394c6cec9a350063b4e64ac332c7c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:母艦|ぼかん|",
+        "count": 140,
+        "from": "fact:literal_reading:札幌|さっぽろ|",
         "index": 111,
         "key": "canonical",
-        "to": "fact:literal_reading:泉漳語|せんしょうご|"
+        "to": "fact:literal_reading:検算|けんざん|"
       }
     },
     {
-      "byteLength": 338676,
+      "byteLength": 340856,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-112.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/112",
-      "sha256": "8680286cf3c251b2c50dd3c40be40b8bf5f161e12ee83db20747dfbed6535acc",
+      "sha256": "854bc9ac41ac848f5298a9c9a44bfe853bdc32eb04df57cac86c6b1f19ec088a",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:泉熱|いずみねつ|",
+        "count": 140,
+        "from": "fact:literal_reading:検糖計|けんとうけい|",
         "index": 112,
         "key": "canonical",
-        "to": "fact:literal_reading:清算取引|せいさんとりひき|"
+        "to": "fact:literal_reading:死を迎える|しをむかえる|"
       }
     },
     {
-      "byteLength": 335060,
+      "byteLength": 337200,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-113.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/113",
-      "sha256": "cf1b56370c737acb1b16cba36638580999c5db3c7b6657e71e301cc792ce4930",
+      "sha256": "c1fdf6d0db150d4d2b39d64d4c9cd4aba53cfcf1bef278b87f0fe948c82f263d",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:清算書|せいさんしょ|",
+        "count": 140,
+        "from": "fact:literal_reading:死を選ぶ|しをえらぶ|",
         "index": 113,
         "key": "canonical",
-        "to": "fact:literal_reading:烏天狗|からすてんぐ|"
+        "to": "fact:literal_reading:沈潜|ちんせん|"
       }
     },
     {
-      "byteLength": 334448,
+      "byteLength": 337948,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-114.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/114",
-      "sha256": "8db3f99bb89427a7744ca2518a39ef05d7287cf2fc03b71c7fb454cd7df617ce",
+      "sha256": "c3360d553b6db63be2aded6e88117050f582a193c2fc122d24c4eac422d393ea",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:烏山椒|からすざんしょう|",
+        "count": 140,
+        "from": "fact:literal_reading:沈澱|ちんでん|",
         "index": 114,
         "key": "canonical",
-        "to": "fact:literal_reading:物理探査学会|ぶつりたんさがっかい|"
+        "to": "fact:literal_reading:液圧プレス|えきあつプレス|"
       }
     },
     {
-      "byteLength": 344104,
+      "byteLength": 335220,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-115.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/115",
-      "sha256": "b0c69358d87a7441261378bc91bd0cc48e49e9aad0ddb655dad6d9a881109f51",
+      "sha256": "d4c5f06cd7b07944686791635f64389094ad889126580f1b59b9d2b18b9fb83f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:物理攻撃|ぶつりこうげき|",
+        "count": 140,
+        "from": "fact:literal_reading:液安|えきあん|",
         "index": 115,
         "key": "canonical",
-        "to": "fact:literal_reading:生兵法は大けがのもと|なまびょうほうはおおけがのもと|"
+        "to": "fact:literal_reading:火雷噬嗑|からいぜいごう|"
       }
     },
     {
-      "byteLength": 340100,
+      "byteLength": 334552,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-116.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/116",
-      "sha256": "5d6df19a5a6d401b99cc76420d7f01c56c124551b685ce12c33a6b2e68007188",
+      "sha256": "467ecd4d15e6f47acc072b5b9507df7c0abe26c98a67ac11519a35a2701b784a",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:生兵法は大けがの元|なまびょうほうはおおけがのもと|",
+        "count": 140,
+        "from": "fact:literal_reading:火面|かめん|",
         "index": 116,
         "key": "canonical",
-        "to": "fact:literal_reading:白ロリ|しろロリ|"
+        "to": "fact:literal_reading:片前|かたまえ|"
       }
     },
     {
-      "byteLength": 335556,
+      "byteLength": 342616,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-117.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/117",
-      "sha256": "76bee03aebb20e86ec2c96e36b57380bb360c525e137a41ab0f79ebe7d46208b",
+      "sha256": "1aa16a34e028d5a190373e8727a8cbff86b15b9c3b9500f96bd69d0b54be6f7e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:白ワイン|しろワイン|",
+        "count": 140,
+        "from": "fact:literal_reading:片割れ|かたわれ|",
         "index": 117,
         "key": "canonical",
-        "to": "fact:literal_reading:眼軸|がんじく|"
+        "to": "fact:literal_reading:環境省|かんきょうしょう|"
       }
     },
     {
-      "byteLength": 340120,
+      "byteLength": 338924,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-118.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/118",
-      "sha256": "d2e2cb23d2474afd300acd94e470fc85d0494dd442cf87a3e86bf1817b66f9e9",
+      "sha256": "4b6a49ffba9115344ca2aa0e0af74473ef269ca4bdc9245e73886f672e39852a",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:眼軸長|がんじくちょう|",
+        "count": 140,
+        "from": "fact:literal_reading:環境省地球環境局|かんきょうしょうちきゅうかんきょうきょく|",
         "index": 118,
         "key": "canonical",
-        "to": "fact:literal_reading:福寿草|ふくじゅそう|"
+        "to": "fact:literal_reading:痺れ茸|しびれたけ|"
       }
     },
     {
-      "byteLength": 333504,
+      "byteLength": 336632,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-119.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/119",
-      "sha256": "c464a767cff8197be51e68aa84f5ba7ada70f5b95e931f9e4124bdc75abee9cd",
+      "sha256": "fe1b9340944ee7dedf1684eebc58bf4515b17441ac11752b910adf69aea6de9e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:福山大学|ふくやまだいがく|",
+        "count": 140,
+        "from": "fact:literal_reading:痺れ薬|しびれぐすり|",
         "index": 119,
         "key": "canonical",
-        "to": "fact:literal_reading:符牒|ふちょう|"
+        "to": "fact:literal_reading:看護師長|かんごしちょう|"
       }
     },
     {
-      "byteLength": 274044,
+      "byteLength": 277012,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-12.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/12",
-      "sha256": "e8824d12742d5aea3627181b066a69651a5cc6bb19683e37dec4562da1cac926",
+      "sha256": "3b90f6e4554d608224614e7589928afd49c3e4c9a4a11b2c6196f96e8c61ce7c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:作用反作用の法則||",
+        "count": 140,
+        "from": "fact:literal_form:乙種||",
         "index": 12,
         "key": "canonical",
-        "to": "fact:literal_form:先天梅毒||"
+        "to": "fact:literal_form:人間型||"
       }
     },
     {
-      "byteLength": 338088,
+      "byteLength": 338680,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-120.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/120",
-      "sha256": "990511904f0482e21d0820843f28d5eaa08414a95c303ffe40df6a9ff5453ea2",
+      "sha256": "c0f68dc0f67e0922295d3b7e6e00f5d4566a07685c78f6f6e75cd51f1f2b1b38",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:符節|ふせつ|",
+        "count": 140,
+        "from": "fact:literal_reading:看護法|かんごほう|",
         "index": 120,
         "key": "canonical",
-        "to": "fact:literal_reading:索餌|さくじ|"
+        "to": "fact:literal_reading:神呪|じんじゅ|"
       }
     },
     {
-      "byteLength": 340872,
+      "byteLength": 335124,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-121.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/121",
-      "sha256": "b731f5a7567ede22e1d33ed1f95d0d617c8cbe6316f920861a855d461ea6314f",
+      "sha256": "fae18024bdc2ea6fc6da4916c9759b9d9a8bcaf6c25828cac26d42debadf655e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:索麺|そうめん|",
+        "count": 140,
+        "from": "fact:literal_reading:神命|しんめい|",
         "index": 121,
         "key": "canonical",
-        "to": "fact:literal_reading:繁栄の福音|はんえいのふくいん|"
+        "to": "fact:literal_reading:竏|キロリットル|"
       }
     },
     {
-      "byteLength": 334548,
+      "byteLength": 338144,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-122.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/122",
-      "sha256": "afece8863a6fe7481152bb4a64ee190072e0f4efce6c4cd64ff38f37ba4775e0",
+      "sha256": "b9f45e12eb33f14390fc5be505d9962531ff1afb7c7f03b402b11b01263b1888",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:繁殖|はんしょく|",
+        "count": 140,
+        "from": "fact:literal_reading:竏|キロ・リットル|",
         "index": 122,
         "key": "canonical",
-        "to": "fact:literal_reading:背部叩打法|はいぶこうだほう|"
+        "to": "fact:literal_reading:紋紋|もんもん|"
       }
     },
     {
-      "byteLength": 342104,
+      "byteLength": 341776,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-123.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/123",
-      "sha256": "b652499b286dce0641cf9db559843af809cf0bed7e3719e7152b858c506405cf",
+      "sha256": "62416e94143874857d1890e79df19ba8fd9734fb44c5a4bf4ac7b9b4e393ccd0",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:背部痛|はいぶつう|",
+        "count": 140,
+        "from": "fact:literal_reading:紋織り|もんおり|",
         "index": 123,
         "key": "canonical",
-        "to": "fact:literal_reading:舎密|セイミ|"
+        "to": "fact:literal_reading:編み笠|あみがさ|"
       }
     },
     {
-      "byteLength": 330604,
+      "byteLength": 333028,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-124.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/124",
-      "sha256": "a9ad001a08de4ac44ed4f2ccf11567e51dd017c9b22dfa2f82b0dc55349b182a",
+      "sha256": "9e94655a5f841b545e5b8871cf3ba9b9fb2e51bcd77f397f179edacb017dd8ab",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:舎密|セーミ|",
+        "count": 140,
+        "from": "fact:literal_reading:編み籠|あみかご|",
         "index": 124,
         "key": "canonical",
-        "to": "fact:literal_reading:葉巻蛾|はまきが|"
+        "to": "fact:literal_reading:肝が太い|きもがふとい|"
       }
     },
     {
-      "byteLength": 328988,
+      "byteLength": 339724,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-125.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/125",
-      "sha256": "ea5edf481bc428d908446d993e50ff5bdd256ff6a4aaf8ea7f9fb33f1ab7125b",
+      "sha256": "a999b9ac0bc2a3de44e7684fa7a7fa0a1299cf8374a2f8832a9623b8de5ffdb7",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:葉序|ようじょ|",
+        "count": 140,
+        "from": "fact:literal_reading:肝が座る|きもがすわる|",
         "index": 125,
         "key": "canonical",
-        "to": "fact:literal_reading:行政罰|ぎょうせいばつ|"
+        "to": "fact:literal_reading:自然地理学|しぜんちりがく|"
       }
     },
     {
-      "byteLength": 340296,
+      "byteLength": 334876,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-126.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/126",
-      "sha256": "bc1a801d3b27291781a5e6906345f2f16fc9ec6482a3be63cbc7f2055292703a",
+      "sha256": "f4c9f0c0c24bd397aa2c0440c86751248353ab03d50a6c915793bd295e01631e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:行政職員|ぎょうせいしょくいん|",
+        "count": 140,
+        "from": "fact:literal_reading:自然塩|しぜんえん|",
         "index": 126,
         "key": "canonical",
-        "to": "fact:literal_reading:角状|かくじょう|"
+        "to": "fact:literal_reading:荷車|にぐるま|"
       }
     },
     {
-      "byteLength": 338764,
+      "byteLength": 326880,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-127.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/127",
-      "sha256": "b80041baaf410c3ac63070dd0e78808cde964eea9f2784e90abe180047344f27",
+      "sha256": "3130c8ba6346b194cbc02c3e78a83ace7aa6849b5e05f06be35144cb28761d60",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:角瓶|かくびん|",
+        "count": 140,
+        "from": "fact:literal_reading:荷送|におくり|",
         "index": 127,
         "key": "canonical",
-        "to": "fact:literal_reading:諾諾|だくだく|"
+        "to": "fact:literal_reading:血と汗の結晶|ちとあせのけっしょう|"
       }
     },
     {
-      "byteLength": 337720,
+      "byteLength": 339244,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-128.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/128",
-      "sha256": "e609a0eab99744d760899332c9df2e26009e4f505df5fde67b0a45f3bc9b3577",
+      "sha256": "44013447bf6eea9d211ca57de145ab782b10083c28b606c0c2e4acc94eb02375",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:諾足|だくあし|",
+        "count": 140,
+        "from": "fact:literal_reading:血どめ|ちどめ|",
         "index": 128,
         "key": "canonical",
-        "to": "fact:literal_reading:足し湯|たしゆ|"
+        "to": "fact:literal_reading:視する|しする|"
       }
     },
     {
-      "byteLength": 336976,
+      "byteLength": 339176,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-129.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/129",
-      "sha256": "0652b1bc1da5f749cffed0e3f94b4e60bb35239419f14a2ac7c690653dcedc9d",
+      "sha256": "ab434c40c1171472f4a09a70c971c27fdf7677bd75538dbec23a4a884489eff5",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:足し算|たしざん|",
+        "count": 140,
+        "from": "fact:literal_reading:視つかる|みつかる|",
         "index": 129,
         "key": "canonical",
-        "to": "fact:literal_reading:送り吊り落とし|おくりつりおとし|"
+        "to": "fact:literal_reading:誰一人として|だれひとりとして|"
       }
     },
     {
-      "byteLength": 278504,
+      "byteLength": 273888,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-13.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/13",
-      "sha256": "e5c2efe70e4be290ab9b629e945f0d047260a42fe52dd53b302459e8c3fcad8a",
+      "sha256": "a237c6b1b35b90193f6f02b5790940606fad4dc20c9421883eb24b6b3322efe7",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:先天異常||",
+        "count": 140,
+        "from": "fact:literal_form:人間大砲||",
         "index": 13,
         "key": "canonical",
-        "to": "fact:literal_form:再出場||"
+        "to": "fact:literal_form:何とも無い||"
       }
     },
     {
-      "byteLength": 346496,
+      "byteLength": 335956,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-130.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/130",
-      "sha256": "f34752d05457996bb9212f95f08d50bc094b1a520f93f34bf85301987e3791fd",
+      "sha256": "e09582b32379e44ef0de784dceb2a3a45845657cb6c7db67ae90fda77676351b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:送り孔|おくりこう|",
+        "count": 140,
+        "from": "fact:literal_reading:誰人|たれびと|",
         "index": 130,
         "key": "canonical",
-        "to": "fact:literal_reading:遺留分|いりゅうぶん|"
+        "to": "fact:literal_reading:赤蝦|あかえび|"
       }
     },
     {
-      "byteLength": 338376,
+      "byteLength": 339444,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-131.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/131",
-      "sha256": "c042d3af099f6c3f186e857ab796c2231101e2bf47082e36d5649cdf35cf1c4c",
+      "sha256": "23982c70984ce6966e7eb04facf4274ff8e9edfec5e0ae9551b388df2f90bd35",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:遺留品|いりゅうひん|",
+        "count": 140,
+        "from": "fact:literal_reading:赤蝦夷松|あかえぞまつ|",
         "index": 131,
         "key": "canonical",
-        "to": "fact:literal_reading:銀行間取引|ぎんこうかんとりひき|"
+        "to": "fact:literal_reading:近接学|きんせつがく|"
       }
     },
     {
-      "byteLength": 337192,
+      "byteLength": 343848,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-132.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/132",
-      "sha256": "291d1636eba317c20e73e12fea744c4778f4cbda8e66eda91b3be154cd5b309f",
+      "sha256": "9c5035825fd91cfdba8aa1e796b90f64644bd89a4e0f05363a58d038b421afc0",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:銀行預金|ぎんこうよきん|",
+        "count": 140,
+        "from": "fact:literal_reading:近接戦|きんせつせん|",
         "index": 132,
         "key": "canonical",
-        "to": "fact:literal_reading:陸でなし|ろくでなし|"
+        "to": "fact:literal_reading:遠洋航海|えんようこうかい|"
       }
     },
     {
-      "byteLength": 339848,
+      "byteLength": 342096,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-133.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/133",
-      "sha256": "f6e5bcb210abf9360a26a3ee0d97344bb08ed5fcbd862cf9aabcc2db1cab9053",
+      "sha256": "4dad40a4be42e9cc8383208d3d2a2ee2f340be635751e4f52f0965a8c96a4924",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:陸でもない|ろくでもない|",
+        "count": 140,
+        "from": "fact:literal_reading:遠洋航路|えんようこうろ|",
         "index": 133,
         "key": "canonical",
-        "to": "fact:literal_reading:静脈血栓症|じょうみゃくけっせんしょう|"
+        "to": "fact:literal_reading:釣合う|つりあう|"
       }
     },
     {
-      "byteLength": 339872,
+      "byteLength": 337520,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-134.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/134",
-      "sha256": "506cdf6df7266ae3533d679fa5ab13b8db8f2fe68447d40d9b998fb2179f5f7e",
+      "sha256": "112de03913f259e0dd165111aa447919b174605af1748238ec195c6192edb0d5",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:静脈麻酔薬|じょうみゃくますいやく|",
+        "count": 140,
+        "from": "fact:literal_reading:釣堀|つりぼり|",
         "index": 134,
         "key": "canonical",
-        "to": "fact:literal_reading:飲ませる|のませる|"
+        "to": "fact:literal_reading:陀羅尼|だらに|"
       }
     },
     {
-      "byteLength": 332928,
+      "byteLength": 339172,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-135.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/135",
-      "sha256": "263ee64d3aa8c319c2904bdaa638fb4e6611bc57b486fd30f2b86c75584aa876",
+      "sha256": "b604fb858c942aa5e9430bc09718d29be6e3bf77eea849c28b5cbfa8715888e6",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:飲まれる|のまれる|",
+        "count": 140,
+        "from": "fact:literal_reading:陀羅尼助|だらにすけ|",
         "index": 135,
         "key": "canonical",
-        "to": "fact:literal_reading:鳥餌|とりえ|"
+        "to": "fact:literal_reading:霊液|れいえき|"
       }
     },
     {
-      "byteLength": 331504,
+      "byteLength": 340216,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-136.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/136",
-      "sha256": "366b1f5a5c388eb3a4fe1b4c604e93ec12f71d033a1cec11e75f8ffb338d2dfa",
+      "sha256": "661d1958d5e3f8be50baac120ebb64e110d5c12c6d4c4d0cf91ed91336acdcf0",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:鳥馬|ちょうま|",
+        "count": 140,
+        "from": "fact:literal_reading:霊狐|れいこ|",
         "index": 136,
         "key": "canonical",
-        "to": "fact:literal_reading:ＤＬ|ディー・エル|"
+        "to": "fact:literal_reading:飛び魚の子|とびうおのこ|"
       }
     },
     {
-      "byteLength": 328220,
+      "byteLength": 335460,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-137.bin",
-      "rowCount": 2539,
+      "rowCount": 4096,
       "sectionId": "evidence-map@canonical/137",
-      "sha256": "d8500e6650f25011c6d1828689d6aee266ae135806f39b12b4b72e90da2ea8a7",
+      "sha256": "2ea1a7c6175622b1b72273e722e4d3ed2a49b98bfbf5f673f43fba744bbd8628",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:ＤＬＣ|ディーエルシー|",
+        "count": 140,
+        "from": "fact:literal_reading:飛ぶ|とぶ|",
         "index": 137,
         "key": "canonical",
-        "to": "rule:sino:をん>おん"
+        "to": "fact:literal_reading:魚みそ|うおみそ|"
       }
     },
     {
-      "byteLength": 270728,
+      "byteLength": 329476,
+      "encoding": "binary-columnar",
+      "kind": "evidence-map",
+      "loading": "lazy",
+      "path": "evidence-map-canonical-138.bin",
+      "rowCount": 4096,
+      "sectionId": "evidence-map@canonical/138",
+      "sha256": "f15d489fe498bcb42f78c6b9e2f37aa314e1d95236833f77f60bc9ac9ed3d0c4",
+      "shard": {
+        "count": 140,
+        "from": "fact:literal_reading:魚をとる|さかなをとる|",
+        "index": 138,
+        "key": "canonical",
+        "to": "fact:literal_reading:６箇年|ろっかねん|"
+      }
+    },
+    {
+      "byteLength": 600820,
+      "encoding": "binary-columnar",
+      "kind": "evidence-map",
+      "loading": "lazy",
+      "path": "evidence-map-canonical-139.bin",
+      "rowCount": 3618,
+      "sectionId": "evidence-map@canonical/139",
+      "sha256": "d914ec196ee724d051dca00dad41f7ce5fec153a5e4e9862a9d19f5cd6ed3d9a",
+      "shard": {
+        "count": 140,
+        "from": "fact:literal_reading:６角形|ろっかくけい|",
+        "index": 139,
+        "key": "canonical",
+        "to": "rule:sino:－>－"
+      }
+    },
+    {
+      "byteLength": 274552,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-14.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/14",
-      "sha256": "46260923f5f92bf46f9c899a4c8e19d14c8e8cc16a185329a4e17f154e438e2b",
+      "sha256": "e5cb0b7132ddeb2f1be4155ce5c45591a2fa2ee14e33903253b49420924eee4c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:再出発||",
+        "count": 140,
+        "from": "fact:literal_form:何とも言えない||",
         "index": 14,
         "key": "canonical",
-        "to": "fact:literal_form:到達性||"
+        "to": "fact:literal_form:僭す||"
       }
     },
     {
-      "byteLength": 274976,
+      "byteLength": 277692,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-15.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/15",
-      "sha256": "cf040bfa553b077a10798775eb2978cb75ddba2b9c59d633c7199e7c237a1a0d",
+      "sha256": "acf955d45c1cd5e7a10f966c5cc22deaa66a7fc8747c702fc4726e24c7f4c50d",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:到頭||",
+        "count": 140,
+        "from": "fact:literal_form:僭する||",
         "index": 15,
         "key": "canonical",
-        "to": "fact:literal_form:匿れる||"
+        "to": "fact:literal_form:内乱||"
       }
     },
     {
-      "byteLength": 277312,
+      "byteLength": 271692,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-16.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/16",
-      "sha256": "6faf89b3a03deab7c523331d34d8f3b82b31260b349b46629ac8999d7bc737ce",
+      "sha256": "3d2202411c3ac7e16c8f8e81ab8f508eed230743f297aad82f9ffbb9793ab37b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:匿名||",
+        "count": 140,
+        "from": "fact:literal_form:内乱罪||",
         "index": 16,
         "key": "canonical",
-        "to": "fact:literal_form:取り切る||"
+        "to": "fact:literal_form:列王記下||"
       }
     },
     {
-      "byteLength": 270304,
+      "byteLength": 273076,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-17.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/17",
-      "sha256": "eaadac379d3346ca875df120475ca9767d36c615085444ff7632fef35aceb6fb",
+      "sha256": "e4d8a7a86454ad1a63d1ed974dbadb49d1d96db367b787dea4f2dd39e2b321d4",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:取り前||",
+        "count": 140,
+        "from": "fact:literal_form:列番号||",
         "index": 17,
         "key": "canonical",
-        "to": "fact:literal_form:向ケ丘遊園モノレール線||"
+        "to": "fact:literal_form:包有||"
       }
     },
     {
-      "byteLength": 269220,
+      "byteLength": 278188,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-18.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/18",
-      "sha256": "41dbef9d6e1e391cc0fe17099b57a7096ab2a78bdf894bbc959aa2fdad2b25db",
+      "sha256": "f4f9e9aacf65dd6af561b2298793d81a03520043325546e6d0eafd0695be8fe4",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:向ヶ丘遊園モノレール線||",
+        "count": 140,
+        "from": "fact:literal_form:包有物||",
         "index": 18,
         "key": "canonical",
-        "to": "fact:literal_form:回折||"
+        "to": "fact:literal_form:双対性||"
       }
     },
     {
-      "byteLength": 280864,
+      "byteLength": 269504,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-19.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/19",
-      "sha256": "1fe6cdb84d5d46f90d46640dc36573f8f24b32a6722531ded0303aaae8a2748a",
+      "sha256": "b9f94a10c1137a2135f8ce49152b85bcccb17ae1135bc7ec27370ed0a9f72655",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:回折損||",
+        "count": 140,
+        "from": "fact:literal_form:双対演算||",
         "index": 19,
         "key": "canonical",
-        "to": "fact:literal_form:場所柄弁えず||"
+        "to": "fact:literal_form:同日付||"
       }
     },
     {
-      "byteLength": 328444,
+      "byteLength": 388900,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-2.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/2",
-      "sha256": "5448650f972f9b4265912b3863fdc22effc925846ac03d36d1b440ca81b0e91c",
+      "sha256": "b0acf0ad6dec329dc548092d71270fee81076234a861c37b01fc2fbd3c17a8e7",
       "shard": {
-        "count": 138,
-        "from": "fact:form_relation:装うちゃ||装ふちゃ",
+        "count": 140,
+        "from": "binding:sino:蟄:ちゅう>ちゅう@phase46e-reading-class",
         "index": 2,
         "key": "canonical",
-        "to": "fact:literal_form:かに座||"
+        "to": "fact:form_relation:そこなひ||そこない"
       }
     },
     {
-      "byteLength": 274296,
+      "byteLength": 270264,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-20.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/20",
-      "sha256": "648294d2c6008dbd51b812b71d9434d7bfb022fdbd167f379ee19bb4ed4eb32c",
+      "sha256": "6f727dc4d53d816e0baff08a2143f32bdf367d89658bdc76426849508bc337ca",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:場所見知り||",
+        "count": 140,
+        "from": "fact:literal_form:同日付け||",
         "index": 20,
         "key": "canonical",
-        "to": "fact:literal_form:大根演技||"
+        "to": "fact:literal_form:噎せっぽい||"
       }
     },
     {
-      "byteLength": 277028,
+      "byteLength": 280504,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-21.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/21",
-      "sha256": "264e5508bc0e102095b47d5dda4f8a3436e7f8385616c4bf1b9af5de453d9cd0",
+      "sha256": "c6945ba5cd0ced52de1e3e2396468e6aa814ce9e8dc2a5f508ea260e6e578f1b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:大根焚き||",
+        "count": 140,
+        "from": "fact:literal_form:噎せる||",
         "index": 21,
         "key": "canonical",
-        "to": "fact:literal_form:婦人雑誌||"
+        "to": "fact:literal_form:垣牆||"
       }
     },
     {
-      "byteLength": 275808,
+      "byteLength": 273676,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-22.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/22",
-      "sha256": "ded614c6966240fe61066dde8b9dc0f9fca4bddbd518f6cd82a9eeeb1b22a542",
+      "sha256": "6e258fb0f0043062847ff4d98caaf20000876827c79ed0dffeb8c69bcb9935fd",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:婦人靴||",
+        "count": 140,
+        "from": "fact:literal_form:垣繕う||",
         "index": 22,
         "key": "canonical",
-        "to": "fact:literal_form:寒帯||"
+        "to": "fact:literal_form:大人買い||"
       }
     },
     {
-      "byteLength": 272572,
+      "byteLength": 278216,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-23.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/23",
-      "sha256": "ffbb96c907ae83c867f9470ed72d9cb3e0bb43f3f4fb4134a5e86966c835f5e5",
+      "sha256": "e352747b59dad5a3af9abe00cdbc15ed6c22493a513584b9624c57db25a3003a",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:寒帯前線||",
+        "count": 140,
+        "from": "fact:literal_form:大人面皰||",
         "index": 23,
         "key": "canonical",
-        "to": "fact:literal_form:山野美容芸術短期大学||"
+        "to": "fact:literal_form:妄想気分||"
       }
     },
     {
-      "byteLength": 272472,
+      "byteLength": 275960,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-24.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/24",
-      "sha256": "2052c04d45798b28a2d57b2428b6e826b808f19eb8b40da46c54693a522b6c62",
+      "sha256": "13d2179309f4c40438a411820ac5eb5b60de79c29f1d9bcb4d72a4648bcdf38a",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:山野草||",
+        "count": 140,
+        "from": "fact:literal_form:妄想狂||",
         "index": 24,
         "key": "canonical",
-        "to": "fact:literal_form:広告代理業||"
+        "to": "fact:literal_form:家庭に入る||"
       }
     },
     {
-      "byteLength": 268856,
+      "byteLength": 272460,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-25.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/25",
-      "sha256": "5b9ba45ba79ef1e795ad2b2ee20baa9e8ba8f382493ef2532e2fdc5cca34f31f",
+      "sha256": "4534bf57e9d40821684239dfe91bf260444304a5f91afb7cc1bcd838e0dc26d2",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:広告会社||",
+        "count": 140,
+        "from": "fact:literal_form:家庭を持つ||",
         "index": 25,
         "key": "canonical",
-        "to": "fact:literal_form:後先になる||"
+        "to": "fact:literal_form:屈腱炎||"
       }
     },
     {
-      "byteLength": 274340,
+      "byteLength": 272124,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-26.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/26",
-      "sha256": "191f466aad835bd0f9c5ff2386da2ce93b89708d9a8cc5a0a619ec4d3d08ffad",
+      "sha256": "115ee0e1e66b3ed6e9c13d040f426812aefb716501a59e8a60b60f4ecb1da616",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:後先考えず||",
+        "count": 140,
+        "from": "fact:literal_form:屈葬||",
         "index": 26,
         "key": "canonical",
-        "to": "fact:literal_form:性能監視||"
+        "to": "fact:literal_form:平鍋||"
       }
     },
     {
-      "byteLength": 272108,
+      "byteLength": 268676,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-27.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/27",
-      "sha256": "1d4c439225f3d1f46b4f8c3cfbbbc31fc87199eb6706415b98b32174786699b6",
+      "sha256": "da53c68d9ca65b5b5da4538aff2c9f413a156b690b8f10116607f7425cd72b06",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:性能管理||",
+        "count": 140,
+        "from": "fact:literal_form:平鑿||",
         "index": 27,
         "key": "canonical",
-        "to": "fact:literal_form:戸当たり||"
+        "to": "fact:literal_form:形態機能的||"
       }
     },
     {
-      "byteLength": 266596,
+      "byteLength": 274276,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-28.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/28",
-      "sha256": "c3b67ce630b18dc4afb14a5f41f29d94a4c51d523d3332c4b5a374ea6beb8910",
+      "sha256": "d310a9ae42e3bf39eeaf4e68701ccfd250467763e19b2733a6954ce697da2340",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:戸当り||",
+        "count": 140,
+        "from": "fact:literal_form:形態機能的変化||",
         "index": 28,
         "key": "canonical",
-        "to": "fact:literal_form:指南||"
+        "to": "fact:literal_form:忽せ||"
       }
     },
     {
-      "byteLength": 266928,
+      "byteLength": 271312,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-29.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/29",
-      "sha256": "6c0f4b4d07b94d20c5405beb558ab70ea43bc2922d7ad983893bce9d6ed198bf",
+      "sha256": "abd0822845045e83a0ee1e3bfde3716aaeeb6470fe35a8300425f0713bc6915d",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:指南役||",
+        "count": 140,
+        "from": "fact:literal_form:忽せにする||",
         "index": 29,
         "key": "canonical",
-        "to": "fact:literal_form:放射性系列||"
+        "to": "fact:literal_form:成りすまし||"
       }
     },
     {
-      "byteLength": 286472,
+      "byteLength": 496396,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-3.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/3",
-      "sha256": "635b842a7a0f60df6962194bceb047f36eafd0789e6b0974dc2adbcfbfb29e72",
+      "sha256": "b9051d3f213afab2719decc71064f80e9171c54bb53c4dbeed458e4e71df3828",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:かに挟み||",
+        "count": 140,
+        "from": "fact:form_relation:そこなふ||そこなう",
         "index": 3,
         "key": "canonical",
-        "to": "fact:literal_form:ならし保育||"
+        "to": "fact:form_relation:歌はねば||歌わねば"
       }
     },
     {
-      "byteLength": 279504,
+      "byteLength": 267308,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-30.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/30",
-      "sha256": "e68ee9a1841fab184a23b047d095b46c9e9da894bae2410faf8a954e8b9dc2fe",
+      "sha256": "019c426cb767a109a1776fb63d177397099693de3aee704dd6fe0ab267d3d196",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:放射性肺炎||",
+        "count": 140,
+        "from": "fact:literal_form:成りすます||",
         "index": 30,
         "key": "canonical",
-        "to": "fact:literal_form:日本国外||"
+        "to": "fact:literal_form:拇趾||"
       }
     },
     {
-      "byteLength": 278168,
+      "byteLength": 266236,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-31.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/31",
-      "sha256": "d6aee2f760c6354945d36903f62d0b94a000e438c5f19e2c9a109f14c2849b8d",
+      "sha256": "a84991fd12bf669b8deba8cc0323b0d8da30a8557bb1234278ca6883899fa8ce",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:日本国憲法||",
+        "count": 140,
+        "from": "fact:literal_form:拈くる||",
         "index": 31,
         "key": "canonical",
-        "to": "fact:literal_form:書契||"
+        "to": "fact:literal_form:撰ばれし者||"
       }
     },
     {
-      "byteLength": 276760,
+      "byteLength": 277264,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-32.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/32",
-      "sha256": "1b0a7704692a800fdf40a1da48aab5bd91e75956f7a3c5f980e6800bf81368c8",
+      "sha256": "a6a66eef072b61c1158b515bfbb3af183e337fd536ab4d21c675db5c4d12185f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:書字||",
+        "count": 140,
+        "from": "fact:literal_form:撰ぶ||",
         "index": 32,
         "key": "canonical",
-        "to": "fact:literal_form:松飾||"
+        "to": "fact:literal_form:旅先||"
       }
     },
     {
-      "byteLength": 273176,
+      "byteLength": 281116,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-33.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/33",
-      "sha256": "171a22565d027f2b565438237119018d8338f0038a6cd03110e2c0a94598d93f",
+      "sha256": "e49f45365ac690f7330f81dff2e9dd2386829a84beb5265db539a7dfddf47027",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:松飾り||",
+        "count": 140,
+        "from": "fact:literal_form:旅具||",
         "index": 33,
         "key": "canonical",
-        "to": "fact:literal_form:橋げた||"
+        "to": "fact:literal_form:暗暗裏||"
       }
     },
     {
-      "byteLength": 275192,
+      "byteLength": 273492,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-34.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/34",
-      "sha256": "bf42d9dd3e07df153fb72866389b45a41005d621d7f40de893891b6acd455bcc",
+      "sha256": "87538d1e95393ab4f75df05e8dbb6569a931f5b8eb2d04f392c3f996cc296d27",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:橋わたし||",
+        "count": 140,
+        "from": "fact:literal_form:暗暗裡||",
         "index": 34,
         "key": "canonical",
-        "to": "fact:literal_form:気分||"
+        "to": "fact:literal_form:杢||"
       }
     },
     {
-      "byteLength": 272092,
+      "byteLength": 274876,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-35.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/35",
-      "sha256": "ce390120b03c33505bcf946b35bd123149f8da78ecf33f42e2481150e0b52c61",
+      "sha256": "8b8ed31c550141f435d5d077df931753729d8072ca2e76d74b11e133ffdbc6b9",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:気分がいい||",
+        "count": 140,
+        "from": "fact:literal_form:杢グレー||",
         "index": 35,
         "key": "canonical",
-        "to": "fact:literal_form:活字を組む||"
+        "to": "fact:literal_form:構築||"
       }
     },
     {
-      "byteLength": 273188,
+      "byteLength": 275692,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-36.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/36",
-      "sha256": "7ea7111334e4bb4ba106651221bb36c8ddf18892f26583c7ae60ebbdd155d4fd",
+      "sha256": "487ec36b1c838a682192cb2716d0ff93a36b4b3a8f9ed9ebfcc27abfbc127b0e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:活字ドラム||",
+        "count": 140,
+        "from": "fact:literal_form:構築主義||",
         "index": 36,
         "key": "canonical",
-        "to": "fact:literal_form:滴らす||"
+        "to": "fact:literal_form:比較解剖学||"
       }
     },
     {
-      "byteLength": 271348,
+      "byteLength": 272408,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-37.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/37",
-      "sha256": "f2dfb84f8e8d9cd0041b570d2b03fc1acd7e10bf80a95f60dae49fbbdf915291",
+      "sha256": "7784717236348a72aeebbb98f1d66bd2d6705339b7baebcb8279421734205931",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:滴り||",
+        "count": 140,
+        "from": "fact:literal_form:比較言語学||",
         "index": 37,
         "key": "canonical",
-        "to": "fact:literal_form:煎茶||"
+        "to": "fact:literal_form:泣き落とし||"
       }
     },
     {
-      "byteLength": 273308,
+      "byteLength": 272568,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-38.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/38",
-      "sha256": "25b71691ca5dd564ad1c0f8b326e1c99b733494ef99d3655a4e0923a93f5b87a",
+      "sha256": "a0c227bb5388cd82697e12a7f49c20544f6baf6bb01fb621ba399a3010320119",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:煎茶道||",
+        "count": 140,
+        "from": "fact:literal_form:泣き落とす||",
         "index": 38,
         "key": "canonical",
-        "to": "fact:literal_form:王立園芸協会||"
+        "to": "fact:literal_form:湾曲部||"
       }
     },
     {
-      "byteLength": 274460,
+      "byteLength": 273484,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-39.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/39",
-      "sha256": "a88379913953e00f7730f07f5ad3d23b7a001d945a9fc381a6fa923239626148",
+      "sha256": "f8291e1dab544865433b4e7db9488baf704d4d347208649937e292da6d1fac17",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:王立工学アカデミー||",
+        "count": 140,
+        "from": "fact:literal_form:湾流||",
         "index": 39,
         "key": "canonical",
-        "to": "fact:literal_form:當十錢||"
+        "to": "fact:literal_form:無記名社債||"
       }
     },
     {
-      "byteLength": 290960,
+      "byteLength": 368988,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-4.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/4",
-      "sha256": "1fa2c718ab348137015ac2201704d7152356d5bb7208495ae6e2f68c7dc83927",
+      "sha256": "8ef17a4c9d964f31b16db5bc215709f7c4b4fc05d8d680a74900e58f436777df",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:ならず者||",
+        "count": 140,
+        "from": "fact:form_relation:歌はれ||歌われ",
         "index": 4,
         "key": "canonical",
-        "to": "fact:literal_form:イタリア・トルコ戦争||"
+        "to": "fact:literal_form:お猪口になる||"
       }
     },
     {
-      "byteLength": 271852,
+      "byteLength": 272220,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-40.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/40",
-      "sha256": "f4a2e1cbac1b0c5b316554f5996445bd15a0c5e6f69fa93d77fcb8a73ffc699a",
+      "sha256": "88b84a70ea197e9f2edb84877919f379fa14a09795acd849bef0fa52aa98c3bf",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:畷||",
+        "count": 140,
+        "from": "fact:literal_form:無記名預金||",
         "index": 40,
         "key": "canonical",
-        "to": "fact:literal_form:相性|||@jmdict-form:lexeme:相生/そうしょう"
+        "to": "fact:literal_form:猛犬||"
       }
     },
     {
-      "byteLength": 274008,
+      "byteLength": 273424,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-41.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/41",
-      "sha256": "5f665675f6c0b953ecb597a1ea2e0889b3ec3e2d99a66eaa45d0a412711567dd",
+      "sha256": "66637ab4b3543ad75bd60a618ec3f020e8a14f67fe5412fddbf00f73c4414dfe",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:相性占い||",
+        "count": 140,
+        "from": "fact:literal_form:猛猛しい||",
         "index": 41,
         "key": "canonical",
-        "to": "fact:literal_form:神の思召||"
+        "to": "fact:literal_form:画一||"
       }
     },
     {
-      "byteLength": 270444,
+      "byteLength": 271840,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-42.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/42",
-      "sha256": "dcabf8ef8eaabeb544cb2bd9b04fb149ce7a8c0596d8c14b472394d57478fe21",
+      "sha256": "01f5303fe2f9be269e4ad7dfb2ffeb73487ebda4c447643ccf4a9943041310cf",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:神の思召し||",
+        "count": 140,
+        "from": "fact:literal_form:画一主義||",
         "index": 42,
         "key": "canonical",
-        "to": "fact:literal_form:端初||"
+        "to": "fact:literal_form:目立つ||"
       }
     },
     {
-      "byteLength": 272044,
+      "byteLength": 273536,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-43.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/43",
-      "sha256": "c5d0e45f42a86cce5d2df28d5fec480f5e151cfa1b5e6d4ddb2e4071c3914d02",
+      "sha256": "35c3472db11ee475bba46195a4746668e27969c31d185054f01c8494bc56df4f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:端午||",
+        "count": 140,
+        "from": "fact:literal_form:目立て||",
         "index": 43,
         "key": "canonical",
-        "to": "fact:literal_form:素性文字||"
+        "to": "fact:literal_form:磁気バブルメモリー||"
       }
     },
     {
-      "byteLength": 272388,
+      "byteLength": 273208,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-44.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/44",
-      "sha256": "c06f43dc0346dcfdcf3fe2747bfacbabeb25c63fbcf7902a8465d94bc1f62e33",
+      "sha256": "57379ec1404b069b74126cff63e25bdef1cfc84a2effa2fa22870180e2f17349",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:素性構造||",
+        "count": 140,
+        "from": "fact:literal_form:磁気バブル記憶装置||",
         "index": 44,
         "key": "canonical",
-        "to": "fact:literal_form:繁盛||"
+        "to": "fact:literal_form:竃|||@jmdict-form:lexeme:竈/かまど"
       }
     },
     {
-      "byteLength": 269612,
+      "byteLength": 270124,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-45.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/45",
-      "sha256": "e33f5eda0eac00117c06cc36951a440c06af4cdd5984a98d7dad6822bba79c13",
+      "sha256": "be7399e8616da5a7fb88414c057a5865866fb083a159553260830921c16b3294",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:繁簡||",
+        "count": 140,
+        "from": "fact:literal_form:竃|||@jmdict-form:lexeme:竈/くど",
         "index": 45,
         "key": "canonical",
-        "to": "fact:literal_form:胴体着陸||"
+        "to": "fact:literal_form:糾す||"
+      }
+    },
+    {
+      "byteLength": 273476,
+      "encoding": "binary-columnar",
+      "kind": "evidence-map",
+      "loading": "lazy",
+      "path": "evidence-map-canonical-46.bin",
+      "rowCount": 4096,
+      "sectionId": "evidence-map@canonical/46",
+      "sha256": "107a319675a4bdc788d07e428cda6f2bbeb9be997aae1bb13fcdd3c74f093232",
+      "shard": {
+        "count": 140,
+        "from": "fact:literal_form:糾合||",
+        "index": 46,
+        "key": "canonical",
+        "to": "fact:literal_form:締結||"
+      }
+    },
+    {
+      "byteLength": 268928,
+      "encoding": "binary-columnar",
+      "kind": "evidence-map",
+      "loading": "lazy",
+      "path": "evidence-map-canonical-47.bin",
+      "rowCount": 4096,
+      "sectionId": "evidence-map@canonical/47",
+      "sha256": "76464393708dc74870243319a7abdbe758ba3bc5b52450beb6b4f6990856dbf4",
+      "shard": {
+        "count": 140,
+        "from": "fact:literal_form:締結日||",
+        "index": 47,
+        "key": "canonical",
+        "to": "fact:literal_form:肩すかしを食らう||"
       }
     },
     {
@@ -7998,1002 +8066,968 @@
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
-      "path": "evidence-map-canonical-46.bin",
-      "rowCount": 4096,
-      "sectionId": "evidence-map@canonical/46",
-      "sha256": "dbc2a065bed680917adff9bea957ea912e7beb06bf374557038179e6651816c3",
-      "shard": {
-        "count": 138,
-        "from": "fact:literal_form:胴像||",
-        "index": 46,
-        "key": "canonical",
-        "to": "fact:literal_form:船積||"
-      }
-    },
-    {
-      "byteLength": 268432,
-      "encoding": "binary-columnar",
-      "kind": "evidence-map",
-      "loading": "lazy",
-      "path": "evidence-map-canonical-47.bin",
-      "rowCount": 4096,
-      "sectionId": "evidence-map@canonical/47",
-      "sha256": "1971237b4493aeb18b0d8385111111e64265658ddaef38a6959a442525db776e",
-      "shard": {
-        "count": 138,
-        "from": "fact:literal_form:船積み||",
-        "index": 47,
-        "key": "canonical",
-        "to": "fact:literal_form:蕭洒||"
-      }
-    },
-    {
-      "byteLength": 269460,
-      "encoding": "binary-columnar",
-      "kind": "evidence-map",
-      "loading": "lazy",
       "path": "evidence-map-canonical-48.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/48",
-      "sha256": "4ac283ebb5f13146067b4d1996434462b3e28fbf16af8993de762cdd7ca9b980",
+      "sha256": "36039de0f55c005abd2b88a5c710eee3d49d60c8238de68cc3c8066ec143cdf7",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:蕭然||",
+        "count": 140,
+        "from": "fact:literal_form:肩すかしを食わせる||",
         "index": 48,
         "key": "canonical",
-        "to": "fact:literal_form:補助バッテリー||"
+        "to": "fact:literal_form:臭覚||"
       }
     },
     {
-      "byteLength": 271924,
+      "byteLength": 268640,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-49.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/49",
-      "sha256": "f5991c2a2f878cb5ab669e67f9d3d4d836f0c7c531637235cfc7bec09b651245",
+      "sha256": "85384e480e0728f3c2e9b7db319c4143ba2477b68d26a514a46cf5be3d494a32",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:補助人||",
+        "count": 140,
+        "from": "fact:literal_form:臭豆腐|||@jmdict-form:lexeme:臭豆腐/しゅうどうふ",
         "index": 49,
         "key": "canonical",
-        "to": "fact:literal_form:設立者||"
+        "to": "fact:literal_form:葉枯れ||"
       }
     },
     {
-      "byteLength": 299876,
+      "byteLength": 284788,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-5.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/5",
-      "sha256": "ff8b36c94ea9c804703eed07d2f68bbb012d1f5bba5732ac8da7d9b8c70e7a48",
+      "sha256": "b160c2611c4d664861f45628514e59db8f75039b5d5a35f1068507dac37d4b6e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:イタリア人||",
+        "count": 140,
+        "from": "fact:literal_form:お猿さん||",
         "index": 5,
         "key": "canonical",
-        "to": "fact:literal_form:ストア主義||"
+        "to": "fact:literal_form:つれ帰る||"
       }
     },
     {
-      "byteLength": 272508,
+      "byteLength": 268388,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-50.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/50",
-      "sha256": "db0be39d2b035ceedfb3921835603e1bc64ef610f52aee35cf30059aa5bb0fb5",
+      "sha256": "6b21e2b64b2af166e4a18a741fa9987673a0abb3cda433eff6cea0088b5141af",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:設立趣意書||",
+        "count": 140,
+        "from": "fact:literal_form:葉柄||",
         "index": 50,
         "key": "canonical",
-        "to": "fact:literal_form:貰う||"
+        "to": "fact:literal_form:表見出し||"
       }
     },
     {
-      "byteLength": 269996,
+      "byteLength": 271872,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-51.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/51",
-      "sha256": "77ab2427734887eef5dcfb8a70070dd78eeae58c670066639b1754548e4bfe1d",
+      "sha256": "c4020f64be31fb7f684337a7c636d76e3472ce5b4f683fe532d5a431e7f1bb3f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:貰える||",
+        "count": 140,
+        "from": "fact:literal_form:表見支配人||",
         "index": 51,
         "key": "canonical",
-        "to": "fact:literal_form:転びバテレン||"
+        "to": "fact:literal_form:言志四録||"
       }
     },
     {
-      "byteLength": 274000,
+      "byteLength": 272960,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-52.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/52",
-      "sha256": "072098f8107d093cbafe3e528d3cfb720a840c1cb333f00750df442fb61b5ded",
+      "sha256": "d6ae0feaf2eb82ece9f3845677c598c461e26a53e9e8cfda54f04524775be1b7",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:転び伴天連||",
+        "count": 140,
+        "from": "fact:literal_form:言忘れる||",
         "index": 52,
         "key": "canonical",
-        "to": "fact:literal_form:遅配||"
+        "to": "fact:literal_form:象が踏んでも壊れない||"
       }
     },
     {
-      "byteLength": 276484,
+      "byteLength": 270648,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-53.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/53",
-      "sha256": "70a717fc669641fd49db7f906090243c13f453ef7baed5017531d5d4b3729afb",
+      "sha256": "a4a6aa602f21f47b5a57456e3ed8d44b1e699c9bcc2e2e18db282e8c81222260",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:遅鈍||",
+        "count": 140,
+        "from": "fact:literal_form:象の檻||",
         "index": 53,
         "key": "canonical",
-        "to": "fact:literal_form:金ざる||"
+        "to": "fact:literal_form:身体表現性障害||"
       }
     },
     {
-      "byteLength": 272104,
+      "byteLength": 273684,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-54.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/54",
-      "sha256": "451ba163acbef2551edc47a4e6521dd5a7cd09c74163285a8fa35823c922a5de",
+      "sha256": "614781a084ba2a0938b2fe909569d118d3599f8f6199692f9f33821561f89b33",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:金しばり||",
+        "count": 140,
+        "from": "fact:literal_form:身体装検器||",
         "index": 54,
         "key": "canonical",
-        "to": "fact:literal_form:闃||"
+        "to": "fact:literal_form:逡巡||"
       }
     },
     {
-      "byteLength": 273744,
+      "byteLength": 276672,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-55.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/55",
-      "sha256": "0cfa2c1391a0f6a8c94a3d64f6403f1b0ee07cb31284b722ffb6d0a67afd7d46",
+      "sha256": "59f34f7f751077f0fd4a55a3bbadde7aea3b91ec1dc234f783a7dfbd5c2b5d75",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:闃寂||",
+        "count": 140,
+        "from": "fact:literal_form:逢いびき||",
         "index": 55,
         "key": "canonical",
-        "to": "fact:literal_form:電磁界||"
+        "to": "fact:literal_form:釈尊||"
       }
     },
     {
-      "byteLength": 273528,
+      "byteLength": 271548,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-56.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/56",
-      "sha256": "b91057dfe52fcd94b2fa853e0586e006987c862610f65f4149fa362de01ce5c7",
+      "sha256": "e60a5a67353decc709ba2b56c1c0ca5f12cabb1260c7fb6d922268d8a308991c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:電磁的||",
+        "count": 140,
+        "from": "fact:literal_form:釈放||",
         "index": 56,
         "key": "canonical",
-        "to": "fact:literal_form:飛沫核||"
+        "to": "fact:literal_form:開成所||"
       }
     },
     {
-      "byteLength": 270268,
+      "byteLength": 273344,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-57.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/57",
-      "sha256": "98813cd46b9db15a5361bc9365b2bc7f375561775a7e63912bbadb293d8b9b03",
+      "sha256": "d2672295d1f283c1f2d5e0f1ff59ab766d4fbc71d16e5bb8a951f1edb043f228",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:飛沫核感染||",
+        "count": 140,
+        "from": "fact:literal_form:開戦||",
         "index": 57,
         "key": "canonical",
-        "to": "fact:literal_form:鰒|||@jmdict-form:lexeme:鮑/アワビ"
+        "to": "fact:literal_form:雪質||"
       }
     },
     {
-      "byteLength": 272196,
+      "byteLength": 275468,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-58.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/58",
-      "sha256": "5884266807414557333edda76025bfac93824ed5a34ba689f93e20e03b84340a",
+      "sha256": "1f1578d1421bf5ab84bd03a9b774ccfa20da85b2fb419b562f7a30ba8a9baebb",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:鰓|||@jmdict-form:lexeme:顎門/あぎと",
+        "count": 140,
+        "from": "fact:literal_form:雪起こし||",
         "index": 58,
         "key": "canonical",
-        "to": "fact:literal_form:ＩＨ調理器||"
+        "to": "fact:literal_form:顔見世狂言||"
       }
     },
     {
-      "byteLength": 276468,
+      "byteLength": 270808,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-59.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/59",
-      "sha256": "47c87c693b0be19174307616dbd812c7add991d4407fc63ae4bddce34de9eb7b",
+      "sha256": "d816ce6f8111e35d470c6e0461b9eeccad339cc866a89af97ab166ed2ae9ec54",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:ＩＩ型糖尿病||",
+        "count": 140,
+        "from": "fact:literal_form:顔見知り||",
         "index": 59,
         "key": "canonical",
-        "to": "fact:literal_reading:|となりのトトロ|"
+        "to": "fact:literal_form:髪挿||"
       }
     },
     {
-      "byteLength": 298712,
+      "byteLength": 287704,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-6.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/6",
-      "sha256": "f6780d43ca6ded782040e12218a7857177818a2ff9c3e9dcc57f90453b8e18d0",
+      "sha256": "160e32d30950e0ccd0dad8fe045a6310644fc6df09ea3b11b2f8c549d6a178d6",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:ストア哲学||",
+        "count": 140,
+        "from": "fact:literal_form:つれ添う||",
         "index": 6,
         "key": "canonical",
-        "to": "fact:literal_form:ブス可愛い||"
+        "to": "fact:literal_form:アセスルファムＫ||"
       }
     },
     {
-      "byteLength": 282192,
+      "byteLength": 268520,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-60.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/60",
-      "sha256": "e0346c5d79edbe6e6d18fa3b77d5557fca1d2ac4374db10e88de973edccdd3cc",
+      "sha256": "452cd5e140ccbcaf3270a640c6fe2654da67fe60c3b58b7664f7c79bf27c2f5b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|となる|",
+        "count": 140,
+        "from": "fact:literal_form:髪挿屋||",
         "index": 60,
         "key": "canonical",
-        "to": "fact:literal_reading:|アナモルフィック・レンズ|"
+        "to": "fact:literal_form:９ヶ年||"
       }
     },
     {
-      "byteLength": 293452,
+      "byteLength": 278656,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-61.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/61",
-      "sha256": "9327973cead4c8f78402e15da8916031b45fefd27d695dc73fcbbbdbe57205bc",
+      "sha256": "b4b9e6d15a63fd350dffce35d1b77465f617fe5da10e31c830ad9abbd02c5fe8",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|アナライザ|",
+        "count": 140,
+        "from": "fact:literal_form:９人||",
         "index": 61,
         "key": "canonical",
-        "to": "fact:literal_reading:|ウインドシア|"
+        "to": "fact:literal_reading:|そっか|"
       }
     },
     {
-      "byteLength": 289584,
+      "byteLength": 278976,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-62.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/62",
-      "sha256": "20d0f61ccd38f4b8da6e9e5275cbda14a1aef41aebd05dc175ba7c2a9ce9fdd3",
+      "sha256": "5823cd38a57636ab4b62001f0904a6bd46e6702f234d0e0063c3ccd2fbdf30ed",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ウインドシアー|",
+        "count": 140,
+        "from": "fact:literal_reading:|そっから|",
         "index": 62,
         "key": "canonical",
-        "to": "fact:literal_reading:|オーバー・アクション|"
+        "to": "fact:literal_reading:|アサルト・ライフル|"
       }
     },
     {
-      "byteLength": 286824,
+      "byteLength": 293144,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-63.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/63",
-      "sha256": "6b591c793f1b9e83d4aa81ac380f9d9bf36fff1905cfff7ac99a39be36e865fc",
+      "sha256": "9852cf0a928aa30c8d14fed7a9075b85a7382af7fd898f3ad5e1930bac711899",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|オーバー・エイジ|",
+        "count": 140,
+        "from": "fact:literal_reading:|アサンプション|",
         "index": 63,
         "key": "canonical",
-        "to": "fact:literal_reading:|クオリファイングトーナメント|"
+        "to": "fact:literal_reading:|インディアペーパー|"
       }
     },
     {
-      "byteLength": 291088,
+      "byteLength": 288216,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-64.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/64",
-      "sha256": "839c8323100df5fe5c4d1c7eaa0029e113de3fb8ca54300412feaa0b590705c4",
+      "sha256": "cd2d8d48b6b1b38ce25c20b53ba5cf55a550696346ac89bc3aa1abef7d6a2c92",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|クオンタイズ|",
+        "count": 140,
+        "from": "fact:literal_reading:|インディアペールエール|",
         "index": 64,
         "key": "canonical",
-        "to": "fact:literal_reading:|コントロールタワー|"
+        "to": "fact:literal_reading:|オリジネーター|"
       }
     },
     {
-      "byteLength": 290420,
+      "byteLength": 289408,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-65.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/65",
-      "sha256": "9c70ccd279133d9ab85028093d6de912b38960e46a243431ee8aa8142ac56a83",
+      "sha256": "54ce458656eec63ca47e7308f45a7bd0ceec0804acbb2d58034afb13feb2d012",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|コントロールパット|",
+        "count": 140,
+        "from": "fact:literal_reading:|オリジン|",
         "index": 65,
         "key": "canonical",
-        "to": "fact:literal_reading:|ショーダウン|"
+        "to": "fact:literal_reading:|キュウッと|"
       }
     },
     {
-      "byteLength": 290984,
+      "byteLength": 288448,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-66.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/66",
-      "sha256": "f60a8a8534ed5de4d701b7ca91452a03de6a868ce0ac484e0c5b8402e6d6488f",
+      "sha256": "49edf9d543482b5aa32d668b8ec20e75adddd30e76d48a1d73e9162587cdc09b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ショーダービジョン|",
+        "count": 140,
+        "from": "fact:literal_reading:|キュクロプス|",
         "index": 66,
         "key": "canonical",
-        "to": "fact:literal_reading:|スポーツ・ファン|"
+        "to": "fact:literal_reading:|コマンド・キー|"
       }
     },
     {
-      "byteLength": 287796,
+      "byteLength": 291904,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-67.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/67",
-      "sha256": "0c894fe258e7859612cab93d2e097f727a7f8a5c3e2fe5627b3537035d5c356e",
+      "sha256": "3cc7f082aa01b50528dafc2a04c4261ce0911bbcf16bba0118c2dd1566dfa078",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|スポーツ・フェアー|",
+        "count": 140,
+        "from": "fact:literal_reading:|コマンド・シンタックス|",
         "index": 67,
         "key": "canonical",
-        "to": "fact:literal_reading:|チジミ|"
+        "to": "fact:literal_reading:|シックハウス|"
       }
     },
     {
-      "byteLength": 287956,
+      "byteLength": 290352,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-68.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/68",
-      "sha256": "70e376fc09db5ae3a5af04d3c151e6e43c5d197c6c955d8ed589a1c47df37b95",
+      "sha256": "1f3b833b2f70acab655eb6871ce523b855fcbace47159d60f61e56129dd7509d",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|チセ|",
+        "count": 140,
+        "from": "fact:literal_reading:|シック・スクール|",
         "index": 68,
         "key": "canonical",
-        "to": "fact:literal_reading:|トレンチ・ガン|"
+        "to": "fact:literal_reading:|ストロンチウム|"
       }
     },
     {
-      "byteLength": 286680,
+      "byteLength": 289004,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-69.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/69",
-      "sha256": "8b4383f80afdef6d8246b20162de98bd6857cfff98d70b4d331bd51aab9be4ae",
+      "sha256": "b825182929d61e24e2556cc9f15486f4e107c82bd101a9429d04f44fa19951a4",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|トレンチ・コート|",
+        "count": 140,
+        "from": "fact:literal_reading:|ストロー|",
         "index": 69,
         "key": "canonical",
-        "to": "fact:literal_reading:|ハング・オン|"
+        "to": "fact:literal_reading:|ダイレイタンシー|"
       }
     },
     {
-      "byteLength": 294712,
+      "byteLength": 300020,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-7.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/7",
-      "sha256": "20ca6ac87d5cd7c961cc928928cf525448beed28d932a595c1e0d352acb5b1e9",
+      "sha256": "bedd1c72b25229fa04d9da7fcd20cf7f4f10b4eb58ba3535a6ddeac75e031bd7",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:ブス専||",
+        "count": 140,
+        "from": "fact:literal_form:アセタール樹脂||",
         "index": 7,
         "key": "canonical",
-        "to": "fact:literal_form:一括払い||"
+        "to": "fact:literal_form:サルモネラ食中毒||"
       }
     },
     {
-      "byteLength": 288608,
+      "byteLength": 286660,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-70.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/70",
-      "sha256": "77de444f177fa1fc0b50636acbe7d391a243c04e0c6e01c65f373e5edd1a0550",
+      "sha256": "ce8ae7b13c9d9d0340c841a2a629b70a162049d338a2bc9e32d6eaa24cb99e60",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ハング・グライダー|",
+        "count": 140,
+        "from": "fact:literal_reading:|ダイレクション|",
         "index": 70,
         "key": "canonical",
-        "to": "fact:literal_reading:|ビッグ・ネーム|"
+        "to": "fact:literal_reading:|トゲゾー|"
       }
     },
     {
-      "byteLength": 288920,
+      "byteLength": 287368,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-71.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/71",
-      "sha256": "a660a7b3d7f593be00f74c82cd1a05c4cf31f57661a9253c48a1ad8e43ebf54c",
+      "sha256": "7ea1b959cd797a297bc6a92afd3909f085d20e21b8d2951df2b0da362c93ddfe",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ビッグ・バン|",
+        "count": 140,
+        "from": "fact:literal_reading:|トゲドコロ|",
         "index": 71,
         "key": "canonical",
-        "to": "fact:literal_reading:|ブッラータ|"
+        "to": "fact:literal_reading:|ハイウエイ|"
       }
     },
     {
-      "byteLength": 288148,
+      "byteLength": 288260,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-72.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/72",
-      "sha256": "023289b22b6794711a8faa0d48b41b30c64cdad0320094d8e382c77254960fd5",
+      "sha256": "3fa7a5e2041240f70294f5416f5f048900440a4a3a27005339d8be92da2aff11",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ブツクサ|",
+        "count": 140,
+        "from": "fact:literal_reading:|ハイウエイラジオ|",
         "index": 72,
         "key": "canonical",
-        "to": "fact:literal_reading:|ホット・サンド|"
+        "to": "fact:literal_reading:|パート|"
       }
     },
     {
-      "byteLength": 287892,
+      "byteLength": 289064,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-73.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/73",
-      "sha256": "5f81efa359e0a1b301a9c8eb807ebbd33f53acb61bb89f9c29f9f7d1e6e296b8",
+      "sha256": "31e019acb94b5a4391463925c721ff10312fc69d358c00970bd5c70c8061ca3c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ホット・サンド・メーカー|",
+        "count": 140,
+        "from": "fact:literal_reading:|パートタイマー|",
         "index": 73,
         "key": "canonical",
-        "to": "fact:literal_reading:|ミネソタ|"
+        "to": "fact:literal_reading:|フリー・トーキング|"
       }
     },
     {
-      "byteLength": 285632,
+      "byteLength": 288984,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-74.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/74",
-      "sha256": "44a7f6c4d7873aa434ecbc29193ff3ac0201f35fa1e9682407d29798cbd1d9c6",
+      "sha256": "4729de3338950bed52a50d7783e6a606884d17d4a5d5a22a629911b572ab1415",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ミネベア|",
+        "count": 140,
+        "from": "fact:literal_reading:|フリー・トーク|",
         "index": 74,
         "key": "canonical",
-        "to": "fact:literal_reading:|リスカ|"
+        "to": "fact:literal_reading:|ベース・キャンプ|"
       }
     },
     {
-      "byteLength": 286904,
+      "byteLength": 286852,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-75.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/75",
-      "sha256": "828d0dfd82558e11699710b054aad89c7f90e98bf8d3e72ded0f843f3581259c",
+      "sha256": "e1d8ee21c5bcb0135b9c68a168897672aa3a399d0a676b837bfd8d846e19a922",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|リスキリング|",
+        "count": 140,
+        "from": "fact:literal_reading:|ベース・ギター|",
         "index": 75,
         "key": "canonical",
-        "to": "fact:literal_reading:|ヴェジマイト|"
+        "to": "fact:literal_reading:|マルチプル・チョイス|"
       }
     },
     {
-      "byteLength": 347480,
+      "byteLength": 286452,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-76.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/76",
-      "sha256": "0aea40a8c0428b70fb8f4630b6443e32344135c345361ecf70c2924435743e17",
+      "sha256": "d91886485a693089f724fc90026390bbf0d6973a7eacfdf25b9809642ac4b083",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:|ヴェスト|",
+        "count": 140,
+        "from": "fact:literal_reading:|マルチプレイ|",
         "index": 76,
         "key": "canonical",
-        "to": "fact:literal_reading:くっ付き虫|くっつきむし|"
+        "to": "fact:literal_reading:|ラップ||@jmdict-reading:lexeme:ラップ/ラップ#3"
       }
     },
     {
-      "byteLength": 357776,
+      "byteLength": 286556,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-77.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/77",
-      "sha256": "da776227d46521a9e03c1e6b2bd672f6c99c26d6f55fba2fa8b005e1862e093b",
+      "sha256": "b2fd7ec5b88dd50c9bb91cf1d401a1bd0bffa9909c7d991bd38bc93fdadcad46",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:くっ付く|くっつく|",
+        "count": 140,
+        "from": "fact:literal_reading:|ラップアラウンド|",
         "index": 77,
         "key": "canonical",
-        "to": "fact:literal_reading:に基づき|にもとづき|"
+        "to": "fact:literal_reading:|ロー・ソファー|"
       }
     },
     {
-      "byteLength": 366784,
+      "byteLength": 335620,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-78.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/78",
-      "sha256": "24090794f572fe18fdc82dfbbe6a51b4fdd4712035ee6d40f34657b8778567c2",
+      "sha256": "d892e7f483541e8bacd075a6e053fc5d619930fa17e97741c5487a843cb40440",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:に対し|にたいし|",
+        "count": 140,
+        "from": "fact:literal_reading:|ロー・チェスト|",
         "index": 78,
         "key": "canonical",
-        "to": "fact:literal_reading:アンケート結果|アンケートけっか|"
+        "to": "fact:literal_reading:かけ替えのない|かけがえのない|"
       }
     },
     {
-      "byteLength": 402492,
+      "byteLength": 357064,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-79.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/79",
-      "sha256": "6f8960cd4f3589c59a279a2037a777d460c410d65028b3decdb611f172e073bb",
+      "sha256": "6c8d75d23c21739a95c88313ec8d769769cc4a0c308bf339701b34d74c5ee4a6",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:アンケート調査|アンケートちょうさ|",
+        "count": 140,
+        "from": "fact:literal_reading:かけ替える|かけかえる|",
         "index": 79,
         "key": "canonical",
-        "to": "fact:literal_reading:サンコウチョウ|サンクヮウテウ|"
+        "to": "fact:literal_reading:とび色|とびいろ|"
       }
     },
     {
-      "byteLength": 277712,
+      "byteLength": 299068,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-8.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/8",
-      "sha256": "bd8c531cc04afc1e9d08b9f305a1c132079d4cf5a2768b1bea042a1666ad31b8",
+      "sha256": "8057431c3f72fe334522e40da740e16d2cec06f49502cd1b2f885767f6b72d47",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:一括方式||",
+        "count": 140,
+        "from": "fact:literal_form:サル便||",
         "index": 8,
         "key": "canonical",
-        "to": "fact:literal_form:不妊||"
+        "to": "fact:literal_form:ヒコ札||"
       }
     },
     {
-      "byteLength": 408612,
+      "byteLength": 357624,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-80.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/80",
-      "sha256": "9059a07224b4807b48e7c612b8d268ad55e31d085a1da8b296aaa84ba782c85b",
+      "sha256": "8ac550a85b1d87b60a181e9df6e1c2418e65d8e71b03d145aad756e80e41652b",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:サンコウメヌケ|サンコウメヌケ|",
+        "count": 140,
+        "from": "fact:literal_reading:とび込み営業|とびこみえいぎょう|",
         "index": 80,
         "key": "canonical",
-        "to": "fact:literal_reading:バイルシュタイン試験|バイルシュタインしけん|"
+        "to": "fact:literal_reading:アオバズク|アヲバヅク|"
       }
     },
     {
-      "byteLength": 397872,
+      "byteLength": 402352,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-81.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/81",
-      "sha256": "f0292be7b5cd0f29a9ec6a1eed17212295889dd21a92be95dd6c0296637c2622",
+      "sha256": "8efc51d3c2ffdb9846e183276681f44fa8a860a75f8d773cdcae26e180000c33",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:バイ菌|ばいきん|",
+        "count": 140,
+        "from": "fact:literal_reading:アオバト|アヲバト|",
         "index": 81,
         "key": "canonical",
-        "to": "fact:literal_reading:ラチが明かない|らちがあかん|"
+        "to": "fact:literal_reading:ゲージ粒子|ゲージりゅうし|"
       }
     },
     {
-      "byteLength": 356132,
+      "byteLength": 406360,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-82.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/82",
-      "sha256": "ebcd10d79459eb773f9e5a086eff9f9d7e7cd75026b5ccd9c49b8279c17897dc",
+      "sha256": "d614e52128f53fc25f7ec853f9954546c50435edee95b1d06efb56d424511745",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:ラチが明かない|ラチがあかない|",
+        "count": 140,
+        "from": "fact:literal_reading:ゲーズ語|ゲーズご|",
         "index": 82,
         "key": "canonical",
-        "to": "fact:literal_reading:三度三度|さんどさんど|"
+        "to": "fact:literal_reading:ニオブ酸|ニオブさん|"
       }
     },
     {
-      "byteLength": 342608,
+      "byteLength": 401124,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-83.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/83",
-      "sha256": "e51a4d83d23dccac78d292f59c8554e679afc49e990b509496fd7d15d268e7a7",
+      "sha256": "fe2ce1c52ed730a4128eb8e269dc7f4075f6dccd9485c77671e44660576aa63c",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:三度入り|さんどいり|",
+        "count": 140,
+        "from": "fact:literal_reading:ニカの乱|ニカのらん|",
         "index": 83,
         "key": "canonical",
-        "to": "fact:literal_reading:中国短期大学|ちゅうごくたんきだいがく|"
+        "to": "fact:literal_reading:メタ分析|メタぶんせき|"
       }
     },
     {
-      "byteLength": 344404,
+      "byteLength": 367028,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-84.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/84",
-      "sha256": "0dc00b0072f7e720b69d9bcd4a897299511400e72559f7c73812d231d5fe33b2",
+      "sha256": "5d6d1320649ab5b6abd95e1cd89f89a5923c84ab4de9c49b3b0d77770cc0e0e8",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:中国科学技術大学|ちゅうごくかがくぎじゅつだいがく|",
+        "count": 140,
+        "from": "fact:literal_reading:メタ数学|メタすうがく|",
         "index": 84,
         "key": "canonical",
-        "to": "fact:literal_reading:五大老|ごたいろう|"
+        "to": "fact:literal_reading:七味とうがらし|しちみとうがらし|"
       }
     },
     {
-      "byteLength": 343328,
+      "byteLength": 342568,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-85.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/85",
-      "sha256": "6f47125a9dceee088ba19dbed36bc9a87b21ed36ce1c0a39289743900704c60b",
+      "sha256": "8275eae6b95a6115f0158c2ef40fc32a48b3b554626afa063512eccb3b6be782",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:五大陸|ごたいりく|",
+        "count": 140,
+        "from": "fact:literal_reading:七味唐辛子|しちみとうがらし|",
         "index": 85,
         "key": "canonical",
-        "to": "fact:literal_reading:仮想移動体通信事業者|かそういどうたいつうしんじぎょうしゃ|"
+        "to": "fact:literal_reading:世界観|せかいかん|"
       }
     },
     {
-      "byteLength": 341268,
+      "byteLength": 343484,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-86.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/86",
-      "sha256": "5db0e4477be2f0cf71b6c7b1c1d58bc6101c467f171c5cdb60a6c6643a097b55",
+      "sha256": "5b98c01215586d33f515e8836a62eed5da3d8253b0333474de66143b70a5e227",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:仮想空間|かそうくうかん|",
+        "count": 140,
+        "from": "fact:literal_reading:世界観光機関|せかいかんこうきかん|",
         "index": 86,
         "key": "canonical",
-        "to": "fact:literal_reading:俗説|ぞくせつ|"
+        "to": "fact:literal_reading:二十八|にじゅうはち|"
       }
     },
     {
-      "byteLength": 341724,
+      "byteLength": 345084,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-87.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/87",
-      "sha256": "ae8e3208773ddf18170e658865203ebde14001f42863f447be184d9fc0d84ea3",
+      "sha256": "74213b77aa15f5510bc83a180757043f352e6579a02ed52bfbeccbe27edc0e51",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:俗調|ぞくちょう|",
+        "count": 140,
+        "from": "fact:literal_reading:二十八宿|にじゅうはっしゅく|",
         "index": 87,
         "key": "canonical",
-        "to": "fact:literal_reading:入り違い|いりちがい|"
+        "to": "fact:literal_reading:付け方|つけかた|"
       }
     },
     {
-      "byteLength": 351416,
+      "byteLength": 342084,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-88.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/88",
-      "sha256": "56b4f373175304de1f9ec6d36038a591dfb2c9bba4612bff8e47a6035f5c82ec",
+      "sha256": "63be38c14f61d461645b91dfca8cd0b6ebc514d2b2e2015406d307f4a35a0a01",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:入り隅|いりすみ|",
+        "count": 140,
+        "from": "fact:literal_reading:付け景気|つけげいき|",
         "index": 88,
         "key": "canonical",
-        "to": "fact:literal_reading:冠鳩|かんむりばと|"
+        "to": "fact:literal_reading:使い走り|つかいはしり|"
       }
     },
     {
-      "byteLength": 333340,
+      "byteLength": 339664,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-89.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/89",
-      "sha256": "ef6329e588b60eaeed45df1ec681dc7fa4dc05573fb03e965cf7d755240f9aa6",
+      "sha256": "c82e6a61bfa2cf316b13488927639b83de59e82fce0853366b91293036201b68",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:冠鳰|かんむりかいつぶり|",
+        "count": 140,
+        "from": "fact:literal_reading:使い走り|つかいばしり|",
         "index": 89,
         "key": "canonical",
-        "to": "fact:literal_reading:刺し身包丁|さしみぼうちょう|"
+        "to": "fact:literal_reading:先妻|せんさい|"
       }
     },
     {
-      "byteLength": 275516,
+      "byteLength": 299208,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-9.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/9",
-      "sha256": "d7024011b7deb94b16c67a114a7b1e36c82cdbf30192896bca89a0d47c4cb360",
+      "sha256": "7165bea1b13af427f722a9531fc1a06352f499c5fc8a88fcdc4ad7591d487f7f",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_form:不妊性||",
+        "count": 140,
+        "from": "fact:literal_form:ヒザ関節||",
         "index": 9,
         "key": "canonical",
-        "to": "fact:literal_form:予実||"
+        "to": "fact:literal_form:一つ釜||"
       }
     },
     {
-      "byteLength": 342708,
+      "byteLength": 350824,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-90.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/90",
-      "sha256": "82beb7f37963d89ecf03c03dfe69c27fb6ddef10d6baa944e8532d44b5853278",
+      "sha256": "146110350bb2faab4072f76e11c83fccb52728a0b2e78ca9a07529d33699b996",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:刺し通す|さしとおす|",
+        "count": 140,
+        "from": "fact:literal_reading:先婦|せんぷ|",
         "index": 90,
         "key": "canonical",
-        "to": "fact:literal_reading:十三月|じゅうさんがつ|"
+        "to": "fact:literal_reading:内需|ないじゅ|"
       }
     },
     {
-      "byteLength": 347492,
+      "byteLength": 335632,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-91.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/91",
-      "sha256": "54e3ee24043db601b1672a6f22184e74d71ed4fe20656c3457c0c200a4f5c391",
+      "sha256": "06090b0ce06459d794fce9cc1c3db5622f7d9f910252ae3dcf2c44d44c1f8be9",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:十三階段|じゅうさんかいだん|",
+        "count": 140,
+        "from": "fact:literal_reading:内需主導型|ないじゅしゅどうがた|",
         "index": 91,
         "key": "canonical",
-        "to": "fact:literal_reading:収音|しゅうおん|"
+        "to": "fact:literal_reading:初転法輪|しょてんほうりん|"
       }
     },
     {
-      "byteLength": 334764,
+      "byteLength": 338528,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-92.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/92",
-      "sha256": "31a41c858245cfc1dc74865cdf47ff7e3994cd392badd3724fbf87921a57de04",
+      "sha256": "ef20998a1d44d9cd19f74a771aa45fd29c07f6b8c8099c9725adfcf6fea12424",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:収骨|しゅうこつ|",
+        "count": 140,
+        "from": "fact:literal_reading:初転法輪|しょてんぼうりん|",
         "index": 92,
         "key": "canonical",
-        "to": "fact:literal_reading:名古屋造形大学|なごやぞうけいだいがく|"
+        "to": "fact:literal_reading:化女|けにょ|"
       }
     },
     {
-      "byteLength": 333064,
+      "byteLength": 348896,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-93.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/93",
-      "sha256": "bd805f3c15fc95353e0d2a9b4a273ea4027a3e5193d49c9089d6873c1213f1d4",
+      "sha256": "6b04aca7495abc54169faf0ff98cce862d877cf7645b7cc425d339458fb54d06",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:名古屋造形芸術大学|なごやぞうけいげいじゅつだいがく|",
+        "count": 140,
+        "from": "fact:literal_reading:化学|かがく|",
         "index": 93,
         "key": "canonical",
-        "to": "fact:literal_reading:噛んで含める|かんでふくめる|"
+        "to": "fact:literal_reading:又従兄|またいとこ|"
       }
     },
     {
-      "byteLength": 355988,
+      "byteLength": 335944,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-94.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/94",
-      "sha256": "416623d29abed1ddf20d01c7d6bba93fd16359b0a840fffbb75993f8b3925a1f",
+      "sha256": "c55a7253a9df68ddaf7f05e4b7b9de84190c84a62e5a876c260119506dc5d0f6",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:噛付く|かみつく|",
+        "count": 140,
+        "from": "fact:literal_reading:又従兄妹|またいとこ|",
         "index": 94,
         "key": "canonical",
-        "to": "fact:literal_reading:垂し髪|すべしがみ|"
+        "to": "fact:literal_reading:合集|がっしゅう|"
       }
     },
     {
-      "byteLength": 338020,
+      "byteLength": 335984,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-95.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/95",
-      "sha256": "8c35698fcc9656e4a09dce7c4aa0e0cc6d93eded0a940e93e756e74349c524bf",
+      "sha256": "cb48bc3d49a9b4270253c2e46ed577dfb5ba7f5d55e7b279213440294926ae07",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:垂ぜん|すいえん|",
+        "count": 140,
+        "from": "fact:literal_reading:合音|ごうおん|",
         "index": 95,
         "key": "canonical",
-        "to": "fact:literal_reading:夜酒|よざけ|"
+        "to": "fact:literal_reading:喉ごしの良い|のどごしのよい|"
       }
     },
     {
-      "byteLength": 345328,
+      "byteLength": 353160,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-96.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/96",
-      "sha256": "c1552ec9e13c82d4e142383913fb181192e264c7522500d9689ff2782878baae",
+      "sha256": "28a681f3d0bff34e3099b7dfb699d17defcb4a4edc728e0b9ae8a7459055525e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:夜釣|よづり|",
+        "count": 140,
+        "from": "fact:literal_reading:喉ちんこ|のどちんこ|",
         "index": 96,
         "key": "canonical",
-        "to": "fact:literal_reading:女の子っぽい|おんなのこっぽい|"
+        "to": "fact:literal_reading:地久節|ちきゅうせつ|"
       }
     },
     {
-      "byteLength": 341884,
+      "byteLength": 337932,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-97.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/97",
-      "sha256": "b094770a487f66dc3016ef409ac299d8f0baea8dadf4152c7d37e1b1aa1b1185",
+      "sha256": "13e00274a58857758f63eb7fcddff3ebd23d9560772cd5c54b86f184bb97fb14",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:女の子の日|おんなのこのひ|",
+        "count": 140,
+        "from": "fact:literal_reading:地付き|じつき|",
         "index": 97,
         "key": "canonical",
-        "to": "fact:literal_reading:宛先変更|あてさきへんこう|"
+        "to": "fact:literal_reading:外舅|がいきゅう|"
       }
     },
     {
-      "byteLength": 339556,
+      "byteLength": 345904,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-98.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/98",
-      "sha256": "24197e16d05d4a2decf756a125f30f657d1035423658e024cbc9dbe847408633",
+      "sha256": "e6679eeeea34a2d31676ddff394ddb207dbe4641b81866d332872d017224822e",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:宛名|あてな|",
+        "count": 140,
+        "from": "fact:literal_reading:外航|がいこう|",
         "index": 98,
         "key": "canonical",
-        "to": "fact:literal_reading:小穂|しょうすい|"
+        "to": "fact:literal_reading:太陽系|たいようけい|"
       }
     },
     {
-      "byteLength": 334580,
+      "byteLength": 340724,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-99.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/99",
-      "sha256": "316ad7284ec1963976e89035adf9500908093fb169ab9a47efcf914bc69871e5",
+      "sha256": "c96a26682b35b7a2e50ae8b2473d050887b04b47294aadfe4c10c29477f9c755",
       "shard": {
-        "count": 138,
-        "from": "fact:literal_reading:小突き回す|こづきまわす|",
+        "count": 140,
+        "from": "fact:literal_reading:太陽系儀|たいようけいぎ|",
         "index": 99,
         "key": "canonical",
-        "to": "fact:literal_reading:巻付く|まきつく|"
+        "to": "fact:literal_reading:安全衛生協会|あんぜんえいせいきょうかい|"
       }
     },
     {
@@ -17907,7 +17941,7 @@
       "path": "program-evidence-program-0.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/0",
-      "sha256": "632aefc6093ba9d0a069ba44197033d6789aa26ae4d2426eb929a84a83fd1878",
+      "sha256": "64e45076158fe9721e341f0907fd1b05ef18343e67d6ff600fb84db5ca2d72f9",
       "shard": {
         "count": 12,
         "from": "00000000",
@@ -17924,7 +17958,7 @@
       "path": "program-evidence-program-1.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/1",
-      "sha256": "f5d8cadfb0a25e8e49e49331131a137e356ae7c143bd149f00615ab6d84cb35d",
+      "sha256": "c36951a0d771fdeec259daca60da943e9db2c4ec644739118a524641fe0d393f",
       "shard": {
         "count": 12,
         "from": "00016384",
@@ -17934,14 +17968,14 @@
       }
     },
     {
-      "byteLength": 190248,
+      "byteLength": 217708,
       "encoding": "binary-columnar",
       "kind": "program-evidence",
       "loading": "lazy",
       "path": "program-evidence-program-10.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/10",
-      "sha256": "334a0927f318d0cbd48af621775b5fd8000b635ca7c475df4278d96b0b683479",
+      "sha256": "a80574be378eb68432948be3eeb7db9144f3bdfa5b02b5d7b0e07d1e30d008c2",
       "shard": {
         "count": 12,
         "from": "00163840",
@@ -17951,20 +17985,20 @@
       }
     },
     {
-      "byteLength": 20988,
+      "byteLength": 131420,
       "encoding": "binary-columnar",
       "kind": "program-evidence",
       "loading": "lazy",
       "path": "program-evidence-program-11.bin",
-      "rowCount": 1863,
+      "rowCount": 11134,
       "sectionId": "program-evidence@program/11",
-      "sha256": "074664b453711f280c4a6c86df3f5654ddff037c3d32500c8fef52f7ad45d708",
+      "sha256": "71c094e073aee60713709512b5683b2f87da5a793c32823042befd018139a0c7",
       "shard": {
         "count": 12,
         "from": "00180224",
         "index": 11,
         "key": "program",
-        "to": "00182086"
+        "to": "00191357"
       }
     },
     {
@@ -17975,7 +18009,7 @@
       "path": "program-evidence-program-2.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/2",
-      "sha256": "4bcee885e9d79497c997f45a87fb09bec9b93864f2db61e8fc13cc60d62227fc",
+      "sha256": "bf8843e7f32f8b791fecd62c40fb9c05ad03126229cd69fc83664076b30817e0",
       "shard": {
         "count": 12,
         "from": "00032768",
@@ -17992,7 +18026,7 @@
       "path": "program-evidence-program-3.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/3",
-      "sha256": "ecc7e72809dd4bd880eac2ef09ccacb72587644c2da14141ec578856ec0954a6",
+      "sha256": "1e81fc1a055b929366fa35d9ce3425adc187331760095a7e814d16ed84826da1",
       "shard": {
         "count": 12,
         "from": "00049152",
@@ -18009,7 +18043,7 @@
       "path": "program-evidence-program-4.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/4",
-      "sha256": "f72ed6a15beaa6b493c0a6e7e888cc0a6bb9b8e626ee149b49c2a8eee379ac9d",
+      "sha256": "7ebbe2b7716d44a8fd242f2d4009ef185230ad0ae3b138bb7cd130b97dc47a26",
       "shard": {
         "count": 12,
         "from": "00065536",
@@ -18026,7 +18060,7 @@
       "path": "program-evidence-program-5.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/5",
-      "sha256": "5c83ca32f5ed6db7d7ae4a61888d8f50e94d26617bf1ff29dd947a55f7144111",
+      "sha256": "76b9c8c4423f0d637d9780d2cd016ce347a066f2822b168ba8030ab26d5c488a",
       "shard": {
         "count": 12,
         "from": "00081920",
@@ -18043,7 +18077,7 @@
       "path": "program-evidence-program-6.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/6",
-      "sha256": "2cc5f2161caa7a2f7086b61725ddc5f0cb2c86b3e65550d138dfd5232d1cc489",
+      "sha256": "384c82b7abe5637086338f38dacba03862105393ef838e0f7b1b1eb2c7740a0a",
       "shard": {
         "count": 12,
         "from": "00098304",
@@ -18060,7 +18094,7 @@
       "path": "program-evidence-program-7.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/7",
-      "sha256": "287206bb068d4daee180d834491c92d868676bb71b98bc585085cc31665e98a8",
+      "sha256": "69d4179d6a1aecd8f8b69af285b1f375d362780b326fe12139810a93551e9b32",
       "shard": {
         "count": 12,
         "from": "00114688",
@@ -18077,7 +18111,7 @@
       "path": "program-evidence-program-8.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/8",
-      "sha256": "cc37fcdc531683354b15ec2eff5e6ae95b8540abbac3d718c1697b8007c27b22",
+      "sha256": "48f898261948788c58b450f8bb0cf786c0b2506861a86869f21a1f6d003bdc64",
       "shard": {
         "count": 12,
         "from": "00131072",
@@ -18094,7 +18128,7 @@
       "path": "program-evidence-program-9.bin",
       "rowCount": 16384,
       "sectionId": "program-evidence@program/9",
-      "sha256": "c046a72e4433e93cbb29e28318340d0c3fd79987f50642e94aeb17a9dfc571a3",
+      "sha256": "ecfa23e9c05fca8e6a43c847c8182017927485b2400c5d0fc2bfbf483181f108",
       "shard": {
         "count": 12,
         "from": "00147456",
@@ -26070,34 +26104,34 @@
       "sha256": "b81db7056189ddef81bdda173347254dcfd0954ceed1bcbb05e42698642b17d2"
     },
     {
-      "byteLength": 194040,
+      "byteLength": 1050240,
       "encoding": "binary-columnar",
       "kind": "rule-predicates",
       "loading": "on-demand",
       "path": "rule-predicates.bin",
-      "rowCount": 2009,
+      "rowCount": 10973,
       "sectionId": "rule-predicates",
-      "sha256": "39e6d23ad4d85af75cce4092971bce7f9ea8766fffb1917bc5c21f0b58375f03"
+      "sha256": "aaf803c0a47b64008fab815f5dcbc3c53d40e8ee059b84ef3d7f54df92cde85a"
     },
     {
-      "byteLength": 2708064,
+      "byteLength": 2748228,
       "encoding": "binary-columnar",
       "kind": "rule-program-index",
       "loading": "on-demand",
       "path": "rule-program-index.bin",
-      "rowCount": 179949,
+      "rowCount": 180229,
       "sectionId": "rule-program-index",
-      "sha256": "1ad879e007ae4133e459134aed233e7651cc9f1683042e56539d88fd4ac29cfc"
+      "sha256": "a7059913040b12b09939092d7a3f0e23dc937d8ae098916ce0faf74a964ea725"
     },
     {
-      "byteLength": 6135812,
+      "byteLength": 6629388,
       "encoding": "binary-columnar",
       "kind": "rule-programs",
       "loading": "on-demand",
       "path": "rule-programs.bin",
-      "rowCount": 182087,
+      "rowCount": 191358,
       "sectionId": "rule-programs",
-      "sha256": "ff8d2514196e5a37a3e5850cc13404323872aaee262bbe981ee8775dbcacdf05"
+      "sha256": "6164e74f19d4a7ffbc7eff414d15cfab87654c818671c4612ba48a3843d6783b"
     },
     {
       "byteLength": 292,
@@ -26110,24 +26144,24 @@
       "sha256": "feefca46cb4f55046808a76e8eb9c97e978bfd467d6776924db581f290651190"
     },
     {
-      "byteLength": 110092,
+      "byteLength": 150124,
       "encoding": "binary-columnar",
       "kind": "rules",
       "loading": "eager",
       "path": "rules.bin",
       "rowCount": 203,
       "sectionId": "rules",
-      "sha256": "7b68f6203609716c0db0142cb8127b99464cf938c10e2f6fff82b2277b14f55d"
+      "sha256": "8dba8aba62d3edb81543628ec9320555b47d01f61cf7c75a494451b3ac8a8fdb"
     },
     {
-      "byteLength": 5506752,
+      "byteLength": 5507100,
       "encoding": "binary-columnar",
       "kind": "sequence-pool",
       "loading": "on-demand",
       "path": "sequence-pool.bin",
-      "rowCount": 408151,
+      "rowCount": 408193,
       "sectionId": "sequence-pool",
-      "sha256": "d81d561a28a8b90a1bfa58cee40cc3d5836b5364c31b59468b68a3bd507b88c3"
+      "sha256": "d89ad90fb07e8c6d87f85eeff762ca16b74043588bb04db6cd5c67e6225b503b"
     },
     {
       "byteLength": 12736,
@@ -26138,6 +26172,16 @@
       "rowCount": 330,
       "sectionId": "shard-directory",
       "sha256": "595538195c1be8d882a3c93e7088bc3fdc716664d8ab750ace7d7b3162b0b41a"
+    },
+    {
+      "byteLength": 352292,
+      "encoding": "binary-columnar",
+      "kind": "sino-component-index",
+      "loading": "on-demand",
+      "path": "sino-component-index.bin",
+      "rowCount": 8964,
+      "sectionId": "sino-component-index",
+      "sha256": "4e2e79fff1fe9970313ee602cc06b6a30034ff198b6da66ce5038090def612d5"
     },
     {
       "byteLength": 51912,
@@ -32721,7 +32765,7 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "817f7eda140e68f42df0c240941eb4035a3c3c0900c9baa34f6dd30ecec37c31",
+  "sourceSetDigest": "cd7d496a230bf3bff3bffd7e79ae37d178285c30a9cf6f28864fd38568bedebc",
   "symbolRegistry": {
     "digest": "360af312e92abaeb38029de3339a7a51c994853b94ac10df0f9924d5f06c0745",
     "generation": 1

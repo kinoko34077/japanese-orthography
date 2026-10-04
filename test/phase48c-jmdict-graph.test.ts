@@ -6,31 +6,33 @@ import { gzipSync } from 'node:zlib';
 import { loadJmdictIntake, sha256 } from '../tools/jmdict-intake.ts';
 import { compileJmdictLexicalGraph, lexemeKeys } from '../tools/jmdict-lexical-graph.ts';
 import { createEntityGraphRuntime, compactEntityGraph, inflateEntityGraph, makeId, validateEntityGraph } from '../tools/lexical-entity-graph.ts';
-import { createSinoDagRuntime, projectSinoDag } from '../tools/sino-dag-projection.ts';
+import { createSinoDagRuntime, historicalSinoRelations, projectSinoDag } from '../tools/sino-dag-projection.ts';
 import { buildLexicalGraphMeasurements, MEASUREMENTS_PATH } from '../tools/lexical-graph-measurements.ts';
 
 async function legacySino() {
   const sandbox: Record<string, any> = {};
   sandbox.globalThis = sandbox;
   vm.runInNewContext(await readFile('runtime/historical-sino-runtime.js', 'utf8'), sandbox);
-  const artifact = JSON.parse(await readFile('data/historical/sino/phase46e-sino-kana.json', 'utf8'));
+  const rawArtifact = JSON.parse(await readFile('data/historical/sino/phase46e-sino-kana.json', 'utf8'));
+  const artifact = { ...rawArtifact, componentRelations: historicalSinoRelations(rawArtifact.componentRelations) };
   return { artifact, runtime: sandbox.HistoricalSinoRuntime.createHistoricalSinoRuntime(artifact) };
 }
 const plain = (value: unknown) => JSON.parse(JSON.stringify(value ?? null));
 
 test('4.6E component authority is reproduced exactly by the shared DAG projection', async () => {
   const { artifact, runtime: legacy } = await legacySino();
-  const graph = projectSinoDag(artifact.componentRelations, 'phase46e-sino-table');
+  const relations = historicalSinoRelations(artifact.componentRelations);
+  const graph = projectSinoDag(relations, 'phase46e-sino-table');
   assert.deepEqual(validateEntityGraph(graph), []);
   const dag = createSinoDagRuntime(graph);
 
   // patterns are shared: far fewer pattern nodes than relations, every table pair once
-  const tablePairs = new Set(artifact.componentRelations.flatMap((r: any) => r.historicalReadings.map((h: string) => `${h}>${r.modernReading}`)));
+  const tablePairs = new Set(relations.flatMap((r: any) => r.historicalReadings.map((h: string) => `${h}>${r.modernReading}`)));
   assert.equal(graph.convergencePatterns.filter((p) => !p.base).length, tablePairs.size);
-  assert.ok(graph.convergencePatterns.length < artifact.componentRelations.length);
+  assert.ok(graph.convergencePatterns.length < relations.length);
 
   let checked = 0;
-  for (const r of artifact.componentRelations) {
+  for (const r of relations) {
     for (const query of [{}, { context: null }, { context: '仏教用語' }]) {
       const q = { character: r.character, modernReading: r.modernReading, ...query };
       assert.deepEqual(plain(dag.resolveDirect(r.character, r.modernReading, query)), plain(legacy.resolveHistoricalSino(q)), JSON.stringify(q));
@@ -86,9 +88,10 @@ test('JMdict compiles deterministically into grouped lexemes with separate homop
 
 test('4.6E word reconstruction is reproduced across the JMdict Sino vocabulary', async () => {
   const { artifact, runtime: legacy } = await legacySino();
-  const dag = createSinoDagRuntime(projectSinoDag(artifact.componentRelations, 'phase46e-sino-table'));
+  const relations = historicalSinoRelations(artifact.componentRelations);
+  const dag = createSinoDagRuntime(projectSinoDag(relations, 'phase46e-sino-table'));
   const { extract } = await loadJmdictIntake(process.cwd());
-  const known = new Set(artifact.componentRelations.map((r: any) => r.character));
+  const known = new Set(relations.map((r: any) => r.character));
   let compared = 0;
   for (const entry of extract) {
     for (const k of entry.k ?? []) {
@@ -109,8 +112,9 @@ test('4.6E word reconstruction is reproduced across the JMdict Sino vocabulary',
 test('recorded size measurements are real compiled bytes', async () => {
   const recorded = JSON.parse(await readFile(MEASUREMENTS_PATH, 'utf8'));
   const { artifact } = await legacySino();
-  const sino = projectSinoDag(artifact.componentRelations, 'phase46e-sino-table');
-  const measured = buildLexicalGraphMeasurements({ sino, sinoSource: artifact.componentRelations });
+  const relations = historicalSinoRelations(artifact.componentRelations);
+  const sino = projectSinoDag(relations, 'phase46e-sino-table');
+  const measured = buildLexicalGraphMeasurements({ sino, sinoSource: relations });
   assert.deepEqual(measured.sinoDag, recorded.sinoDag);
   assert.ok(recorded.compactGraph.bytes < recorded.canonicalGraph.bytes);
   assert.ok(recorded.hotProjection.bytes < recorded.jmdict.rawExtractBytes);

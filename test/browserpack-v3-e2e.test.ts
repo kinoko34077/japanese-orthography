@@ -75,12 +75,14 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   for (const profileId of ['modern', 'historical', 'kinotch-fixed']) {
     const necessary = await runAcceptance('必要', profileId);
     const necessaryUnit = unitFor(necessary, '必要');
-    assert.equal(necessary.renderedText, '｜必要《ひつよう》', profileId);
+    const expectedNecessaryRuby = profileId === 'modern' ? 'ひつよう' : 'ひつえう';
+    assert.equal(necessary.renderedText, `｜必要《${expectedNecessaryRuby}》`, profileId);
     assert.equal(necessaryUnit.kind, 'resolved', profileId);
     assert.equal(necessaryUnit.reading, 'ひつよう', profileId);
     assert.deepEqual(necessary.spans.map((span: any) => [span.start, span.end]), [[0, 2]], profileId);
     const component = await runAcceptance('必要', profileId, 'ruby-components-explicit');
-    assert.equal(component.renderedText, necessary.renderedText, `${profileId}: partial component evidence must fall back to whole Ruby`);
+    const expectedComponentRuby = profileId === 'modern' ? necessary.renderedText : '｜必《ひつ》要《えう》';
+    assert.equal(component.renderedText, expectedComponentRuby, `${profileId}: complete component evidence may be emitted; partial evidence must still fall back`);
   }
 
   const marketProperty = await runAcceptance('市場特性', 'modern');

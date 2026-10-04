@@ -2,26 +2,26 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "2c23362bcf9654cdec5c77e1fc1ac77abf4441705d096c3066cea6aa72848d17",
-  "sections": 1842,
+  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
+  "sections": 1845,
   "sizes": {
-    "total": 183452860,
-    "totalGzip": 72084139,
+    "total": 186242248,
+    "totalGzip": 72852978,
     "byLoading": {
       "eager": {
         "sections": 10,
-        "bytes": 534972,
-        "gzipBytes": 214554
+        "bytes": 575004,
+        "gzipBytes": 233971
       },
       "lazy": {
-        "sections": 480,
-        "bytes": 73565916,
-        "gzipBytes": 24482170
+        "sections": 482,
+        "bytes": 74572692,
+        "gzipBytes": 24867169
       },
       "on-demand": {
-        "sections": 1352,
-        "bytes": 109351972,
-        "gzipBytes": 47387415
+        "sections": 1353,
+        "bytes": 111094552,
+        "gzipBytes": 47751838
       }
     },
     "byKind": {
@@ -36,9 +36,9 @@
         "gzipBytes": 8743205
       },
       "evidence-map": {
-        "sections": 138,
-        "bytes": 42901636,
-        "gzipBytes": 14483931
+        "sections": 140,
+        "bytes": 43770520,
+        "gzipBytes": 14824186
       },
       "knowledge-bundle": {
         "sections": 330,
@@ -77,8 +77,8 @@
       },
       "program-evidence": {
         "sections": 12,
-        "bytes": 2360868,
-        "gzipBytes": 1255034
+        "bytes": 2498760,
+        "gzipBytes": 1299778
       },
       "reading-index": {
         "sections": 468,
@@ -92,18 +92,18 @@
       },
       "rule-predicates": {
         "sections": 1,
-        "bytes": 194040,
-        "gzipBytes": 14901
+        "bytes": 1050240,
+        "gzipBytes": 74916
       },
       "rule-program-index": {
         "sections": 1,
-        "bytes": 2708064,
-        "gzipBytes": 1441367
+        "bytes": 2748228,
+        "gzipBytes": 1469145
       },
       "rule-programs": {
         "sections": 1,
-        "bytes": 6135812,
-        "gzipBytes": 2741434
+        "bytes": 6629388,
+        "gzipBytes": 2838735
       },
       "rule-runtime-meta": {
         "sections": 1,
@@ -112,18 +112,23 @@
       },
       "rules": {
         "sections": 1,
-        "bytes": 110092,
-        "gzipBytes": 31329
+        "bytes": 150124,
+        "gzipBytes": 50746
       },
       "sequence-pool": {
         "sections": 1,
-        "bytes": 5506752,
-        "gzipBytes": 2629946
+        "bytes": 5507100,
+        "gzipBytes": 2630003
       },
       "shard-directory": {
         "sections": 1,
         "bytes": 12736,
         "gzipBytes": 7868
+      },
+      "sino-component-index": {
+        "sections": 1,
+        "bytes": 352292,
+        "gzipBytes": 179272
       },
       "surface-index": {
         "sections": 386,
@@ -148,24 +153,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 10,
-        "bytes": 534972,
-        "gzipBytes": 215697,
-        "openMs": 118
+        "bytes": 575004,
+        "gzipBytes": 235270,
+        "openMs": 85
       },
       "coldFirstResult": {
-        "requests": 71,
-        "bytes": 3882604,
-        "gzipBytes": 1696200,
-        "ms": 702
+        "requests": 72,
+        "bytes": 4234896,
+        "gzipBytes": 1875536,
+        "ms": 791
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 17
+        "ms": 12
       },
-      "detailLatencyMs": 24,
+      "detailLatencyMs": 59,
       "unitDetailLatencyMs": 97,
-      "residentArrayBufferBytes": 7660584,
-      "jsHeapDeltaBytes": 17554208,
+      "residentArrayBufferBytes": 9143476,
+      "jsHeapDeltaBytes": 33930528,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -174,24 +179,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 10,
-        "bytes": 534972,
-        "gzipBytes": 215697,
-        "openMs": 68
+        "bytes": 575004,
+        "gzipBytes": 235270,
+        "openMs": 67
       },
       "coldFirstResult": {
-        "requests": 152,
-        "bytes": 8244472,
-        "gzipBytes": 3558487,
-        "ms": 1020
+        "requests": 153,
+        "bytes": 8596764,
+        "gzipBytes": 3737823,
+        "ms": 1060
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 36
+        "ms": 46
       },
-      "detailLatencyMs": 19,
-      "unitDetailLatencyMs": 23,
-      "residentArrayBufferBytes": 9960428,
-      "jsHeapDeltaBytes": 12087992,
+      "detailLatencyMs": 113,
+      "unitDetailLatencyMs": 31,
+      "residentArrayBufferBytes": 11319304,
+      "jsHeapDeltaBytes": 13884344,
       "spans": 7,
       "inspectableUnits": 23
     }

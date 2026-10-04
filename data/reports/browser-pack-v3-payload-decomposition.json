@@ -2,88 +2,88 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "17ac2182b926b9d2a5df883a2e4c96e55c828ddc1c0f97984a7a99dc5c9959dd",
-  "totalBytes": 157056684,
-  "classTotalBytes": 157056684,
+  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
+  "totalBytes": 186242248,
+  "classTotalBytes": 186242248,
   "classes": {
     "bundle-container": {
-      "sections": 328,
-      "bytes": 142694,
+      "sections": 330,
+      "bytes": 143722,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
       "integerBytes": 0,
-      "overheadBytes": 142694,
+      "overheadBytes": 143722,
       "jsonBytes": 0
     },
     "evidence-map": {
-      "sections": 137,
-      "bytes": 42444868,
-      "unicodeStringBytes": 3715863,
-      "stringOffsetBytes": 1806664,
-      "symbolTokenBytes": 15137498,
-      "integerBytes": 21740791,
-      "overheadBytes": 44052,
+      "sections": 140,
+      "bytes": 43770520,
+      "unicodeStringBytes": 3718781,
+      "stringOffsetBytes": 1807676,
+      "symbolTokenBytes": 15820744,
+      "integerBytes": 22378682,
+      "overheadBytes": 44637,
       "jsonBytes": 0
     },
     "knowledge-facts": {
       "sections": 0,
-      "bytes": 7829518,
+      "bytes": 7915912,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
-      "integerBytes": 7829518,
+      "integerBytes": 7915912,
       "overheadBytes": 0,
       "jsonBytes": 0
     },
     "knowledge-index": {
       "sections": 1,
-      "bytes": 3006102,
+      "bytes": 3017176,
       "unicodeStringBytes": 10,
       "stringOffsetBytes": 12,
-      "symbolTokenBytes": 8356,
-      "integerBytes": 2997470,
-      "overheadBytes": 254,
+      "symbolTokenBytes": 8168,
+      "integerBytes": 3008730,
+      "overheadBytes": 256,
       "jsonBytes": 0
     },
     "knowledge-strings": {
       "sections": 0,
-      "bytes": 7287158,
-      "unicodeStringBytes": 22,
+      "bytes": 7274950,
+      "unicodeStringBytes": 20,
       "stringOffsetBytes": 1388,
-      "symbolTokenBytes": 7285748,
+      "symbolTokenBytes": 7273542,
       "integerBytes": 0,
       "overheadBytes": 0,
       "jsonBytes": 0
     },
     "lexeme-metadata": {
       "sections": 162,
-      "bytes": 29177404,
-      "unicodeStringBytes": 695,
-      "stringOffsetBytes": 1612,
-      "symbolTokenBytes": 15574552,
-      "integerBytes": 13573758,
-      "overheadBytes": 26787,
+      "bytes": 34216864,
+      "unicodeStringBytes": 10102,
+      "stringOffsetBytes": 10736,
+      "symbolTokenBytes": 15588456,
+      "integerBytes": 18575218,
+      "overheadBytes": 32352,
       "jsonBytes": 0
     },
     "lexical-index": {
-      "sections": 750,
-      "bytes": 37152196,
-      "unicodeStringBytes": 8463,
-      "stringOffsetBytes": 12620,
-      "symbolTokenBytes": 24381356,
-      "integerBytes": 12578742,
-      "overheadBytes": 171015,
+      "sections": 855,
+      "bytes": 42282716,
+      "unicodeStringBytes": 127144,
+      "stringOffsetBytes": 127844,
+      "symbolTokenBytes": 24580506,
+      "integerBytes": 17219097,
+      "overheadBytes": 228125,
       "jsonBytes": 0
     },
     "morphology": {
       "sections": 1,
-      "bytes": 10684,
+      "bytes": 115292,
       "unicodeStringBytes": 354,
       "stringOffsetBytes": 348,
-      "symbolTokenBytes": 788,
-      "integerBytes": 8929,
-      "overheadBytes": 265,
+      "symbolTokenBytes": 46950,
+      "integerBytes": 67351,
+      "overheadBytes": 289,
       "jsonBytes": 0
     },
     "presentation": {
@@ -108,61 +108,131 @@
     },
     "program-evidence": {
       "sections": 12,
-      "bytes": 2359388,
-      "unicodeStringBytes": 797,
-      "stringOffsetBytes": 180,
-      "symbolTokenBytes": 294,
-      "integerBytes": 2355866,
-      "overheadBytes": 2251,
+      "bytes": 2498760,
+      "unicodeStringBytes": 869,
+      "stringOffsetBytes": 188,
+      "symbolTokenBytes": 306,
+      "integerBytes": 2495150,
+      "overheadBytes": 2247,
       "jsonBytes": 0
     },
     "provenance-evidence": {
-      "sections": 328,
-      "bytes": 27276256,
-      "unicodeStringBytes": 1830838,
-      "stringOffsetBytes": 1040488,
-      "symbolTokenBytes": 8388998,
-      "integerBytes": 15930153,
-      "overheadBytes": 85779,
+      "sections": 330,
+      "bytes": 28303412,
+      "unicodeStringBytes": 1855560,
+      "stringOffsetBytes": 1044332,
+      "symbolTokenBytes": 8689596,
+      "integerBytes": 16627664,
+      "overheadBytes": 86260,
+      "jsonBytes": 0
+    },
+    "rule-lexeme-sets": {
+      "sections": 1,
+      "bytes": 4900,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 4837,
+      "overheadBytes": 63,
+      "jsonBytes": 0
+    },
+    "rule-predicates": {
+      "sections": 1,
+      "bytes": 1050240,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 1050055,
+      "overheadBytes": 185,
+      "jsonBytes": 0
+    },
+    "rule-program-index": {
+      "sections": 1,
+      "bytes": 2748228,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 2748075,
+      "overheadBytes": 153,
+      "jsonBytes": 0
+    },
+    "rule-programs": {
+      "sections": 1,
+      "bytes": 6629388,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 6629108,
+      "overheadBytes": 280,
+      "jsonBytes": 0
+    },
+    "rule-runtime-meta": {
+      "sections": 1,
+      "bytes": 292,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 186,
+      "overheadBytes": 106,
       "jsonBytes": 0
     },
     "rules-bindings": {
       "sections": 2,
-      "bytes": 311024,
-      "unicodeStringBytes": 142797,
-      "stringOffsetBytes": 16424,
-      "symbolTokenBytes": 90126,
-      "integerBytes": 61042,
-      "overheadBytes": 635,
+      "bytes": 351056,
+      "unicodeStringBytes": 160642,
+      "stringOffsetBytes": 17864,
+      "symbolTokenBytes": 106522,
+      "integerBytes": 65394,
+      "overheadBytes": 634,
+      "jsonBytes": 0
+    },
+    "sequence-pool": {
+      "sections": 1,
+      "bytes": 5507100,
+      "unicodeStringBytes": 0,
+      "stringOffsetBytes": 0,
+      "symbolTokenBytes": 0,
+      "integerBytes": 5507064,
+      "overheadBytes": 36,
+      "jsonBytes": 0
+    },
+    "sino-component-index": {
+      "sections": 1,
+      "bytes": 352292,
+      "unicodeStringBytes": 53796,
+      "stringOffsetBytes": 4328,
+      "symbolTokenBytes": 105532,
+      "integerBytes": 188412,
+      "overheadBytes": 224,
       "jsonBytes": 0
     },
     "symbol-registry": {
       "sections": 1,
-      "bytes": 45704,
+      "bytes": 45740,
       "unicodeStringBytes": 19555,
       "stringOffsetBytes": 26084,
       "symbolTokenBytes": 0,
-      "integerBytes": 0,
-      "overheadBytes": 65,
+      "integerBytes": 1,
+      "overheadBytes": 100,
       "jsonBytes": 0
     }
   },
   "textualPayload": {
     "occurrences": {
       "orthographic": {
-        "count": 2150974,
-        "bytes": 30913468
+        "count": 2161182,
+        "bytes": 30972252
       },
       "identifier": {
-        "count": 2169332,
-        "bytes": 62852503
+        "count": 2255077,
+        "bytes": 65811073
       }
     },
-    "distinctStrings": 1496805,
-    "distinctOrthographicStrings": 477344,
-    "occurrenceBytes": 93765971,
-    "distinctBytes": 41158281,
-    "duplicateBytes": 52607690,
+    "distinctStrings": 1530381,
+    "distinctOrthographicStrings": 477378,
+    "occurrenceBytes": 96783325,
+    "distinctBytes": 42919959,
+    "duplicateBytes": 53863366,
     "note": "string occurrences are counted per shard-local pool entry; duplicateBytes is what one pack-wide pool would save before any Symbol encoding"
   },
   "orthographicAtoms": {
@@ -170,83 +240,83 @@
     "top": [
       {
         "atom": "う",
-        "occurrences": 396210
+        "occurrences": 396916
       },
       {
         "atom": "い",
-        "occurrences": 360999
+        "occurrences": 361375
       },
       {
         "atom": "ん",
-        "occurrences": 342562
+        "occurrences": 343288
       },
       {
         "atom": "し",
-        "occurrences": 241649
+        "occurrences": 242044
       },
       {
         "atom": "ー",
-        "occurrences": 210880
+        "occurrences": 211003
       },
       {
         "atom": "く",
-        "occurrences": 187961
+        "occurrences": 188268
       },
       {
         "atom": "か",
-        "occurrences": 180022
+        "occurrences": 180315
       },
       {
         "atom": "き",
-        "occurrences": 178411
+        "occurrences": 178896
       },
       {
         "atom": "り",
-        "occurrences": 146255
+        "occurrences": 146452
       },
       {
         "atom": "ょ",
-        "occurrences": 143923
+        "occurrences": 144209
       },
       {
         "atom": "ン",
-        "occurrences": 143245
+        "occurrences": 143353
       },
       {
         "atom": "る",
-        "occurrences": 124243
+        "occurrences": 124400
       },
       {
         "atom": "こ",
-        "occurrences": 108941
+        "occurrences": 109123
       },
       {
         "atom": "つ",
-        "occurrences": 105670
+        "occurrences": 105986
       },
       {
         "atom": "じ",
-        "occurrences": 101197
+        "occurrences": 101473
       },
       {
         "atom": "ス",
-        "occurrences": 90198
+        "occurrences": 90251
       },
       {
         "atom": "た",
-        "occurrences": 87609
+        "occurrences": 87859
       },
       {
         "atom": "せ",
-        "occurrences": 87309
+        "occurrences": 87470
       },
       {
         "atom": "が",
-        "occurrences": 87222
+        "occurrences": 87278
       },
       {
         "atom": "ち",
-        "occurrences": 85066
+        "occurrences": 85305
       }
     ],
     "bmpOnly": false

@@ -2,9 +2,9 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "926b5c2e895483cc720b5008824f921411b6e36de7d1ee6e306b3c874df449eb",
-  "totalBytes": 148473624,
-  "classTotalBytes": 148473624,
+  "packDigest": "3491990fe2e35eb352932155d64ab3aa0e975e4d597c035b69e574ca86705a7f",
+  "totalBytes": 149336200,
+  "classTotalBytes": 149336200,
   "classes": {
     "bundle-container": {
       "sections": 330,
@@ -108,51 +108,61 @@
     },
     "rules-bindings": {
       "sections": 2,
-      "bytes": 335020,
-      "unicodeStringBytes": 239899,
-      "stringOffsetBytes": 33516,
+      "bytes": 455548,
+      "unicodeStringBytes": 347875,
+      "stringOffsetBytes": 41716,
       "symbolTokenBytes": 0,
-      "integerBytes": 61042,
+      "integerBytes": 65394,
       "overheadBytes": 563,
+      "jsonBytes": 0
+    },
+    "sino-component-index": {
+      "sections": 1,
+      "bytes": 742048,
+      "unicodeStringBytes": 495615,
+      "stringOffsetBytes": 57828,
+      "symbolTokenBytes": 0,
+      "integerBytes": 188412,
+      "overheadBytes": 193,
       "jsonBytes": 0
     }
   },
   "textualPayload": {
     "occurrences": {
       "orthographic": {
-        "count": 2149257,
-        "bytes": 30935407
+        "count": 2154665,
+        "bytes": 30952690
       },
       "identifier": {
-        "count": 1202230,
-        "bytes": 36765665
+        "count": 1213327,
+        "bytes": 37351973
       }
     },
-    "distinctStrings": 938721,
-    "distinctOrthographicStrings": 474394,
-    "occurrenceBytes": 67701072,
-    "distinctBytes": 18178309,
-    "duplicateBytes": 49522763,
+    "distinctStrings": 950038,
+    "distinctOrthographicStrings": 476664,
+    "occurrenceBytes": 68304663,
+    "distinctBytes": 18663574,
+    "duplicateBytes": 49641089,
     "note": "string occurrences are counted per shard-local pool entry; duplicateBytes is what one pack-wide pool would save before any Symbol encoding"
   },
   "orthographicAtoms": {
-    "distinct": 6439,
+    "distinct": 6493,
     "top": [
       {
         "atom": "う",
-        "occurrences": 396872
+        "occurrences": 396915
       },
       {
         "atom": "い",
-        "occurrences": 361333
+        "occurrences": 361374
       },
       {
         "atom": "ん",
-        "occurrences": 343229
+        "occurrences": 343287
       },
       {
         "atom": "し",
-        "occurrences": 242026
+        "occurrences": 242043
       },
       {
         "atom": "ー",
@@ -160,23 +170,23 @@
       },
       {
         "atom": "く",
-        "occurrences": 188204
+        "occurrences": 188267
       },
       {
         "atom": "か",
-        "occurrences": 180308
+        "occurrences": 180314
       },
       {
         "atom": "き",
-        "occurrences": 178868
+        "occurrences": 178895
       },
       {
         "atom": "り",
-        "occurrences": 146441
+        "occurrences": 146451
       },
       {
         "atom": "ょ",
-        "occurrences": 144183
+        "occurrences": 144208
       },
       {
         "atom": "ン",
@@ -184,19 +194,19 @@
       },
       {
         "atom": "る",
-        "occurrences": 124397
+        "occurrences": 124399
       },
       {
         "atom": "こ",
-        "occurrences": 109116
+        "occurrences": 109122
       },
       {
         "atom": "つ",
-        "occurrences": 105937
+        "occurrences": 105985
       },
       {
         "atom": "じ",
-        "occurrences": 101457
+        "occurrences": 101472
       },
       {
         "atom": "ス",
@@ -204,19 +214,19 @@
       },
       {
         "atom": "た",
-        "occurrences": 87852
+        "occurrences": 87858
       },
       {
         "atom": "せ",
-        "occurrences": 87462
+        "occurrences": 87469
       },
       {
         "atom": "が",
-        "occurrences": 87271
+        "occurrences": 87277
       },
       {
         "atom": "ち",
-        "occurrences": 85251
+        "occurrences": 85304
       }
     ],
     "bmpOnly": false

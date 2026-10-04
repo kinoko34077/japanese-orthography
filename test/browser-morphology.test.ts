@@ -33,20 +33,24 @@ const graph = (() => {
     ...lexeme('lexeme:味わう/あじわう', '味わう', 'あじわう'), ...lexeme('lexeme:書く/かく', '書く', 'かく'),
     ...lexeme('lexeme:超長複合語動詞/ちょうちょうふくごうごどうし', '超長複合語動詞', 'ちょうちょうふくごうごどうし'),
     ...lexeme('lexeme:円周/えんしゅう', '円周', 'えんしゅう'), ...lexeme('lexeme:法律/ほうりつ', '法律', 'ほうりつ'),
+    ...lexeme('lexeme:必要/ひつよう', '必要', 'ひつよう'),
     ...lexeme('lexeme:海松/みる', '海松', 'みる'), ...lexeme('lexeme:勉強/べんきょう', '勉強', 'べんきょう'),
     { id: 'fact:literal_reading:味わった|あじはった|native-inflected', kind: 'literal_reading' as const, lexicalRefs: [], surface: '味わった', reading: 'あじはった', periodRefs: ['period:historical-kana'], sourceRefs: ['intake/phase46d-native-kana'], evidenceRefs: ['phase46d-kkh-kana:kana-jisyo:L170'], tags: ['historical_kana_native'] },
     { id: 'fact:form_relation:あじはった||あじわった', kind: 'form_relation' as const, lexicalRefs: [], surface: 'あじはった', target: 'あじわった', periodRefs: ['period:historical-kana'], tags: ['historical_kana_native'], sourceRefs: ['intake/phase46d-native-kana'], evidenceRefs: ['phase46d-kkh-kana:kana-jisyo:L170'] }
   );
   g.rules.push(sinoRule('ゑん', 'えん'), sinoRule('しう', 'しゅう'), sinoRule('はふ', 'ほう'), sinoRule('ほふ', 'ほう'), sinoRule('りつ', 'りつ'),
+    sinoRule('ひつ', 'ひつ'), sinoRule('えう', 'よう'),
     { id: 'rule:char:圓>円', class: 'orthographic', directionality: 'reverse_traversable', lossiness: 'lossless', from: ['圓'], to: ['円'], dependencies: [], predicate: { channel: 'surface' }, ...P });
-  g.bindings.push(sinoBinding('円', 'ゑん', 'えん'), sinoBinding('周', 'しう', 'しゅう'), sinoBinding('法', 'はふ', 'ほう'), sinoBinding('法', 'ほふ', 'ほう', '仏教用語'), sinoBinding('律', 'りつ', 'りつ'));
+  g.bindings.push(sinoBinding('円', 'ゑん', 'えん'), sinoBinding('周', 'しう', 'しゅう'), sinoBinding('法', 'はふ', 'ほう'), sinoBinding('法', 'ほふ', 'ほう', '仏教用語'), sinoBinding('律', 'りつ', 'りつ'),
+    sinoBinding('必', 'ひつ', 'ひつ'), sinoBinding('要', 'えう', 'よう'));
   return canonicalizeOrthographyKnowledge(g);
 })();
 const jm = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'jmdict', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: null }];
 const sinoMorphology = (pos: string[]): LexicalMorphologyRow[] => [{ source: 'unidic', pos, conjugationType: null, conjugationForm: null, reading: null, lexicalOrigin: 'sino' }];
 const morphology = new Map<string, LexicalMorphologyRow[]>([
   ['lexeme:味わう/あじわう', jm(['v5u', 'vt'])], ['lexeme:書く/かく', jm(['v5k', 'vt'])], ['lexeme:超長複合語動詞/ちょうちょうふくごうごどうし', jm(['vs'])], ['lexeme:見る/みる', jm(['v1', 'vt'])], ['lexeme:診る/みる', jm(['v1', 'vt'])],
-  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', sinoMorphology(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])]
+  ['lexeme:海松/みる', jm(['n'])], ['lexeme:円周/えんしゅう', sinoMorphology(['n'])], ['lexeme:法律/ほうりつ', jm(['n'])], ['lexeme:勉強/べんきょう', jm(['n', 'vs'])],
+  ['lexeme:必要/ひつよう', jm(['n'])]
 ]);
 const build = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ morphology, lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
@@ -105,6 +109,14 @@ test('Sino component reconstruction uses the accepted reconstructor over canonic
   assert.equal(unknownOrigin.unit.historical.diagnostic, 'sino_evidence_unavailable');
 
   // 法 (ほう) keeps the accepted はふ | ほふ ambiguity without usage context: candidates, no winner
+});
+
+test('unknown lexical origin can use a uniquely source-backed component alignment', async () => {
+  const { raw, unit } = await whole('必要', 'ruby-whole-explicit');
+  assert.equal(raw.renderedText, '｜必要《ひつえう》');
+  assert.equal(unit.historical.route, 'sino');
+  assert.equal(unit.historical.kana, 'ひつえう');
+  assert.equal(unit.historical.diagnostic, null);
 });
 
 test('R5 #236 diagnostics distinguish Sino reconstruction from literal source facts', async () => {
