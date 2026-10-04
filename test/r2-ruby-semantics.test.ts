@@ -62,6 +62,57 @@ test('R2 renders modern lexical reading as Ruby even when no historical conversi
   assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit' }), '｜学校《がっこう》');
 });
 
+test('Phase B historical rendering never uses modern display reading without historical authority', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:学校/がっこう', 'がっこう')]
+  });
+  const unit = resolver.resolveUnit('学校');
+  assert.equal(unit.historical.kana, null);
+  assert.deepEqual(unit.displayReading, { value: 'がっこう', source: 'lexical' });
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', historicalProfile: true }), '学校');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', historicalProfile: true }), '学校');
+});
+
+test('Phase B factors identical kana edges after an admitted historical reading', () => {
+  const cases = [
+    ['必ずしも', 'かならずしも', '｜必《かなら》ずしも', '必《かなら》ずしも'],
+    ['東南アジア', 'とうなんアジア', '｜東南《とうなん》アジア', '東南《とうなん》アジア'],
+    ['好む', 'このむ', '｜好《この》む', '好《この》む']
+  ] as const;
+
+  for (const [surface, historicalReading, explicit, implicit] of cases) {
+    const resolver = createResolver({
+      lexicalLookup: () => [candidate(`lexeme:${surface}`, historicalReading)],
+      historicalLookup: () => ({
+        route: 'native',
+        basis: 'literal_whole_word',
+        reading: historicalReading,
+        surface,
+        evidenceRefs: [`ev:${surface}`]
+      })
+    });
+    const unit = resolver.resolveUnit(surface);
+    assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', historicalProfile: true }), explicit);
+    assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', historicalProfile: true }), implicit);
+  }
+});
+
+test('Phase B does not factor arbitrary equal non-kana edges', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:A学B', 'AがくB')],
+    historicalLookup: () => ({
+      route: 'native',
+      basis: 'literal_whole_word',
+      reading: 'AがくB',
+      surface: 'A学B',
+      evidenceRefs: ['ev:A学B']
+    })
+  });
+  const unit = resolver.resolveUnit('A学B');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', historicalProfile: true }), '｜A学B《AがくB》');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', historicalProfile: true }), '｜A学B《AがくB》');
+});
+
 test('R2 falls back to complete whole-word Ruby when component evidence is partial', () => {
   const resolver = createResolver({
     lexicalLookup: () => [candidate('lexeme:必要/ひつよう', 'ひつよう', {
@@ -118,7 +169,7 @@ test('R2 browser adapter exposes modern-profile Ruby from the lexical reading', 
   assert.equal(result.renderedText, '｜学校《がっこう》');
 });
 
-test('R2 browser adapter renders consensus or source-prioritized Ruby without selecting a lexeme', async () => {
+test('Phase B keeps historical lexical ambiguity and display preference without emitting automatic historical Ruby', async () => {
   const graph = lexicalFixture();
   graph.facts.push(
     { id: 'fact:literal_form:大人|lexeme:大人/おとな#1', kind: 'literal_form', lexicalRefs: ['lexeme:大人/おとな#1'], surface: '大人', periodRefs: ['period:modern'], sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] },
@@ -134,9 +185,13 @@ test('R2 browser adapter renders consensus or source-prioritized Ruby without se
   const pack = await openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!);
   const lexical = createBrowserLexicalRuntime(pack);
   const result = await transformWithResolver(pack, lexical, '大人', 'historical', { renderMode: 'ruby-whole-explicit' });
-  assert.equal(result.renderedText, '｜大人《おとな》');
+  assert.equal(result.renderedText, '大人');
   assert.equal(result.units[0].unit.kind, 'candidates');
   assert.equal(result.units[0].unit.lexicalIdentity, null);
+  assert.deepEqual(result.units[0].unit.displayReading, { value: 'おとな', source: 'lexical-consensus' });
+
+  const modern = await transformWithResolver(pack, lexical, '大人', 'modern', { renderMode: 'ruby-whole-explicit' });
+  assert.equal(modern.renderedText, '｜大人《おとな》');
 });
 
 test('R2 carries source-backed display priority through the Browser lexical pack', async () => {
