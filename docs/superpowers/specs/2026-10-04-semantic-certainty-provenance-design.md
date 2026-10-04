@@ -1,57 +1,134 @@
-# Semantic certainty and provenance design (#230/#244/#236)
+# Semantic certainty / provenance設計 (#230/#244/#236)
 
-## Goal
+## 目的
 
-Make the diagnostics contract report semantic facts rather than counting serialized output spans. A preferred display reading is useful output decoration, not lexical or historical certainty.
+diagnosticsを「serializeされたspan数」ではなくsemantic factから導出する。
 
-## Explicit semantic state
+preferred display readingは有用なpresentation dataだが、lexical/historical certaintyではない。
 
-Every summarized unit and every applied span must carry independent state for:
+## 独立semantic state
 
-- `lexicalIdentity`: `resolved`, `ambiguous`, or `unknown`, with candidate IDs and restrictions;
-- `reading`: `resolved`, `ambiguous`, or `unknown`, with the complete allowed reading set;
-- `historical`: `resolved`, `candidate`, `unavailable`, or `unknown`, with route, basis, and evidence;
-- `displayReading`: optional value plus its source (`priority`, `consensus`, or explicit input), explicitly marked as display-only;
-- `provenance`: source references, canonical IDs, evidence references, and any Rule Program ID.
+summarized unitとapplied spanは、少なくとも次を独立して保持する。
 
-The serializer may select one display value under #244 when exactly one distinct reading has valid JMdict priority after restrictions. That selection must not mutate lexical identity, reading certainty, or historical state. A consensus value follows the same rule.
+- `lexicalIdentity`: resolved / ambiguous / unknown
+- `reading`: resolved / ambiguous / unknown
+- `historical`: resolved / candidate / unavailable / unknown
+- `displayReading`: optional value + source
+- `provenance`: sourceRefs / canonicalIds / evidenceRefs / ProgramId等
+- `outputArbitration`: applied / competed / blocked等
+
+candidate IDs、allowed reading set、restriction、historical route/basis/evidenceを失わない。
+
+`displayReading` sourceは少なくとも以下を区別する。
+
+- lexical
+- consensus
+- JMdict priority
+- explicit input
+
+display valueの選択はlexical identity、reading certainty、historical stateを書き換えない。
 
 ## Certainty policy
 
-`certaintyOf` must inspect the semantic state in addition to span arbitration:
+certaintyは「その出力判断に必要なsemantic axis」が確定しているかで決める。
 
-- `unique` requires an applied span, no competing output span, and resolved semantic fields required by the requested profile/output. For historical Ruby, a historical reading with valid basis/evidence is required.
-- `conditional` is used when one display/output candidate survives but lexical identity, reading, or historical applicability remains ambiguous or depends on a preference/consensus.
-- `unresolved` is used when required semantic information is missing, no authorized output exists, or arbitration did not apply.
+### historical Ruby
 
-Thus `男女` with a selected display preference is not historical `unique` while lexical identity/readings remain ambiguous. A format change from plain to Ruby cannot upgrade certainty because certainty is computed from semantic state, not from the number of Ruby spans.
+`unique`に必要:
 
-The contract must preserve a neutral diagnostic record when no Ruby is emitted, so the UI can explain `historical: unavailable` rather than interpreting absence as a failed lookup.
+- output spanがapplied
+- competing output spanがない
+- historical readingがresolved
+- historical basisが有効
+- 必要なprovenanceが存在
+
+lexical identityがそのhistorical decisionの適用条件ならlexical identityもresolvedであることを要求する。
+
+### lexeme-scoped transform
+
+lexeme-specific / contextual ruleの適用には、そのruleが要求するlexical identity / context axisの確定を要求する。
+
+### identity-independent deterministic transform
+
+lexical identityに依存しないglobal deterministic character/form ruleは、lexical ambiguityが存在するだけで一律に非`unique`へ落とさない。
+
+つまり、
+
+```text
+「lexical ambiguityがある」
+!=
+「全ての変換が非unique」
+```
+
+であり、operationごとのrequired semantic axisを検査する。
+
+### display preference / consensus
+
+複数lexeme・複数reading候補の中からdisplay policyだけで1表示値を選んだ場合、それをsemantic winnerへ昇格させない。
+
+historical outputに必要なaxisが未解決なら`conditional`または`unresolved`とし、historical `unique`にはしない。
+
+## Format invariance
+
+plain / Ruby modeの変更だけでsemantic certaintyを昇格・降格させない。
+
+no Rubyの場合もneutral diagnostic recordを保持し、
+
+```text
+historical: unavailable
+```
+
+等を説明できるようにする。
+
+「spanが存在しない」を「lookup失敗」と同義にしない。
 
 ## Authority policy
 
-Authority is derived from explicit semantic basis and provenance:
+authorityはexplicit semantic basis + provenanceから導出する。
 
-- `literal_fact` only for an admitted literal whole-word/native exact fact;
-- `source_rule` only for a source-backed deterministic or productive rule with source/evidence references;
-- `derived_rule` or `project_rule` only when the corresponding basis is explicit;
-- `none` when no authority/provenance exists.
+- `literal_fact`: admitted literal whole-word/native exact fact
+- `source_rule`: source-backed deterministic/productive ruleでsource/evidence referenceが存在
+- `derived_rule`: accepted derived basisが明示
+- `project_rule`: project-defined basisが明示
+- `none`: authority/provenanceなし
 
-In particular, reconstructed `必要 -> ひつえう` is not `literal_fact`, and a unit with empty `sourceRefs` and `evidenceRefs` is never labeled `source_rule` by adapter fallback. Authority labels must agree with the detail panel and the serialized provenance.
+例:
 
-## Detail-panel contract
+- `必要 -> ひつえう`のcomponent reconstructionはwhole-word literal factではない。
+- `sourceRefs=[]`かつ`evidenceRefs=[]`のoutputをadapter fallbackだけで`source_rule`にしない。
+- detail panelの表示とserialized provenanceを一致させる。
 
-The adapter must serialize enough information for the UI to show modern reading, historical reading/status, lexical candidates, display preference, basis, authority, and all provenance IDs from the same resolved unit. The UI must not infer certainty from the presence of a `ruby` string.
+## Detail panel contract
+
+adapterは同一resolved unitから以下を表示できる情報を渡す。
+
+- modern reading
+- historical reading/status
+- lexical candidates
+- display preferenceとそのsource
+- historical basis
+- authority
+- sourceRefs
+- canonicalIds
+- evidenceRefs
+- ProgramId / execution trace handle
+
+UIはRuby stringの存在やspan candidate数だけからcertaintyを推定しない。
 
 ## Required RED cases
 
-- historical unknown with a modern display reading is not `unique` and has no historical authority;
-- `男女` retains multiple lexical/readings candidates and is not `unique` even if `だんじょ` is selected for display;
-- source-backed productive reconstruction has `source_rule`/`derived_rule` as specified, never `literal_fact`;
-- no-provenance output has `authority: none`;
-- plain and Ruby modes produce the same semantic certainty for the same unit;
-- actual source-backed literal historical evidence continues to report `literal_fact`.
+- historical unknown + modern display readingはhistorical `unique`にならず、historical authorityを持たない。
+- `男女`はdisplayに`だんじょ`が選ばれても、複数lexical/readings candidateを保持し、historical `unique`にならない。
+- source-backed productive reconstructionはbasisに応じた`source_rule`/`derived_rule`であり、whole-word `literal_fact`へ誤昇格しない。
+- no-provenance outputは`authority: none`。
+- plain/Ruby modeでrequired semantic axesの状態が同一。
+- identity-independent deterministic ruleは無関係なlexical ambiguityだけで失敗しない。
+- literal historical evidenceは引き続き`literal_fact`。
+- display preference/consensusはsemantic winnerを作らない。
 
-## Non-goals
+## 非対象
 
-This phase does not change source ingestion, select a lexical winner, invent new evidence, or change the canonical Ruby factorization algorithm.
+- source ingestion変更
+- lexical winnerの新規選択
+- evidence捏造
+- canonical Ruby factorization algorithm変更
