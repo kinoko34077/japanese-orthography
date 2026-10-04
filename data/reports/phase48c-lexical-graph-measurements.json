@@ -30,14 +30,14 @@
     "restrictions": 11418
   },
   "sinoDag": {
-    "sourceRelations": 2000,
-    "sourceBytes": 296536,
-    "primaryPatterns": 177,
-    "derivedPatterns": 94,
-    "bindings": 2000,
-    "readingAtoms": 240,
-    "canonicalBytes": 644876,
-    "compactBytes": 160167
+    "sourceRelations": 5002,
+    "sourceBytes": 1061417,
+    "primaryPatterns": 339,
+    "derivedPatterns": 248,
+    "bindings": 5002,
+    "readingAtoms": 484,
+    "canonicalBytes": 1825231,
+    "compactBytes": 465247
   },
-  "compileMsObserved": 16874
+  "compileMsObserved": 26068
 }

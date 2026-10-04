@@ -4,36 +4,36 @@
   "owner": "japanese-orthography#172",
   "note": "Sizes/digests are deterministic real compiled data; performance values are informational observations (machine-dependent). The v2 canonical graph holds all normalized sources (JMdict forms/readings, Phase-4.6 literal facts, shared rules, bindings) and is a different content set from the Phase-4.8 lexical entity graph.",
   "canonicalGraph": {
-    "sha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
-    "bytes": 163815755,
-    "gzipBytes": 13654578,
-    "ledgerDispositions": 257632
+    "sha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
+    "bytes": 166959500,
+    "gzipBytes": 13870459,
+    "ledgerDispositions": 275560
   },
   "counts": {
     "facts": 561488,
-    "rules": 203,
-    "bindings": 2000,
-    "sources": 28
+    "rules": 510,
+    "bindings": 10964,
+    "sources": 29
   },
   "hotArtifacts": {
     "modern": {
-      "bytes": 66026079,
-      "gzipBytes": 9909402,
-      "contentDigest": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+      "bytes": 67662338,
+      "gzipBytes": 10114027,
+      "contentDigest": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
       "profileDigest": "81550baef6409f30c7160f503cfb6e4991d1c50352bc37e2fdbc633c82185446",
       "projectedFacts": 2438
     },
     "historical": {
-      "bytes": 66028136,
-      "gzipBytes": 9911128,
-      "contentDigest": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+      "bytes": 67664395,
+      "gzipBytes": 10114505,
+      "contentDigest": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
       "profileDigest": "e29f816624fce000557cc0c0c94b62cf00a2b5b4e3cdab99089a767f1bc37162",
       "projectedFacts": 2438
     },
     "kinotch": {
-      "bytes": 66027909,
-      "gzipBytes": 9910989,
-      "contentDigest": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+      "bytes": 67664168,
+      "gzipBytes": 10114352,
+      "contentDigest": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
       "profileDigest": "23d6433664cd24264d35f891c035c62a19a4c890eb7dd1fbaaee42d8f931c617",
       "projectedFacts": 2438
     }
@@ -47,10 +47,10 @@
     }
   },
   "performanceObserved": {
-    "node": "v26.10.0",
-    "hotStartupMs": 16871,
-    "hotHeapDeltaMb": 993,
-    "projectionsPerSecond": 1264,
-    "restorationsPerSecond": 488
+    "node": "v24.21.0",
+    "hotStartupMs": 9653,
+    "hotHeapDeltaMb": 1011,
+    "projectionsPerSecond": 438,
+    "restorationsPerSecond": 268
   }
 }

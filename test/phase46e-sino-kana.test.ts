@@ -44,6 +44,7 @@ test('字音 table extraction is complete and fully dispositioned', async () => 
     bundle.records.filter((record) => record.disposition === 'excluded_unresolved').map((record) => record.exclusionReason).sort(),
     ['catch_all_statement', 'parenthesized_uncertain_entry']
   );
+  assert.deepEqual(coverageReport.readingClass.remainders, [{ row: 242, column: 'C', text: '(ズチ)' }]);
 });
 
 test('canonical 字音 artifacts are reproducible byte-for-byte', async () => {
@@ -65,6 +66,8 @@ test('XLSXの分類はHTMLのcatch-all根拠付きidentityだけを追加する'
 
   const conflicting = artifact.componentRelations.find((relation: any) => relation.character === '姶' && relation.modernReading === 'おう');
   assert.equal(conflicting, undefined);
+  const workbookOnly = artifact.componentRelations.find((relation: any) => relation.character === '襾' && relation.modernReading === 'あ');
+  assert.equal(workbookOnly, undefined);
 });
 
 test('every admitted table relation is exactly reproducible through the direct component API', async () => {
@@ -118,7 +121,10 @@ test('word-level reconstruction aligns readings and preserves ambiguity', async 
 test('R3 #234: unmatched reading material never acquires arbitrary component ownership', async () => {
   const runtime = await sinoRuntime();
   const opaque = runtime.reconstructWord('日本企業', 'にほんきぎょう');
-  assert.equal(opaque, null);
+  assert.equal(opaque.status, 'resolved');
+  assert.deepEqual(plain(opaque.components.map((component: any) => [component.surface, component.modernReading, component.historicalReading, component.evidenceRefs.length])), [
+    ['日本企', 'にほんき', 'にほんき', 0], ['業', 'ぎょう', 'げふ', 1]
+  ]);
 
   const valid = runtime.reconstructWord('企業', 'きぎょう');
   assert.equal(valid.status, 'resolved');

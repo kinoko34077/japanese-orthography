@@ -23,7 +23,14 @@ export function sinoVariants(modern: string, historical: string) {
   return deriveSinoVariants(modern, historical);
 }
 
-export interface SinoComponentRelation { character: string; modernReading: string; context: string | null; historicalReadings: string[]; evidenceRefs: string[] }
+export interface SinoComponentRelation {
+  character: string;
+  modernReading: string;
+  context: string | null;
+  historicalReadings: string[];
+  evidenceRefs: string[];
+  readingClasses?: string[];
+}
 
 const patternKey = (historical: string, modern: string) => `${historical}>${modern}`;
 const contextKey = (context: string) => `usage:${context}`;
@@ -84,7 +91,7 @@ export function createSinoDagRuntime(graph: EntityGraph) {
   const atom = (pathId: string) => strip(pathId);
   // reverse index: character -> every (modern surface form -> historical) reachable from its bindings
   const matchesByCharacter = new Map<string, Match[]>();
-  const tableForms = new Set<string>();
+  const tableFormsByCharacter = new Map<string, Set<string>>();
   for (const b of graph.bindings) {
     const list = matchesByCharacter.get(strip(b.symbol)) ?? [];
     const context = b.context === null ? null : strip(strip(b.context));
@@ -93,7 +100,9 @@ export function createSinoDagRuntime(graph: EntityGraph) {
       const base = patterns.get(id)!;
       for (const p of [base, ...(base.derivations ?? []).map((d) => patterns.get(d)!)]) {
         list.push({ modern: atom(p.to), historical: atom(p.from), context, evidence });
-        tableForms.add(atom(p.to));
+        const formsForCharacter = tableFormsByCharacter.get(strip(b.symbol)) ?? new Set<string>();
+        formsForCharacter.add(atom(p.to));
+        tableFormsByCharacter.set(strip(b.symbol), formsForCharacter);
       }
     }
     matchesByCharacter.set(strip(b.symbol), list);
@@ -121,7 +130,7 @@ export function createSinoDagRuntime(graph: EntityGraph) {
       else matches = all.filter((m) => m.context === null);
     }
     if (matches.length > 0) return matches;
-    if (tableForms.has(segment) || segment.endsWith('っ')) return [];
+    if (tableFormsByCharacter.get(character)?.has(segment) || segment.endsWith('っ')) return [];
     return [{ historical: segment, context: null, evidence: [] }];
   };
 

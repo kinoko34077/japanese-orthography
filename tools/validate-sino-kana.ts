@@ -27,6 +27,10 @@ async function main(): Promise<void> {
     throw new Error('Phase 4.6E coverage partition mismatch');
   }
   if (summary.unparsedMappingRecords !== 0) throw new Error('Phase 4.6E parser remainder is not empty');
+  const expectedReadingClassRemainders = [{ row: 242, column: 'C', text: '(ズチ)' }];
+  if (JSON.stringify(generated.readingClass.remainders) !== JSON.stringify(expectedReadingClassRemainders)) {
+    throw new Error('Phase 4.6E XLSX reading-class remainder changed; classify it before changing the projection');
+  }
 
   for (const [relativePath, text] of Object.entries(generated.texts)) {
     if (normalizeCheckoutText(await readFile(resolve(rootDir, relativePath), 'utf8')) !== text) {

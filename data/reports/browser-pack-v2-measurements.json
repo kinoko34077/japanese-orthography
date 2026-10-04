@@ -2,16 +2,16 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-measurements",
   "owner": "japanese-orthography#196 I",
-  "packDigest": "926b5c2e895483cc720b5008824f921411b6e36de7d1ee6e306b3c874df449eb",
-  "sections": 2015,
+  "packDigest": "12253d8c1fa060336fc3cc79c5e4ab935fc10d32f97f3a8156f6518880bff4eb",
+  "sections": 2016,
   "sizes": {
-    "total": 148473624,
-    "totalGzip": 54898212,
+    "total": 149336200,
+    "totalGzip": 55108575,
     "byLoading": {
       "eager": {
         "sections": 9,
-        "bytes": 537752,
-        "gzipBytes": 174950
+        "bytes": 658280,
+        "gzipBytes": 195773
       },
       "lazy": {
         "sections": 330,
@@ -19,9 +19,9 @@
         "gzipBytes": 8701912
       },
       "on-demand": {
-        "sections": 1676,
-        "bytes": 117299452,
-        "gzipBytes": 46021350
+        "sections": 1677,
+        "bytes": 118041500,
+        "gzipBytes": 46210890
       }
     },
     "byKind": {
@@ -82,13 +82,18 @@
       },
       "rules": {
         "sections": 1,
-        "bytes": 100412,
-        "gzipBytes": 22342
+        "bytes": 220940,
+        "gzipBytes": 43165
       },
       "shard-directory": {
         "sections": 1,
         "bytes": 15440,
         "gzipBytes": 9671
+      },
+      "sino-component-index": {
+        "sections": 1,
+        "bytes": 742048,
+        "gzipBytes": 189540
       },
       "surface-index": {
         "sections": 386,
@@ -108,24 +113,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 9,
-        "bytes": 537752,
-        "gzipBytes": 176057,
-        "openMs": 127
+        "bytes": 658280,
+        "gzipBytes": 198922,
+        "openMs": 65
       },
       "coldFirstResult": {
-        "requests": 68,
-        "bytes": 4302000,
-        "gzipBytes": 1748228,
-        "ms": 838
+        "requests": 72,
+        "bytes": 5313064,
+        "gzipBytes": 2019694,
+        "ms": 779
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 23
+        "ms": 15
       },
-      "detailLatencyMs": 8,
-      "unitDetailLatencyMs": 157,
-      "residentArrayBufferBytes": 7949092,
-      "jsHeapDeltaBytes": 12297416,
+      "detailLatencyMs": 3,
+      "unitDetailLatencyMs": 102,
+      "residentArrayBufferBytes": 8986840,
+      "jsHeapDeltaBytes": 49106096,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -134,24 +139,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 9,
-        "bytes": 537752,
-        "gzipBytes": 176057,
-        "openMs": 96
+        "bytes": 658280,
+        "gzipBytes": 198922,
+        "openMs": 55
       },
       "coldFirstResult": {
-        "requests": 142,
-        "bytes": 8888024,
-        "gzipBytes": 3567615,
-        "ms": 1275
+        "requests": 153,
+        "bytes": 10516444,
+        "gzipBytes": 4023871,
+        "ms": 938
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 65
+        "ms": 42
       },
-      "detailLatencyMs": 7,
-      "unitDetailLatencyMs": 47,
-      "residentArrayBufferBytes": 10378568,
-      "jsHeapDeltaBytes": 10039680,
+      "detailLatencyMs": 1,
+      "unitDetailLatencyMs": 38,
+      "residentArrayBufferBytes": 11940796,
+      "jsHeapDeltaBytes": -2049488,
       "spans": 7,
       "inspectableUnits": 23
     }

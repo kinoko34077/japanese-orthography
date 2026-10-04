@@ -1,9 +1,9 @@
 {
-  "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+  "canonicalGraphSha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
   "compilerVersion": "2",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "926b5c2e895483cc720b5008824f921411b6e36de7d1ee6e306b3c874df449eb",
+  "packDigest": "12253d8c1fa060336fc3cc79c5e4ab935fc10d32f97f3a8156f6518880bff4eb",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -30100,14 +30100,14 @@
       }
     },
     {
-      "byteLength": 100412,
+      "byteLength": 220940,
       "encoding": "binary-columnar",
       "kind": "rules",
       "loading": "eager",
       "path": "rules.bin",
       "rowCount": 203,
       "sectionId": "rules",
-      "sha256": "90444ef9af218b8ceb8eb9e17088d30b93b96be80ba16d4a84b100f83bb3964f"
+      "sha256": "a3d25a5ccc5903063b0d19ade16f59771e6dc18893de727534144922fb3805d8"
     },
     {
       "byteLength": 15440,
@@ -30118,6 +30118,16 @@
       "rowCount": 330,
       "sectionId": "shard-directory",
       "sha256": "52c4d58030e9ff3e32e962287827bc29f6b7e84a9530f2c48d1b861333699b06"
+    },
+    {
+      "byteLength": 742048,
+      "encoding": "binary-columnar",
+      "kind": "sino-component-index",
+      "loading": "on-demand",
+      "path": "sino-component-index.bin",
+      "rowCount": 8964,
+      "sectionId": "sino-component-index",
+      "sha256": "a2885c69c419319cdd856610043b5ec71e52f70ec53a981fe45299b240113277"
     },
     {
       "byteLength": 63900,
@@ -36691,5 +36701,5 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "817f7eda140e68f42df0c240941eb4035a3c3c0900c9baa34f6dd30ecec37c31"
+  "sourceSetDigest": "cd7d496a230bf3bff3bffd7e79ae37d178285c30a9cf6f28864fd38568bedebc"
 }

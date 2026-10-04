@@ -122,13 +122,25 @@ function relationKey(character: string, modernReading: string, context: string |
   return JSON.stringify([character, modernReading, context]);
 }
 
-function classIdentityRelations(parsed: SinoTableParseResult, readingClass: SinoReadingClassParseResult): JsonRecord[] {
+function classIdentityRelations(
+  parsed: SinoTableParseResult,
+  readingClass: SinoReadingClassParseResult,
+  runtimeSymbols: ReadonlySet<string>
+): JsonRecord[] {
   const htmlKeys = new Set(parsed.records.filter((record) => record.character).map((record) => relationKey(record.character!, record.modernReading, record.context)));
   const catchAll = parsed.records.find((record) => record.exclusionReason === 'catch_all_statement');
   if (!catchAll) throw new Error('Phase 4.6E catch-all authority record is missing');
   const catchAllRef = evidenceRef(catchAll);
+  // XLSXの分類は、HTMLの歴史的綴りを単独で発明しない。一方、HTMLには
+  // 「現代仮名遣いと同じ」と明記された文字が載らない場合があるため、
+  // compact runtimeへ投影できる既存Symbol Registryの文字だけを昇格させる。
+  // 未投影の分類証拠はreadingClassEvidenceに全件保持し、ここで黙って捨てない。
   return readingClass.entries
-    .filter((entry) => entry.classes.length === 1 && !htmlKeys.has(relationKey(entry.character, entry.modernReading)))
+    .filter((entry) => runtimeSymbols.has(entry.character)
+      // 一つ以上の分類を持つentryをHTML catch-allのidentityとして投影する。
+      // 複数分類のentryもbit flagの組み合わせとして保持し、曖昧性を削らない。
+      && entry.classes.length > 0
+      && !htmlKeys.has(relationKey(entry.character, entry.modernReading)))
     .map((entry) => ({
       character: entry.character,
       modernReading: entry.modernReading,
@@ -143,7 +155,8 @@ export function compileSinoKanaArtifact(
   bundle: IntakeBundleDocument,
   parsed: SinoTableParseResult,
   identitySlice: JsonRecord,
-  readingClass: SinoReadingClassParseResult
+  readingClass: SinoReadingClassParseResult,
+  runtimeSymbols: ReadonlySet<string>
 ) {
   const readingClassByKey = new Map(readingClass.entries.map((entry) => [relationKey(entry.character, entry.modernReading), entry]));
   const groups = new Map<string, { character: string; modernReading: string; context: string | null; historicalReadings: Set<string>; evidenceRefs: Set<string>; readingClasses: Set<string> }>();
@@ -171,7 +184,7 @@ export function compileSinoKanaArtifact(
     }))
     .sort((a, b) => compareText(a.character, b.character) || compareText(a.modernReading, b.modernReading)
       || compareText(a.context ?? '', b.context ?? ''));
-  const componentRelations = [...explicitRelations, ...classIdentityRelations(parsed, readingClass)]
+  const componentRelations = [...explicitRelations, ...classIdentityRelations(parsed, readingClass, runtimeSymbols)]
     .sort((a, b) => compareText(a.character, b.character) || compareText(a.modernReading, b.modernReading)
       || compareText(a.context ?? '', b.context ?? ''));
 
@@ -207,7 +220,9 @@ export async function buildPhase46eSinoArtifacts(rootDir: string) {
   const bundle = buildPhase46eSinoIntake(parsed);
   const coverageReport = buildPhase46eCoverageReport(bundle, parsed, readingClass);
   const identitySlice = JSON.parse(await readFile(resolve(rootDir, IDENTITY_SLICE_PATH), 'utf8')) as JsonRecord;
-  const artifact = compileSinoKanaArtifact(bundle, parsed, identitySlice, readingClass);
+  const symbolRegistry = JSON.parse(await readFile(resolve(rootDir, 'data/runtime/symbol-registry.json'), 'utf8')) as JsonRecord;
+  const runtimeSymbols = new Set((symbolRegistry.atoms as unknown[]).filter((atom): atom is string => typeof atom === 'string'));
+  const artifact = compileSinoKanaArtifact(bundle, parsed, identitySlice, readingClass, runtimeSymbols);
   return {
     parsed,
     readingClass,

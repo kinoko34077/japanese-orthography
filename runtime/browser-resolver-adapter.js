@@ -16,7 +16,14 @@
   // Accepted 4.6E Sino component table, rebuilt from the pack's canonical sino bindings
   // (binding:sino:<char>:<historical>><modern>@<context>); one reconstructor per pack.
   const sinoReconstructors = new WeakMap();
-  const sinoFor = (pack) => {
+  const evaluateSinoApplicability = (candidate, reconstructed) => {
+    if (candidate?.lexicalOrigin === "sino") return "lexical-origin";
+    if (reconstructed?.status !== "resolved" || !Array.isArray(reconstructed.components) || reconstructed.components.length === 0) return null;
+    return reconstructed.components.every((component) => Array.isArray(component.evidenceRefs) && component.evidenceRefs.length > 0)
+      ? "source-backed-components"
+      : null;
+  };
+  const sinoFor = async (pack) => {
     if (sinoReconstructors.has(pack)) return sinoReconstructors.get(pack);
     const grouped = new Map();
     for (let i = 0; i < pack.bindingCount(); i += 1) {
@@ -33,6 +40,28 @@
       for (const ref of [...binding.sourceRefs, ...rule.sourceRefs]) if (!entry.sourceRefs.includes(ref)) entry.sourceRefs.push(ref);
       for (const id of [binding.id, rule.id]) if (!entry.canonicalIds.includes(id)) entry.canonicalIds.push(id);
       grouped.set(key, entry);
+    }
+    // Phase A: full 呉音/漢音/共通/慣用分類は、generic eager bindingsではなくcompact
+    // projectionから復元する。分類を削って容量を合わせる経路は許可しない。
+    let componentIndex = typeof pack.eagerSection === "function" ? pack.eagerSection("sino-component-index") : null;
+    if (!componentIndex && typeof pack.sectionsOfKind === "function" && typeof pack.loadSection === "function") {
+      const section = pack.sectionsOfKind("sino-component-index")[0];
+      if (section) componentIndex = await pack.loadSection(section.sectionId);
+    }
+    if (componentIndex) {
+      const text = (id) => componentIndex.string("strings", id);
+      for (let i = 0; i < componentIndex.rowCount("character"); i += 1) {
+        const character = text(componentIndex.value("character", i));
+        const modernReading = text(componentIndex.value("modernReading", i));
+        const key = JSON.stringify([character, modernReading, null]);
+        const entry = grouped.get(key) ?? { character, modernReading, context: null, historicalReadings: [], evidenceRefs: [], sourceRefs: [], canonicalIds: [] };
+        const sourceRefs = componentIndex.list("sourceRefs", i);
+        const evidenceRefs = componentIndex.list("evidenceRefs", i);
+        if (!entry.historicalReadings.includes(modernReading)) entry.historicalReadings.push(modernReading);
+        for (const ref of sourceRefs) { const value = text(ref); if (!entry.sourceRefs.includes(value)) entry.sourceRefs.push(value); }
+        for (const ref of evidenceRefs) { const value = text(ref); if (!entry.evidenceRefs.includes(value)) entry.evidenceRefs.push(value); }
+        grouped.set(key, entry);
+      }
     }
     const relations = [...grouped.values()];
     const reconstructor = relations.length && HistoricalSino?.createSinoComponentReconstructor ? HistoricalSino.createSinoComponentReconstructor(relations) : null;
@@ -241,7 +270,7 @@
       ...lexical.lookupSurfaceSync(surface).flatMap((c) => (c.modernReadings.length > 1 ? c.modernReadings.map((r) => lexical.withReading(c, r)) : [c])),
       ...(inflected.get(surface) ?? [])
     ];
-    const sino = sinoFor(pack);
+    const sino = await sinoFor(pack);
     const historicalFactMetadata = (candidate, surface) => {
       const metadata = { sourceRefs: [], evidenceRefs: [], canonicalIds: [] };
       const readings = new Set((candidate.historicalReadings ?? []).filter((h) => h.surface === surface).map((h) => `${h.reading}|${h.factIndex}`));
@@ -304,17 +333,21 @@
         const sinoEvidenceUnavailable = sinoScope && candidate.lexicalOrigin !== "sino"
           ? { status: "unavailable", diagnostic: "sino_evidence_unavailable", evidenceRefs: [] }
           : null;
-        if (sinoScope && candidate.lexicalOrigin === "sino") {
+        if (sinoScope) {
           const reconstructed = sino.reconstructWord(surface, candidate.reading);
           if (reconstructed?.status === "resolved") {
-            const metadata = sino.metadataFor(reconstructed.components);
-            return {
-              route: "sino", basis: "sino_component_reconstruction", reading: reconstructed.historicalReading, surface, requiresMorphology: false, requiredMorphology: null,
-              components: reconstructed.components.map((c) => ({ lexicalIdentity: null, surface: c.surface, lexicalReading: c.modernReading, lexicalOrigin: "sino", readingClass: "on", historicalKana: c.historicalReading, evidenceRefs: c.evidenceRefs })),
-              ...metadata, evidenceRefs: uniq([...reconstructed.evidenceRefs, ...metadata.evidenceRefs])
-            };
+            if (evaluateSinoApplicability(candidate, reconstructed)) {
+              const metadata = sino.metadataFor(reconstructed.components);
+              return {
+                route: "sino", basis: "sino_component_reconstruction", reading: reconstructed.historicalReading, surface, requiresMorphology: false, requiredMorphology: null,
+                components: reconstructed.components.map((c) => ({ lexicalIdentity: null, surface: c.surface, lexicalReading: c.modernReading, lexicalOrigin: "sino", readingClass: "on", historicalKana: c.historicalReading, evidenceRefs: c.evidenceRefs })),
+                ...metadata, evidenceRefs: uniq([...reconstructed.evidenceRefs, ...metadata.evidenceRefs])
+              };
+            }
           }
-          if (reconstructed?.status === "candidates") return { status: "candidates", route: "sino", basis: "sino_component_reconstruction", readings: reconstructed.historicalReadings, evidenceRefs: [] };
+          if (reconstructed?.status === "candidates") {
+            if (candidate.lexicalOrigin === "sino") return { status: "candidates", route: "sino", basis: "sino_component_reconstruction", readings: reconstructed.historicalReadings, evidenceRefs: [] };
+          }
         }
         // surface-keyed historical reading, accepted only when the native kana relation of the
         // candidate's own modern reading names the same historical kana (two sources agree)
@@ -533,5 +566,5 @@
     };
   }
 
-  return { transformWithResolver, summarizeUnit };
+  return { transformWithResolver, summarizeUnit, evaluateSinoApplicability };
 });

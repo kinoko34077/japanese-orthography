@@ -52,6 +52,7 @@ const SECTION_KINDS = {
   facts: { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'columnar v2 facts needed by browser conversion' },
   rules: { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'columnar v2 rules; every conversion can reach any rule, and the whole table is small' },
   bindings: { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'eager', shardable: false, profileScoped: false, description: 'columnar rule bindings' },
+  'sino-component-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: false, profileScoped: false, description: 'compact all-reading-class evidence for positive Sino applicability' },
   'lexical-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'lexical surface index for span candidate discovery' },
   'provenance-index': { contentClass: 'knowledge', encoding: 'binary-columnar', loading: 'on-demand', shardable: true, profileScoped: false, description: 'compact provenance/detail references resolvable to canonical ids' },
   'detail-shard': { contentClass: 'detail', encoding: 'binary-columnar', loading: 'lazy', shardable: true, profileScoped: false, description: 'diagnostic/provenance detail payload opened only when a span is inspected' },

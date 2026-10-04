@@ -2,18 +2,18 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v1-compiled",
   "owner": "japanese-orthography#185 B",
-  "packDigest": "d88ad330cea31708773affe42f6040394dfd1f2648fcb682fbfdf54de877eead",
-  "canonicalGraphSha256": "5da0ab0e1baea602551b27756fba53529855468f17766384cf7fd5b8d1b529fa",
+  "packDigest": "3207cc62b9026d7569e7d69eebb6ce6aec89e183934cb4666aaa69c621c04c62",
+  "canonicalGraphSha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
   "totals": {
-    "sections": 1657,
-    "bytes": 83139296,
-    "gzipBytes": 26158377
+    "sections": 1658,
+    "bytes": 84001872,
+    "gzipBytes": 26368740
   },
   "byLoading": {
     "eager": {
       "sections": 7,
-      "bytes": 364148,
-      "gzipBytes": 93977
+      "bytes": 484676,
+      "gzipBytes": 114800
     },
     "lazy": {
       "sections": 330,
@@ -21,9 +21,9 @@
       "gzipBytes": 14213315
     },
     "on-demand": {
-      "sections": 1320,
-      "bytes": 24328408,
-      "gzipBytes": 11851085
+      "sections": 1321,
+      "bytes": 25070456,
+      "gzipBytes": 12040625
     }
   },
   "byKind": {
@@ -59,13 +59,18 @@
     },
     "rules": {
       "sections": 1,
-      "bytes": 100412,
-      "gzipBytes": 22342
+      "bytes": 220940,
+      "gzipBytes": 43165
     },
     "shard-directory": {
       "sections": 1,
       "bytes": 15440,
       "gzipBytes": 9671
+    },
+    "sino-component-index": {
+      "sections": 1,
+      "bytes": 742048,
+      "gzipBytes": 189540
     },
     "string-pool": {
       "sections": 330,

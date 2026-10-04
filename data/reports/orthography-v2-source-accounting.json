@@ -4,24 +4,24 @@
   "owner": "japanese-orthography#166",
   "note": "Every record enumerated by a source adapter has exactly one disposition. Source files are provenance roots and are not modified.",
   "totals": {
-    "inputRecords": 257632,
-    "disposedRecords": 257632,
+    "inputRecords": 263636,
+    "disposedRecords": 263636,
     "unaccounted": 0,
     "byDisposition": {
       "literal_fact": 228384,
       "rule_definition": 26,
-      "rule_binding": 2011,
+      "rule_binding": 5013,
       "profile_policy": 419,
-      "derived_only": 25312,
+      "derived_only": 28314,
       "excluded_with_reason": 1480
     }
   },
   "graph": {
-    "sources": 28,
+    "sources": 29,
     "facts": 561488,
-    "rules": 198,
-    "bindings": 2000,
-    "sha256": "7a04e80fa45c4fef1bb7a0e9b0f4989055373d2038e1ade24d82560d7bb0d13e"
+    "rules": 360,
+    "bindings": 5002,
+    "sha256": "1a83fd6533f7bdec901063bcec3097151b35a86e4efbfd3411741be19e86a02e"
   },
   "bySource": {
     "derivation/kana-conventions": {
@@ -85,7 +85,7 @@
       "rule_definition": 0,
       "rule_binding": 0,
       "profile_policy": 0,
-      "derived_only": 2001,
+      "derived_only": 5003,
       "excluded_with_reason": 0
     },
     "intake/phase46-legacy-safety": {
@@ -198,6 +198,14 @@
       "rule_binding": 0,
       "profile_policy": 0,
       "derived_only": 3,
+      "excluded_with_reason": 0
+    },
+    "phase46e-sino-reading-class": {
+      "literal_fact": 0,
+      "rule_definition": 0,
+      "rule_binding": 3002,
+      "profile_policy": 0,
+      "derived_only": 0,
       "excluded_with_reason": 0
     },
     "profiles/kinotch/homophone-kanji": {

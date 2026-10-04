@@ -15,6 +15,7 @@ import { CAPABILITY_PROBES } from './measure-browser-capability-utilization.ts';
 import { compileRuleIR } from './rule-ir.ts';
 import { canonicalizeOrthographyKnowledge } from './orthography-knowledge-model.ts';
 import { normalizeCheckoutText } from './verification-text.ts';
+import { SINO_READING_CLASS_FLAGS, type SinoComponentIndexRow } from './sino-component-index.ts';
 
 // BrowserPack B (#185 B): build the pack from the accepted v2 knowledge.
 //   npm run generate:browser-pack            -> data/browser-pack/ (manifest committed, bodies ignored)
@@ -42,11 +43,56 @@ const PROFILES = [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE];
 
 type AcceptedGraph = Awaited<ReturnType<typeof normalizeAcceptedOrthographySources>>['graph'];
 
+const SINO_CLASS_SOURCE = 'phase46e-sino-reading-class';
+const SINO_TABLE_SOURCE = 'phase46e-sino-table';
+const SINO_CATCH_ALL = 'phase46e-sino-table:row:179:catch-all';
+
+type SinoArtifactRelation = {
+  character?: string;
+  modernReading?: string;
+  context?: string | null;
+  historicalReadings?: string[];
+  readingClasses?: string[];
+  sourceRefs?: string[];
+  evidenceRefs?: string[];
+};
+
+function classFlags(classes: readonly string[]): number {
+  return classes.reduce((flags, name) => flags | (SINO_READING_CLASS_FLAGS[name as keyof typeof SINO_READING_CLASS_FLAGS] ?? 0), 0);
+}
+
+async function sinoComponentProjection(rootDir: string, graph: AcceptedGraph): Promise<Pick<NonNullable<Parameters<typeof compileBrowserPack>[2]>, 'sinoComponentRows' | 'omitRuleIds' | 'omitBindingIds'>> {
+  const artifact = JSON.parse(await readFile(resolve(rootDir, 'data/historical/sino/phase46e-sino-kana.json'), 'utf8')) as { componentRelations: SinoArtifactRelation[] };
+  const rows: SinoComponentIndexRow[] = [];
+  for (const relation of artifact.componentRelations) {
+    const classes = relation.readingClasses ?? [];
+    const evidenceRefs = relation.evidenceRefs ?? [];
+    if (!relation.character || !relation.modernReading || relation.context != null || relation.historicalReadings?.length !== 1
+      || relation.historicalReadings[0] !== relation.modernReading || classes.length === 0
+      || !evidenceRefs.some((ref) => ref.startsWith(`${SINO_CLASS_SOURCE}:`)) || !evidenceRefs.includes(SINO_CATCH_ALL)) continue;
+    rows.push({
+      character: relation.character,
+      modernReading: relation.modernReading,
+      classFlags: classFlags(classes),
+      sourceRefs: [SINO_CLASS_SOURCE, SINO_TABLE_SOURCE],
+      evidenceRefs: [...new Set(evidenceRefs)].sort()
+    });
+  }
+  rows.sort((a, b) => a.character.localeCompare(b.character) || a.modernReading.localeCompare(b.modernReading));
+  const syntheticBindingIds = new Set(graph.bindings.filter((binding) => binding.sourceRefs.includes(SINO_CLASS_SOURCE)).map((binding) => binding.id));
+  const regularRuleIds = new Set(graph.bindings.filter((binding) => !syntheticBindingIds.has(binding.id)).map((binding) => binding.ruleId));
+  const syntheticRuleIds = new Set(graph.bindings.filter((binding) => syntheticBindingIds.has(binding.id)).map((binding) => binding.ruleId));
+  const omitRuleIds = new Set([...syntheticRuleIds].filter((id) => !regularRuleIds.has(id)));
+  return { sinoComponentRows: rows, omitRuleIds, omitBindingIds: syntheticBindingIds };
+}
+
 async function acceptedInputs(rootDir: string, graph?: AcceptedGraph) {
   const g = graph ?? (await normalizeAcceptedOrthographySources(rootDir)).graph;
+  const fullGraph = withProfileRules(g);
+  const sino = await sinoComponentProjection(rootDir, fullGraph);
   let terminology: unknown;
   try { terminology = JSON.parse(await readFile(resolve(rootDir, 'site/terminology-ja.json'), 'utf8')); } catch { terminology = undefined; }
-  return { graph: withProfileRules(g), options: terminology === undefined ? {} : { terminology } };
+  return { graph: fullGraph, options: { ...(terminology === undefined ? {} : { terminology }), ...sino } };
 }
 
 export async function buildAcceptedBrowserPack(rootDir: string, graph?: AcceptedGraph): Promise<BrowserPackBuild> {

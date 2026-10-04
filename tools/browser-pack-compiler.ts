@@ -18,6 +18,7 @@ import { encodeBundle, encodeSection, StringTable } from './browser-pack-encodin
 import { knowledgeDigest } from './orthography-hot-artifact.ts';
 import { canonicalizeOrthographyKnowledge, FACT_KINDS, KNOWLEDGE_ORIGINS, RULE_CLASSES, RULE_DIRECTIONALITIES, RULE_LOSSINESS, type OrthographyFact, type OrthographyKnowledgeGraph } from './orthography-knowledge-model.ts';
 import { resolveProjectionPolicy, type OrthographyProfilePolicy } from './orthography-policy.ts';
+import { encodeSinoComponentIndex, type SinoComponentIndexRow } from './sino-component-index.ts';
 
 // BrowserPack B (#185 B): compile accepted v2 knowledge into the profile-neutral, source-locked,
 // sectioned binary pack fixed by unit A. Knowledge is partitioned by lookup key into shards whose
@@ -96,6 +97,11 @@ export interface CompileOptions {
   /** Defaults to the v1 compiler version; layers that add v2 kinds must pass the v2 version. */
   compilerVersion?: string;
   layers?: ReadonlyArray<(context: BrowserPackLayerContext) => void>;
+  /** Production packs keep these rows in a compact eager index instead of generic bindings. */
+  sinoComponentRows?: readonly SinoComponentIndexRow[];
+  /** Generic rows omitted after their semantic payload has moved to the compact index. */
+  omitRuleIds?: ReadonlySet<string>;
+  omitBindingIds?: ReadonlySet<string>;
 }
 
 export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: readonly OrthographyProfilePolicy[], options: CompileOptions = {}): BrowserPackBuild {
@@ -222,36 +228,39 @@ export function compileBrowserPack(input: OrthographyKnowledgeGraph, profiles: r
       { name: 'maxKeyLength', kind: 'scalar', values: directory.maxKeyLength }
     ]), { rowCount: directory.index.length });
   }
-  const ruleRow = new Map(graph.rules.map((r, i) => [r.id, i]));
+  const rules = graph.rules.filter((r) => !options.omitRuleIds?.has(r.id));
+  const bindings = graph.bindings.filter((b) => !options.omitBindingIds?.has(b.id));
+  const ruleRow = new Map(rules.map((r, i) => [r.id, i]));
   {
     const s = new StringTable();
     add('rules', encodeSection([
-      { name: 'id', kind: 'scalar', values: graph.rules.map((r) => s.id(r.id)) },
-      { name: 'class', kind: 'scalar', values: graph.rules.map((r) => enumIndex(RULE_CLASSES, r.class)) },
-      { name: 'directionality', kind: 'scalar', values: graph.rules.map((r) => enumIndex(RULE_DIRECTIONALITIES, r.directionality)) },
-      { name: 'lossiness', kind: 'scalar', values: graph.rules.map((r) => enumIndex(RULE_LOSSINESS, r.lossiness)) },
-      { name: 'from', kind: 'list', values: graph.rules.map((r) => r.from.map((v) => s.id(v))) },
-      { name: 'to', kind: 'list', values: graph.rules.map((r) => r.to.map((v) => s.id(v))) },
-      { name: 'dependencies', kind: 'list', values: graph.rules.map((r) => r.dependencies.map((v) => s.id(v))) },
-      { name: 'predicate', kind: 'scalar', values: graph.rules.map((r) => (r.predicate === undefined ? 0 : s.id(JSON.stringify(sortKeys(r.predicate))))) },
-      { name: 'origin', kind: 'scalar', values: graph.rules.map((r) => enumIndex(KNOWLEDGE_ORIGINS, r.origin)) },
-      { name: 'sourceRefs', kind: 'list', values: graph.rules.map((r) => r.sourceRefs.map((v) => s.id(v))) },
-      { name: 'evidenceRefs', kind: 'list', values: graph.rules.map((r) => r.evidenceRefs.map((v) => s.id(v))) },
+      { name: 'id', kind: 'scalar', values: rules.map((r) => s.id(r.id)) },
+      { name: 'class', kind: 'scalar', values: rules.map((r) => enumIndex(RULE_CLASSES, r.class)) },
+      { name: 'directionality', kind: 'scalar', values: rules.map((r) => enumIndex(RULE_DIRECTIONALITIES, r.directionality)) },
+      { name: 'lossiness', kind: 'scalar', values: rules.map((r) => enumIndex(RULE_LOSSINESS, r.lossiness)) },
+      { name: 'from', kind: 'list', values: rules.map((r) => r.from.map((v) => s.id(v))) },
+      { name: 'to', kind: 'list', values: rules.map((r) => r.to.map((v) => s.id(v))) },
+      { name: 'dependencies', kind: 'list', values: rules.map((r) => r.dependencies.map((v) => s.id(v))) },
+      { name: 'predicate', kind: 'scalar', values: rules.map((r) => (r.predicate === undefined ? 0 : s.id(JSON.stringify(sortKeys(r.predicate))))) },
+      { name: 'origin', kind: 'scalar', values: rules.map((r) => enumIndex(KNOWLEDGE_ORIGINS, r.origin)) },
+      { name: 'sourceRefs', kind: 'list', values: rules.map((r) => r.sourceRefs.map((v) => s.id(v))) },
+      { name: 'evidenceRefs', kind: 'list', values: rules.map((r) => r.evidenceRefs.map((v) => s.id(v))) },
       { name: 'strings', kind: 'strings', values: s.values }
-    ]), { rowCount: graph.rules.length });
+    ]), { rowCount: rules.length });
   }
   {
     const s = new StringTable();
     add('bindings', encodeSection([
-      { name: 'id', kind: 'scalar', values: graph.bindings.map((b) => s.id(b.id)) },
-      { name: 'rule', kind: 'scalar', values: graph.bindings.map((b) => ruleRow.get(b.ruleId)!) },
-      { name: 'lexicalRefs', kind: 'list', values: graph.bindings.map((b) => b.lexicalRefs.map((v) => s.id(v))) },
-      { name: 'contextRefs', kind: 'list', values: graph.bindings.map((b) => (b.contextRefs ?? []).map((v) => s.id(v))) },
-      { name: 'sourceRefs', kind: 'list', values: graph.bindings.map((b) => b.sourceRefs.map((v) => s.id(v))) },
-      { name: 'evidenceRefs', kind: 'list', values: graph.bindings.map((b) => b.evidenceRefs.map((v) => s.id(v))) },
+      { name: 'id', kind: 'scalar', values: bindings.map((b) => s.id(b.id)) },
+      { name: 'rule', kind: 'scalar', values: bindings.map((b) => ruleRow.get(b.ruleId)!) },
+      { name: 'lexicalRefs', kind: 'list', values: bindings.map((b) => b.lexicalRefs.map((v) => s.id(v))) },
+      { name: 'contextRefs', kind: 'list', values: bindings.map((b) => (b.contextRefs ?? []).map((v) => s.id(v))) },
+      { name: 'sourceRefs', kind: 'list', values: bindings.map((b) => b.sourceRefs.map((v) => s.id(v))) },
+      { name: 'evidenceRefs', kind: 'list', values: bindings.map((b) => b.evidenceRefs.map((v) => s.id(v))) },
       { name: 'strings', kind: 'strings', values: s.values }
-    ]), { rowCount: graph.bindings.length, requires: ['rules'] });
+    ]), { rowCount: bindings.length, requires: ['rules'] });
   }
+  add('sino-component-index', encodeSinoComponentIndex(options.sinoComponentRows ?? []), { rowCount: options.sinoComponentRows?.length ?? 0 });
   add('terminology', json(options.terminology ?? { schemaVersion: '1', kind: 'browser-pack-terminology', terms: {} }));
 
   // ---- profiles: policy descriptors only ----------------------------------------------------------
