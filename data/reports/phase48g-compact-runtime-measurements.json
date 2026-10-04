@@ -19,9 +19,9 @@
       "sha256": "d3356dd8eb75e403ca6b2d8577e958dfff93ac1004cfa0f8cae4a46cb999c9a4"
     },
     "hotRuntimeArtifact": {
-      "bytes": 22107569,
-      "gzipBytes": 6268115,
-      "sha256": "44f2da27f4734b1383e7c30000e30980ca48d0733196fcfb251502b76b6bbb59"
+      "bytes": 21810629,
+      "gzipBytes": 6224189,
+      "sha256": "b557f5af894a84801585a49b3dcdff54d5d7e4e106744a1849dc769b54811674"
     },
     "hotRestrictionTables": {
       "bytes": 226305,
@@ -33,28 +33,28 @@
       "recordedAt": "japanese-orthography#139 / PR #152"
     },
     "phase46eArtifact": {
-      "bytes": 4295011
+      "bytes": 6384462
     },
     "sinoDagHotTables": {
-      "bytes": 188602
+      "bytes": 66990
     }
   },
   "counts": {
     "lexemes": 218850,
-    "hotStrings": 472801,
+    "hotStrings": 468628,
     "hotForms": 229114,
     "hotReadings": 236621,
-    "patterns": 587,
-    "bindings": 5002
+    "patterns": 271,
+    "bindings": 2000
   },
   "performanceObserved": {
-    "node": "v26.10.0",
-    "hotStartupMs": 989,
-    "hotHeapDeltaMb": 94,
-    "formLookupsPerSecond": 879042,
+    "node": "v24.21.0",
+    "hotStartupMs": 721,
+    "hotHeapDeltaMb": 140,
+    "formLookupsPerSecond": 1007690,
     "formLookupHits": 700680,
-    "formReadingLookupsPerSecond": 124771,
-    "reconstructWordsPerSecond": 66503,
-    "compactInflateMs": 20393
+    "formReadingLookupsPerSecond": 423645,
+    "reconstructWordsPerSecond": 119588,
+    "compactInflateMs": 16499
   }
 }

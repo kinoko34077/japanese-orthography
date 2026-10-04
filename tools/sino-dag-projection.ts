@@ -32,6 +32,36 @@ export interface SinoComponentRelation {
   readingClasses?: string[];
 }
 
+/**
+ * Reading-class evidence is a positive applicability signal, not a new
+ * historical relation.  The BrowserPack keeps these rows in its compact
+ * class index; the accepted historical DAG must continue to project only the
+ * HTML/intake relations that carry historical-kana authority.
+ */
+export function isSinoReadingClassIdentityRelation(relation: SinoComponentRelation): boolean {
+  return relation.context === null
+    && relation.historicalReadings.length === 1
+    && relation.historicalReadings[0] === relation.modernReading
+    && relation.readingClasses !== undefined
+    && relation.readingClasses.length > 0
+    && relation.evidenceRefs.some((ref) => ref.startsWith('phase46e-sino-reading-class:'))
+    && relation.evidenceRefs.includes('phase46e-sino-table:row:179:catch-all');
+}
+
+export function historicalSinoRelations(relations: readonly SinoComponentRelation[]): SinoComponentRelation[] {
+  return relations
+    .filter((relation) => !isSinoReadingClassIdentityRelation(relation))
+    .map((relation) => {
+      const { readingClasses: _readingClasses, ...historical } = relation;
+      return {
+        ...historical,
+        // Class evidence remains available from the artifact/compact index, but
+        // it is not historical-DAG authority and must not alter legacy parity.
+        evidenceRefs: relation.evidenceRefs.filter((ref) => !ref.startsWith('phase46e-sino-reading-class:'))
+      };
+    });
+}
+
 const patternKey = (historical: string, modern: string) => `${historical}>${modern}`;
 const contextKey = (context: string) => `usage:${context}`;
 

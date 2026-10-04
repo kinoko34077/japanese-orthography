@@ -4,7 +4,7 @@ import { gunzipSync } from 'node:zlib';
 import { JMDICT_EXTRACT_FILE, JMDICT_INTAKE_DIR, loadJmdictIntake } from './jmdict-intake.ts';
 import { compileJmdictLexicalGraph } from './jmdict-lexical-graph.ts';
 import { MEASUREMENTS_PATH, buildLexicalGraphMeasurements } from './lexical-graph-measurements.ts';
-import { projectSinoDag } from './sino-dag-projection.ts';
+import { historicalSinoRelations, projectSinoDag } from './sino-dag-projection.ts';
 
 // npm run measure:lexical-graph — recompiles the pinned JMdict lexicon and the 4.6E DAG projection
 // and records real byte measurements plus the canonical graph hash (determinism anchor).
@@ -15,7 +15,8 @@ async function main(): Promise<void> {
   const started = performance.now();
   const graph = compileJmdictLexicalGraph(extract, accounting);
   const compileMs = Math.round(performance.now() - started);
-  const sinoSource = JSON.parse(await readFile(resolve(rootDir, 'data/historical/sino/phase46e-sino-kana.json'), 'utf8')).componentRelations;
+  const artifact = JSON.parse(await readFile(resolve(rootDir, 'data/historical/sino/phase46e-sino-kana.json'), 'utf8'));
+  const sinoSource = historicalSinoRelations(artifact.componentRelations);
   const report = {
     schemaVersion: '1',
     kind: 'phase48c-lexical-graph-measurements',
