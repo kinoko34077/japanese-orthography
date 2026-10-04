@@ -1,53 +1,144 @@
-# Positive 字音 applicability design (#268)
+# Positive 字音 applicability設計 (#268)
 
-## Goal
+## 目的
 
-Project the existing 字音 source knowledge into a compact runtime applicability fact so ordinary Sino-Japanese words can use source-backed component reconstruction without treating `lexicalOrigin=unknown` as Sino.
+既存の字音資料をruntime applicabilityへ正しく投影し、普通の漢語がsource-backed component reconstructionを利用できるようにする。
 
-## Source and normalization
+ただし、`lexicalOrigin=unknown`をSinoとみなす方式には戻さない。
 
-The HTML tables remain authoritative for explicit historical relations, identity records, heading readings, and admitted/excluded status. The workbook `仮名遣等資料/字音仮名_まとめ.xlsx` contributes reading-class evidence from the columns `呉音のみ`, `呉音漢音共通`, `漢音のみ`, and `慣用音等`.
+## Sourceの役割分離
 
-The intake/compiler must normalize each admitted workbook cell into a deterministic record containing:
+### `字音仮名遣い表.html`
 
-- kanji/symbol identity;
-- modern reading and normalized historical reading value;
-- one or more reading-class flags (`go`, `kan`, `go_kan`, `customary`);
-- source row/column identity and canonical evidence reference;
-- admitted/excluded status and identity-vs-change relation where available.
+以下のauthorityを担当する。
 
-Blank, malformed, excluded, and unclassified cells do not become positive runtime evidence. Reconciliation must be keyed by canonical symbol and normalized reading, not by source row order. The compiler must report counts for admitted, excluded, ambiguous, and unclassified records and fail if an unexpected unclassified record is silently dropped.
+- 明示されたhistorical kana relation
+- identity relation
+- heading reading
+- admitted / excluded等の既存disposition
+- 「表にない音は現代仮名遣いと同じ」とするsource規則
+
+### `仮名遣等資料/字音仮名_まとめ.xlsx`
+
+主にreading-class evidenceを担当する。
+
+- `呉音のみ`
+- `呉音漢音共通`
+- `漢音のみ`
+- `慣用音等`
+
+例:
+
+```text
+必 / ヒチ -> 呉音側
+必 / ヒツ -> 漢音側
+```
+
+XLSXのclass情報だけからhistorical spellingを新規生成してはならない。historical kana valueはHTML等のadmitted relation、identity rule、または両資料を機械的にreconcileして得られる明示根拠から取得する。
+
+## Source normalization
+
+各admitted workbook cellを、少なくとも以下へ正規化する。
+
+- canonical symbol / kanji identity
+- modern component reading
+- reading-class flag: `go`, `kan`, `go_kan`, `customary`
+- source row/column identity
+- canonical evidence reference
+- admitted / ambiguous / excluded / unclassified disposition
+
+identity-vs-changeは、HTML等のhistorical relation authorityとのreconciliation結果として保持する。
+
+blank、malformed、excluded、unclassified cellをpositive runtime evidenceへ昇格させない。
+
+reconciliationはsource row orderではなくcanonical symbol + normalized modern readingを基準にする。
+
+compilerはadmitted / ambiguous / excluded / unclassified件数を出力し、予期しないunclassified recordのsilent dropをfailさせる。
+
+## Component alignment contract
+
+JMdict等から得られるwhole-word readingを、最初からcomponent readingへ分割済みだと仮定しない。
+
+Han surfaceとselected modern whole readingに対し、次の手順でsource-backed alignmentを求める。
+
+1. 各Han characterについて、admittedな`(character, modern component reading)` edgeだけを候補にする。
+2. whole readingを先頭から末尾まで完全に消費するalignmentを列挙する。
+3. non-Han部分が語内にある場合は、そのliteral reading/surface境界を既存lexical evidenceに従って固定し、Han component routeと混同しない。
+4. source-backed alignmentが0件なら`unresolved / missing`。
+5. 1件ならpositive component alignment。
+6. 複数件ならstorage orderで選ばず`candidate / conflict`として保持する。
+7. 既存runtimeに同等のsource-backed segmentation処理がある場合は再利用してよいが、この0/1/複数の意味契約を維持する。
+
+単に「音読みらしいkana列へ分割できる」ことはpositive evidenceではない。
 
 ## Applicability predicate
 
-For a candidate to enter the positive Sino reconstruction route, at least one of these must hold:
+Sino component reconstructionへ入れるのは、少なくとも次のいずれかが成立するcandidateだけとする。
 
-1. the candidate has explicit admitted Sino lexical-origin evidence; or
-2. every required kanji component has an admitted source-backed reading/class relation that matches the candidate's modern component reading and the selected reconstruction route.
+1. candidate自身がadmittedなSino lexical-origin evidenceを持つ。
+2. 上記alignment contractにより、必要なHan componentすべてについてsource-backed reading/class relationが一意に成立する。
 
-The second route is the intended bridge for cases such as `必 / ひつ` where the workbook records `ヒツ` under `漢音のみ`, combined with the existing source-backed relation for `要 / よう -> えう`.
+`lexicalOrigin=unknown`単独では不許可。
 
-`lexicalOrigin=unknown` remains unavailable by itself. A candidate with missing, conflicting, or incomplete component evidence remains unresolved and is not promoted to Sino. Candidate ambiguity is retained for later arbitration and diagnostics.
+missing / conflicting / incomplete component evidenceはSinoへ昇格させない。
+
+### 代表例: 必要
+
+```text
+必要 / ひつよう
+
+必 / ひつ
+  -> XLSX: 漢音側のpositive evidence
+  -> HTML/source規則: historical identityとして扱える
+
+要 / よう
+  -> HTML: よう -> えう
+
+=> ひつえう
+```
+
+`必要`全体が17件のUniDic first-sliceへ存在することを要求しない。
 
 ## Runtime projection
 
-Compile the reconciled fact into the BrowserPack as compact symbol/reading-class identifiers or bit flags plus provenance IDs. The runtime lookup must return applicability, evidence IDs, and the reason for failure (`missing`, `conflict`, or `not-positive`) without loading the workbook or scanning the full dictionary in the browser.
+reconciled evidenceをBrowserPackへcompactなID/flagとしてcompileする。
 
-The projection must be versioned with the pack manifest and included in the pack digest. It must not alter existing explicit native historical relations or identity records.
+hot runtimeへ必要なのは例として以下。
+
+- SymbolId / SequenceId
+- modern-reading ID
+- reading-class bit flags
+- applicability/provenance handle
+- failure reason: `missing` / `conflict` / `not-positive`
+
+browserでXLSX本体をロードしたり、毎回full dictionary scanを行ったりしない。
+
+projectionはpack manifest/version/digestの対象とする。
 
 ## Required RED cases
 
-- `必要 / ひつよう` reaches the positive component route and produces the source-backed reconstruction `ひつえう` once the Ruby phase consumes it.
-- `必 / ひつ` is recognized as positive Han-on evidence from the workbook classification.
-- `学 / がく` keeps the admitted identity relation and does not become a changed historical reading.
-- a candidate with unknown origin and no component evidence does not enter the Sino route.
-- Go-on-only and Han-on-only distinctions remain visible and are not merged into an undifferentiated reading set.
-- HTML and workbook conflicts are surfaced as ambiguity/conflict, never resolved by source order.
+- `必要 / ひつよう -> ひつえう`がsource-backed component routeで成立する。
+- `必 / ひつ`がXLSXの漢音reading-class evidenceとしてpositiveになる。
+- `学/學 / がく`が「historical unknown」ではなくknown identityとして保持される。
+- unknown originかつcomponent evidenceなしのcandidateはSino routeへ入らない。
+- 呉音only / 漢音only / 共通 / 慣用等を無差別にmergeしない。
+- modern readingが字音classを実質的に区別できる例を回帰に含める。
+- HTMLとXLSXのconflictをsource orderで解決せずcandidate/conflictとして残す。
+- alignment 0件 / 1件 / 複数件をそれぞれテストする。
 
-## Non-goals
+## 非対象
 
-This phase does not add new dictionary sources, scan JMdict broadly, choose a lexical sense, change Ruby serialization, change GUI labels, cut over the worker, regenerate public Pages, or deploy a pack.
+- 新しい外部辞書sourceの追加
+- broad JMdict再scan
+- lexical sense winnerの選択
+- Ruby serialization変更
+- GUI label変更
+- Worker cutover
+- public BrowserPack再生成・Pages deploy
+- future unknown-reading acquisition cache
 
-## Verification
+## 検証
 
-Add compiler-level reconciliation assertions, runtime-pack lookup tests, and adapter-level tests for the positive and negative cases above. Record source counts, pack digest, and focused test output in the owning Issue before moving to the Ruby phase.
+compiler-level reconciliation、runtime-pack lookup、adapter-level positive/negative testを追加する。
+
+次Phaseへ進む前に、source accounting、focused test、pack projectionの差分をowning Issueへ記録する。
