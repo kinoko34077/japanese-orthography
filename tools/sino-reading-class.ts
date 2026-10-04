@@ -33,6 +33,10 @@ export interface SinoReadingClassRemainder {
 const HAN = /^\p{Script=Han}$/u;
 const textDecoder = new TextDecoder('utf-8', { fatal: true });
 
+function compareText(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
 function u16(bytes: Uint8Array, offset: number): number {
   return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint16(offset, true);
 }
@@ -197,6 +201,6 @@ export function parseSinoReadingClassWorkbook(input: Uint8Array, sourceRef: stri
     modernReading: entry.modernReading,
     classes: [...entry.classes].sort(),
     evidenceRefs: [...entry.evidenceRefs].sort()
-  })).sort((a, b) => a.character.localeCompare(b.character) || a.modernReading.localeCompare(b.modernReading));
+  })).sort((a, b) => compareText(a.character, b.character) || compareText(a.modernReading, b.modernReading));
   return { headers: expectedHeaders, entries, remainders, rowCount: rows.length };
 }
