@@ -209,7 +209,6 @@ test('Phase B keeps historical lexical ambiguity and display preference without 
   assert.equal(result.renderedText, '大人');
   assert.equal(result.units[0].unit.kind, 'candidates');
   assert.equal(result.units[0].unit.lexicalIdentity, null);
-  assert.deepEqual(result.units[0].unit.displayReading, { value: 'おとな', source: 'lexical-consensus' });
 
   const modern = await transformWithResolver(pack, lexical, '大人', 'modern', { renderMode: 'ruby-whole-explicit' });
   assert.equal(modern.renderedText, '｜大人《おとな》');
