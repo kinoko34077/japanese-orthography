@@ -11,8 +11,13 @@ export const BROWSER_RUBY_ACCEPTANCE_PROFILES = ['modern', 'historical', 'kinotc
 
 /** Stable real-text corpus for #225. The expected rendering is asserted through the real v3 pack. */
 export const BROWSER_RUBY_ACCEPTANCE_CORPUS = [
+  { id: 'school', text: '学校', purpose: 'source-backed historical reading and canonical implicit whole-word Ruby' },
+  { id: 'necessary', text: '必要', purpose: 'source-backed Sino component reconstruction and historical Ruby authority' },
+  { id: 'must-shimo', text: '必ずしも', purpose: 'safe kana suffix factorization after admitted whole historical reading' },
+  { id: 'east-south-asia', text: '東南アジア', purpose: 'Katakana suffix factorization without changing semantic authority' },
+  { id: 'prefer', text: '好む', purpose: 'inflected kana suffix factorization after historical reading resolution' },
+  { id: 'men-women', text: '男女', purpose: 'display preference must not erase lexical/historical ambiguity' },
   { id: 'adult-suffix', text: '大人層', purpose: 'whole-word priority display; no per-character decomposition' },
-  { id: 'necessary', text: '必要', purpose: 'whole-word lexical reading and component fallback' },
   { id: 'market-property', text: '市場特性', purpose: 'adjacent and overlapping segmentation; ambiguous market is fail-closed' },
   { id: 'publishers', text: '出版各社', purpose: 'compound plus suffix segmentation' },
   { id: 'japan-company', text: '日本企業', purpose: 'Sino whole-word path and opaque component boundary' },
