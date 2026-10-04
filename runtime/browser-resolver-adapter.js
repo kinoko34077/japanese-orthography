@@ -154,6 +154,7 @@
   const transformWithResolver = async (pack, lexical, text, profileId, options = {}) => {
     const policy = pack.getProfilePolicy(profileId).policy;
     const renderMode = options.renderMode ?? "plain";
+    const renderOptions = (mode) => ({ mode, historicalProfile: policy.period === "historical" });
     if (policy.period !== "historical" && renderMode === "plain") {
       return { ...(await planner.planAndTransform(pack, text, profileId, options)), engine: "restoration" };
     }
@@ -423,7 +424,7 @@
         const h = resolved.historical;
         if (resolved.kind === "resolved" && h.disposition !== "PRESERVE" && h.disposition !== "CANDIDATES" && h.kana) {
           const mode = renderMode === "plain" ? (unit.ruby.explicit ? "ruby-whole-explicit" : "ruby-whole-implicit") : renderMode;
-          outputs = [resolver.render(resolved, { mode })];
+          outputs = [resolver.render(resolved, renderOptions(mode))];
         }
       } else if (isKana(surface)) {
         // dictionary-form readings plus deinflected kana forms (morphology-filtered by JMdict POS)
@@ -446,19 +447,19 @@
         if (resolved.kind === "resolved" && h.disposition !== "PRESERVE") {
           outputs = h.disposition === "CANDIDATES"
               ? uniq((h.contextualKanji.candidates.length ? h.contextualKanji.candidates : [h.surface]).map(applyActiveSafe))
-              .flatMap((s) => (renderMode === "plain" || !(h.sinoCandidates || h.nativeCandidates) ? [s] : uniq([...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])]).map((k) => resolver.render({ ...resolved, historical: { ...h, surface: s, kana: k } }, { mode: renderMode }))))
-            : [resolver.render(resolved, { mode: renderMode })];
+              .flatMap((s) => (renderMode === "plain" || !(h.sinoCandidates || h.nativeCandidates) ? [s] : uniq([...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])]).map((k) => resolver.render({ ...resolved, historical: { ...h, surface: s, kana: k } }, renderOptions(renderMode)))))
+            : [resolver.render(resolved, renderOptions(renderMode))];
         } else if (resolved.kind !== "resolved" && h.disposition !== "PRESERVE") {
           // lexical ambiguity: only identity-independent knowledge applies — relations bound to no
           // lexeme, and deterministic character rendering. It never selects among the candidates.
           const global = uniq(relations.filter((r) => r.match === surface && r.lexicalBindingIds.length === 0).map((r) => r.target));
           const preserved = safety.some((x) => x.match === surface);
-          if (!preserved && renderMode !== "plain" && resolved.displayReading?.value) {
+          if (!preserved && policy.period !== "historical" && renderMode !== "plain" && resolved.displayReading?.value) {
             const displaySurfaces = global.length ? global.map(applyActiveSafe) : [surface];
             outputs = displaySurfaces.map((displaySurface) => resolver.render({
               ...resolved,
               historical: { ...h, surface: displaySurface }
-            }, { mode: renderMode }));
+            }, renderOptions(renderMode)));
           } else {
             outputs = preserved ? [] : (global.length ? global : [surface]).map(applyActiveSafe);
           }
