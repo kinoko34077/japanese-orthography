@@ -192,7 +192,7 @@
         "historicalSurface": "思ふ",
         "disposition": "AUTO",
         "plain": "思ふ",
-        "rubyWhole": "｜思ふ《おもう》",
+        "rubyWhole": "思ふ",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -242,7 +242,7 @@
         "historicalSurface": "買ふ",
         "disposition": "AUTO",
         "plain": "買ふ",
-        "rubyWhole": "｜買ふ《かう》",
+        "rubyWhole": "買ふ",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -297,7 +297,7 @@
         "historicalSurface": "合う",
         "disposition": "CANDIDATES",
         "plain": "合ふ",
-        "rubyWhole": "｜合ふ《あう》",
+        "rubyWhole": "合ふ",
         "historicalRoute": null
       },
       "difference": "unbound-relation",
