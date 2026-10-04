@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "12253d8c1fa060336fc3cc79c5e4ab935fc10d32f97f3a8156f6518880bff4eb",
+  "packDigest": "3491990fe2e35eb352932155d64ab3aa0e975e4d597c035b69e574ca86705a7f",
   "totalBytes": 149336200,
   "classTotalBytes": 149336200,
   "classes": {

@@ -2,10 +2,10 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization-v2",
   "owner": "japanese-orthography#196 J",
-  "packDigest": "12253d8c1fa060336fc3cc79c5e4ab935fc10d32f97f3a8156f6518880bff4eb",
+  "packDigest": "3491990fe2e35eb352932155d64ab3aa0e975e4d597c035b69e574ca86705a7f",
   "oracle": {
     "report": "data/reports/browser-capability-utilization-v1.json",
-    "packDigest": "3207cc62b9026d7569e7d69eebb6ce6aec89e183934cb4666aaa69c621c04c62"
+    "packDigest": "6138f0215c29855e15c97c00b449817da8ad94df11f8d33b8602d6ef3c340903"
   },
   "rows": [
     {

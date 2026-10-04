@@ -52,6 +52,7 @@ function fixtureSections(): BrowserPackSectionDescriptor[] {
     [section('rules', 'rules', { rowCount: 2 }), 'rules'],
     [section('bindings', 'bindings', { rowCount: 1, requires: ['rules'] }), 'bindings'],
     [section('provenance-index', 'prov', { rowCount: 2 }), 'prov'],
+    [section('sino-component-index', 'sino', { rowCount: 0 }), 'sino'],
     [section('lexical-index', 'lexA', { rowCount: 2, shard: { key: 'surface', index: 0, count: 2, from: 'あ', to: 'な' } }), 'lexA'],
     [section('lexical-index', 'lexB', { rowCount: 2, shard: { key: 'surface', index: 1, count: 2, from: 'に', to: '鼻' } }), 'lexB'],
     [section('detail-shard', 'detail', { rowCount: 4, shard: { key: 'detail', index: 0, count: 1, from: '0', to: '9' } }), 'detail'],

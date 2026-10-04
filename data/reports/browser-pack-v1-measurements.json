@@ -359,7 +359,7 @@
       "sectionBytesResident": 228867,
       "alignmentPaddingBytes": 4,
       "views": 28,
-      "openMs": 0.104,
+      "openMs": 0.224,
       "viewObjectHeapMb": 0.1
     },
     "measuredFullyResident": {
@@ -367,7 +367,7 @@
       "sectionBytesResident": 64421619,
       "alignmentPaddingBytes": 6,
       "views": 56,
-      "openMs": 3.48,
+      "openMs": 7.821,
       "viewObjectHeapMb": 0
     }
   },

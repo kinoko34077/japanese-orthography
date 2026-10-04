@@ -2,11 +2,11 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "582a82e0ad189baea88325badc96b4a37beccb40c5fee10fd88bbd64082d5aac",
+  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
   "sections": 1845,
   "sizes": {
     "total": 186242248,
-    "totalGzip": 72851367,
+    "totalGzip": 72852978,
     "byLoading": {
       "eager": {
         "sections": 10,
@@ -21,7 +21,7 @@
       "on-demand": {
         "sections": 1353,
         "bytes": 111094552,
-        "gzipBytes": 47750227
+        "gzipBytes": 47751838
       }
     },
     "byKind": {
@@ -128,7 +128,7 @@
       "sino-component-index": {
         "sections": 1,
         "bytes": 352292,
-        "gzipBytes": 177661
+        "gzipBytes": 179272
       },
       "surface-index": {
         "sections": 386,
@@ -155,22 +155,22 @@
         "requests": 10,
         "bytes": 575004,
         "gzipBytes": 235270,
-        "openMs": 96
+        "openMs": 85
       },
       "coldFirstResult": {
         "requests": 72,
         "bytes": 4234896,
-        "gzipBytes": 1873914,
-        "ms": 867
+        "gzipBytes": 1875536,
+        "ms": 791
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 19
+        "ms": 12
       },
       "detailLatencyMs": 59,
-      "unitDetailLatencyMs": 104,
+      "unitDetailLatencyMs": 97,
       "residentArrayBufferBytes": 9143476,
-      "jsHeapDeltaBytes": 43310776,
+      "jsHeapDeltaBytes": 33930528,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -181,22 +181,22 @@
         "requests": 10,
         "bytes": 575004,
         "gzipBytes": 235270,
-        "openMs": 87
+        "openMs": 67
       },
       "coldFirstResult": {
         "requests": 153,
         "bytes": 8596764,
-        "gzipBytes": 3736201,
-        "ms": 1017
+        "gzipBytes": 3737823,
+        "ms": 1060
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 33
+        "ms": 46
       },
-      "detailLatencyMs": 65,
-      "unitDetailLatencyMs": 23,
+      "detailLatencyMs": 113,
+      "unitDetailLatencyMs": 31,
       "residentArrayBufferBytes": 11319304,
-      "jsHeapDeltaBytes": 39836112,
+      "jsHeapDeltaBytes": 13884344,
       "spans": 7,
       "inspectableUnits": 23
     }

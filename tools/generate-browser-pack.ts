@@ -78,7 +78,8 @@ async function sinoComponentProjection(rootDir: string, graph: AcceptedGraph): P
       evidenceRefs: [...new Set(evidenceRefs)].sort()
     });
   }
-  rows.sort((a, b) => a.character.localeCompare(b.character) || a.modernReading.localeCompare(b.modernReading));
+  rows.sort((a, b) => (a.character < b.character ? -1 : a.character > b.character ? 1 : 0)
+    || (a.modernReading < b.modernReading ? -1 : a.modernReading > b.modernReading ? 1 : 0));
   const syntheticBindingIds = new Set(graph.bindings.filter((binding) => binding.sourceRefs.includes(SINO_CLASS_SOURCE)).map((binding) => binding.id));
   const regularRuleIds = new Set(graph.bindings.filter((binding) => !syntheticBindingIds.has(binding.id)).map((binding) => binding.ruleId));
   const syntheticRuleIds = new Set(graph.bindings.filter((binding) => syntheticBindingIds.has(binding.id)).map((binding) => binding.ruleId));

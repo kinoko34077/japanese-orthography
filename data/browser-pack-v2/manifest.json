@@ -3,7 +3,7 @@
   "compilerVersion": "2",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "12253d8c1fa060336fc3cc79c5e4ab935fc10d32f97f3a8156f6518880bff4eb",
+  "packDigest": "3491990fe2e35eb352932155d64ab3aa0e975e4d597c035b69e574ca86705a7f",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -30127,7 +30127,7 @@
       "path": "sino-component-index.bin",
       "rowCount": 8964,
       "sectionId": "sino-component-index",
-      "sha256": "a2885c69c419319cdd856610043b5ec71e52f70ec53a981fe45299b240113277"
+      "sha256": "4b1acb8a71b4d066cd95830536cf6eb4986c27e5720feb5adfe33893bcb59317"
     },
     {
       "byteLength": 63900,
