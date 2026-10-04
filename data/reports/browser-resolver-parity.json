@@ -82,7 +82,7 @@
         "historicalSurface": "颱風",
         "disposition": "AUTO",
         "plain": "颱風",
-        "rubyWhole": "｜颱風《たいふう》"
+        "rubyWhole": "颱風"
       },
       "browser": {
         "kind": "resolved",
@@ -105,7 +105,8 @@
       },
       "difference": "browser-sino-reconstruction",
       "fieldsDiffering": [
-        "historicalKana"
+        "historicalKana",
+        "rubyWhole"
       ]
     },
     {
@@ -178,7 +179,7 @@
         "historicalSurface": "思う",
         "disposition": "CANDIDATES",
         "plain": "思う",
-        "rubyWhole": "｜思う《おもう》"
+        "rubyWhole": "思う"
       },
       "browser": {
         "kind": "resolved",
@@ -192,7 +193,7 @@
         "historicalSurface": "思ふ",
         "disposition": "AUTO",
         "plain": "思ふ",
-        "rubyWhole": "｜思ふ《おもう》",
+        "rubyWhole": "思ふ",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -242,7 +243,7 @@
         "historicalSurface": "買ふ",
         "disposition": "AUTO",
         "plain": "買ふ",
-        "rubyWhole": "｜買ふ《かう》",
+        "rubyWhole": "買ふ",
         "historicalRoute": null
       },
       "difference": "lexicon-granularity",
@@ -297,7 +298,7 @@
         "historicalSurface": "合う",
         "disposition": "CANDIDATES",
         "plain": "合ふ",
-        "rubyWhole": "｜合ふ《あう》",
+        "rubyWhole": "合ふ",
         "historicalRoute": null
       },
       "difference": "unbound-relation",
@@ -324,7 +325,7 @@
         "historicalSurface": "味わおう",
         "disposition": "SOURCE_REVIEW",
         "plain": "味わおう",
-        "rubyWhole": "｜味わおう《あじわおう》"
+        "rubyWhole": "味わおう"
       },
       "browser": {
         "kind": "resolved",
@@ -346,8 +347,7 @@
       },
       "difference": "browser-canonical-relations",
       "fieldsDiffering": [
-        "disposition",
-        "rubyWhole"
+        "disposition"
       ]
     },
     {
@@ -414,7 +414,7 @@
         "historicalSurface": "今日",
         "disposition": "SOURCE_REVIEW",
         "plain": "今日",
-        "rubyWhole": "｜今日《きょう》"
+        "rubyWhole": "今日"
       },
       "browser": {
         "kind": "resolved",
