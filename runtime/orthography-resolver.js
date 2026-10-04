@@ -482,6 +482,58 @@
     evidenceRefs: []
   });
 
+  const KANA_CHAR = /^[ぁ-ゟ゠-ヿㇰ-ㇿｦ-ﾟ]$/u;
+  const HAN_CHAR = /^\p{Script=Han}$/u;
+
+  const factorAutomaticRubyRange = (surfaceValue, readingValue) => {
+    const surface = Array.from(`${surfaceValue ?? ""}`);
+    const reading = Array.from(`${readingValue ?? ""}`);
+    const original = {
+      prefix: "",
+      base: surface.join(""),
+      ruby: reading.join(""),
+      suffix: "",
+      implicitSafe: surface.length > 0 && surface.every((char) => HAN_CHAR.test(char))
+    };
+    if (surface.length === 0 || reading.length === 0) return original;
+
+    let prefixLength = 0;
+    while (
+      prefixLength < surface.length &&
+      prefixLength < reading.length &&
+      surface[prefixLength] === reading[prefixLength] &&
+      KANA_CHAR.test(surface[prefixLength])
+    ) {
+      prefixLength += 1;
+    }
+
+    let surfaceEnd = surface.length;
+    let readingEnd = reading.length;
+    while (
+      surfaceEnd > prefixLength &&
+      readingEnd > prefixLength &&
+      surface[surfaceEnd - 1] === reading[readingEnd - 1] &&
+      KANA_CHAR.test(surface[surfaceEnd - 1])
+    ) {
+      surfaceEnd -= 1;
+      readingEnd -= 1;
+    }
+
+    const base = surface.slice(prefixLength, surfaceEnd).join("");
+    const ruby = reading.slice(prefixLength, readingEnd).join("");
+    if (!base || !ruby || !Array.from(base).some((char) => HAN_CHAR.test(char))) {
+      return original;
+    }
+
+    return {
+      prefix: surface.slice(0, prefixLength).join(""),
+      base,
+      ruby,
+      suffix: surface.slice(surfaceEnd).join(""),
+      implicitSafe: Array.from(base).every((char) => HAN_CHAR.test(char))
+    };
+  };
+
   const createResolver = (config = {}) => {
     if (typeof config.lexicalLookup !== "function") {
       throw new TypeError("createResolver requires lexicalLookup(surface)");
@@ -604,21 +656,36 @@
       }
 
       const mode = options.mode ?? "plain";
+      const historicalProfile = options.historicalProfile === true;
       const surface = unit?.historical?.surface ?? unit?.sourceSurface ?? unit?.sourceText ?? "";
       const historicalKana = unit?.historical?.kana ?? null;
       const displayReading = unit?.displayReading?.value ?? unit?.reading?.modernSurface ?? null;
-      // A modern-only unit may expose its lexical reading as Ruby, but a historical
-      // route with no admitted historical kana must not invent a modern Ruby fallback.
-      const rubyReading = historicalKana ?? (unit?.historical?.route ? null : displayReading);
+      // Historical output is stricter than modern display: absence of admitted
+      // historical reading evidence must not silently authorize a modern/display Ruby.
+      const rubyReading = historicalKana ?? (!historicalProfile && !unit?.historical?.route ? displayReading : null);
       if (mode === "plain" || !rubyReading) {
         return surface;
       }
 
+      const range = historicalProfile && historicalKana
+        ? factorAutomaticRubyRange(surface, rubyReading)
+        : {
+            prefix: "",
+            base: surface,
+            ruby: rubyReading,
+            suffix: "",
+            implicitSafe: Array.from(surface).every((char) => HAN_CHAR.test(char))
+          };
+      const serializeWhole = (explicit) => {
+        const useExplicitBar = explicit || (historicalProfile && !range.implicitSafe);
+        return `${range.prefix}${useExplicitBar ? "｜" : ""}${range.base}《${range.ruby}》${range.suffix}`;
+      };
+
       if (mode === "ruby-whole-explicit") {
-        return `｜${surface}《${rubyReading}》`;
+        return serializeWhole(true);
       }
       if (mode === "ruby-whole-implicit") {
-        return `${surface}《${rubyReading}》`;
+        return serializeWhole(false);
       }
 
       const components = Array.isArray(unit.components) ? unit.components : [];
@@ -630,10 +697,10 @@
       }).join("") : "";
 
       if (mode === "ruby-components-explicit") {
-        return componentRuby ? `｜${componentRuby}` : `｜${surface}《${rubyReading}》`;
+        return componentRuby ? `｜${componentRuby}` : serializeWhole(true);
       }
       if (mode === "ruby-components-implicit") {
-        return componentRuby || `${surface}《${rubyReading}》`;
+        return componentRuby || serializeWhole(false);
       }
 
       return surface;
