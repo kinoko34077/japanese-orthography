@@ -21,9 +21,10 @@ const lexical = createBrowserLexicalRuntime(pack);
 const run = (text: string, renderMode = 'plain', profile = 'historical') => transformWithResolver(pack, lexical, text, profile, { renderMode });
 const unitAt = (raw: any, surface: string) => raw.units.find((u: any) => u.surface === surface)?.unit;
 
-test('学校: plain => 學校, Ruby mode => ｜學校《がくかう》', async () => {
+test('学校: plain / explicit / canonical implicit Rubyを区別する', async () => {
   assert.equal((await run('学校')).renderedText, '學校');
   assert.equal((await run('学校', 'ruby-whole-explicit')).renderedText, '｜學校《がくかう》');
+  assert.equal((await run('学校', 'ruby-whole-implicit')).renderedText, '學校《がくかう》');
 });
 
 test('がっこう reaches the same lexical identity as 学校 and its historical kana', async () => {
@@ -78,7 +79,7 @@ test('Pages: output format is separate from the profile, shown only when the eng
   const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
   const fieldset = html.slice(html.indexOf('id="render-modes"'), html.indexOf('</fieldset>', html.indexOf('id="render-modes"')));
   assert.match(html, /<fieldset class="profiles render-modes" id="render-modes" hidden>/);
-  for (const mode of ['plain', 'ruby-whole-explicit', 'ruby-components-explicit']) assert.match(fieldset, new RegExp(`name="renderMode" value="${mode}"`));
+  for (const mode of ['plain', 'ruby-whole-implicit', 'ruby-components-implicit']) assert.match(fieldset, new RegExp(`name="renderMode" value="${mode}"`));
   assert.doesNotMatch(fieldset, /name="profile"/);
 
   const { createTransformService } = require('../runtime/browser-transform-worker.js');
