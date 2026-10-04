@@ -95,6 +95,39 @@ test('R2 factorizes only literal kana edges of an admitted whole historical read
   assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', profile: 'historical' }), '必《かなら》ずしも');
 });
 
+test('R2 factorization covers real-text kana suffixes and does not mutate semantic metadata', () => {
+  for (const [surface, reading, expected] of [
+    ['東南アジア', 'とうなんアジア', '｜東南《とうなん》アジア'],
+    ['好む', 'このむ', '｜好《この》む']
+  ] as const) {
+    const resolver = createResolver({
+      lexicalLookup: () => [candidate(`lexeme:${surface}/${reading}`, reading)],
+      historicalLookup: () => ({
+        status: 'resolved', route: 'native', reading, surface, basis: 'literal_whole_word',
+        sourceRefs: ['historical/fixture'], evidenceRefs: [`ev:${surface}`]
+      })
+    });
+    const unit = resolver.resolveUnit(surface);
+    const before = JSON.stringify(unit.historical);
+    assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), expected);
+    assert.equal(JSON.stringify(unit.historical), before);
+  }
+});
+
+test('R2 component mode uses safe whole-word factorization when component evidence is incomplete', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:必ずしも/かならずしも', 'かならずしも', {
+      components: [{ surface: '必', lexicalReading: 'ひつ', historicalKana: null }]
+    })],
+    historicalLookup: () => ({
+      status: 'resolved', route: 'native', reading: 'かならずしも', surface: '必ずしも', basis: 'literal_whole_word',
+      sourceRefs: ['historical/fixture'], evidenceRefs: ['ev:fixture']
+    })
+  });
+  const unit = resolver.resolveUnit('必ずしも');
+  assert.equal(resolver.render(unit, { mode: 'ruby-components-explicit', profile: 'historical' }), '｜必《かなら》ずしも');
+});
+
 test('R2 falls back to complete whole-word Ruby when component evidence is partial', () => {
   const resolver = createResolver({
     lexicalLookup: () => [candidate('lexeme:必要/ひつよう', 'ひつよう', {

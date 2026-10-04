@@ -678,10 +678,13 @@
       }
 
       const components = Array.isArray(unit.components) ? unit.components : [];
-      const completeComponents = components.length > 0 && components.every((component) => Boolean(component.historicalKana ?? component.lexicalReading));
+      const componentReading = (component) => profile === "historical"
+        ? component.historicalKana ?? null
+        : component.historicalKana ?? component.lexicalReading ?? null;
+      const completeComponents = components.length > 0 && components.every((component) => Boolean(componentReading(component)));
       const componentRuby = completeComponents ? components.map((component) => {
         const componentSurface = component.renderedSurface ?? component.surface ?? "";
-        const componentKana = component.historicalKana ?? component.lexicalReading ?? null;
+        const componentKana = componentReading(component);
         return componentKana ? `${componentSurface}《${componentKana}》` : componentSurface;
       }).join("") : "";
 
