@@ -54,8 +54,8 @@ registerVerticalCases('v3 site', service);
 
 test('the built site includes every runtime module imported by the dedicated worker', async () => {
   const workerSource = await readFile(new URL('../runtime/browser-transform-worker.js', import.meta.url), 'utf8');
-  const imported = [...workerSource.matchAll(/importScripts\\(([^;]+)\\);/gs)]
-    .flatMap((match) => [...match[1]!.matchAll(/["']([^"']+\\.js)["']/g)].map((entry) => entry[1]!));
+  const imported = [...workerSource.matchAll(/importScripts\(([^;]+)\);/gs)]
+    .flatMap((match) => [...match[1]!.matchAll(/["']([^"']+\.js)["']/g)].map((entry) => entry[1]!));
   assert.ok(imported.length > 0, 'dedicated worker must declare literal importScripts runtime dependencies');
   for (const module of imported) {
     assert.ok(SITE_RUNTIME_MODULES.includes(module), `${module} is imported by the worker but missing from SITE_RUNTIME_MODULES`);
