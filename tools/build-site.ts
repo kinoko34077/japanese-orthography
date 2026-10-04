@@ -21,6 +21,10 @@ export const SITE_RUNTIME_MODULES = [
   'browser-inflection.js',
   'historical-sino-runtime.js',
   'browser-resolver-adapter.js',
+  'symbol-registry-runtime.js',
+  'sequence-pool-runtime.js',
+  'rule-program-vm.js',
+  'browser-program-runtime.js',
   'browser-transform-worker.js'
 ];
 
