@@ -423,7 +423,7 @@
         const h = resolved.historical;
         if (resolved.kind === "resolved" && h.disposition !== "PRESERVE" && h.disposition !== "CANDIDATES" && h.kana) {
           const mode = renderMode === "plain" ? (unit.ruby.explicit ? "ruby-whole-explicit" : "ruby-whole-implicit") : renderMode;
-          outputs = [resolver.render(resolved, { mode })];
+          outputs = [resolver.render(resolved, { mode, profile: policy.period })];
         }
       } else if (isKana(surface)) {
         // dictionary-form readings plus deinflected kana forms (morphology-filtered by JMdict POS)
@@ -446,8 +446,8 @@
         if (resolved.kind === "resolved" && h.disposition !== "PRESERVE") {
           outputs = h.disposition === "CANDIDATES"
               ? uniq((h.contextualKanji.candidates.length ? h.contextualKanji.candidates : [h.surface]).map(applyActiveSafe))
-              .flatMap((s) => (renderMode === "plain" || !(h.sinoCandidates || h.nativeCandidates) ? [s] : uniq([...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])]).map((k) => resolver.render({ ...resolved, historical: { ...h, surface: s, kana: k } }, { mode: renderMode }))))
-            : [resolver.render(resolved, { mode: renderMode })];
+              .flatMap((s) => (renderMode === "plain" || !(h.sinoCandidates || h.nativeCandidates) ? [s] : uniq([...(h.sinoCandidates?.readings ?? []), ...(h.nativeCandidates?.readings ?? [])]).map((k) => resolver.render({ ...resolved, historical: { ...h, surface: s, kana: k } }, { mode: renderMode, profile: policy.period }))))
+            : [resolver.render(resolved, { mode: renderMode, profile: policy.period })];
         } else if (resolved.kind !== "resolved" && h.disposition !== "PRESERVE") {
           // lexical ambiguity: only identity-independent knowledge applies — relations bound to no
           // lexeme, and deterministic character rendering. It never selects among the candidates.
@@ -458,7 +458,7 @@
             outputs = displaySurfaces.map((displaySurface) => resolver.render({
               ...resolved,
               historical: { ...h, surface: displaySurface }
-            }, { mode: renderMode }));
+            }, { mode: renderMode, profile: policy.period }));
           } else {
             outputs = preserved ? [] : (global.length ? global : [surface]).map(applyActiveSafe);
           }
@@ -544,6 +544,7 @@
       lexicalIdentity: unit.lexicalIdentity ?? null,
       reading: unit.reading?.modernSurface ?? null,
       readingSource: unit.reading?.source ?? null,
+      displayReading: unit.displayReading ? { value: unit.displayReading.value, source: unit.displayReading.source } : null,
       lexicalOrigin: unit.lexicalOrigin ?? "unknown",
       morphology: unit.morphology ? { partOfSpeech: [...(unit.morphology.partOfSpeech ?? [])].filter((p) => p !== "*"), conjugationType: unit.morphology.conjugationType ?? null, conjugationForm: unit.morphology.conjugationForm ?? null } : null,
       inflection: unit.inflection ?? null,
@@ -551,6 +552,7 @@
       historical: {
         route: h.route ?? null,
         kana: h.kana ?? null,
+        status: h.status ?? null,
         surface: h.surface ?? null,
         disposition: h.disposition ?? null,
         contextualKanji: h.contextualKanji?.status ?? "none",

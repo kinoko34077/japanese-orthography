@@ -37,7 +37,8 @@ test('R2 keeps lexical identity ambiguous while exposing a consensus reading for
   assert.equal(unit.kind, 'candidates');
   assert.deepEqual(unit.lexicalCandidates.map((c: any) => c.lexicalIdentity), ['lexeme:大人/おとな#1', 'lexeme:大人/おとな#2']);
   assert.deepEqual(unit.displayReading, { value: 'おとな', source: 'lexical-consensus' });
-  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit' }), '｜大人《おとな》');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), '大人');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'modern' }), '｜大人《おとな》');
 });
 
 test('R2 uses a unique source-backed JMdict priority for display without resolving lexical identity', () => {
@@ -50,16 +51,48 @@ test('R2 uses a unique source-backed JMdict priority for display without resolvi
   const unit = resolver.resolveUnit('大人');
   assert.equal(unit.kind, 'candidates');
   assert.deepEqual(unit.displayReading, { value: 'おとな', source: 'jmdict-re-pri' });
-  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit' }), '｜大人《おとな》');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), '大人');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'modern' }), '｜大人《おとな》');
 });
 
-test('R2 renders modern lexical reading as Ruby even when no historical conversion exists', () => {
+test('R2 keeps modern display reading out of historical Ruby when no historical conversion exists', () => {
   const resolver = createResolver({
     lexicalLookup: () => [candidate('lexeme:学校/がっこう', 'がっこう')]
   });
   const unit = resolver.resolveUnit('学校');
   assert.equal(unit.historical.kana, null);
-  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit' }), '｜学校《がっこう》');
+  assert.equal(unit.historical.status, 'unknown');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), '学校');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'modern' }), '｜学校《がっこう》');
+});
+
+test('R2 distinguishes source-backed known-identical historical reading from unknown history', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:学校/がっこう', 'がっこう')],
+    historicalLookup: () => ({
+      status: 'resolved', route: 'native', reading: 'がっこう', surface: '学校', basis: 'deterministic_identity',
+      sourceRefs: ['historical/identity'], evidenceRefs: ['ev:identity']
+    })
+  });
+  const unit = resolver.resolveUnit('学校');
+  assert.equal(unit.historical.status, 'resolved');
+  assert.equal(unit.historical.basis, 'deterministic_identity');
+  assert.deepEqual(unit.historical.sourceRefs, ['historical/identity']);
+  assert.deepEqual(unit.historical.evidenceRefs, ['ev:identity']);
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), '｜学校《がっこう》');
+});
+
+test('R2 factorizes only literal kana edges of an admitted whole historical reading', () => {
+  const resolver = createResolver({
+    lexicalLookup: () => [candidate('lexeme:必ずしも/かならずしも', 'かならずしも')],
+    historicalLookup: () => ({
+      status: 'resolved', route: 'native', reading: 'かならずしも', surface: '必ずしも', basis: 'literal_whole_word',
+      sourceRefs: ['historical/fixture'], evidenceRefs: ['ev:fixture']
+    })
+  });
+  const unit = resolver.resolveUnit('必ずしも');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-explicit', profile: 'historical' }), '｜必《かなら》ずしも');
+  assert.equal(resolver.render(unit, { mode: 'ruby-whole-implicit', profile: 'historical' }), '必《かなら》ずしも');
 });
 
 test('R2 falls back to complete whole-word Ruby when component evidence is partial', () => {
@@ -134,9 +167,10 @@ test('R2 browser adapter renders consensus or source-prioritized Ruby without se
   const pack = await openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!);
   const lexical = createBrowserLexicalRuntime(pack);
   const result = await transformWithResolver(pack, lexical, '大人', 'historical', { renderMode: 'ruby-whole-explicit' });
-  assert.equal(result.renderedText, '｜大人《おとな》');
+  assert.equal(result.renderedText, '大人');
   assert.equal(result.units[0].unit.kind, 'candidates');
   assert.equal(result.units[0].unit.lexicalIdentity, null);
+  assert.deepEqual(result.units[0].unit.displayReading, { value: 'おとな', source: 'lexical-consensus' });
 });
 
 test('R2 carries source-backed display priority through the Browser lexical pack', async () => {
