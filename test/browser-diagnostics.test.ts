@@ -130,6 +130,31 @@ test('Rule Program candidates retain source authority and branch uncertainty', (
   assert.equal(span.authority, 'source_rule');
 });
 
+test('Rule Program Ruby diagnostics preserve historical unknown and lexical ambiguity', () => {
+  const programRaw = (unit: any) => ({
+    profileId: 'historical', renderedText: '｜男女《だんじょ》', offsetUnit: 'UTF-16', renderMode: 'ruby-whole-explicit', lexicalMatchCount: 1, units: [],
+    spans: [{
+      detailRef: '0', start: 0, end: 2, renderedStart: 0, renderedEnd: 9, sourceText: '男女', renderedText: '｜男女《だんじょ》',
+      state: 'applied', reasons: [], blocked: [], contextual: [],
+      winners: [{ origin: 'program', output: '｜男女《だんじょ》', ref: 'program:7', programIds: [7], candidate: false, unit }]
+    }]
+  });
+  const unknown = resolverUnit({ historical: { status: 'unknown', sourceRefs: [], evidenceRefs: [], canonicalIds: [] } });
+  assert.deepEqual(
+    [summarize(programRaw(unknown)).spans[0].certainty, summarize(programRaw(unknown)).spans[0].authority],
+    ['unresolved', 'none']
+  );
+  const ambiguous = resolverUnit({
+    kind: 'candidates', lexicalIdentity: null,
+    lexicalCandidates: [{ lexicalIdentity: 'lexeme:男女/おとこおんな' }, { lexicalIdentity: 'lexeme:男女/だんじょ' }],
+    historical: { status: 'resolved', route: 'sino', kana: 'だんじょ', sourceRefs: [], evidenceRefs: ['ev:program'], canonicalIds: ['fact:program'] }
+  });
+  assert.deepEqual(
+    [summarize(programRaw(ambiguous)).spans[0].certainty, summarize(programRaw(ambiguous)).spans[0].authority],
+    ['conditional', 'source_rule']
+  );
+});
+
 test('lazy detail maps back to canonical provenance and equals an eager expansion', async () => {
   const { raw, summary } = await run('溶接と円');
   const lazy = await expandDetail(pack, raw, summary.spans[0].detailRef);

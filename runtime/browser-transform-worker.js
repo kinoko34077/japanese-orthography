@@ -7,9 +7,9 @@
   }
   const deps = isCommonJs
     ? { runtime: require("./browser-pack-runtime.js"), planner: require("./browser-span-planner.js"), diagnostics: safeRequire("./browser-diagnostic-contract.js"), fetcher: safeRequire("./browser-section-fetcher.js"),
-      lexicalRuntime: safeRequire("./browser-lexical-runtime.js"), adapter: safeRequire("./browser-resolver-adapter.js"), programRuntime: safeRequire("./browser-program-runtime.js") }
+      lexicalRuntime: safeRequire("./browser-lexical-runtime.js"), resolver: safeRequire("./orthography-resolver.js"), adapter: safeRequire("./browser-resolver-adapter.js"), programRuntime: safeRequire("./browser-program-runtime.js") }
     : { runtime: root.BrowserPackRuntime, planner: root.BrowserSpanPlanner, diagnostics: root.BrowserDiagnosticContract, fetcher: root.BrowserSectionFetcher,
-      lexicalRuntime: root.BrowserLexicalRuntime, adapter: root.BrowserResolverAdapter, programRuntime: root.BrowserProgramRuntime };
+      lexicalRuntime: root.BrowserLexicalRuntime, resolver: root.OrthographyResolver, adapter: root.BrowserResolverAdapter, programRuntime: root.BrowserProgramRuntime };
   function safeRequire(path) { try { return require(path); } catch { return null; } }
   const api = factory(deps);
   if (isCommonJs) module.exports = api;
@@ -17,7 +17,7 @@
   if (!isCommonJs && typeof root.addEventListener === "function" && typeof importScripts === "function") api.attachToWorkerScope(root);
 })(typeof globalThis !== "undefined" ? globalThis : this, function (deps) {
   "use strict";
-  const { runtime, planner, diagnostics, fetcher, lexicalRuntime, adapter, programRuntime } = deps;
+  const { runtime, planner, diagnostics, fetcher, lexicalRuntime, resolver, adapter, programRuntime } = deps;
 
   // Worker-side transform service (#185 D/E). The pack is opened once per service and reused for every
   // request. Only plain, compact JSON crosses the worker boundary; the pack, its TypedArray views and
@@ -51,6 +51,36 @@
     // a v1 pack keeps the v1 planner, so the published site is unaffected until the J cutover
     const lexicalFor = new WeakMap();
     const programFor = new WeakMap();
+    const lexicalScopeFor = async (p, text) => {
+      if (!selectedLexicalRuntime || typeof p.hasSection !== "function" || !p.hasSection("lexical-directory")
+        || typeof p.eagerSection !== "function" || !p.eagerSection("lexical-directory")) {
+        return { lexicalMatches: [], lexemesFor: () => new Set() };
+      }
+      if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
+      const lexical = lexicalFor.get(p);
+      await lexical.prepare(text, { reading: true });
+      const byRange = new Map();
+      const candidatesByRange = new Map();
+      const lexicalMatches = [];
+      for (let start = 0; start < text.length;) {
+        const ch = planner.charAt(text, start);
+        for (const match of lexical.matchesAtSync(text, start, "surface")) {
+          lexicalMatches.push({ start: match.start, end: match.end });
+          const key = `${match.start}:${match.end}`;
+          const ids = byRange.get(key) ?? new Set();
+          for (const candidate of match.candidates ?? []) if (Number.isInteger(candidate.lexemeId)) ids.add(candidate.lexemeId);
+          byRange.set(key, ids);
+          candidatesByRange.set(key, match.candidates ?? []);
+        }
+        start += ch.length;
+      }
+      return {
+        lexical,
+        lexicalMatches,
+        candidatesFor: (start, end) => candidatesByRange.get(`${start}:${end}`) ?? [],
+        lexemesFor: (start, end) => byRange.get(`${start}:${end}`) ?? new Set()
+      };
+    };
     const programForPack = async (p) => {
       if (!selectedProgramRuntime || typeof p.hasSection !== "function" || !p.hasSection("sequence-pool")) return null;
       if (!programFor.has(p)) programFor.set(p, selectedProgramRuntime.createBrowserProgramRuntime(p));
@@ -61,19 +91,146 @@
       if (profileId === "kinotch-fixed") return ["to-historical", "to-modern"];
       return [period === "historical" ? "to-historical" : "to-modern"];
     };
-    const assembleProgramObservation = (text, profileId, observation, renderMode) => {
-      if (renderMode && renderMode !== "plain") throw new RangeError("vm-authoritative mode currently exposes plain output only; Ruby rendering remains in parity mode");
+    const charBoundariesOf = (text) => {
       const charBoundaries = [];
       for (let i = 0; i < text.length;) {
         const end = i + planner.charAt(text, i).length;
         charBoundaries.push([i, end]);
         i = end;
       }
-      const raw = planner.assemble(text, profileId, planner.lexicalDag(text.length, [], charBoundaries), observation.candidates ?? [], observation.contextual ?? [], { lexicalMatchCount: observation.lexicalMatchCount ?? 0 });
+      return charBoundaries;
+    };
+    const surfaceCandidatesOf = (observation) => (observation.candidates ?? [])
+      .filter((candidate) => !candidate.channel || candidate.channel === "surface");
+    const assembleProgramObservation = (text, profileId, observation, renderMode, options = {}) => {
+      const charBoundaries = charBoundariesOf(text);
+      const lexicalMatches = options.lexicalMatches ?? [];
+      const raw = planner.assemble(text, profileId, planner.lexicalDag(text.length, lexicalMatches, charBoundaries), observation.candidates ?? [], observation.contextual ?? [], { lexicalMatchCount: options.lexicalMatchCount ?? observation.lexicalMatchCount ?? lexicalMatches.length });
       return { ...raw, engine: "rule-program", renderMode: renderMode ?? "plain", programTrace: observation.trace, executionMode: "vm-authoritative" };
     };
-    const transformWithProgram = async (p, hot, text, profileId, renderMode) =>
-      assembleProgramObservation(text, profileId, await hot.transformText(text, profileId, { directions: programDirection(p, profileId) }), renderMode);
+    const programEvidenceFor = async (p, programIds) => {
+      const entries = [];
+      for (const programId of [...new Set(programIds ?? [])]) {
+        const evidence = typeof p.loadProgramEvidence === "function" ? await p.loadProgramEvidence(programId) : null;
+        if (evidence) entries.push(evidence);
+      }
+      return {
+        sourceRefs: [],
+        evidenceRefs: [...new Set(entries.flatMap((entry) => entry.evidenceRefs ?? []))],
+        canonicalIds: [...new Set(entries.flatMap((entry) => entry.canonicalIds ?? []))]
+      };
+    };
+    const localSurface = (text, profileId, start, end, candidates) => {
+      const source = text.slice(start, end);
+      const localCandidates = candidates
+        .filter((candidate) => candidate.start >= start && candidate.end <= end)
+        .map((candidate) => ({ ...candidate, start: candidate.start - start, end: candidate.end - start }));
+      return planner.assemble(source, profileId, planner.lexicalDag(source.length, [], charBoundariesOf(source)), localCandidates, [], {}).renderedText;
+    };
+    const transformWithProgramRuby = async (p, hot, text, profileId, renderMode, supplied = {}) => {
+      const scope = supplied.scope ?? await lexicalScopeFor(p, text);
+      const observation = supplied.observation ?? await hot.transformText(text, profileId, {
+        directions: programDirection(p, profileId),
+        lexemesFor: scope.lexemesFor
+      });
+      const surfaceCandidates = surfaceCandidatesOf(observation);
+      const readingCandidates = (observation.candidates ?? []).filter((candidate) => (
+        candidate.channel === "reading" && candidate.stage === "diachronic" && candidate.direction === "to-historical"
+      ));
+      const rubyCandidates = [];
+      const units = [];
+      const period = p.getProfilePolicy(profileId).policy.period;
+      for (const match of scope.lexicalMatches) {
+        const key = `${match.start}:${match.end}`;
+        const surface = text.slice(match.start, match.end);
+        const lexicalCandidates = scope.candidatesFor(match.start, match.end);
+        if (lexicalCandidates.length === 0) continue;
+        const baseSurface = localSurface(text, profileId, match.start, match.end, surfaceCandidates);
+        const exactReading = [...new Map(readingCandidates
+          .filter((candidate) => candidate.start === match.start && candidate.end === match.end)
+          .map((candidate) => [candidate.output, candidate])).values()];
+        let resolved = null;
+        let programIds = [];
+        if (period === "historical" && lexicalCandidates.length === 1 && exactReading.length === 1) {
+          const lexicalCandidate = lexicalCandidates[0];
+          const reading = exactReading[0];
+          const admitted = (lexicalCandidate.historicalReadings ?? []).filter((entry) => (
+            entry.surface === surface && entry.reading === reading.output && entry.candidate !== true
+          ));
+          if (admitted.length === 1) {
+            programIds = reading.programIds ?? [];
+            const provenance = await programEvidenceFor(p, programIds);
+            const unitResolver = resolver.createResolver({
+              lexicalLookup: () => [lexicalCandidate],
+              historicalLookup: () => ({
+                route: admitted[0].route ?? "native",
+                basis: "rule_program",
+                reading: reading.output,
+                surface: baseSurface,
+                ...provenance
+              })
+            });
+            resolved = unitResolver.resolveUnit(surface);
+          }
+        } else if (period !== "historical" && lexicalCandidates.length === 1) {
+          const lexicalCandidate = lexicalCandidates[0];
+          const unitResolver = resolver.createResolver({ lexicalLookup: () => [lexicalCandidate] });
+          resolved = unitResolver.resolveUnit(surface);
+        }
+        if (!resolved) {
+          const unitResolver = resolver.createResolver({ lexicalLookup: () => lexicalCandidates });
+          resolved = unitResolver.resolveUnit(surface);
+        }
+        const summarized = typeof selectedAdapter?.summarizeUnit === "function"
+          ? selectedAdapter.summarizeUnit(resolved)
+          : resolved;
+        units.push({ start: match.start, end: match.end, surface, outputs: [], unit: summarized });
+        if (period === "historical" && resolved.kind === "resolved" && resolved.historical?.status === "resolved" && exactReading.length === 1) {
+          const reading = exactReading[0];
+          const rendered = resolver.createResolver({ lexicalLookup: () => [lexicalCandidates[0]] }).render(resolved, { mode: renderMode, profile: period });
+          if (rendered !== surface) {
+            rubyCandidates.push({
+              start: match.start, end: match.end, output: rendered, policy: "lexical_boundary", origin: "program",
+              ref: `program:${reading.programIds?.at(-1) ?? "historical-reading"}`,
+              programIds: reading.programIds ?? [], candidate: Boolean(reading.candidate), unit: summarized,
+              provenance: resolved.historical
+            });
+            units.at(-1).outputs = [rendered];
+          }
+        } else if (period !== "historical" && resolved.kind === "resolved") {
+          const rendered = resolver.createResolver({ lexicalLookup: () => [lexicalCandidates[0]] }).render(resolved, { mode: renderMode, profile: period });
+          if (rendered !== surface) {
+            rubyCandidates.push({
+              start: match.start, end: match.end, output: rendered, policy: "lexical_boundary", origin: "program",
+              ref: "program:display-reading", programIds: [], candidate: false, unit: summarized
+            });
+            units.at(-1).outputs = [rendered];
+          }
+        }
+      }
+      const observationForAssembly = {
+        ...observation,
+        candidates: [...surfaceCandidates, ...rubyCandidates]
+      };
+      const charBoundaries = charBoundariesOf(text);
+      const raw = planner.assemble(text, profileId, planner.lexicalDag(text.length, scope.lexicalMatches, charBoundaries), observationForAssembly.candidates, observationForAssembly.contextual ?? [], { lexicalMatchCount: scope.lexicalMatches.length });
+      return {
+        ...raw,
+        engine: "rule-program",
+        renderMode: renderMode ?? "plain",
+        programTrace: observation.trace,
+        executionMode: "vm-authoritative",
+        units
+      };
+    };
+    const transformWithProgram = async (p, hot, text, profileId, renderMode) => {
+      const scope = await lexicalScopeFor(p, text);
+      const observation = await hot.transformText(text, profileId, {
+        directions: programDirection(p, profileId),
+        lexemesFor: scope.lexemesFor
+      });
+      return assembleProgramObservation(text, profileId, { ...observation, candidates: surfaceCandidatesOf(observation) }, renderMode, { lexicalMatches: scope.lexicalMatches });
+    };
     const compareProgramOutput = (legacy, program) => ({
       equivalent: legacy.renderedText === program.renderedText
         && (legacy.spans?.length ?? 0) === (program.spans?.length ?? 0),
@@ -110,18 +267,25 @@
           if (mode === "vm-authoritative") {
             const hot = await programForPack(p);
             if (!hot || typeof hot.transformText !== "function") throw new Error("Rule Program VM admission failed: required hot sections are unavailable");
-            raw = await transformWithProgram(p, hot, source, message.profileId, message.renderMode);
+            raw = (message.renderMode ?? "plain") === "plain"
+              ? await transformWithProgram(p, hot, source, message.profileId, message.renderMode)
+              : await transformWithProgramRuby(p, hot, source, message.profileId, message.renderMode);
           } else {
             raw = await transformLegacy(p, source, message.profileId, message.renderMode);
             if (mode === "parity") {
               const hot = await programForPack(p);
               if (hot && typeof hot.transformText === "function") {
-                const observation = await hot.transformText(source, message.profileId, { directions: programDirection(p, message.profileId) });
+                const scope = await lexicalScopeFor(p, source);
+                const observation = await hot.transformText(source, message.profileId, {
+                  directions: programDirection(p, message.profileId),
+                  lexemesFor: scope.lexemesFor
+                });
                 raw.programTrace = observation.trace;
                 if ((message.renderMode ?? "plain") === "plain") {
-                  raw.programParity = compareProgramOutput(raw, assembleProgramObservation(source, message.profileId, observation, "plain"));
+                  raw.programParity = compareProgramOutput(raw, assembleProgramObservation(source, message.profileId, { ...observation, candidates: surfaceCandidatesOf(observation) }, "plain", { lexicalMatches: scope.lexicalMatches }));
                 } else {
-                  raw.programParity = { candidateCount: observation.candidates?.length ?? 0, renderedText: null, authority: "legacy" };
+                  const program = await transformWithProgramRuby(p, hot, source, message.profileId, message.renderMode, { scope, observation });
+                  raw.programParity = compareProgramOutput(raw, program);
                 }
               }
             }

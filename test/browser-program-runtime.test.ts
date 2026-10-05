@@ -75,3 +75,40 @@ test('vm-authoritative worker output is assembled from the real Rule Program sca
   assert.deepEqual(result.result.programTrace.executedProgramIds, [28]);
   assert.equal(result.result.spans[0].authority, 'source_rule');
 });
+
+test('vm-authoritative renders whole explicit Ruby from Rule Program reading evidence', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const result = await service.handle({ type: 'transform', requestId: 'vm-ruby', text: '学校', profileId: 'historical', renderMode: 'ruby-whole-explicit' });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.renderedText, '｜學校《がくかう》');
+  assert.equal(result.result.spans[0].certainty, 'unique');
+  assert.equal(result.result.spans[0].authority, 'source_rule');
+});
+
+test('vm-authoritative preserves all four Ruby render modes through the shared serializer', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const expected = new Map([
+    ['ruby-whole-explicit', '｜學校《がくかう》'],
+    ['ruby-whole-implicit', '學校《がくかう》'],
+    ['ruby-components-explicit', '｜學校《がくかう》'],
+    ['ruby-components-implicit', '學校《がくかう》']
+  ]);
+  for (const [renderMode, renderedText] of expected) {
+    const result = await service.handle({ type: 'transform', requestId: `vm-ruby-${renderMode}`, text: '学校', profileId: 'historical', renderMode });
+    assert.equal(result.type, 'result', result.message);
+    assert.equal(result.result.renderedText, renderedText);
+  }
+});
+
+test('parity mode compares legacy and Rule Program Ruby rendering with one VM observation', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'parity' });
+  const result = await service.handle({ type: 'transform', requestId: 'parity-ruby', text: '学校', profileId: 'historical', renderMode: 'ruby-whole-explicit' });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.programParity.equivalent, true);
+  assert.equal(result.result.programParity.legacyRenderedText, '｜學校《がくかう》');
+  assert.equal(result.result.programParity.programRenderedText, '｜學校《がくかう》');
+  assert.equal(result.result.programParity.authority, 'legacy');
+});

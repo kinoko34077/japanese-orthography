@@ -31,7 +31,15 @@
       if (!hasHistoricalProvenance) return "none";
       return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
     }
-    if (winner.origin === "program") return (winner.programIds?.length || winner.provenance?.canonicalIds?.length) ? "source_rule" : "none";
+    if (winner.origin === "program") {
+      const historical = winner.unit?.historical;
+      if (historical) {
+        const hasHistoricalProvenance = [historical.sourceRefs, historical.evidenceRefs, historical.canonicalIds]
+          .some((refs) => Array.isArray(refs) && refs.length > 0);
+        if (historical.status !== "resolved" || !hasHistoricalProvenance) return "none";
+      }
+      return (winner.programIds?.length || winner.provenance?.canonicalIds?.length) ? "source_rule" : "none";
+    }
     if (winner.origin === "fact") return "literal_fact";
     if (winner.origin === "safety") return "literal_fact";
     const origin = ruleOrigin ?? winner.rule?.origin ?? "historically_attested";
@@ -42,9 +50,9 @@
 
   const certaintyOf = (span) => {
     if (span.state !== "applied") return CERTAINTY.unresolved;
-    const resolverWinner = span.winners.find((winner) => winner.origin === "resolver");
-    if (resolverWinner) {
-      const unit = resolverWinner.unit ?? {};
+    const semanticWinner = span.winners.find((winner) => winner.unit && (winner.origin === "resolver" || winner.origin === "program"));
+    if (semanticWinner) {
+      const unit = semanticWinner.unit ?? {};
       const historical = unit.historical ?? {};
       // A serializer winner is not a semantic winner. Historical Ruby requires an admitted,
       // source-backed historical decision, while displayReading is presentation-only.
@@ -54,8 +62,10 @@
       const lexicalCandidates = Array.isArray(unit.lexicalCandidates) ? unit.lexicalCandidates : [];
       const lexicalAmbiguous = unit.kind === "candidates" || (!unit.lexicalIdentity && lexicalCandidates.length > 1);
       if (lexicalAmbiguous) return CERTAINTY.conditional;
+      const semanticCompetition = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason) && b.unit);
+      if (semanticCompetition) return CERTAINTY.conditional;
     }
-    const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason));
+    const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason) && (!semanticWinner || b.unit));
     const sourceAlternatives = span.winners.some((w) => w.fact?.candidate || (w.origin === "program" && w.candidate));
     return competed || sourceAlternatives ? CERTAINTY.conditional : CERTAINTY.unique;
   };
