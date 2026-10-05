@@ -20,6 +20,32 @@ graph.facts.push(
 const { pack } = await plannerPack(canonicalizeOrthographyKnowledge(graph));
 const run = async (text: string, profile = 'historical') => { const raw = await planAndTransform(pack, text, profile); return { raw, summary: summarize(raw) }; };
 
+const resolverRaw = (unit: any, output: string, renderMode = 'ruby-whole-explicit') => ({
+  profileId: 'historical',
+  renderedText: output,
+  offsetUnit: 'UTF-16',
+  renderMode,
+  lexicalMatchCount: 1,
+  units: [],
+  spans: [{
+    detailRef: '0', start: 0, end: 2, renderedStart: 0, renderedEnd: output.length,
+    sourceText: '男女', renderedText: output, state: 'applied', reasons: [], blocked: [], contextual: [],
+    winners: [{ origin: 'resolver', output, authority: 'source_rule', unit, relationFacts: [] }]
+  }]
+});
+
+const resolverUnit = (overrides: any = {}) => ({
+  kind: 'resolved',
+  lexicalIdentity: 'lexeme:男女/だんじょ',
+  lexicalCandidates: [],
+  historical: {
+    status: 'unknown', route: null, kana: null, basis: null,
+    sourceRefs: [], evidenceRefs: [], canonicalIds: [],
+    ...overrides.historical
+  },
+  ...overrides
+});
+
 test('unique resolution is green; no-op text has no highlight', async () => {
   const { summary } = await run('溶接する');
   assert.deepEqual(summary.spans.map((s: any) => [s.sourceText, s.certainty, s.authority]), [['溶接', 'unique', 'literal_fact']]);
@@ -45,6 +71,49 @@ test('unresolved, conflicting or context-dependent results are red even when not
   const { raw } = await run('装丁');
   const forged = { ...raw, spans: [{ ...raw.spans[0], renderedText: '装幀' }] };
   assert.equal(summarize(forged).spans[0].certainty, 'unresolved');
+});
+
+test('resolver display winners do not turn unknown history into unique certainty', () => {
+  const modernDisplay = resolverRaw(resolverUnit(), '｜男女《だんじょ》');
+  const historicalPlain = resolverRaw(resolverUnit(), '男女');
+  assert.deepEqual(
+    [summarize(modernDisplay).spans[0].certainty, summarize(modernDisplay).spans[0].authority],
+    ['unresolved', 'none']
+  );
+  assert.deepEqual(
+    [summarize(historicalPlain).spans[0].certainty, summarize(historicalPlain).spans[0].authority],
+    ['unresolved', 'none']
+  );
+});
+
+test('lexical ambiguity remains conditional even when a historical result is source-backed', () => {
+  const unit = resolverUnit({
+    kind: 'candidates',
+    lexicalIdentity: null,
+    lexicalCandidates: [
+      { lexicalIdentity: 'lexeme:男女/おとこおんな' },
+      { lexicalIdentity: 'lexeme:男女/だんじょ' }
+    ],
+    historical: {
+      status: 'resolved', basis: 'sino_component_reconstruction', route: 'sino', kana: 'だんじょ',
+      sourceRefs: ['historical/sino'], evidenceRefs: ['ev:sino'], canonicalIds: ['binding:sino']
+    }
+  });
+  const span = summarize(resolverRaw(unit, '｜男女《だんじょ》')).spans[0];
+  assert.equal(span.certainty, 'conditional');
+  assert.equal(span.authority, 'source_rule');
+});
+
+test('source-backed resolver authority is preserved without a source_rule fallback', () => {
+  const unit = resolverUnit({
+    historical: {
+      status: 'resolved', basis: 'deterministic_identity', route: 'native', kana: 'がくかう',
+      sourceRefs: ['historical/identity'], evidenceRefs: ['ev:identity'], canonicalIds: ['identity:學校']
+    }
+  });
+  const span = summarize(resolverRaw(unit, '｜男女《だんじょ》')).spans[0];
+  assert.equal(span.certainty, 'unique');
+  assert.equal(span.authority, 'source_rule');
 });
 
 test('lazy detail maps back to canonical provenance and equals an eager expansion', async () => {

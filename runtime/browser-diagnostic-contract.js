@@ -24,7 +24,13 @@
 
   const authorityOf = (winner, ruleOrigin) => {
     if (!winner) return "none";
-    if (winner.origin === "resolver") return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
+    if (winner.origin === "resolver") {
+      const historical = winner.unit?.historical ?? {};
+      const hasHistoricalProvenance = [historical.sourceRefs, historical.evidenceRefs, historical.canonicalIds]
+        .some((refs) => Array.isArray(refs) && refs.length > 0);
+      if (!hasHistoricalProvenance) return "none";
+      return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
+    }
     if (winner.origin === "fact") return "literal_fact";
     if (winner.origin === "safety") return "literal_fact";
     const origin = ruleOrigin ?? winner.rule?.origin ?? "historically_attested";
@@ -35,6 +41,19 @@
 
   const certaintyOf = (span) => {
     if (span.state !== "applied") return CERTAINTY.unresolved;
+    const resolverWinner = span.winners.find((winner) => winner.origin === "resolver");
+    if (resolverWinner) {
+      const unit = resolverWinner.unit ?? {};
+      const historical = unit.historical ?? {};
+      // A serializer winner is not a semantic winner. Historical Ruby requires an admitted,
+      // source-backed historical decision, while displayReading is presentation-only.
+      const hasHistoricalProvenance = [historical.sourceRefs, historical.evidenceRefs, historical.canonicalIds]
+        .some((refs) => Array.isArray(refs) && refs.length > 0);
+      if (historical.status !== "resolved" || !hasHistoricalProvenance) return CERTAINTY.unresolved;
+      const lexicalCandidates = Array.isArray(unit.lexicalCandidates) ? unit.lexicalCandidates : [];
+      const lexicalAmbiguous = unit.kind === "candidates" || (!unit.lexicalIdentity && lexicalCandidates.length > 1);
+      if (lexicalAmbiguous) return CERTAINTY.conditional;
+    }
     const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason));
     const sourceAlternatives = span.winners.some((w) => w.fact?.candidate);
     return competed || sourceAlternatives ? CERTAINTY.conditional : CERTAINTY.unique;
@@ -121,16 +140,18 @@
         facts.push({ id: detail.factId, surface: f.surface, target: f.target, sourceCandidate: Boolean(f.candidate), tags: detail.tags, sourceRefs: detail.sourceRefs, evidenceRefs: detail.evidenceRefs });
       }
       const unit = candidate.unit ?? null;
+      const historical = unit?.historical ?? {};
+      const historicalFacts = historical.status === "resolved" ? facts : [];
       return {
         ...base, kind: "resolver_unit", basis: unit?.historical?.basis ?? (unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver"),
-        authority: candidate.authority ?? "source_rule", ruleChain: [], unit, relationFacts: facts,
-        provenance: { sourceRefs: [...new Set([...facts.flatMap((f) => f.sourceRefs), ...(unit?.historical?.sourceRefs ?? [])])].sort(), evidenceRefs: [...new Set([...facts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort(), canonicalIds: [...new Set([...facts.map((f) => f.id), ...(unit?.historical?.canonicalIds ?? [])])].sort() }
+        authority: authorityOf(candidate), ruleChain: [], unit, relationFacts: facts,
+        provenance: { sourceRefs: [...new Set([...historicalFacts.flatMap((f) => f.sourceRefs), ...(unit?.historical?.sourceRefs ?? [])])].sort(), evidenceRefs: [...new Set([...historicalFacts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort(), canonicalIds: [...new Set([...historicalFacts.map((f) => f.id), ...(unit?.historical?.canonicalIds ?? [])])].sort() }
       };
     }
     if (candidate.origin === "rule") {
       const rule = ruleById(pack, candidate.ref);
       return {
-        ...base, kind: "rule", basis: "rule_application", authority: authorityOf(candidate, rule?.origin),
+        ...base, kind: "rule", basis: "rule_application", authority: authorityOf({ ...candidate, rule }, rule?.origin),
         ruleChain: [candidate.ref], rule: rule && { id: rule.id, class: rule.class, directionality: rule.directionality, lossiness: rule.lossiness, from: rule.from, to: rule.to, origin: rule.origin },
         provenance: rule ? { sourceRefs: rule.sourceRefs, evidenceRefs: rule.evidenceRefs } : null
       };

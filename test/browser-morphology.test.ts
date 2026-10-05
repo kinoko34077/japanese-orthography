@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
 const { transformWithResolver } = require('../runtime/browser-resolver-adapter.js');
-const { expandDetail, expandUnitDetail } = require('../runtime/browser-diagnostic-contract.js');
+const { expandDetail, expandUnitDetail, summarize } = require('../runtime/browser-diagnostic-contract.js');
 const Inflection = require('../runtime/browser-inflection.js');
 
 const P = { sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] };
@@ -127,6 +127,15 @@ test('R5 #236 diagnostics distinguish Sino reconstruction from literal source fa
   assert.equal(candidate.authority, 'source_rule');
   assert.ok(candidate.provenance.sourceRefs.length > 0);
   assert.ok(candidate.provenance.canonicalIds.length > 0);
+});
+
+test('R5 modern display Ruby keeps unknown historical authority unresolved', async () => {
+  const raw = await transformWithResolver(pack, lexical, '法律', 'modern', { renderMode: 'ruby-whole-explicit' });
+  const summary = summarize(raw);
+  assert.equal(raw.renderedText, '｜法律《ほうりつ》');
+  assert.equal(summary.spans[0].certainty, 'unresolved');
+  assert.equal(summary.spans[0].authority, 'none');
+  assert.equal(raw.units.find((u: any) => u.surface === '法律')?.unit.historical.status, 'unknown');
 });
 
 test('R4 #226 derives the deinflection scan bound from BrowserPack lexical capability', async () => {
