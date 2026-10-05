@@ -58,6 +58,6 @@ describe('site cache contract (#185 H)', () => {
     const app = await readFile(new URL('../site/app.js', import.meta.url), 'utf8');
     assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
     const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
-    assert.match(html, /id="clear-cache"[^>]*>キャッシュを消去/);
+    assert.match(html, /id="clear-cache"[^>]*>辞書キャッシュを消去/);
   });
 });
