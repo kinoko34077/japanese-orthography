@@ -121,3 +121,49 @@ test('engine技術情報はpackと実行modeを表示できるがselectorには�
   assert.match(html, /42 ms/);
   assert.doesNotMatch(html, /<select|name="executionMode"/);
 });
+
+
+test('cache状態は辞書section数だけを読み、本文を保存せず初回/再利用候補を区別する', async () => {
+  const empty = await app.readBrowserCacheState({
+    navigator: { onLine: true },
+    caches: { open: async () => ({ keys: async () => [] }) }
+  });
+  assert.deepEqual(empty, { available: true, online: true, sectionCount: 0, reuse: false });
+
+  const reused = await app.readBrowserCacheState({
+    navigator: { onLine: false },
+    caches: { open: async () => ({ keys: async () => [{ url: 'a' }, { url: 'b' }] }) }
+  });
+  assert.deepEqual(reused, { available: true, online: false, sectionCount: 2, reuse: true });
+
+  const unavailable = await app.readBrowserCacheState({ navigator: { onLine: true } });
+  assert.deepEqual(unavailable, { available: false, online: true, sectionCount: 0, reuse: false });
+});
+
+test('engine技術情報は接続・cache・起動時section loadを表示する', () => {
+  const html = app.renderEngineInfoHtml({
+    manifest: { compilerVersion: '3' },
+    openReply: {
+      packDigest: 'abcdef0123456789',
+      renderModes: ['plain'],
+      stats: { sectionsLoaded: 10, bytesLoaded: 575004, loaded: ['a'] }
+    },
+    result: { executionMode: 'vm-authoritative' },
+    elapsedMs: 42,
+    cacheState: { available: true, online: false, sectionCount: 12, reuse: true }
+  });
+  assert.match(html, /オフライン/);
+  assert.match(html, /再利用候補 12 section/);
+  assert.match(html, /起動時 10 section/);
+  assert.match(html, /575,004 byte/);
+});
+
+test('status文言は辞書準備・変換・完了・復旧可能errorを区別する', async () => {
+  const html = await readFile('site/index.html', 'utf8');
+  const source = await readFile('site/app.js', 'utf8');
+  assert.match(html, /画面を準備しました。辞書データを準備しています/);
+  assert.match(source, /辞書データを準備しています/);
+  assert.match(source, /必要な辞書データを確認し、変換しています/);
+  assert.match(source, /変換しました/);
+  assert.match(source, /再読み込み/);
+});
