@@ -99,11 +99,13 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   for (const profileId of ['modern', 'historical', 'kinotch-fixed']) {
     const japanCompany = await runAcceptance('日本企業', profileId);
     const company = unitFor(japanCompany, '日本企業');
-    assert.equal(japanCompany.renderedText, '｜日本企業《にほんきぎょう》', profileId);
+    const expectedCompanyRuby = profileId === 'modern' ? '｜日本企業《にほんきぎょう》' : '日本企業';
+    assert.equal(japanCompany.renderedText, expectedCompanyRuby, profileId);
     assert.equal(company.kind, 'resolved', profileId);
     assert.equal(company.lexicalIdentity, 'lexeme:日本企業/にほんきぎょう', profileId);
     assert.equal(company.historical.diagnostic, profileId === 'modern' ? null : 'sino_evidence_unavailable', profileId);
-    assert.deepEqual(japanCompany.spans.map((span: any) => [span.start, span.end]), [[0, 4]], profileId);
+    const expectedCompanySpans = profileId === 'modern' ? [[0, 4]] : [];
+    assert.deepEqual(japanCompany.spans.map((span: any) => [span.start, span.end]), expectedCompanySpans, profileId);
     const component = await runAcceptance('日本企業', profileId, 'ruby-components-explicit');
     assert.equal(component.renderedText, japanCompany.renderedText, `${profileId}: opaque Sino component evidence must fall back to whole Ruby`);
     assert.equal(component.renderedText.includes('本《ほ》'), false, `${profileId}: unmatched Sino material must not be assigned to 本`);
@@ -143,13 +145,13 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
 
   const southWind = await runAcceptance('南風', 'historical');
   const southWindUnit = unitFor(southWind, '南風');
-  assert.equal(southWind.renderedText, '｜南風《みなみかぜ》');
+  assert.equal(southWind.renderedText, '南風');
   assert.equal(southWindUnit.kind, 'candidates');
   assert.equal(southWindUnit.historical.kana, null, 'unbound historical basis must not cross-apply はえ');
   assert.equal(southWindUnit.historical.candidateReadings.includes('はえ'), false);
 
   const hunter = await runAcceptance('狩人', 'historical');
-  assert.equal(hunter.renderedText, '｜狩人《かりゅうど》');
+  assert.equal(hunter.renderedText, '狩人');
   assert.equal(unitFor(hunter, '狩人').kind, 'candidates');
 
   const protectedText = 'abc 😀 𠮷 ｜学校《がっこう》';

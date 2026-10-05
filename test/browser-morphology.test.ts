@@ -103,7 +103,7 @@ test('Sino component reconstruction uses the accepted reconstructor over canonic
   assert.deepEqual([unit.historical.route, unit.historical.kana, unit.historical.disposition], ['sino', 'ゑんしう', 'AUTO']);
 
   const unknownOrigin = await whole('法律', 'ruby-whole-explicit');
-  assert.equal(unknownOrigin.raw.renderedText, '｜法律《ほうりつ》');
+  assert.equal(unknownOrigin.raw.renderedText, '法律');
   assert.notEqual(unknownOrigin.unit.historical.route, 'sino');
   assert.deepEqual(unknownOrigin.unit.historical.candidateReadings, []);
   assert.equal(unknownOrigin.unit.historical.diagnostic, 'sino_evidence_unavailable');

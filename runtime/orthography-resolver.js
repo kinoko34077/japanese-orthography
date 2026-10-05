@@ -14,9 +14,10 @@
     relationIds: []
   });
 
-  const emptyHistorical = (surface, disposition = "UNRESOLVED") => ({
+  const emptyHistorical = (surface, disposition = "UNRESOLVED", status = "unknown") => ({
     route: null,
     kana: null,
+    status,
     contextualKanji: emptyContextualDecision(),
     deterministicKanji: null,
     surface,
@@ -101,6 +102,39 @@
       ? candidate.displayReadingPreferences.find((entry) => entry.reading === value)?.priorities ?? []
       : candidate?.displayPriority ?? [];
     return priorities.length > 0 ? { value, source: "jmdict-re-pri" } : { value, source: "lexical" };
+  };
+
+  const allHan = (value) => Array.from(`${value ?? ""}`).length > 0 && Array.from(`${value ?? ""}`).every((character) => /\p{Script=Han}/u.test(character));
+
+  /**
+   * Remove only literal kana edges from an already-admitted whole-word Ruby pair.
+   * This is serialization metadata, not a source of historical authority.
+   */
+  const factorizeRuby = (surface, reading) => {
+    const base = Array.from(`${surface ?? ""}`);
+    const ruby = Array.from(`${reading ?? ""}`);
+    if (base.length === 0 || ruby.length === 0) return null;
+
+    let prefixLength = 0;
+    while (prefixLength < base.length && prefixLength < ruby.length && base[prefixLength] === ruby[prefixLength]) prefixLength += 1;
+
+    let suffixLength = 0;
+    while (
+      suffixLength < base.length - prefixLength &&
+      suffixLength < ruby.length - prefixLength &&
+      base[base.length - 1 - suffixLength] === ruby[ruby.length - 1 - suffixLength]
+    ) suffixLength += 1;
+
+    const target = base.slice(prefixLength, base.length - suffixLength).join("");
+    const targetRuby = ruby.slice(prefixLength, ruby.length - suffixLength).join("");
+    if (!target || !targetRuby || !allHan(target)) return null;
+
+    return {
+      prefix: base.slice(0, prefixLength).join(""),
+      target,
+      targetRuby,
+      suffix: base.slice(base.length - suffixLength).join("")
+    };
   };
 
   const unresolvedUnit = (evidence, candidates = []) => ({
@@ -283,6 +317,12 @@
       config.safeKanjiMap ?? {},
       { allowRelationFallback: contextualKanji.status !== "resolved" }
     );
+    const historicalStatus = (relation, candidates = false, deterministic = false) => {
+      if (candidates || relation?.status === "candidates") return "candidate";
+      if (typeof relation?.reading === "string" && relation.reading.length > 0) return "resolved";
+      if (relation || deterministic || relation?.status === "unavailable") return "unavailable";
+      return "unknown";
+    };
 
     if (contextualKanji.status === "preserve") {
       return {
@@ -290,6 +330,7 @@
         historical: {
           route: acceptedRelation?.route ?? null,
           kana: acceptedRelation?.reading ?? null,
+          status: historicalStatus(acceptedRelation),
           contextualKanji,
           deterministicKanji: null,
           surface: sourceSurface,
@@ -307,6 +348,7 @@
         historical: {
           route: acceptedRelation?.route ?? null,
           kana: acceptedRelation?.reading ?? null,
+          status: historicalStatus(acceptedRelation, true),
           contextualKanji,
           deterministicKanji: null,
           surface: sourceSurface,
@@ -324,6 +366,7 @@
         historical: {
           route: acceptedRelation?.route ?? null,
           kana: acceptedRelation?.reading ?? null,
+          status: historicalStatus(acceptedRelation),
           contextualKanji,
           deterministicKanji: null,
           surface: contextualKanji.target,
@@ -341,6 +384,7 @@
         historical: {
           route: sinoCandidates.route ?? "sino",
           kana: null,
+          status: historicalStatus(sinoCandidates, true),
           contextualKanji,
           deterministicKanji: null,
           surface: sourceSurface,
@@ -359,6 +403,7 @@
         historical: {
           route: surfaceDecision?.route ?? "native",
           kana: surfaceDecision?.reading ?? null,
+          status: historicalStatus(surfaceDecision, true),
           contextualKanji,
           deterministicKanji: null,
           surface: surfaceDecision?.surface ?? sourceSurface,
@@ -386,6 +431,7 @@
       historical: {
         route: acceptedRelation?.route ?? null,
         kana: acceptedRelation?.reading ?? null,
+        status: historicalStatus(acceptedRelation, false, deterministicKanji !== null),
         contextualKanji,
         deterministicKanji,
         surface: renderedSurface,
@@ -413,6 +459,7 @@
         historical: {
           route: decision.route ?? "native",
           kana: decision.reading ?? null,
+          status: "candidate",
           contextualKanji: emptyContextualDecision(),
           deterministicKanji: null,
           surface: decision.surface ?? evidence.baseSurface,
@@ -459,6 +506,7 @@
       historical: {
         route: decision.route ?? "native",
         kana: decision.reading ?? null,
+        status: typeof decision.reading === "string" && decision.reading.length > 0 ? "resolved" : "unavailable",
         contextualKanji: emptyContextualDecision(),
         deterministicKanji,
         surface: renderedSurface,
@@ -604,36 +652,47 @@
       }
 
       const mode = options.mode ?? "plain";
+      const profile = options.profile ?? "historical";
       const surface = unit?.historical?.surface ?? unit?.sourceSurface ?? unit?.sourceText ?? "";
       const historicalKana = unit?.historical?.kana ?? null;
       const displayReading = unit?.displayReading?.value ?? unit?.reading?.modernSurface ?? null;
-      // A modern-only unit may expose its lexical reading as Ruby, but a historical
-      // route with no admitted historical kana must not invent a modern Ruby fallback.
-      const rubyReading = historicalKana ?? (unit?.historical?.route ? null : displayReading);
+      // displayReading is presentation data. It is allowed for modern Ruby only;
+      // historical Ruby requires an admitted historical decision.
+      const rubyReading = profile === "historical" ? historicalKana : displayReading;
       if (mode === "plain" || !rubyReading) {
         return surface;
       }
 
+      const factorized = profile === "historical" ? factorizeRuby(surface, rubyReading) : null;
+      const wholeRuby = (implicit) => {
+        if (!factorized) return `${implicit ? "" : "｜"}${surface}《${rubyReading}》`;
+        const value = `${factorized.prefix}${factorized.target}《${factorized.targetRuby}》${factorized.suffix}`;
+        return implicit ? value : `｜${value}`;
+      };
+
       if (mode === "ruby-whole-explicit") {
-        return `｜${surface}《${rubyReading}》`;
+        return wholeRuby(false);
       }
       if (mode === "ruby-whole-implicit") {
-        return `${surface}《${rubyReading}》`;
+        return wholeRuby(true);
       }
 
       const components = Array.isArray(unit.components) ? unit.components : [];
-      const completeComponents = components.length > 0 && components.every((component) => Boolean(component.historicalKana ?? component.lexicalReading));
+      const componentReading = (component) => profile === "historical"
+        ? component.historicalKana ?? null
+        : component.historicalKana ?? component.lexicalReading ?? null;
+      const completeComponents = components.length > 0 && components.every((component) => Boolean(componentReading(component)));
       const componentRuby = completeComponents ? components.map((component) => {
         const componentSurface = component.renderedSurface ?? component.surface ?? "";
-        const componentKana = component.historicalKana ?? component.lexicalReading ?? null;
+        const componentKana = componentReading(component);
         return componentKana ? `${componentSurface}《${componentKana}》` : componentSurface;
       }).join("") : "";
 
       if (mode === "ruby-components-explicit") {
-        return componentRuby ? `｜${componentRuby}` : `｜${surface}《${rubyReading}》`;
+        return componentRuby ? `｜${componentRuby}` : wholeRuby(false);
       }
       if (mode === "ruby-components-implicit") {
-        return componentRuby || `${surface}《${rubyReading}》`;
+        return componentRuby || wholeRuby(true);
       }
 
       return surface;
