@@ -31,6 +31,18 @@
       if (!hasHistoricalProvenance) return "none";
       return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
     }
+    if (winner.origin === "program") {
+      if (winner.authority) return winner.authority;
+      const historical = winner.unit?.historical;
+      if (historical) {
+        const hasHistoricalProvenance = [historical.sourceRefs, historical.evidenceRefs, historical.canonicalIds]
+          .some((refs) => Array.isArray(refs) && refs.length > 0);
+        if (historical.status !== "resolved" || !hasHistoricalProvenance) return "none";
+      }
+      const canonicalIds = winner.provenance?.canonicalIds ?? [];
+      if (historical) return "source_rule";
+      return (winner.programIds?.length || winner.provenance?.canonicalIds?.length) ? "source_rule" : "none";
+    }
     if (winner.origin === "fact") return "literal_fact";
     if (winner.origin === "safety") return "literal_fact";
     const origin = ruleOrigin ?? winner.rule?.origin ?? "historically_attested";
@@ -41,9 +53,9 @@
 
   const certaintyOf = (span) => {
     if (span.state !== "applied") return CERTAINTY.unresolved;
-    const resolverWinner = span.winners.find((winner) => winner.origin === "resolver");
-    if (resolverWinner) {
-      const unit = resolverWinner.unit ?? {};
+    const semanticWinner = span.winners.find((winner) => winner.unit && (winner.origin === "resolver" || winner.origin === "program"));
+    if (semanticWinner) {
+      const unit = semanticWinner.unit ?? {};
       const historical = unit.historical ?? {};
       // A serializer winner is not a semantic winner. Historical Ruby requires an admitted,
       // source-backed historical decision, while displayReading is presentation-only.
@@ -53,9 +65,11 @@
       const lexicalCandidates = Array.isArray(unit.lexicalCandidates) ? unit.lexicalCandidates : [];
       const lexicalAmbiguous = unit.kind === "candidates" || (!unit.lexicalIdentity && lexicalCandidates.length > 1);
       if (lexicalAmbiguous) return CERTAINTY.conditional;
+      const semanticCompetition = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason) && b.unit);
+      if (semanticCompetition) return CERTAINTY.conditional;
     }
-    const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason));
-    const sourceAlternatives = span.winners.some((w) => w.fact?.candidate);
+    const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason) && (!semanticWinner || b.unit));
+    const sourceAlternatives = span.winners.some((w) => w.fact?.candidate || (w.origin === "program" && w.candidate));
     return competed || sourceAlternatives ? CERTAINTY.conditional : CERTAINTY.unique;
   };
 
@@ -146,6 +160,29 @@
         ...base, kind: "resolver_unit", basis: unit?.historical?.basis ?? (unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver"),
         authority: authorityOf(candidate), ruleChain: [], unit, relationFacts: facts,
         provenance: { sourceRefs: [...new Set([...historicalFacts.flatMap((f) => f.sourceRefs), ...(unit?.historical?.sourceRefs ?? [])])].sort(), evidenceRefs: [...new Set([...historicalFacts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort(), canonicalIds: [...new Set([...historicalFacts.map((f) => f.id), ...(unit?.historical?.canonicalIds ?? [])])].sort() }
+      };
+    }
+    if (candidate.origin === "program") {
+      const programIds = [...new Set(candidate.programIds ?? [])];
+      const programs = [];
+      const sourceRefs = [];
+      for (const programId of programIds) {
+        const evidence = await pack.loadProgramEvidence(programId);
+        if (evidence) {
+          programs.push(evidence);
+          if (typeof pack.loadEvidence === "function") {
+            for (const canonicalId of evidence.canonicalIds ?? []) {
+              const detail = await pack.loadEvidence(canonicalId);
+              for (const ref of detail?.sourceSnapshots ?? []) if (!sourceRefs.includes(ref)) sourceRefs.push(ref);
+            }
+          }
+        }
+      }
+      const canonicalIds = [...new Set(programs.flatMap((program) => program.canonicalIds ?? []))].sort();
+      return {
+        ...base, kind: "rule_program", basis: "rule_program_execution", authority: authorityOf({ ...candidate, provenance: { canonicalIds } }),
+        ruleChain: programIds.map((programId) => `program:${programId}`), programIds, programs,
+        provenance: { sourceRefs: sourceRefs.sort(), evidenceRefs: canonicalIds, canonicalIds }
       };
     }
     if (candidate.origin === "rule") {

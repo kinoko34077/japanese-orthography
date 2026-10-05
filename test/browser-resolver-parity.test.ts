@@ -74,7 +74,7 @@ test('UTF-16 ranges stay correct around emoji / surrogate pairs and unknown text
 });
 
 test('the worker service uses the resolver for a v2 pack and expands resolver-unit details', async () => {
-  const service = createTransformService({ openPack });
+  const service = createTransformService({ executionMode: 'legacy-only', openPack });
   const reply = await service.handle({ type: 'transform', requestId: 1, text: '学校', profileId: 'historical', renderMode: 'ruby-whole-explicit' });
   assert.equal(reply.type, 'result', reply.message);
   assert.equal(reply.result.renderedText, '｜學校《がくかう》');

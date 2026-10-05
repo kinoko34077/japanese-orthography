@@ -20,7 +20,7 @@ const terminology = JSON.parse(await readFile(new URL('../site/terminology-ja.js
 const build = compileBrowserPack(adapterFixture(), [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
   shardBudgetBytes: 2048, compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION, layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })], terminology
 });
-const service = createTransformService({ openPack: () => openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!) });
+const service = createTransformService({ executionMode: 'legacy-only', openPack: () => openBrowserPack(build.manifest, async (s: { path: string }) => build.files.get(s.path)!) });
 let id = 0;
 const transform = async (text: string, renderMode = 'plain') => {
   const reply = await service.handle({ type: 'transform', requestId: ++id, text, profileId: 'historical', renderMode });

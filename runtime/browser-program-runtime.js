@@ -61,15 +61,15 @@
     const vm = RuleProgramVM.createRuleVM({ programs: programView, pool, predicates, profileBits, lexemeSets, lexemeSetModes, mechanismCount });
     vm.verify();
     const index = new Map();
+    const inputLengths = new Set();
     for (let i = 0; i < indexSection.rowCount("stage"); i += 1) {
-      const key = keyOf(STAGES[indexSection.value("stage", i)], DIRECTIONS[indexSection.value("direction", i)], CHANNELS[indexSection.value("channel", i)], indexSection.value("input", i));
+      const input = indexSection.value("input", i);
+      const key = keyOf(STAGES[indexSection.value("stage", i)], DIRECTIONS[indexSection.value("direction", i)], CHANNELS[indexSection.value("channel", i)], input);
       index.set(key, [...indexSection.list("programs", i)]);
+      inputLengths.add(pool.symbols(input).length);
     }
 
-    const run = ({ stage, direction, channel, text, profileId, symbol, lexemes, context }) => {
-      const sequence = symbolizer.sequenceOf(text);
-      if (sequence === null) return { text, sequenceId: -1, edges: [], preserved: false, mechanisms: [], executedProgramIds: [], trace: [] };
-      const sequenceId = pool.find(sequence);
+    const runSequence = ({ stage, direction, channel, sequenceId, text, profileId, symbol, lexemes, context }) => {
       if (sequenceId < 0) return { text, sequenceId, edges: [], preserved: false, mechanisms: [], executedProgramIds: [], trace: [] };
       const programIds = index.get(keyOf(stage, direction, channel, sequenceId)) ?? [];
       const state = { profileId, symbol, lexemes: lexemes instanceof Set ? lexemes : new Set(lexemes ?? []), context };
@@ -86,6 +86,60 @@
       return { text, sequenceId, edges, preserved, mechanisms: [...new Set(mechanisms)], executedProgramIds, trace };
     };
 
+    const run = ({ stage, direction, channel, text, profileId, symbol, lexemes, context }) => {
+      const sequence = symbolizer.sequenceOf(text);
+      if (sequence === null) return { text, sequenceId: -1, edges: [], preserved: false, mechanisms: [], executedProgramIds: [], trace: [] };
+      return runSequence({ stage, direction, channel, sequenceId: pool.find(sequence), text, profileId, symbol, lexemes, context });
+    };
+
+    // Scan once-symbolized input through the same SequenceId postings used by the VM. This is the
+    // production candidate seam for #229: it never reconstructs Unicode to perform ordinary lookup,
+    // and the returned candidates retain the actual ProgramId path that produced each edge.
+    const transformText = (text, profileId, options = {}) => {
+      const source = `${text ?? ""}`;
+      const atoms = SymbolRegistryRuntime.atomsOf(source);
+      const tokens = symbolizer.symbolize(source);
+      const offsets = [0];
+      for (const atom of atoms) offsets.push(offsets.at(-1) + atom.length);
+      const stages = options.stages ?? STAGES;
+      const directions = options.directions ?? DIRECTIONS;
+      const channels = options.channels ?? CHANNELS;
+      const lengths = [...inputLengths].sort((a, b) => a - b);
+      const candidates = [], runs = [];
+      const contextFor = typeof options.contextFor === "function" ? options.contextFor : () => options.context;
+      const executedProgramIds = new Set();
+      for (let start = 0; start < tokens.length; start += 1) {
+        for (const length of lengths) {
+          const end = start + length;
+          if (end > tokens.length) break;
+          const sequence = tokens.slice(start, end);
+          if (!sequence.every((token) => typeof token === "number")) continue;
+          const sequenceId = pool.find(sequence);
+          if (sequenceId < 0) continue;
+          const segment = source.slice(offsets[start], offsets[end]);
+          const suppliedSymbol = typeof options.symbolFor === "function" ? options.symbolFor(offsets[start], offsets[end], segment) : undefined;
+          const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
+          const lexemes = typeof options.lexemesFor === "function" ? options.lexemesFor(offsets[start], offsets[end], segment) : undefined;
+          for (const stage of stages) for (const direction of directions) for (const channel of channels) {
+            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes, context: contextFor(offsets[start], offsets[end], segment) });
+            if (!result.executedProgramIds.length) continue;
+            for (const id of result.executedProgramIds) executedProgramIds.add(id);
+            runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, ...result });
+            for (const edge of result.edges) {
+              const programId = edge.programs.at(-1);
+              candidates.push({
+                start: offsets[start], end: offsets[end], output: edge.output,
+                policy: stage === "orthographic" && length === 1 ? "anywhere" : stage === "lexical" ? "lexical_boundary" : "whole_lexeme",
+                origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
+                key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${edge.output}`
+              });
+            }
+          }
+        }
+      }
+      return { candidates, contextual: [], lexicalMatchCount: 0, trace: { executedProgramIds: [...executedProgramIds], runs } };
+    };
+
     // Bounded dual-run observation for the legacy adapter: all exact whole-text postings are
     // executed by the new VM and surfaced in the trace while cutover parity is being accepted.
     const traceText = (text, profileId) => {
@@ -96,7 +150,7 @@
       }
       return { executedProgramIds: [...new Set(runs.flatMap((x) => x.executedProgramIds))], runs };
     };
-    return Object.freeze({ run, traceText, sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); }, programCount: programView.count, sequenceCount: pool.count });
+    return Object.freeze({ run, transformText, traceText, symbolId: (atom) => symbolizer.idOf(atom), sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); }, programCount: programView.count, sequenceCount: pool.count });
   };
 
   return { createBrowserProgramRuntime };
