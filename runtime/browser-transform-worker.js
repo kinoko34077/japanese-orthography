@@ -399,7 +399,7 @@
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor
       });
-      const surfaceCandidates = surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "literal_fact" });
+      const surfaceCandidates = surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" });
       const readingCandidates = (observation.candidates ?? []).filter((candidate) => (
         candidate.channel === "reading" && candidate.stage === "diachronic" && candidate.direction === "to-historical"
       ));
