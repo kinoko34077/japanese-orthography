@@ -25,6 +25,20 @@ const v2 = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTC
   layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
 });
 const v3 = transcodeToV3(v2, registry, { evidence: { graph, ir: compileRuleIR(graph) } });
+const necessaryGraph = adapterFixture();
+necessaryGraph.facts.push(
+  { id: 'fact:literal_form:必要|lexeme:必要/ひつよう', kind: 'literal_form', lexicalRefs: ['lexeme:必要/ひつよう'], surface: '必要', periodRefs: ['period:modern'], sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] },
+  { id: 'fact:literal_reading:必要|ひつよう|lexeme:必要/ひつよう', kind: 'literal_reading', lexicalRefs: ['lexeme:必要/ひつよう'], surface: '必要', reading: 'ひつよう', periodRefs: ['period:modern'], sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] }
+);
+necessaryGraph.rules.push({ id: 'rule:sino:えう>よう', class: 'diachronic', directionality: 'reverse_traversable', lossiness: 'lossless', from: ['えう'], to: ['よう'], dependencies: [], predicate: { channel: 'reading' }, sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] });
+necessaryGraph.bindings.push({ id: 'binding:sino:要:えう>よう@phase46e-reading-class', ruleId: 'rule:sino:えう>よう', lexicalRefs: ['symbol:要'], contextRefs: [], sourceRefs: ['src:fixture'], evidenceRefs: ['ev:fixture'] });
+const necessaryCanonical = canonicalizeOrthographyKnowledge(necessaryGraph);
+const necessaryV2 = compileBrowserPack(necessaryCanonical, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
+  compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION,
+  layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })],
+  sinoComponentRows: [{ character: '必', modernReading: 'ひつ', classFlags: 4, sourceRefs: ['phase46e-sino-reading-class'], evidenceRefs: ['phase46e-sino-reading-class:必:ひつ'] }]
+});
+const necessaryV3 = transcodeToV3(necessaryV2, registry, { evidence: { graph: necessaryCanonical, ir: compileRuleIR(necessaryCanonical) } });
 
 test('BrowserPack v3 carries the shared hot Rule Program sections and executes by SequenceId', async () => {
   const kinds = new Set(v3.manifest.sections.map((section) => section.kind));
@@ -111,4 +125,14 @@ test('parity mode compares legacy and Rule Program Ruby rendering with one VM ob
   assert.equal(result.result.programParity.legacyRenderedText, '｜學校《がくかう》');
   assert.equal(result.result.programParity.programRenderedText, '｜學校《がくかう》');
   assert.equal(result.result.programParity.authority, 'legacy');
+});
+
+test('vm-authoritative reconstructs 必要 from compact class evidence and symbol-scoped Rule Programs', async () => {
+  const pack = await openBrowserPack(necessaryV3.manifest, async (section: { path: string }) => necessaryV3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const result = await service.handle({ type: 'transform', requestId: 'vm-necessary', text: '必要', profileId: 'historical', renderMode: 'ruby-whole-explicit' });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.renderedText, '｜必要《ひつえう》');
+  assert.equal(result.result.spans[0].authority, 'source_rule');
+  assert.equal(result.result.spans[0].certainty, 'unique');
 });

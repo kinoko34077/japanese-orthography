@@ -51,6 +51,7 @@
     // a v1 pack keeps the v1 planner, so the published site is unaffected until the J cutover
     const lexicalFor = new WeakMap();
     const programFor = new WeakMap();
+    const sinoFor = new WeakMap();
     const lexicalScopeFor = async (p, text) => {
       if (!selectedLexicalRuntime || typeof p.hasSection !== "function" || !p.hasSection("lexical-directory")
         || typeof p.eagerSection !== "function" || !p.eagerSection("lexical-directory")) {
@@ -79,6 +80,127 @@
         lexicalMatches,
         candidatesFor: (start, end) => candidatesByRange.get(`${start}:${end}`) ?? [],
         lexemesFor: (start, end) => byRange.get(`${start}:${end}`) ?? new Set()
+      };
+    };
+    const sinoComponentsFor = async (p) => {
+      if (sinoFor.has(p)) return sinoFor.get(p);
+      const promise = (async () => {
+        const byKey = new Map();
+        const add = (character, modernReading, historicalReading, metadata = {}) => {
+          if (!character || !modernReading || !historicalReading) return;
+          const key = `${character}:${modernReading}:${historicalReading}`;
+          const current = byKey.get(key) ?? {
+            character, modernReading, historicalReading, classFlags: 0,
+            sourceRefs: [], evidenceRefs: []
+          };
+          current.classFlags |= metadata.classFlags ?? 0;
+          for (const name of ["sourceRefs", "evidenceRefs"]) {
+            for (const value of metadata[name] ?? []) if (!current[name].includes(value)) current[name].push(value);
+          }
+          byKey.set(key, current);
+        };
+        if (typeof p.bindingCount === "function" && typeof p.getBinding === "function" && typeof p.getRule === "function") {
+          for (let i = 0; i < p.bindingCount(); i += 1) {
+            const binding = p.getBinding(i);
+            const rule = p.getRule(binding.rule);
+            const symbol = binding.lexicalRefs.find((ref) => ref.startsWith("symbol:"));
+            if (!symbol || !rule?.id?.startsWith("rule:sino:") || rule.from.length !== 1 || rule.to.length !== 1) continue;
+            add(symbol.slice("symbol:".length), rule.to[0], rule.from[0], {
+              sourceRefs: [...(binding.sourceRefs ?? []), ...(rule.sourceRefs ?? [])],
+              evidenceRefs: [...(binding.evidenceRefs ?? []), ...(rule.evidenceRefs ?? [])]
+            });
+          }
+        }
+        let section = typeof p.eagerSection === "function" ? p.eagerSection("sino-component-index") : null;
+        if (!section && typeof p.sectionsOfKind === "function" && typeof p.loadSection === "function") {
+          const descriptor = p.sectionsOfKind("sino-component-index")[0];
+          if (descriptor) section = await p.loadSection(descriptor.sectionId);
+        }
+        if (section) {
+          const stringOf = (id) => section.string("strings", id);
+          for (let i = 0; i < section.rowCount("character"); i += 1) {
+            add(stringOf(section.value("character", i)), stringOf(section.value("modernReading", i)), stringOf(section.value("modernReading", i)), {
+              classFlags: section.value("classFlags", i),
+              sourceRefs: [...section.list("sourceRefs", i)].map(stringOf),
+              evidenceRefs: [...section.list("evidenceRefs", i)].map(stringOf)
+            });
+          }
+        }
+        return [...byKey.values()].sort((a, b) => a.character.localeCompare(b.character) || a.modernReading.localeCompare(b.modernReading) || a.historicalReading.localeCompare(b.historicalReading));
+      })();
+      sinoFor.set(p, promise);
+      return promise;
+    };
+    const alignSinoComponents = (surface, modernReading, components) => {
+      const chars = [...surface];
+      const byCharacter = new Map();
+      for (const component of components) {
+        const list = byCharacter.get(component.character) ?? [];
+        list.push(component);
+        byCharacter.set(component.character, list);
+      }
+      const paths = [];
+      const walk = (characterIndex, readingIndex, parts) => {
+        if (paths.length >= 32) return;
+        if (characterIndex === chars.length) {
+          if (readingIndex === modernReading.length) paths.push(parts);
+          return;
+        }
+        for (const component of byCharacter.get(chars[characterIndex]) ?? []) {
+          if (!modernReading.startsWith(component.modernReading, readingIndex)) continue;
+          const end = readingIndex + component.modernReading.length;
+          walk(characterIndex + 1, end, [...parts, { ...component, start: readingIndex, end }]);
+        }
+      };
+      walk(0, 0, []);
+      const unique = new Map();
+      for (const path of paths) {
+        const key = path.map((part) => `${part.character}:${part.modernReading}:${part.historicalReading}`).join("|");
+        unique.set(key, path);
+      }
+      return [...unique.values()];
+    };
+    const runSinoReadingPath = async (p, hot, profileId, candidate, path) => {
+      if (!path.length || path.some((part) => part.evidenceRefs.length === 0)) return null;
+      const modernReading = candidate.reading;
+      if (typeof modernReading !== "string") return null;
+      const lexemeIds = Number.isInteger(candidate.lexemeId) ? new Set([candidate.lexemeId]) : new Set();
+      const symbolFor = (start, end) => {
+        const part = path.find((entry) => entry.start === start && entry.end === end);
+        return part && typeof hot.symbolId === "function" ? hot.symbolId(part.character) : undefined;
+      };
+      const observation = await hot.transformText(modernReading, profileId, {
+        stages: ["diachronic"], directions: ["to-historical"], channels: ["reading"],
+        symbolFor, lexemesFor: () => lexemeIds
+      });
+      const historicalParts = [];
+      const programIds = [];
+      for (const part of path) {
+        const outputs = [...new Map((observation.candidates ?? [])
+          .filter((item) => item.start === part.start && item.end === part.end && item.channel === "reading")
+          .map((item) => [item.output, item])).values()];
+        if (outputs.length > 1) return null;
+        const output = outputs[0];
+        historicalParts.push({ ...part, historicalReading: output?.output ?? part.historicalReading });
+        for (const id of output?.programIds ?? []) if (!programIds.includes(id)) programIds.push(id);
+      }
+      const historicalReading = historicalParts.map((part) => part.historicalReading).join("");
+      const provenance = await programEvidenceFor(p, programIds);
+      const componentEvidence = historicalParts.flatMap((part) => part.evidenceRefs);
+      return {
+        historicalReading,
+        programIds,
+        trace: observation.trace,
+        provenance: {
+          sourceRefs: [...new Set([...provenance.sourceRefs, ...historicalParts.flatMap((part) => part.sourceRefs)])],
+          evidenceRefs: [...new Set([...provenance.evidenceRefs, ...componentEvidence])],
+          canonicalIds: provenance.canonicalIds
+        },
+        components: historicalParts.map((part) => ({
+          lexicalIdentity: null, surface: part.character, lexicalReading: part.modernReading,
+          lexicalOrigin: "sino", readingClass: part.classFlags, historicalKana: part.historicalReading,
+          evidenceRefs: [...part.evidenceRefs]
+        }))
       };
     };
     const programForPack = async (p) => {
@@ -139,9 +261,9 @@
       ));
       const rubyCandidates = [];
       const units = [];
+      const extraTraces = [];
       const period = p.getProfilePolicy(profileId).policy.period;
       for (const match of scope.lexicalMatches) {
-        const key = `${match.start}:${match.end}`;
         const surface = text.slice(match.start, match.end);
         const lexicalCandidates = scope.candidatesFor(match.start, match.end);
         if (lexicalCandidates.length === 0) continue;
@@ -177,6 +299,33 @@
           const unitResolver = resolver.createResolver({ lexicalLookup: () => [lexicalCandidate] });
           resolved = unitResolver.resolveUnit(surface);
         }
+        if (period === "historical" && !resolved && lexicalCandidates.length === 1 && lexicalCandidates[0].reading) {
+          const components = await sinoComponentsFor(p);
+          const paths = alignSinoComponents(surface, lexicalCandidates[0].reading, components);
+          const sinoResults = [];
+          for (const path of paths) {
+            const result = await runSinoReadingPath(p, hot, profileId, lexicalCandidates[0], path);
+            if (result) sinoResults.push(result);
+          }
+          const uniqueResults = [...new Map(sinoResults.map((result) => [result.historicalReading, result])).values()];
+          if (uniqueResults.length === 1) {
+            const result = uniqueResults[0];
+            programIds = result.programIds;
+            extraTraces.push(result.trace);
+            const unitResolver = resolver.createResolver({
+              lexicalLookup: () => [lexicalCandidates[0]],
+              historicalLookup: () => ({
+                route: "sino",
+                basis: "sino_component_reconstruction",
+                reading: result.historicalReading,
+                surface: baseSurface,
+                components: result.components,
+                ...result.provenance
+              })
+            });
+            resolved = unitResolver.resolveUnit(surface);
+          }
+        }
         if (!resolved) {
           const unitResolver = resolver.createResolver({ lexicalLookup: () => lexicalCandidates });
           resolved = unitResolver.resolveUnit(surface);
@@ -185,14 +334,15 @@
           ? selectedAdapter.summarizeUnit(resolved)
           : resolved;
         units.push({ start: match.start, end: match.end, surface, outputs: [], unit: summarized });
-        if (period === "historical" && resolved.kind === "resolved" && resolved.historical?.status === "resolved" && exactReading.length === 1) {
-          const reading = exactReading[0];
+        if (period === "historical" && resolved.kind === "resolved" && resolved.historical?.status === "resolved"
+          && (exactReading.length === 1 || resolved.historical.basis === "sino_component_reconstruction")) {
+          const reading = exactReading[0] ?? null;
           const rendered = resolver.createResolver({ lexicalLookup: () => [lexicalCandidates[0]] }).render(resolved, { mode: renderMode, profile: period });
           if (rendered !== surface) {
             rubyCandidates.push({
               start: match.start, end: match.end, output: rendered, policy: "lexical_boundary", origin: "program",
-              ref: `program:${reading.programIds?.at(-1) ?? "historical-reading"}`,
-              programIds: reading.programIds ?? [], candidate: Boolean(reading.candidate), unit: summarized,
+              ref: `program:${programIds.at(-1) ?? "historical-reading"}`,
+              programIds, candidate: Boolean(reading?.candidate), unit: summarized,
               provenance: resolved.historical
             });
             units.at(-1).outputs = [rendered];
@@ -218,7 +368,10 @@
         ...raw,
         engine: "rule-program",
         renderMode: renderMode ?? "plain",
-        programTrace: observation.trace,
+        programTrace: {
+          executedProgramIds: [...new Set([...(observation.trace?.executedProgramIds ?? []), ...extraTraces.flatMap((trace) => trace.executedProgramIds ?? [])])],
+          runs: [...(observation.trace?.runs ?? []), ...extraTraces.flatMap((trace) => trace.runs ?? [])]
+        },
         executionMode: "vm-authoritative",
         units
       };

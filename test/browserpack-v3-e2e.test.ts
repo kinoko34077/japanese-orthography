@@ -44,6 +44,17 @@ test('v3 keeps browser/core parity and the capability oracle exactly as v2', asy
   assert.deepEqual(c3.summary, c2.summary);
 });
 
+test('vm-authoritative applies source-backed all-class Sino component evidence to 必要', async () => {
+  const result = await service.handle({
+    type: 'transform', requestId: 'vm-necessary', text: '必要', profileId: 'historical',
+    renderMode: 'ruby-whole-explicit', executionMode: 'vm-authoritative'
+  });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.renderedText, '｜必要《ひつえう》');
+  assert.equal(result.result.spans[0].authority, 'source_rule');
+  assert.equal(result.result.spans[0].certainty, 'unique');
+});
+
 test('v3 measurements are recorded for the current pack', async () => {
   const m = await read('data/reports/browser-pack-v3-measurements.json');
   assert.equal(m.packDigest, build.manifest.packDigest);
