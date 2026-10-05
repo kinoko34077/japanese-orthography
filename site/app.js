@@ -31,6 +31,21 @@
     return RENDER_MODE_MAP[target][notation];
   };
 
+  const readBrowserCacheState = async (win) => {
+    const online = win?.navigator?.onLine !== false;
+    if (!win?.caches || typeof win.caches.open !== "function") {
+      return { available: false, online, sectionCount: 0, reuse: false };
+    }
+    try {
+      const cache = await win.caches.open("browser-pack-sections");
+      const keys = typeof cache.keys === "function" ? await cache.keys() : [];
+      const sectionCount = Array.isArray(keys) ? keys.length : 0;
+      return { available: true, online, sectionCount, reuse: sectionCount > 0 };
+    } catch {
+      return { available: false, online, sectionCount: 0, reuse: false };
+    }
+  };
+
   const renderResultHtml = (result, options = {}) => {
     const text = result.renderedText ?? "";
     if (!options.diagnostic) {
@@ -184,7 +199,7 @@
       + '<p class="muted">プロファイルで変換方針を切り替えます。個別規則の手動選択は行いません。</p>';
   };
 
-  const renderEngineInfoHtml = ({ manifest, openReply, result, elapsedMs }) => {
+  const renderEngineInfoHtml = ({ manifest, openReply, result, elapsedMs, cacheState }) => {
     const compilerVersion = manifest?.compilerVersion ?? "—";
     const digest = openReply?.packDigest ? `${openReply.packDigest.slice(0, 12)}…` : "—";
     const mode = result?.executionMode ?? null;
@@ -192,9 +207,20 @@
       : mode === "parity" ? "Parity検証"
         : mode === "legacy-only" ? "Legacy互換" : "変換後に表示";
     const modes = openReply?.renderModes?.length ? openReply.renderModes.join(" / ") : "plain";
+    const startupSections = Number(openReply?.stats?.sectionsLoaded ?? 0);
+    const startupBytes = Number(openReply?.stats?.bytesLoaded ?? 0);
+    const online = cacheState?.online !== false ? "オンライン" : "オフライン";
+    const cache = !cacheState?.available
+      ? "利用状況を取得できません"
+      : cacheState.reuse
+        ? `再利用候補 ${cacheState.sectionCount} section`
+        : "初回状態 / 0 section";
     return `<dl><dt>実行パック</dt><dd>BrowserPack v${escapeHtml(compilerVersion)}</dd>`
       + `<dt>辞書ID</dt><dd><code>${escapeHtml(digest)}</code></dd>`
       + `<dt>実行エンジン</dt><dd>${escapeHtml(engine)}</dd>`
+      + `<dt>接続状態</dt><dd>${online}</dd>`
+      + `<dt>端末キャッシュ</dt><dd>${escapeHtml(cache)}</dd>`
+      + `<dt>起動時ロード</dt><dd>起動時 ${startupSections.toLocaleString("ja-JP")} section / ${startupBytes.toLocaleString("ja-JP")} byte</dd>`
       + `<dt>前回の変換</dt><dd>${Number.isFinite(elapsedMs) ? `${elapsedMs} ms` : "—"}</dd>`
       + `<dt>対応出力</dt><dd class="technical-wrap">${escapeHtml(modes)}</dd></dl>`;
   };
@@ -224,6 +250,7 @@
     let openReply = null;
     let manifest = null;
     let supportedRenderModes = new Set(["plain"]);
+    let cacheState = { available: false, online: win.navigator?.onLine !== false, sectionCount: 0, reuse: false };
 
     const profile = () => doc.querySelector('input[name="profile"]:checked').value;
     const resultView = () => doc.querySelector('input[name="resultView"]:checked')?.value ?? "clean";
@@ -242,7 +269,8 @@
         manifest,
         openReply,
         result: current?.result,
-        elapsedMs: current?.elapsedMs
+        elapsedMs: current?.elapsedMs,
+        cacheState
       });
     };
 
@@ -292,11 +320,12 @@
 
     const convert = async () => {
       if (!client) return;
-      status("変換中…");
+      status("必要な辞書データを確認し、変換しています…");
       try {
         const reply = await client.transform($("source").value, profile(), renderMode());
         if (reply.stale) return;
         current = reply;
+        cacheState = await readBrowserCacheState(win);
         $("copy").disabled = false;
         closeDetail();
         renderCurrent();
@@ -318,7 +347,9 @@
     };
 
     const loadPolicy = async () => {
+      status("辞書データを準備しています…");
       try {
+        cacheState = await readBrowserCacheState(win);
         openReply = await client.open();
         manifest = await (await win.fetch(manifestUrl, { cache: "no-cache" })).json();
         const profileSection = manifest.sections.find((section) => section.kind === "profile-policy" && section.profileId === profile());
@@ -332,7 +363,10 @@
         terms.bindHelp($("policy"));
         updateEngineInfo();
         $("convert").disabled = false;
-        status(`準備完了（辞書 ${openReply.packDigest.slice(0, 12)}…）。`);
+        const cacheNote = cacheState.available
+          ? (cacheState.reuse ? `端末キャッシュ ${cacheState.sectionCount} sectionを再利用可能` : "初回状態")
+          : "cache状態不明";
+        status(`準備完了（${cacheNote} / 辞書 ${openReply.packDigest.slice(0, 12)}…）。`);
         return true;
       } catch (error) {
         status(`辞書データを読み込めませんでした: ${error.message}`, "error", recover);
@@ -374,6 +408,13 @@
     };
 
     if (sw && win.location.protocol !== "file:") sw.register("sw.js").catch(() => {});
+    const refreshConnectivity = async () => {
+      cacheState = await readBrowserCacheState(win);
+      updateEngineInfo();
+      if (cacheState.online === false) status("オフラインです。利用可能な端末キャッシュから変換を試みます。");
+    };
+    win.addEventListener?.("online", refreshConnectivity);
+    win.addEventListener?.("offline", refreshConnectivity);
     $("clear-cache")?.addEventListener("click", clearCache);
     $("convert").addEventListener("click", convert);
 
@@ -426,6 +467,7 @@
 
   return {
     renderModeFromControls,
+    readBrowserCacheState,
     renderResultHtml,
     renderSummaryHtml,
     renderDetailHtml,
