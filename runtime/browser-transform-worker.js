@@ -63,18 +63,41 @@
       await lexical.prepare(text, { reading: true });
       const byRange = new Map();
       const candidatesByRange = new Map();
+      const surfaceCandidatesByRange = new Map();
+      const readingCandidatesByRange = new Map();
       const lexicalMatches = [];
-      for (let start = 0; start < text.length;) {
-        const ch = planner.charAt(text, start);
-        for (const match of lexical.matchesAtSync(text, start, "surface")) {
-          lexicalMatches.push({ start: match.start, end: match.end });
+      const kana = /^[ぁ-ゟ゠-ヿ]+$/u;
+      const addMatches = (matches, kind) => {
+        for (const match of matches) {
           const key = `${match.start}:${match.end}`;
+          if (!lexicalMatches.some((entry) => entry.start === match.start && entry.end === match.end)) {
+            lexicalMatches.push({ start: match.start, end: match.end });
+          }
           const ids = byRange.get(key) ?? new Set();
           for (const candidate of match.candidates ?? []) if (Number.isInteger(candidate.lexemeId)) ids.add(candidate.lexemeId);
           byRange.set(key, ids);
-          candidatesByRange.set(key, match.candidates ?? []);
+          const target = kind === "reading" ? readingCandidatesByRange : surfaceCandidatesByRange;
+          const current = target.get(key) ?? [];
+          for (const candidate of match.candidates ?? []) {
+            const identity = `${candidate.lexicalIdentity ?? ""}:${candidate.reading ?? ""}:${candidate.surface ?? ""}`;
+            if (!current.some((entry) => `${entry.lexicalIdentity ?? ""}:${entry.reading ?? ""}:${entry.surface ?? ""}` === identity)) current.push(candidate);
+          }
+          target.set(key, current);
         }
+      };
+      for (let start = 0; start < text.length;) {
+        const ch = planner.charAt(text, start);
+        addMatches(lexical.matchesAtSync(text, start, "surface"), "surface");
+        addMatches(lexical.matchesAtSync(text, start, "reading"), "reading");
         start += ch.length;
+      }
+      for (const match of lexicalMatches) {
+        const key = `${match.start}:${match.end}`;
+        const surface = text.slice(match.start, match.end);
+        const candidates = kana.test(surface)
+          ? (readingCandidatesByRange.get(key) ?? surfaceCandidatesByRange.get(key) ?? [])
+          : (surfaceCandidatesByRange.get(key) ?? readingCandidatesByRange.get(key) ?? []);
+        candidatesByRange.set(key, candidates);
       }
       return {
         lexical,
@@ -533,7 +556,10 @@
         observation,
         surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches })
       );
-      return assembleProgramObservation(text, profileId, { ...observation, candidates: surfaceCandidates }, renderMode, { lexicalMatches: scope.lexicalMatches });
+      return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
+        scope,
+        observation: { ...observation, candidates: surfaceCandidates }
+      });
     };
     const compareProgramOutput = (legacy, program) => {
       const summarize = (raw) => diagnostics?.summarize(raw) ?? null;
