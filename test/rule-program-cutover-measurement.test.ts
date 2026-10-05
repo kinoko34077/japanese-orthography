@@ -1,17 +1,10 @@
 import test from 'node:test';
 import { resolve } from 'node:path';
-import {
-  measureRuleProgramMode,
-  RULE_PROGRAM_MODES
-} from '../tools/measure-browser-rule-program-cutover.ts';
+import { measureRuleProgramModes } from '../tools/measure-browser-rule-program-cutover.ts';
 
 test('record Rule Program cutover measurements for #271 closure', async () => {
   const root = resolve(process.cwd());
-  const runs = [];
-
-  for (const mode of RULE_PROGRAM_MODES) {
-    runs.push(await measureRuleProgramMode(root, mode));
-  }
+  const runs = await measureRuleProgramModes(root);
 
   console.log('JO271_CUTOVER_MEASUREMENT ' + JSON.stringify({
     schemaVersion: '1',
