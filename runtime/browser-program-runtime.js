@@ -106,6 +106,7 @@
       const channels = options.channels ?? CHANNELS;
       const lengths = [...inputLengths].sort((a, b) => a - b);
       const candidates = [], runs = [];
+      const contextFor = typeof options.contextFor === "function" ? options.contextFor : () => options.context;
       const executedProgramIds = new Set();
       for (let start = 0; start < tokens.length; start += 1) {
         for (const length of lengths) {
@@ -120,7 +121,7 @@
           const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
           const lexemes = typeof options.lexemesFor === "function" ? options.lexemesFor(offsets[start], offsets[end], segment) : undefined;
           for (const stage of stages) for (const direction of directions) for (const channel of channels) {
-            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes });
+            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes, context: contextFor(offsets[start], offsets[end], segment) });
             if (!result.executedProgramIds.length) continue;
             for (const id of result.executedProgramIds) executedProgramIds.add(id);
             runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, ...result });

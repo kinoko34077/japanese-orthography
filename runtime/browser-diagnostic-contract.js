@@ -165,15 +165,24 @@
     if (candidate.origin === "program") {
       const programIds = [...new Set(candidate.programIds ?? [])];
       const programs = [];
+      const sourceRefs = [];
       for (const programId of programIds) {
         const evidence = await pack.loadProgramEvidence(programId);
-        if (evidence) programs.push(evidence);
+        if (evidence) {
+          programs.push(evidence);
+          if (typeof pack.loadEvidence === "function") {
+            for (const canonicalId of evidence.canonicalIds ?? []) {
+              const detail = await pack.loadEvidence(canonicalId);
+              for (const ref of detail?.sourceSnapshots ?? []) if (!sourceRefs.includes(ref)) sourceRefs.push(ref);
+            }
+          }
+        }
       }
       const canonicalIds = [...new Set(programs.flatMap((program) => program.canonicalIds ?? []))].sort();
       return {
         ...base, kind: "rule_program", basis: "rule_program_execution", authority: authorityOf({ ...candidate, provenance: { canonicalIds } }),
         ruleChain: programIds.map((programId) => `program:${programId}`), programIds, programs,
-        provenance: { sourceRefs: [], evidenceRefs: canonicalIds, canonicalIds }
+        provenance: { sourceRefs: sourceRefs.sort(), evidenceRefs: canonicalIds, canonicalIds }
       };
     }
     if (candidate.origin === "rule") {

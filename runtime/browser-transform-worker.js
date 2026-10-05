@@ -60,6 +60,7 @@
       }
       if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
       const lexical = lexicalFor.get(p);
+      if (typeof p.prepare === "function") await p.prepare(text);
       await lexical.prepare(text, { reading: true });
       const byRange = new Map();
       const candidatesByRange = new Map();
@@ -78,7 +79,12 @@
           byRange.set(key, ids);
           const target = kind === "reading" ? readingCandidatesByRange : surfaceCandidatesByRange;
           const current = target.get(key) ?? [];
-          for (const candidate of match.candidates ?? []) {
+          const candidates = (match.candidates ?? []).flatMap((candidate) => (
+            kind === "surface" && typeof lexical.withReading === "function" && (candidate.modernReadings ?? []).length > 1
+              ? candidate.modernReadings.map((reading) => lexical.withReading(candidate, reading))
+              : [candidate]
+          ));
+          for (const candidate of candidates) {
             const identity = `${candidate.lexicalIdentity ?? ""}:${candidate.reading ?? ""}:${candidate.surface ?? ""}`;
             if (!current.some((entry) => `${entry.lexicalIdentity ?? ""}:${entry.reading ?? ""}:${entry.surface ?? ""}` === identity)) current.push(candidate);
           }
@@ -244,6 +250,15 @@
       if (profileId === "kinotch-fixed") return ["to-historical", "to-modern"];
       return [period === "historical" ? "to-historical" : "to-modern"];
     };
+    const programContextFor = (p) => {
+      if (typeof p.ruleCount !== "function" || typeof p.getRule !== "function") return undefined;
+      const constraints = [];
+      for (let i = 0; i < p.ruleCount(); i += 1) {
+        const constraint = p.getRule(i)?.predicate?.constraint;
+        if (typeof constraint === "string" && !constraints.includes(constraint)) constraints.push(constraint);
+      }
+      return constraints.length ? { constraints } : undefined;
+    };
     const charBoundariesOf = (text) => {
       const charBoundaries = [];
       for (let i = 0; i < text.length;) {
@@ -273,7 +288,9 @@
             baseStart: baseCursor,
             baseEnd: baseCursor + segmentText.length,
             originalStart,
-            originalEnd: originalIndex + originalText.length
+            originalEnd: originalIndex + originalText.length,
+            reading: segment.ruby ?? "",
+            explicit: originalStart !== originalIndex
           });
         }
         baseText += segmentText;
@@ -307,14 +324,17 @@
     };
     const surfaceCandidatesOf = (observation, options = {}) => {
       const surface = (observation.candidates ?? [])
-        .filter((candidate) => !candidate.channel || candidate.channel === "surface");
+        .filter((candidate) => (!candidate.channel || candidate.channel === "surface")
+          && (!options.sourceText || candidate.output !== options.sourceText.slice(candidate.start, candidate.end)));
       if (surface.length > 0) return surface;
+      if (!/^[ぁ-ゟ゠-ヿ]+$/u.test(options.sourceText ?? "")) return [];
       // Some source-backed native-kana rules are indexed on the reading
       // channel and have no lexical surface match (for example サービス ->
       // サーヸス). In that bounded case the Rule Program result is the
       // surface transformation itself, not Ruby metadata.
       return (observation.candidates ?? [])
-        .filter((candidate) => candidate.channel === "reading")
+        .filter((candidate) => candidate.channel === "reading"
+          && (!options.sourceText || candidate.output !== options.sourceText.slice(candidate.start, candidate.end)))
         .map((candidate) => ({
           ...candidate,
           policy: "anywhere",
@@ -342,15 +362,74 @@
     };
     const programEvidenceFor = async (p, programIds) => {
       const entries = [];
+      const sourceRefs = [];
       for (const programId of [...new Set(programIds ?? [])]) {
         const evidence = typeof p.loadProgramEvidence === "function" ? await p.loadProgramEvidence(programId) : null;
-        if (evidence) entries.push(evidence);
+        if (evidence) {
+          entries.push(evidence);
+          if (typeof p.loadEvidence === "function") {
+            for (const canonicalId of evidence.canonicalIds ?? []) {
+              const detail = await p.loadEvidence(canonicalId);
+              for (const ref of detail?.sourceSnapshots ?? []) if (!sourceRefs.includes(ref)) sourceRefs.push(ref);
+            }
+          }
+        }
       }
       return {
-        sourceRefs: [],
+        sourceRefs,
         evidenceRefs: [...new Set(entries.flatMap((entry) => entry.evidenceRefs ?? []))],
-        canonicalIds: [...new Set(entries.flatMap((entry) => entry.canonicalIds ?? []))]
+        canonicalIds: [...new Set(entries.flatMap((entry) => entry.canonicalIds ?? []))],
+        projectRule: entries.some((entry) => entry.kind === "profile-style")
       };
+    };
+    const contextualRelationsFor = (p, text, start, end) => {
+      if (typeof p.findMatchesSync !== "function") return [];
+      return p.findMatchesSync(text, start)
+        .filter((match) => match.end === end)
+        .flatMap((match) => (match.facts ?? [])
+          .filter((fact) => fact.contextual && fact.surface && fact.target)
+          .map((fact) => ({
+            id: fact.detailRef,
+            match: fact.viaTarget ? fact.target : fact.surface,
+            target: fact.viaTarget ? fact.surface : fact.target,
+            candidate: fact.candidate,
+            lexicalBindingIds: [],
+            fact
+          })));
+    };
+    const resolverFor = (p, text, start, end, lexicalLookup, extra = {}) => resolver.createResolver({
+      lexicalLookup,
+      contextualRelations: contextualRelationsFor(p, text, start, end),
+      ...extra
+    });
+    const historicalFactFor = (p, text, start, end, surface, reading) => {
+      if (typeof p.findMatchesSync !== "function") return null;
+      const rows = p.findMatchesSync(text, start)
+        .filter((match) => match.end === end)
+        .flatMap((match) => match.facts ?? [])
+        .filter((fact) => fact.kind === "literal_reading" && fact.historical && fact.surface === surface && fact.reading === reading && !fact.candidate);
+      return rows.length === 1 ? rows[0] : null;
+    };
+    const annotateProgramCandidates = async (p, candidates) => {
+      const annotated = [];
+      for (const candidate of candidates) {
+        if (candidate.origin !== "program") {
+          annotated.push(candidate);
+          continue;
+        }
+        const provenance = await programEvidenceFor(p, candidate.programIds ?? []);
+        annotated.push({
+          ...candidate,
+          ...(provenance.projectRule ? { authority: "project_rule" } : {}),
+          provenance: {
+            ...(candidate.provenance ?? {}),
+            sourceRefs: [...new Set([...(candidate.provenance?.sourceRefs ?? []), ...provenance.sourceRefs])],
+            evidenceRefs: [...new Set([...(candidate.provenance?.evidenceRefs ?? []), ...provenance.evidenceRefs])],
+            canonicalIds: [...new Set([...(candidate.provenance?.canonicalIds ?? []), ...provenance.canonicalIds])]
+          }
+        });
+      }
+      return annotated;
     };
     const localSurface = (text, profileId, start, end, candidates) => {
       const source = text.slice(start, end);
@@ -368,7 +447,15 @@
           .map((candidate, index) => ({ candidate, index }))
           .filter(({ candidate }) => candidate.start >= match.start && candidate.end <= match.end);
         if (local.length === 0) continue;
-        const output = localSurface(text, profileId, match.start, match.end, local.map(({ candidate }) => candidate));
+        const localSource = text.slice(match.start, match.end);
+        const output = planner.assemble(
+          localSource,
+          profileId,
+          planner.lexicalDag(localSource.length, [{ start: 0, end: localSource.length }], charBoundariesOf(localSource)),
+          local.map(({ candidate }) => ({ ...candidate, start: candidate.start - match.start, end: candidate.end - match.start })),
+          [],
+          {}
+        ).renderedText;
         if (output === surface) continue;
         for (const { index } of local) covered.add(index);
         const lexicalCandidates = scope.candidatesFor(match.start, match.end);
@@ -381,14 +468,15 @@
           const admitted = (lexicalCandidates[0].historicalReadings ?? []).filter((entry) => (
             entry.surface === surface && exactReading.length === 1 && entry.reading === exactReading[0].output && entry.candidate !== true
           ));
-          if (admitted.length === 1) {
+          const fact = exactReading.length === 1 ? historicalFactFor(p, text, match.start, match.end, surface, exactReading[0].output) : null;
+          if (admitted.length === 1 || fact) {
             const provenance = await programEvidenceFor(p, exactReading[0].programIds ?? []);
-            const unitResolver = resolver.createResolver({
+            const unitResolver = resolverFor(p, text, match.start, match.end, () => [lexicalCandidates[0]], {
               lexicalLookup: () => [lexicalCandidates[0]],
               historicalLookup: () => ({
-                route: admitted[0].route ?? "native",
+                route: admitted[0]?.route ?? "native",
                 basis: "rule_program",
-                reading: admitted[0].reading,
+                reading: admitted[0]?.reading ?? exactReading[0].output,
                 surface: output,
                 ...provenance
               })
@@ -398,6 +486,14 @@
               : unitResolver.resolveUnit(surface);
           }
         }
+        if (!unit) {
+          const unitResolver = resolverFor(p, text, match.start, match.end, () => lexicalCandidates);
+          const resolved = unitResolver.resolveUnit(surface);
+          unit = typeof selectedAdapter?.summarizeUnit === "function"
+            ? selectedAdapter.summarizeUnit(resolved)
+            : resolved;
+        }
+        const localAuthority = local.map(({ candidate }) => candidate.authority).find(Boolean) ?? "source_rule";
         composed.push({
           start: match.start,
           end: match.end,
@@ -406,6 +502,7 @@
           origin: "program",
           ref: `program:surface:${match.start}:${match.end}`,
           programIds: [...new Set(local.flatMap(({ candidate }) => candidate.programIds ?? []))],
+          authority: localAuthority,
           candidate: local.some(({ candidate }) => candidate.candidate === true),
           ...(unit ? { unit } : {}),
           key: `program:surface:${match.start}:${match.end}:${output}`
@@ -420,9 +517,14 @@
       const scope = supplied.scope ?? await lexicalScopeFor(p, text);
       const observation = supplied.observation ?? await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
-        lexemesFor: scope.lexemesFor
+        lexemesFor: scope.lexemesFor,
+        context: programContextFor(p)
       });
-      const surfaceCandidates = surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" });
+      const rawSurfaceCandidates = await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" }));
+      const surfaceCandidates = [...new Map(rawSurfaceCandidates.map((candidate) => {
+        const key = `${candidate.start}:${candidate.end}:${candidate.output}`;
+        return [key, { ...candidate, programIds: [...new Set(candidate.programIds ?? [])] }];
+      })).values()];
       const readingCandidates = (observation.candidates ?? []).filter((candidate) => (
         candidate.channel === "reading" && candidate.stage === "diachronic" && candidate.direction === "to-historical"
       ));
@@ -432,7 +534,21 @@
       const period = p.getProfilePolicy(profileId).policy.period;
       for (const match of scope.lexicalMatches) {
         const surface = text.slice(match.start, match.end);
-        const lexicalCandidates = scope.candidatesFor(match.start, match.end);
+        const rubyEntries = supplied.rubyEvidence ?? [];
+        const exactRubyEvidence = rubyEntries.find((entry) => entry.baseStart === match.start && entry.baseEnd === match.end);
+        const rubyParts = rubyEntries
+          .filter((entry) => entry.baseStart < match.end && entry.baseEnd > match.start)
+          .sort((left, right) => left.baseStart - right.baseStart || left.baseEnd - right.baseEnd);
+        const componentRubyEvidence = rubyParts.length > 1
+          && rubyParts[0].baseStart === match.start
+          && rubyParts.at(-1).baseEnd === match.end
+          && rubyParts.every((entry, index) => index === 0 || rubyParts[index - 1].baseEnd === entry.baseStart)
+          ? { explicit: rubyParts.some((entry) => entry.explicit), component: true }
+          : null;
+        const rubyEvidence = exactRubyEvidence ?? componentRubyEvidence;
+        const lexicalCandidates = (scope.candidatesFor(match.start, match.end) ?? []).filter((candidate) => !rubyEvidence?.reading
+          || candidate.reading === rubyEvidence.reading
+          || (candidate.modernReadings ?? []).includes(rubyEvidence.reading));
         if (lexicalCandidates.length === 0) continue;
         const baseSurface = localSurface(text, profileId, match.start, match.end, surfaceCandidates);
         const exactReading = [...new Map(readingCandidates
@@ -446,13 +562,14 @@
           const admitted = (lexicalCandidate.historicalReadings ?? []).filter((entry) => (
             entry.surface === surface && entry.reading === reading.output && entry.candidate !== true
           ));
-          if (admitted.length === 1) {
+          const fact = historicalFactFor(p, text, match.start, match.end, surface, reading.output);
+          if (admitted.length === 1 || fact) {
             programIds = reading.programIds ?? [];
             const provenance = await programEvidenceFor(p, programIds);
-            const unitResolver = resolver.createResolver({
+            const unitResolver = resolverFor(p, text, match.start, match.end, () => [lexicalCandidate], {
               lexicalLookup: () => [lexicalCandidate],
               historicalLookup: () => ({
-                route: admitted[0].route ?? "native",
+                route: admitted[0]?.route ?? "native",
                 basis: "rule_program",
                 reading: reading.output,
                 surface: baseSurface,
@@ -462,7 +579,7 @@
             resolved = unitResolver.resolveUnit(surface);
           }
         } else if (period !== "historical") {
-          const unitResolver = resolver.createResolver({ lexicalLookup: () => lexicalCandidates });
+          const unitResolver = resolverFor(p, text, match.start, match.end, () => lexicalCandidates);
           resolved = unitResolver.resolveUnit(surface);
         }
         if (period === "historical" && !resolved && lexicalCandidates.length === 1 && lexicalCandidates[0].reading) {
@@ -478,7 +595,7 @@
             const result = uniqueResults[0];
             programIds = result.programIds;
             extraTraces.push(result.trace);
-            const unitResolver = resolver.createResolver({
+            const unitResolver = resolverFor(p, text, match.start, match.end, () => [lexicalCandidates[0]], {
               lexicalLookup: () => [lexicalCandidates[0]],
               historicalLookup: () => ({
                 route: "sino",
@@ -493,7 +610,7 @@
           }
         }
         if (!resolved) {
-          const unitResolver = resolver.createResolver({ lexicalLookup: () => lexicalCandidates });
+          const unitResolver = resolverFor(p, text, match.start, match.end, () => lexicalCandidates);
           resolved = unitResolver.resolveUnit(surface);
         }
         const summarized = typeof selectedAdapter?.summarizeUnit === "function"
@@ -503,7 +620,10 @@
         if (period === "historical" && resolved.kind === "resolved" && resolved.historical?.status === "resolved"
           && (exactReading.length === 1 || resolved.historical.basis === "sino_component_reconstruction")) {
           const reading = exactReading[0] ?? null;
-          const rendered = resolver.createResolver({ lexicalLookup: () => [lexicalCandidates[0]] }).render(resolved, { mode: renderMode, profile: period });
+          const unitRenderMode = rubyEvidence && (renderMode ?? "plain") === "plain"
+            ? (rubyEvidence.explicit ? "ruby-whole-explicit" : "ruby-whole-implicit")
+            : renderMode;
+          const rendered = resolverFor(p, text, match.start, match.end, () => [lexicalCandidates[0]]).render(resolved, { mode: unitRenderMode, profile: period });
           if (rendered !== surface) {
             rubyCandidates.push({
               start: match.start, end: match.end, output: rendered, policy: "lexical_boundary", origin: "program",
@@ -513,8 +633,12 @@
             });
             units.at(-1).outputs = [rendered];
           }
-        } else if (period !== "historical" && resolved.kind !== "protected" && resolved.displayReading?.value) {
-          const rendered = resolver.createResolver({ lexicalLookup: () => [lexicalCandidates[0]] }).render(resolved, { mode: renderMode, profile: period });
+        } else if (period !== "historical" && resolved.kind !== "protected" && resolved.displayReading?.value
+          && (resolved.displayReading.value !== surface || rubyEvidence)) {
+          const unitRenderMode = rubyEvidence && (renderMode ?? "plain") === "plain"
+            ? (rubyEvidence.explicit ? "ruby-whole-explicit" : "ruby-whole-implicit")
+            : renderMode;
+          const rendered = resolverFor(p, text, match.start, match.end, () => [lexicalCandidates[0]]).render(resolved, { mode: unitRenderMode, profile: period });
           if (rendered !== surface) {
             rubyCandidates.push({
               start: match.start, end: match.end, output: rendered, policy: "lexical_boundary", origin: "program",
@@ -546,7 +670,8 @@
       const scope = await lexicalScopeFor(p, text);
       const observation = await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
-        lexemesFor: scope.lexemesFor
+        lexemesFor: scope.lexemesFor,
+        context: programContextFor(p)
       });
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
@@ -554,7 +679,7 @@
         profileId,
         scope,
         observation,
-        surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches })
+        surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text })
       );
       return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
         scope,
@@ -621,7 +746,7 @@
             if (!hot || typeof hot.transformText !== "function") throw new Error("Rule Program VM admission failed: required hot sections are unavailable");
             raw = (message.renderMode ?? "plain") === "plain" && !normalizedRuby
               ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode)
-              : await transformWithProgramRuby(p, hot, programSource, message.profileId, normalizedRuby && (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode);
+              : await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { rubyEvidence: normalizedRuby?.ranges ?? [] });
             raw = restoreRubyInputRanges(raw, source, normalizedRuby);
             raw.renderMode = message.renderMode ?? "plain";
           } else {
@@ -632,7 +757,8 @@
                 const scope = await lexicalScopeFor(p, programSource);
                 const observation = await hot.transformText(programSource, message.profileId, {
                   directions: programDirection(p, message.profileId),
-                  lexemesFor: scope.lexemesFor
+                  lexemesFor: scope.lexemesFor,
+                  context: programContextFor(p)
                 });
                 raw.programTrace = observation.trace;
                 if ((message.renderMode ?? "plain") === "plain" && !normalizedRuby) {
@@ -642,12 +768,12 @@
                     message.profileId,
                     scope,
                     observation,
-                    surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: programSource, authority: "source_rule" })
+                    await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: programSource, authority: "source_rule" }))
                   );
                   const program = assembleProgramObservation(programSource, message.profileId, { ...observation, candidates: surfaceCandidates }, "plain", { lexicalMatches: scope.lexicalMatches });
                   raw.programParity = compareProgramOutput(raw, restoreRubyInputRanges(program, source, normalizedRuby));
                 } else {
-                  const program = await transformWithProgramRuby(p, hot, programSource, message.profileId, normalizedRuby && (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode, { scope, observation });
+                  const program = await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { scope, observation, rubyEvidence: normalizedRuby?.ranges ?? [] });
                   const parityLegacy = normalizedRuby
                     ? await transformLegacy(p, programSource, message.profileId, (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode)
                     : raw;
