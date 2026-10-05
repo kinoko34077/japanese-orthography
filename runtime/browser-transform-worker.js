@@ -622,7 +622,10 @@
                   raw.programParity = compareProgramOutput(raw, restoreRubyInputRanges(program, source, normalizedRuby));
                 } else {
                   const program = await transformWithProgramRuby(p, hot, programSource, message.profileId, normalizedRuby && (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode, { scope, observation });
-                  raw.programParity = compareProgramOutput(raw, restoreRubyInputRanges(program, source, normalizedRuby));
+                  const parityLegacy = normalizedRuby
+                    ? await transformLegacy(p, programSource, message.profileId, (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode)
+                    : raw;
+                  raw.programParity = compareProgramOutput(parityLegacy, normalizedRuby ? program : restoreRubyInputRanges(program, source, normalizedRuby));
                 }
               }
             }

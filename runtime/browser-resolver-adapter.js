@@ -475,7 +475,7 @@
         : historical.contextualKanji.status === "resolved" ? "literal_fact"
           : historical.basis === "sino_component_reconstruction" ? "source_rule"
             : historical.basis === "literal_whole_word" || historical.basis === "native_exact_surface" ? "literal_fact"
-              : historical.route && historical.kana && renderMode !== "plain" ? "literal_fact"
+              : historical.route && historical.kana && renderMode !== "plain" ? "source_rule"
                 : relationsHere.length && !relationsHere.some((r) => r.contextual) ? "literal_fact" : "source_rule";
       for (const output of outputs) {
         candidates.push({ start, end, output, policy: "lexical_boundary", origin: "resolver", ref: `unit:${start}:${end}`, unit: summarizeUnit(resolved), authority, relationFacts: relationsHere.map((r) => r.fact) });
