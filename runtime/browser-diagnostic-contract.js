@@ -32,12 +32,18 @@
       return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
     }
     if (winner.origin === "program") {
+      if (winner.authority) return winner.authority;
       const historical = winner.unit?.historical;
       if (historical) {
         const hasHistoricalProvenance = [historical.sourceRefs, historical.evidenceRefs, historical.canonicalIds]
           .some((refs) => Array.isArray(refs) && refs.length > 0);
         if (historical.status !== "resolved" || !hasHistoricalProvenance) return "none";
+        const canonicalIds = historical.canonicalIds ?? [];
+        if (canonicalIds.length > 0 && canonicalIds.every((id) => `${id}`.startsWith("fact:"))) return "literal_fact";
       }
+      const canonicalIds = winner.provenance?.canonicalIds ?? [];
+      if (canonicalIds.length > 0 && canonicalIds.every((id) => `${id}`.startsWith("fact:"))) return "literal_fact";
+      if (historical) return "source_rule";
       return (winner.programIds?.length || winner.provenance?.canonicalIds?.length) ? "source_rule" : "none";
     }
     if (winner.origin === "fact") return "literal_fact";

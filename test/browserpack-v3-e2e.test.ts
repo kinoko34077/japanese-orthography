@@ -55,6 +55,71 @@ test('vm-authoritative applies source-backed all-class Sino component evidence t
   assert.equal(result.result.spans[0].certainty, 'unique');
 });
 
+test('Rule Program parity covers the real-text corpus across every render mode', async () => {
+  const renderModes = [
+    'plain',
+    'ruby-whole-explicit',
+    'ruby-whole-implicit',
+    'ruby-components-explicit',
+    'ruby-components-implicit'
+  ];
+  const profilesByCorpusId: Record<string, string[]> = {
+    'adult-suffix': ['modern'],
+    necessary: ['modern', 'historical', 'kinotch-fixed'],
+    'market-property': ['modern'],
+    publishers: ['modern'],
+    'japan-company': ['modern', 'historical', 'kinotch-fixed'],
+    service: ['modern', 'historical'],
+    'same-reading-homograph': ['modern'],
+    'ambiguous-reading': ['modern'],
+    'candidate-reading': ['historical'],
+    'zero-permitted-reading': ['modern'],
+    'modern-historical': ['historical'],
+    'multi-reading-lexeme': ['historical'],
+    'component-ruby': ['historical'],
+    'protected-unknown': ['historical']
+  };
+  assert.deepEqual(Object.keys(profilesByCorpusId).sort(), BROWSER_RUBY_ACCEPTANCE_CORPUS.map((row) => row.id).sort());
+  const mismatches: Array<Record<string, unknown>> = [];
+  for (const row of BROWSER_RUBY_ACCEPTANCE_CORPUS) {
+    for (const profileId of profilesByCorpusId[row.id] ?? []) {
+      for (const renderMode of renderModes) {
+        const result = await service.handle({
+          type: 'transform',
+          requestId: `parity-${row.id}-${profileId}-${renderMode}`,
+          text: row.text,
+          profileId,
+          renderMode,
+          executionMode: 'parity'
+        });
+        assert.equal(result.type, 'result', result.message);
+        if (!result.result.programParity?.equivalent) {
+          mismatches.push({
+            id: row.id,
+            profileId,
+            renderMode,
+            parity: result.result.programParity,
+            renderedText: result.result.renderedText
+          });
+        }
+      }
+    }
+  }
+  assert.deepEqual(mismatches, []);
+});
+
+test('Rule Program parity preserves offsets across multiple explicit Ruby spans', async () => {
+  const source = '｜学校《がくかう》｜必要《ひつよう》';
+  const result = await service.handle({
+    type: 'transform', requestId: 'parity-multiple-ruby', text: source, profileId: 'historical',
+    renderMode: 'plain', executionMode: 'parity'
+  });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.renderedText, source);
+  assert.equal(result.result.programParity?.equivalent, true);
+  assert.equal(result.result.programParity?.semanticEquivalent, true);
+});
+
 test('v3 measurements are recorded for the current pack', async () => {
   const m = await read('data/reports/browser-pack-v3-measurements.json');
   assert.equal(m.packDigest, build.manifest.packDigest);

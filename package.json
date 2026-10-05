@@ -38,6 +38,7 @@
     "measure:browser-capability": "node --import tsx tools/measure-browser-capability-utilization.ts",
     "measure:browser-ruby": "node --import tsx tools/measure-browser-ruby-acceptance.ts",
     "validate:browser-ruby": "node --import tsx tools/measure-browser-ruby-acceptance.ts --check",
+    "measure:browser-rule-program": "node --import tsx tools/measure-browser-rule-program-cutover.ts",
     "measure:browser-pack-v2": "node --expose-gc --import tsx tools/measure-browser-pack-v2.ts",
     "measure:pack-payload": "node --import tsx tools/measure-pack-payload.ts",
     "generate:symbol-registry": "node --import tsx tools/symbol-registry.ts",

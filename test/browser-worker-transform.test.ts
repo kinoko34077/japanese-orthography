@@ -51,7 +51,10 @@ test('vm-authoritative mode uses the Rule Program result without invoking the le
   const programRuntime = {
     createBrowserProgramRuntime: async () => ({
       transformText: async () => ({
-        candidates: [{ start: 0, end: 1, output: '乙', policy: 'anywhere', origin: 'program', ref: 'program:7', programIds: [7] }],
+        candidates: [{
+          start: 0, end: 1, output: '乙', policy: 'anywhere', origin: 'program', ref: 'program:7', programIds: [7],
+          unit: { kind: 'resolved', historical: { status: 'resolved', sourceRefs: ['fixture'], evidenceRefs: ['fixture'], canonicalIds: ['rule:fixture'] } }
+        }],
         contextual: [],
         lexicalMatchCount: 0,
         trace: { executedProgramIds: [7], runs: [{ stage: 'orthographic', direction: 'to-historical', channel: 'surface', start: 0, end: 1, executedProgramIds: [7] }] }
@@ -109,7 +112,13 @@ test('parity mode compares the legacy rendered output with the assembled VM outp
   const adapter = {
     transformWithResolver: async () => ({
       profileId: 'historical', sourceText: '甲', renderedText: '乙', offsetUnit: 'utf16-code-unit',
-      spans: [{ start: 0, end: 1, sourceText: '甲', renderedText: '乙', state: 'applied', reasons: [], winners: [], blocked: [], contextual: [] }],
+      spans: [{
+        start: 0, end: 1, sourceText: '甲', renderedText: '乙', state: 'applied', reasons: [], blocked: [], contextual: [],
+        winners: [{
+          output: '乙', origin: 'resolver',
+          unit: { kind: 'resolved', historical: { status: 'resolved', sourceRefs: ['fixture'], evidenceRefs: ['fixture'], canonicalIds: ['rule:fixture'] } }
+        }]
+      }],
       units: []
     })
   };
@@ -122,6 +131,9 @@ test('parity mode compares the legacy rendered output with the assembled VM outp
     programRenderedText: '乙',
     legacySpanCount: 1,
     programSpanCount: 1,
+    semanticEquivalent: true,
+    legacySemantic: [{ start: 0, end: 1, renderedText: '乙', certainty: 'unique', authority: 'source_rule', resolved: true }],
+    programSemantic: [{ start: 0, end: 1, renderedText: '乙', certainty: 'unique', authority: 'source_rule', resolved: true }],
     authority: 'legacy'
   });
 });
