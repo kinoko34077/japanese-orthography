@@ -192,7 +192,7 @@
       : mode === "parity" ? "Parity検証"
         : mode === "legacy-only" ? "Legacy互換" : "変換後に表示";
     const modes = openReply?.renderModes?.length ? openReply.renderModes.join(" / ") : "plain";
-    return `<dl><dt>BrowserPack</dt><dd>v${escapeHtml(compilerVersion)}</dd>`
+    return `<dl><dt>実行パック</dt><dd>BrowserPack v${escapeHtml(compilerVersion)}</dd>`
       + `<dt>辞書ID</dt><dd><code>${escapeHtml(digest)}</code></dd>`
       + `<dt>実行エンジン</dt><dd>${escapeHtml(engine)}</dd>`
       + `<dt>前回の変換</dt><dd>${Number.isFinite(elapsedMs) ? `${elapsedMs} ms` : "—"}</dd>`
