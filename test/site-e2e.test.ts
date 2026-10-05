@@ -52,6 +52,39 @@ test('the built site serves BrowserPack v3 (resolver engine, Ruby render modes) 
 
 registerVerticalCases('v3 site', service);
 
+test('Pages v2 built site keeps the accepted #271 real-text semantics', async () => {
+  const transform = async (text: string, profileId = 'historical', renderMode = 'plain') => {
+    const reply = await service.handle({ type: 'transform', requestId: ++requestId, text, profileId, renderMode });
+    assert.equal(reply.type, 'result', reply.message);
+    return reply.result;
+  };
+
+  const historicalRubyCases = [
+    ['学校', '｜學校《がくかう》'],
+    ['必要', '｜必要《ひつえう》'],
+    ['必ずしも', '必ずしも'],
+    ['東南アジア', '東南アジア'],
+    ['好む', '好む'],
+    ['男女', '男女']
+  ] as const;
+  for (const [text, expected] of historicalRubyCases) {
+    const result = await transform(text, 'historical', 'ruby-whole-explicit');
+    assert.equal(result.renderedText, expected, text);
+    assert.equal(result.executionMode, 'vm-authoritative', text);
+  }
+
+  assert.equal((await transform('サービス', 'historical')).renderedText, 'サーヸス');
+  assert.equal((await transform('日本企業', 'historical', 'ruby-whole-explicit')).renderedText, '日本企業');
+  assert.equal((await transform('日本企業', 'modern', 'ruby-whole-explicit')).renderedText, '｜日本企業《にほんきぎょう》');
+  assert.equal((await transform('大人層', 'modern', 'ruby-whole-explicit')).renderedText, '｜大人《おとな》｜層《そう》');
+
+  const necessaryComponents = await transform('必要', 'historical', 'ruby-components-explicit');
+  assert.equal(necessaryComponents.renderedText, '｜必《ひつ》要《えう》');
+
+  const unknown = 'unknown ASCII 😀 zzz';
+  assert.equal((await transform(unknown, 'historical')).renderedText, unknown);
+});
+
 test('the built site includes every runtime module imported by the dedicated worker', async () => {
   const workerSource = await readFile(new URL('../runtime/browser-transform-worker.js', import.meta.url), 'utf8');
   const imported = [...workerSource.matchAll(/importScripts\(([^;]+)\);/gs)]
