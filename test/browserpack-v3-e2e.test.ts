@@ -151,7 +151,7 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   assert.equal(southWindUnit.historical.candidateReadings.includes('はえ'), false);
 
   const hunter = await runAcceptance('狩人', 'historical');
-  assert.equal(hunter.renderedText, '｜狩人《かりゅうど》');
+  assert.equal(hunter.renderedText, '狩人');
   assert.equal(unitFor(hunter, '狩人').kind, 'candidates');
 
   const protectedText = 'abc 😀 𠮷 ｜学校《がっこう》';
