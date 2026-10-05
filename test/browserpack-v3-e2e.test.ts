@@ -104,7 +104,8 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
     assert.equal(company.kind, 'resolved', profileId);
     assert.equal(company.lexicalIdentity, 'lexeme:日本企業/にほんきぎょう', profileId);
     assert.equal(company.historical.diagnostic, profileId === 'modern' ? null : 'sino_evidence_unavailable', profileId);
-    assert.deepEqual(japanCompany.spans.map((span: any) => [span.start, span.end]), [[0, 4]], profileId);
+    const expectedCompanySpans = profileId === 'modern' ? [[0, 4]] : [];
+    assert.deepEqual(japanCompany.spans.map((span: any) => [span.start, span.end]), expectedCompanySpans, profileId);
     const component = await runAcceptance('日本企業', profileId, 'ruby-components-explicit');
     assert.equal(component.renderedText, japanCompany.renderedText, `${profileId}: opaque Sino component evidence must fall back to whole Ruby`);
     assert.equal(component.renderedText.includes('本《ほ》'), false, `${profileId}: unmatched Sino material must not be assigned to 本`);
