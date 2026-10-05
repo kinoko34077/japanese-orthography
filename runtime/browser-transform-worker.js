@@ -31,7 +31,12 @@
     contextual: span.contextual.map((c) => ({ output: c.output, ref: c.fact.detailRef }))
   });
 
-  const createTransformService = ({ openPack }) => {
+  const createTransformService = ({ openPack, executionMode = "parity", adapter: adapterOverride, lexicalRuntime: lexicalRuntimeOverride, programRuntime: programRuntimeOverride }) => {
+    const selectedAdapter = adapterOverride ?? adapter;
+    const selectedLexicalRuntime = lexicalRuntimeOverride ?? lexicalRuntime;
+    const selectedProgramRuntime = programRuntimeOverride ?? programRuntime;
+    const executionModes = new Set(["legacy-only", "parity", "vm-authoritative"]);
+    if (!executionModes.has(executionMode)) throw new RangeError(`unknown execution mode ${executionMode}`);
     let packPromise = null;
     let opens = 0;
     const pack = () => {
@@ -47,14 +52,31 @@
     const lexicalFor = new WeakMap();
     const programFor = new WeakMap();
     const programForPack = async (p) => {
-      if (!programRuntime || typeof p.hasSection !== "function" || !p.hasSection("sequence-pool")) return null;
-      if (!programFor.has(p)) programFor.set(p, programRuntime.createBrowserProgramRuntime(p));
+      if (!selectedProgramRuntime || typeof p.hasSection !== "function" || !p.hasSection("sequence-pool")) return null;
+      if (!programFor.has(p)) programFor.set(p, selectedProgramRuntime.createBrowserProgramRuntime(p));
       return programFor.get(p);
     };
-    const transform = async (p, text, profileId, renderMode) => {
-      if (adapter && lexicalRuntime && typeof p.hasSection === "function" && p.hasSection("lexical-directory")) {
-        if (!lexicalFor.has(p)) lexicalFor.set(p, lexicalRuntime.createBrowserLexicalRuntime(p));
-        return adapter.transformWithResolver(p, lexicalFor.get(p), text, profileId, { renderMode: renderMode ?? "plain" });
+    const programDirection = (p, profileId) => {
+      const period = p.getProfilePolicy(profileId).policy.period;
+      if (profileId === "kinotch-fixed") return ["to-historical", "to-modern"];
+      return [period === "historical" ? "to-historical" : "to-modern"];
+    };
+    const transformWithProgram = async (p, hot, text, profileId, renderMode) => {
+      if (renderMode && renderMode !== "plain") throw new RangeError("vm-authoritative mode currently exposes plain output only; Ruby rendering remains in parity mode");
+      const observation = await hot.transformText(text, profileId, { directions: programDirection(p, profileId) });
+      const charBoundaries = [];
+      for (let i = 0; i < text.length;) {
+        const end = i + planner.charAt(text, i).length;
+        charBoundaries.push([i, end]);
+        i = end;
+      }
+      const raw = planner.assemble(text, profileId, planner.lexicalDag(text.length, [], charBoundaries), observation.candidates ?? [], observation.contextual ?? [], { lexicalMatchCount: observation.lexicalMatchCount ?? 0 });
+      return { ...raw, engine: "rule-program", renderMode: renderMode ?? "plain", programTrace: observation.trace, executionMode: "vm-authoritative" };
+    };
+    const transformLegacy = async (p, text, profileId, renderMode) => {
+      if (selectedAdapter && selectedLexicalRuntime && typeof p.hasSection === "function" && p.hasSection("lexical-directory")) {
+        if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
+        return selectedAdapter.transformWithResolver(p, lexicalFor.get(p), text, profileId, { renderMode: renderMode ?? "plain" });
       }
       return planner.planAndTransform(p, text, profileId);
     };
@@ -64,23 +86,36 @@
         if (message?.type === "open") {
           const p = await pack();
           // render modes are a capability of the v2 resolver path; a v1 pack renders plain text only
-          const renderModes = typeof p.hasSection === "function" && p.hasSection("lexical-directory") && adapter
+          const renderModes = typeof p.hasSection === "function" && p.hasSection("lexical-directory") && selectedAdapter
             ? ["plain", "ruby-whole-explicit", "ruby-whole-implicit", "ruby-components-explicit", "ruby-components-implicit"] : ["plain"];
-          return { type: "opened", requestId: message.requestId, packDigest: p.packDigest, profiles: p.profiles, stats: p.stats(), renderModes };
+          return { type: "opened", requestId: message.requestId, packDigest: p.packDigest, profiles: p.profiles, stats: p.stats(), renderModes, executionModes: [...executionModes] };
         }
         if (message?.type === "transform") {
           const p = await pack();
           const started = Date.now();
-          const raw = await transform(p, `${message.text ?? ""}`, message.profileId, message.renderMode);
-          const hot = await programForPack(p);
-          // Keep the accepted legacy adapter as the output authority until R6 parity is accepted,
-          // but execute the new hot VM beside it and expose its actual ProgramIds for audit.
-          const programTrace = hot ? hot.traceText(`${message.text ?? ""}`, message.profileId) : null;
-          if (programTrace) raw.programTrace = programTrace;
+          const mode = message.executionMode ?? executionMode;
+          if (!executionModes.has(mode)) throw new RangeError(`unknown execution mode ${mode}`);
+          const source = `${message.text ?? ""}`;
+          let raw;
+          if (mode === "vm-authoritative") {
+            const hot = await programForPack(p);
+            if (!hot || typeof hot.transformText !== "function") throw new Error("Rule Program VM admission failed: required hot sections are unavailable");
+            raw = await transformWithProgram(p, hot, source, message.profileId, message.renderMode);
+          } else {
+            raw = await transformLegacy(p, source, message.profileId, message.renderMode);
+            if (mode === "parity") {
+              const hot = await programForPack(p);
+              if (hot && typeof hot.transformText === "function") {
+                const observation = await hot.transformText(source, message.profileId, { directions: programDirection(p, message.profileId) });
+                raw.programTrace = observation.trace;
+                raw.programParity = { candidateCount: observation.candidates?.length ?? 0, renderedText: null, authority: "legacy" };
+              }
+            }
+          }
           lastResults.clear();
           lastResults.set(message.requestId, raw);
           const result = diagnostics ? diagnostics.summarize(raw) : { renderedText: raw.renderedText, spans: raw.spans.map(plainSpan), offsetUnit: raw.offsetUnit };
-          return { type: "result", requestId: message.requestId, result: { ...result, ...(programTrace ? { programTrace } : {}) }, elapsedMs: Date.now() - started };
+          return { type: "result", requestId: message.requestId, result: { ...result, ...(raw.programTrace ? { programTrace: raw.programTrace } : {}), ...(raw.programParity ? { programParity: raw.programParity } : {}), executionMode: mode }, elapsedMs: Date.now() - started };
         }
         if (message?.type === "detail") {
           const p = await pack();

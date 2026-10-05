@@ -31,6 +31,7 @@
       if (!hasHistoricalProvenance) return "none";
       return winner.authority ?? "source_rule"; // set by the resolver adapter (#196 D)
     }
+    if (winner.origin === "program") return (winner.programIds?.length || winner.provenance?.canonicalIds?.length) ? "source_rule" : "none";
     if (winner.origin === "fact") return "literal_fact";
     if (winner.origin === "safety") return "literal_fact";
     const origin = ruleOrigin ?? winner.rule?.origin ?? "historically_attested";
@@ -55,7 +56,7 @@
       if (lexicalAmbiguous) return CERTAINTY.conditional;
     }
     const competed = span.blocked.some((b) => COMPETITION_REASONS.has(b.reason));
-    const sourceAlternatives = span.winners.some((w) => w.fact?.candidate);
+    const sourceAlternatives = span.winners.some((w) => w.fact?.candidate || (w.origin === "program" && w.candidate));
     return competed || sourceAlternatives ? CERTAINTY.conditional : CERTAINTY.unique;
   };
 
@@ -146,6 +147,20 @@
         ...base, kind: "resolver_unit", basis: unit?.historical?.basis ?? (unit?.historical?.contextualKanji === "resolved" ? "contextual_kanji" : unit?.historical?.deterministicKanji ? "deterministic_kanji" : unit?.historical?.route ? `historical_${unit.historical.route}` : "resolver"),
         authority: authorityOf(candidate), ruleChain: [], unit, relationFacts: facts,
         provenance: { sourceRefs: [...new Set([...historicalFacts.flatMap((f) => f.sourceRefs), ...(unit?.historical?.sourceRefs ?? [])])].sort(), evidenceRefs: [...new Set([...historicalFacts.flatMap((f) => f.evidenceRefs), ...(unit?.historical?.evidenceRefs ?? [])])].sort(), canonicalIds: [...new Set([...historicalFacts.map((f) => f.id), ...(unit?.historical?.canonicalIds ?? [])])].sort() }
+      };
+    }
+    if (candidate.origin === "program") {
+      const programIds = [...new Set(candidate.programIds ?? [])];
+      const programs = [];
+      for (const programId of programIds) {
+        const evidence = await pack.loadProgramEvidence(programId);
+        if (evidence) programs.push(evidence);
+      }
+      const canonicalIds = [...new Set(programs.flatMap((program) => program.canonicalIds ?? []))].sort();
+      return {
+        ...base, kind: "rule_program", basis: "rule_program_execution", authority: authorityOf({ ...candidate, provenance: { canonicalIds } }),
+        ruleChain: programIds.map((programId) => `program:${programId}`), programIds, programs,
+        provenance: { sourceRefs: [], evidenceRefs: canonicalIds, canonicalIds }
       };
     }
     if (candidate.origin === "rule") {

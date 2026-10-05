@@ -116,6 +116,20 @@ test('source-backed resolver authority is preserved without a source_rule fallba
   assert.equal(span.authority, 'source_rule');
 });
 
+test('Rule Program candidates retain source authority and branch uncertainty', () => {
+  const raw = {
+    profileId: 'historical', renderedText: '乙', offsetUnit: 'UTF-16', renderMode: 'plain', lexicalMatchCount: 0, units: [],
+    spans: [{
+      detailRef: '0', start: 0, end: 1, renderedStart: 0, renderedEnd: 1, sourceText: '甲', renderedText: '乙',
+      state: 'applied', reasons: [], blocked: [], contextual: [],
+      winners: [{ origin: 'program', output: '乙', ref: 'program:7', programIds: [7], candidate: true }]
+    }]
+  };
+  const span = summarize(raw).spans[0];
+  assert.equal(span.certainty, 'conditional');
+  assert.equal(span.authority, 'source_rule');
+});
+
 test('lazy detail maps back to canonical provenance and equals an eager expansion', async () => {
   const { raw, summary } = await run('溶接と円');
   const lazy = await expandDetail(pack, raw, summary.spans[0].detailRef);

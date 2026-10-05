@@ -47,3 +47,14 @@ test('worker executes the hot VM beside the legacy route and returns actual Prog
   assert.deepEqual(result.result.programTrace.executedProgramIds, [28]);
   assert.deepEqual(result.result.programTrace.runs.map((run: { stage: string; direction: string; channel: string }) => [run.stage, run.direction, run.channel]), [['orthographic', 'to-historical', 'surface']]);
 });
+
+test('vm-authoritative worker output is assembled from the real Rule Program scan', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const result = await service.handle({ type: 'transform', requestId: 'vm-r6', text: '学', profileId: 'historical', renderMode: 'plain' });
+  assert.equal(result.type, 'result', result.message);
+  assert.equal(result.result.renderedText, '學');
+  assert.equal(result.result.executionMode, 'vm-authoritative');
+  assert.deepEqual(result.result.programTrace.executedProgramIds, [28]);
+  assert.equal(result.result.spans[0].authority, 'source_rule');
+});
