@@ -40,12 +40,14 @@ export async function measureRuleProgramMode(root: string, mode: Mode) {
     profileId: RULE_PROGRAM_MEASUREMENT_PROFILE, renderMode: RULE_PROGRAM_MEASUREMENT_RENDER_MODE,
     executionMode: mode
   });
+  if (first.type !== 'result') throw new Error(`measurement ${mode} cold failed: ${first.message ?? first.type}`);
   const afterFirst = requests.length;
   const second = await service.handle({
     type: 'transform', requestId: `${mode}-warm`, text: RULE_PROGRAM_MEASUREMENT_TEXT,
     profileId: RULE_PROGRAM_MEASUREMENT_PROFILE, renderMode: RULE_PROGRAM_MEASUREMENT_RENDER_MODE,
     executionMode: mode
   });
+  if (second.type !== 'result') throw new Error(`measurement ${mode} warm failed: ${second.message ?? second.type}`);
   const warmRequests = requests.slice(afterFirst);
   const loadedSections = [...new Set(requests.map((request) => request.sectionId))];
   return {
