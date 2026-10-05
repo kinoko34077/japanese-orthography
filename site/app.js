@@ -376,7 +376,12 @@
 
     const clearCache = async () => {
       try {
-        if (win.caches) for (const name of await win.caches.keys()) await win.caches.delete(name);
+        if (win.caches) {
+          await win.caches.delete("browser-pack-sections");
+          await win.caches.delete("browser-pack-shell-v1");
+        }
+        cacheState = await readBrowserCacheState(win);
+        updateEngineInfo();
         status("辞書キャッシュを消去しました。再読み込みします。");
         await recover();
       } catch (error) {
