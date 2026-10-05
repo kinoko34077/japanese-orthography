@@ -308,7 +308,7 @@
     const surfaceCandidatesOf = (observation, options = {}) => {
       const surface = (observation.candidates ?? [])
         .filter((candidate) => !candidate.channel || candidate.channel === "surface");
-      if (surface.length > 0 || (options.lexicalMatches?.length ?? 0) > 0) return surface;
+      if (surface.length > 0) return surface;
       // Some source-backed native-kana rules are indexed on the reading
       // channel and have no lexical surface match (for example サービス ->
       // サーヸス). In that bounded case the Rule Program result is the
