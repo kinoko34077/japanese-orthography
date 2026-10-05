@@ -57,7 +57,10 @@ describe('site cache contract (#185 H)', () => {
     assert.doesNotMatch(sw, /localStorage|indexedDB|textarea/i);
     const app = await readFile(new URL('../site/app.js', import.meta.url), 'utf8');
     assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
+    assert.match(app, /caches\.delete\("browser-pack-sections"\)/);
+    assert.match(app, /caches\.delete\("browser-pack-shell-v1"\)/);
+    assert.doesNotMatch(app, /for \(const name of await win\.caches\.keys\(\)\)/);
     const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
-    assert.match(html, /id="clear-cache"[^>]*>キャッシュを消去/);
+    assert.match(html, /id="clear-cache"[^>]*>辞書キャッシュを消去/);
   });
 });

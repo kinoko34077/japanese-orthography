@@ -46,17 +46,25 @@ test('unit rendered offsets follow length-changing spans (Ruby mode)', async () 
   assert.equal(result.renderedText.slice(today.renderedStart, today.renderedEnd), '今日');
 });
 
-test('辞書情報表示: inspect mode adds neutral, keyboard-focusable unit marks; off by default', async () => {
+test('診断表示: 変更なし語のinspectはneutral markとして任意表示し、通常表示には混ぜない', async () => {
   const { result } = await transform('学校と今日');
-  const plain = app.renderResultHtml(result);
-  assert.doesNotMatch(plain, /diag lexeme/);
-  const inspect = app.renderResultHtml(result, { inspect: true });
+  const clean = app.renderResultHtml(result);
+  assert.equal(clean, '學校と今日');
+  assert.doesNotMatch(clean, /class="diag/);
+
+  const diagnostic = app.renderResultHtml(result, { diagnostic: true });
+  assert.match(diagnostic, /<mark class="diag diag-unique"[^>]*>學校<\/mark>/);
+  assert.doesNotMatch(diagnostic, /diag lexeme/);
+
+  const inspect = app.renderResultHtml(result, { diagnostic: true, inspect: true });
   const mark = /<span class="diag lexeme" role="button" tabindex="0" aria-pressed="false" data-ref="(u:\d+)"[^>]*>今日<\/span>/.exec(inspect);
   assert.ok(mark, inspect);
   assert.doesNotMatch(mark![0], /diag-(unique|conditional|unresolved)|data-certainty/);
-  assert.match(inspect, /<mark class="diag diag-unique"[^>]*>學校<\/mark>/);
+
   const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
-  assert.match(html, /<input type="checkbox" id="inspect"> 辞書情報表示/);
+  assert.match(html, /<input type="checkbox" id="inspect"> 変更のない語も調べる/);
+  assert.match(html, /name="resultView" value="clean" checked/);
+  assert.match(html, /name="resultView" value="diagnostic"/);
 });
 
 test('a recognized unchanged unit opens a Japanese-first inspector with lexical knowledge and provenance', async () => {

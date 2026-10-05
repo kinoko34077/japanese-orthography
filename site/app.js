@@ -9,27 +9,56 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (Terminology) {
   "use strict";
 
-  // Diagnostic Pages UI (#185 G). Rendering is a set of pure string functions (testable without a
-  // DOM); `boot` wires them to the page and to the transform worker. Copy always uses the worker's
-  // plain `renderedText`, so highlight markup and diagnostic labels can never enter copied text.
+  // Pages v2 (#277): 通常利用のclean resultを主表示とし、診断と技術情報は必要時だけ開く。
+  // Copyは常にWorkerのrenderedTextだけを使用し、表示用markupや診断labelを混入させない。
 
   const { escapeHtml } = Terminology;
   const CERTAINTY_CLASS = { unique: "diag-unique", conditional: "diag-conditional", unresolved: "diag-unresolved" };
   const CERTAINTY_TEXT = { unique: "✓ 一意確定", conditional: "◆ 条件付き確定", unresolved: "! 未解決" };
+  const RENDER_MODE_MAP = {
+    none: { implicit: "plain", explicit: "plain" },
+    whole: { implicit: "ruby-whole-implicit", explicit: "ruby-whole-explicit" },
+    components: { implicit: "ruby-components-implicit", explicit: "ruby-components-explicit" }
+  };
 
-  /**
-   * Result HTML: rendered text with one focusable, labelled element per diagnostic span. With
-   * `inspect` (辞書情報表示, #196 H) recognized-but-unchanged units are also focusable, with a
-   * neutral affordance that carries no certainty colour.
-   */
+  const renderModeFromControls = (target, notation) => {
+    if (!Object.prototype.hasOwnProperty.call(RENDER_MODE_MAP, target)) {
+      throw new RangeError(`unknown Ruby target ${target}`);
+    }
+    if (!["implicit", "explicit"].includes(notation)) {
+      throw new RangeError(`unknown Ruby notation ${notation}`);
+    }
+    return RENDER_MODE_MAP[target][notation];
+  };
+
+  const readBrowserCacheState = async (win) => {
+    const online = win?.navigator?.onLine !== false;
+    if (!win?.caches || typeof win.caches.open !== "function") {
+      return { available: false, online, sectionCount: 0, reuse: false };
+    }
+    try {
+      const cache = await win.caches.open("browser-pack-sections");
+      const keys = typeof cache.keys === "function" ? await cache.keys() : [];
+      const sectionCount = Array.isArray(keys) ? keys.length : 0;
+      return { available: true, online, sectionCount, reuse: sectionCount > 0 };
+    } catch {
+      return { available: false, online, sectionCount: 0, reuse: false };
+    }
+  };
+
   const renderResultHtml = (result, options = {}) => {
+    const text = result.renderedText ?? "";
+    if (!options.diagnostic) {
+      return text ? escapeHtml(text) : '<p class="muted">（結果は空です）</p>';
+    }
+
     let html = "";
     let at = 0;
-    const text = result.renderedText;
     const marks = [
-      ...result.spans.map((span) => ({ kind: "span", item: span })),
+      ...(result.spans ?? []).map((span) => ({ kind: "span", item: span })),
       ...(options.inspect ? (result.units ?? []).map((unit) => ({ kind: "unit", item: unit })) : [])
     ].sort((a, b) => a.item.renderedStart - b.item.renderedStart);
+
     for (const { kind, item } of marks) {
       if (item.renderedStart < at) continue;
       html += escapeHtml(text.slice(at, item.renderedStart));
@@ -49,131 +78,234 @@
     return html || '<p class="muted">（結果は空です）</p>';
   };
 
-  const renderSummaryHtml = (result) => {
+  const renderSummaryHtml = (result, options = {}) => {
     const c = result.counts ?? { unique: 0, conditional: 0, unresolved: 0 };
+    if (options.diagnostic) {
+      return [
+        `<span class="count diag-unique">✓ 一意確定 ${c.unique}</span>`,
+        `<span class="count diag-conditional">◆ 条件付き確定 ${c.conditional}</span>`,
+        `<span class="count diag-unresolved">! 未解決 ${c.unresolved}</span>`,
+        `<span class="muted">認識候補 ${result.lexicalMatchCount ?? 0} 件</span>`
+      ].join("");
+    }
+    const changed = (result.spans ?? []).filter((span) => span.changed).length;
     return [
-      `<span class="count diag-unique">✓ 一意確定 ${c.unique}</span>`,
-      `<span class="count diag-conditional">◆ 条件付き確定 ${c.conditional}</span>`,
-      `<span class="count diag-unresolved">! 未解決 ${c.unresolved}</span>`,
-      `<span class="muted">語の候補 ${result.lexicalMatchCount ?? 0} 件を確認</span>`
+      `<span class="count count-neutral">変換 ${changed}</span>`,
+      `<span class="count count-warning">条件付き ${c.conditional}</span>`,
+      `<span class="count${c.unresolved ? " count-alert" : " count-neutral"}">未解決 ${c.unresolved}</span>`
     ].join("");
   };
 
   const list = (values, render = (v) => `<code>${escapeHtml(v)}</code>`) =>
     values && values.length ? `<ul>${values.map((v) => `<li>${render(v)}</li>`).join("")}</ul>` : '<span class="muted">なし</span>';
 
-  const renderCandidate = (terms, c) => {
-    const parts = [`<strong>${escapeHtml(c.output)}</strong>`];
-    if (c.reason) parts.push(`理由: ${terms.labelHtml(`reason.${c.reason}`)}`);
-    if (c.basis) parts.push(`方法: ${escapeHtml(terms.term(`basis.${c.basis}`).ja)}`);
-    if (c.authority) parts.push(`根拠: ${escapeHtml(terms.term(`authority.${c.authority}`).ja)}`);
-    if (c.fact?.id) parts.push(`事実: <code>${escapeHtml(c.fact.id)}</code>${c.fact.sourceCandidate ? "（出典上の別案）" : ""}`);
-    if (c.rule?.id) parts.push(`規則: <code>${escapeHtml(c.rule.id)}</code>`);
-    if (c.provenance) parts.push(`出典: ${(c.provenance.sourceRefs ?? []).map((s) => `<code>${escapeHtml(s)}</code>`).join(" ")}`);
-    if (c.evidence && c.evidence.programCount > c.evidence.programs.length) parts.push(`Program証拠: ${c.evidence.programs.length}/${c.evidence.programCount} 件（追加取得可能）`);
+  const renderCandidate = (terms, candidate) => {
+    const parts = [`<strong>${escapeHtml(candidate.output)}</strong>`];
+    if (candidate.reason) parts.push(`理由: ${terms.labelHtml(`reason.${candidate.reason}`)}`);
+    if (candidate.basis) parts.push(`方法: ${escapeHtml(terms.term(`basis.${candidate.basis}`).ja)}`);
+    if (candidate.authority) parts.push(`根拠: ${escapeHtml(terms.term(`authority.${candidate.authority}`).ja)}`);
+    if (candidate.fact?.id) parts.push(`事実: <code>${escapeHtml(candidate.fact.id)}</code>${candidate.fact.sourceCandidate ? "（出典上の別案）" : ""}`);
+    if (candidate.rule?.id) parts.push(`規則: <code>${escapeHtml(candidate.rule.id)}</code>`);
+    if (candidate.provenance) parts.push(`出典: ${(candidate.provenance.sourceRefs ?? []).map((s) => `<code>${escapeHtml(s)}</code>`).join(" ")}`);
+    if (candidate.evidence && candidate.evidence.programCount > candidate.evidence.programs.length) {
+      parts.push(`Program証拠: ${candidate.evidence.programs.length}/${candidate.evidence.programCount} 件（追加取得可能）`);
+    }
     return parts.join("<br>");
   };
 
-  /** Detail inspector HTML, every field labelled Japanese-first via the terminology layer. */
   const renderDetailHtml = (terms, detail) => {
     const row = (key, value) => `<dt>${terms.labelHtml(key)}</dt><dd>${value}</dd>`;
     const certainty = terms.term(`certainty.${detail.certainty}`);
-    return `<p><span class="badge ${CERTAINTY_CLASS[detail.certainty]}">${escapeHtml(certainty.ja)}</span> `
+    const modern = detail.readings?.modern?.length ? detail.readings.modern.map(escapeHtml).join("、") : "—";
+    const historical = detail.readings?.historical?.length ? detail.readings.historical.map(escapeHtml).join("、") : "—";
+
+    const overview = `<div class="detail-overview">`
+      + `<p><span class="badge ${CERTAINTY_CLASS[detail.certainty]}">${escapeHtml(certainty.ja)}</span> `
       + `「${escapeHtml(detail.sourceText)}」→「${escapeHtml(detail.renderedText)}」</p>`
       + `<p class="muted">${escapeHtml(certainty.short)}</p>`
       + "<dl>"
       + row("status", escapeHtml(terms.term(`status.${detail.status}`).ja))
-      + row("lexicalIdentity", detail.lexicalIdentity ? `<code>${escapeHtml(detail.lexicalIdentity)}</code>` : '<span class="muted">一つに決まりません</span>')
-      + row("lexicalCandidates", list(detail.lexicalCandidates))
-      + row("readings", `現代: ${detail.readings.modern.length ? detail.readings.modern.map(escapeHtml).join("、") : "—"}<br>歴史的: ${detail.readings.historical.length ? detail.readings.historical.map(escapeHtml).join("、") : "—"}`)
+      + row("readings", `現代: ${modern}<br>歴史的: ${historical}`)
+      + "</dl></div>";
+
+    const diagnostics = `<details class="detail-diagnostics" open><summary>診断情報</summary><dl>`
       + row("morphologyContext", escapeHtml(detail.morphologyContext.note))
       + row("basis", detail.basis ? escapeHtml(terms.term(`basis.${detail.basis}`).ja) : '<span class="muted">なし</span>')
       + row("authority", escapeHtml(terms.term(`authority.${detail.authority}`).ja))
+      + row("acceptedCandidates", list(detail.acceptedCandidates, (candidate) => renderCandidate(terms, candidate)))
+      + row("rejectedCandidates", list(detail.rejectedCandidates, (candidate) => renderCandidate(terms, candidate)))
+      + row("reasonCode", list(detail.reasonCodes, (reason) => terms.labelHtml(`reason.${reason}`)))
+      + "</dl></details>";
+
+    const technical = `<details class="detail-technical"><summary>技術情報</summary><dl>`
+      + row("lexicalIdentity", detail.lexicalIdentity ? `<code>${escapeHtml(detail.lexicalIdentity)}</code>` : '<span class="muted">一つに決まりません</span>')
+      + row("lexicalCandidates", list(detail.lexicalCandidates))
       + row("ruleChain", list(detail.ruleChain))
-      + row("acceptedCandidates", list(detail.acceptedCandidates, (c) => renderCandidate(terms, c)))
-      + row("rejectedCandidates", list(detail.rejectedCandidates, (c) => renderCandidate(terms, c)))
-      + row("reasonCode", list(detail.reasonCodes, (r) => terms.labelHtml(`reason.${r}`)))
-      + row("retainedDistinctions", Object.keys(detail.retainedDistinctions).length ? list(Object.entries(detail.retainedDistinctions).map(([k, v]) => `${k}: ${v}`)) : '<span class="muted">なし</span>')
-      + row("provenance", `${escapeHtml(terms.term("provenance.sourceRefs").ja)}: ${list(detail.provenance.sourceRefs)}${escapeHtml(terms.term("provenance.evidenceRefs").ja)}: ${list(detail.provenance.evidenceRefs)}`)
+      + row("retainedDistinctions", Object.keys(detail.retainedDistinctions ?? {}).length
+        ? list(Object.entries(detail.retainedDistinctions).map(([key, value]) => `${key}: ${value}`))
+        : '<span class="muted">なし</span>')
+      + row("provenance", `${escapeHtml(terms.term("provenance.sourceRefs").ja)}: ${list(detail.provenance.sourceRefs)}`
+        + `${escapeHtml(terms.term("provenance.evidenceRefs").ja)}: ${list(detail.provenance.evidenceRefs)}`)
       + row("compatibilityAgreement", escapeHtml(detail.compatibilityAgreement.note))
       + row("profileEffects", `${escapeHtml(terms.term(`profile.${detail.profileEffects.profileId}`).ja)}（時代: ${escapeHtml(detail.profileEffects.period ?? "—")}）`)
       + row("range", `原文 ${detail.range.start}–${detail.range.end} / 結果 ${detail.range.renderedStart}–${detail.range.renderedEnd}`)
-      + "</dl>";
+      + "</dl></details>";
+
+    return overview + diagnostics + technical;
   };
 
-  /** Inspector for a recognized unit (#196 H): what the dictionary knows, even when nothing changed. */
   const renderUnitDetailHtml = (terms, detail) => {
     const row = (key, value) => `<dt>${terms.labelHtml(key)}</dt><dd>${value}</dd>`;
-    const yesNo = (v) => (v ? "はい" : "いいえ");
-    const r = detail.recognition;
+    const yesNo = (value) => (value ? "はい" : "いいえ");
+    const recognition = detail.recognition;
     const morph = detail.morphologyContext;
-    const lexemeHtml = (l) => `<code>${escapeHtml(l.lexicalIdentity)}</code>`
-      + `<br>${escapeHtml(terms.term("lexicalForms").ja)}: ${l.forms.length ? l.forms.map((f) => `${escapeHtml(f.surface)}${f.flags.filter((x) => x !== "listed").map((x) => `<span class="hint">［${escapeHtml(terms.term(`formFlag.${x}`).ja)}］</span>`).join("")}`).join("、") : "—"}`
-      + `<br>${escapeHtml(terms.term("readings.modern").ja)}: ${l.readings.modern.length ? l.readings.modern.map(escapeHtml).join("、") : "—"}`
-      + `<br>${escapeHtml(terms.term("readings.historical").ja)}: ${l.readings.historical.length ? l.readings.historical.map((h) => `${escapeHtml(h.surface ?? "")}《${escapeHtml(h.reading)}》${h.route ? `（${escapeHtml(terms.term(`route.${h.route}`).ja)}）` : ""}`).join("、") : "—"}`
-      + `<br>${escapeHtml(terms.term("morphology").ja)}: ${l.morphology.length ? l.morphology.map((m) => escapeHtml([m.partOfSpeech.join("・"), m.conjugationType, m.conjugationForm].filter(Boolean).join(" / "))).join("；") : "—"}`;
-    return `<p><span class="badge lexeme">${escapeHtml(terms.term("recognition.recognized").ja)}</span> 「${escapeHtml(detail.sourceText)}」</p>`
-      + `<p class="muted">${escapeHtml(terms.term("recognition").short)}</p>`
-      + "<dl>"
-      + row("recognition", `${escapeHtml(terms.term("recognition.resolved").ja)}: ${yesNo(r.resolved)} ／ ${escapeHtml(terms.term("recognition.changed").ja)}: ${yesNo(r.changed)}`)
-      + row("lexicalIdentity", detail.lexicalIdentity ? `<code>${escapeHtml(detail.lexicalIdentity)}</code>` : '<span class="muted">一つに決まりません</span>')
-      + row("lexicalCandidates", list(detail.lexemes, (l) => lexemeHtml(l)))
+    const lexemeHtml = (lexeme) => `<code>${escapeHtml(lexeme.lexicalIdentity)}</code>`
+      + `<br>${escapeHtml(terms.term("lexicalForms").ja)}: ${lexeme.forms.length ? lexeme.forms.map((form) => `${escapeHtml(form.surface)}${form.flags.filter((flag) => flag !== "listed").map((flag) => `<span class="hint">［${escapeHtml(terms.term(`formFlag.${flag}`).ja)}］</span>`).join("")}`).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("readings.modern").ja)}: ${lexeme.readings.modern.length ? lexeme.readings.modern.map(escapeHtml).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("readings.historical").ja)}: ${lexeme.readings.historical.length ? lexeme.readings.historical.map((historical) => `${escapeHtml(historical.surface ?? "")}《${escapeHtml(historical.reading)}》${historical.route ? `（${escapeHtml(terms.term(`route.${historical.route}`).ja)}）` : ""}`).join("、") : "—"}`
+      + `<br>${escapeHtml(terms.term("morphology").ja)}: ${lexeme.morphology.length ? lexeme.morphology.map((item) => escapeHtml([item.partOfSpeech.join("・"), item.conjugationType, item.conjugationForm].filter(Boolean).join(" / "))).join("；") : "—"}`;
+
+    const overview = `<div class="detail-overview"><p><span class="badge lexeme">${escapeHtml(terms.term("recognition.recognized").ja)}</span> 「${escapeHtml(detail.sourceText)}」</p>`
+      + `<p class="muted">${escapeHtml(terms.term("recognition").short)}</p><dl>`
+      + row("recognition", `${escapeHtml(terms.term("recognition.resolved").ja)}: ${yesNo(recognition.resolved)} ／ ${escapeHtml(terms.term("recognition.changed").ja)}: ${yesNo(recognition.changed)}`)
       + row("readings", detail.reading ? escapeHtml(detail.reading) : '<span class="muted">一つに決まりません</span>')
+      + row("readings.historical", detail.historical?.kana ? escapeHtml(detail.historical.kana) : '<span class="muted">なし</span>')
+      + "</dl></div>";
+
+    const diagnostics = `<details class="detail-diagnostics" open><summary>辞書・診断情報</summary><dl>`
+      + row("lexicalCandidates", list(detail.lexemes, (lexeme) => lexemeHtml(lexeme)))
       + row("morphologyContext", morph.available ? escapeHtml([morph.partOfSpeech.join("・"), morph.conjugationType, morph.conjugationForm].filter(Boolean).join(" / ")) : escapeHtml(morph.note))
       + row("inflection", detail.inflection ? `${escapeHtml(detail.inflection.baseSurface)}（${escapeHtml(detail.inflection.conjugationForm)}）` : '<span class="muted">なし</span>')
       + row("candidates", list(detail.candidateForms))
-      + row("readings.historical", detail.historical?.kana ? escapeHtml(detail.historical.kana) : '<span class="muted">なし</span>')
-      + row("provenance", `${escapeHtml(terms.term("provenance.sourceRefs").ja)}: ${list(detail.provenance.sourceRefs)}${escapeHtml(terms.term("provenance.evidenceRefs").ja)}: ${list(detail.provenance.evidenceRefs)}`)
+      + "</dl></details>";
+
+    const technical = `<details class="detail-technical"><summary>技術情報</summary><dl>`
+      + row("lexicalIdentity", detail.lexicalIdentity ? `<code>${escapeHtml(detail.lexicalIdentity)}</code>` : '<span class="muted">一つに決まりません</span>')
+      + row("provenance", `${escapeHtml(terms.term("provenance.sourceRefs").ja)}: ${list(detail.provenance.sourceRefs)}`
+        + `${escapeHtml(terms.term("provenance.evidenceRefs").ja)}: ${list(detail.provenance.evidenceRefs)}`)
       + row("profileEffects", `${escapeHtml(terms.term(`profile.${detail.profileEffects.profileId}`).ja)}（時代: ${escapeHtml(detail.profileEffects.period ?? "—")}）`)
       + row("renderMode", escapeHtml(terms.term(`renderMode.${detail.renderMode}`).ja))
       + row("range", `原文 ${detail.range.start}–${detail.range.end}`)
-      + "</dl>";
+      + "</dl></details>";
+
+    return overview + diagnostics + technical;
   };
 
   const renderPolicyHtml = (terms, policySection, profileId) => {
-    const p = policySection?.policy ?? {};
+    const policy = policySection?.policy ?? {};
     return `<dl><dt>プロファイル</dt><dd>${escapeHtml(terms.term(`profile.${profileId}`).ja)} — ${escapeHtml(terms.term(`profile.${profileId}`).short)}</dd>`
-      + `<dt>対象の時代</dt><dd>${escapeHtml(p.period ?? "—")}</dd>`
-      + `<dt>無効にしている規則</dt><dd>${(p.disabledRuleIds ?? []).length ? (p.disabledRuleIds ?? []).map((r) => `<code>${escapeHtml(r)}</code>`).join(" ") : "なし"}</dd></dl>`
-      + '<p class="muted">この版では、プロファイルの切り替えで規則の使い分けを行います（個別の規則の切り替えは今後対応予定です）。</p>';
+      + `<dt>対象の時代</dt><dd>${escapeHtml(policy.period ?? "—")}</dd>`
+      + `<dt>無効にしている規則</dt><dd>${(policy.disabledRuleIds ?? []).length ? (policy.disabledRuleIds ?? []).map((rule) => `<code>${escapeHtml(rule)}</code>`).join(" ") : "なし"}</dd></dl>`
+      + '<p class="muted">プロファイルで変換方針を切り替えます。個別規則の手動選択は行いません。</p>';
   };
 
-  /** Text placed on the clipboard: the plain converted text only. */
+  const renderEngineInfoHtml = ({ manifest, openReply, result, elapsedMs, cacheState }) => {
+    const compilerVersion = manifest?.compilerVersion ?? "—";
+    const digest = openReply?.packDigest ? `${openReply.packDigest.slice(0, 12)}…` : "—";
+    const mode = result?.executionMode ?? null;
+    const engine = mode === "vm-authoritative" ? "Rule Program VM"
+      : mode === "parity" ? "Parity検証"
+        : mode === "legacy-only" ? "Legacy互換" : "変換後に表示";
+    const modes = openReply?.renderModes?.length ? openReply.renderModes.join(" / ") : "plain";
+    const startupSections = Number(openReply?.stats?.sectionsLoaded ?? 0);
+    const startupBytes = Number(openReply?.stats?.bytesLoaded ?? 0);
+    const online = cacheState?.online !== false ? "オンライン" : "オフライン";
+    const cache = !cacheState?.available
+      ? "利用状況を取得できません"
+      : cacheState.reuse
+        ? `再利用候補 ${cacheState.sectionCount} section`
+        : "初回状態 / 0 section";
+    return `<dl><dt>実行パック</dt><dd>BrowserPack v${escapeHtml(compilerVersion)}</dd>`
+      + `<dt>辞書ID</dt><dd><code>${escapeHtml(digest)}</code></dd>`
+      + `<dt>実行エンジン</dt><dd>${escapeHtml(engine)}</dd>`
+      + `<dt>接続状態</dt><dd>${online}</dd>`
+      + `<dt>端末キャッシュ</dt><dd>${escapeHtml(cache)}</dd>`
+      + `<dt>起動時ロード</dt><dd>起動時 ${startupSections.toLocaleString("ja-JP")} section / ${startupBytes.toLocaleString("ja-JP")} byte</dd>`
+      + `<dt>前回の変換</dt><dd>${Number.isFinite(elapsedMs) ? `${elapsedMs} ms` : "—"}</dd>`
+      + `<dt>対応出力</dt><dd class="technical-wrap">${escapeHtml(modes)}</dd></dl>`;
+  };
+
   const copyText = (result) => result.renderedText;
 
-  // ---- page wiring --------------------------------------------------------------------------------
   const boot = (win) => {
     const doc = win.document;
     const $ = (id) => doc.getElementById(id);
     const status = (text, kind = "info", retry = null) => {
-      const el = $("status");
-      el.className = `status${kind === "error" ? " error" : ""}`;
-      el.textContent = text;
+      const element = $("status");
+      element.className = `status${kind === "error" ? " error" : ""}`;
+      element.textContent = text;
       if (retry) {
         const button = doc.createElement("button");
         button.type = "button";
         button.textContent = "再読み込み";
         button.addEventListener("click", retry);
-        el.appendChild(button);
+        element.appendChild(button);
       }
     };
+
     let terms = null;
     let client = null;
     let current = null;
     let selected = null;
+    let openReply = null;
+    let manifest = null;
+    let supportedRenderModes = new Set(["plain"]);
+    let cacheState = { available: false, online: win.navigator?.onLine !== false, sectionCount: 0, reuse: false };
 
     const profile = () => doc.querySelector('input[name="profile"]:checked').value;
+    const resultView = () => doc.querySelector('input[name="resultView"]:checked')?.value ?? "clean";
+    const rubyTarget = () => doc.querySelector('input[name="rubyTarget"]:checked')?.value ?? "none";
+    const rubyNotation = () => doc.querySelector('input[name="rubyNotation"]:checked')?.value ?? "implicit";
     const renderMode = () => {
-      const checked = doc.querySelector('input[name="renderMode"]:checked');
-      return checked && !checked.disabled && !$("render-modes").hidden ? checked.value : "plain";
+      const mode = renderModeFromControls(rubyTarget(), rubyNotation());
+      if (!supportedRenderModes.has(mode)) throw new Error(`この辞書は出力形式 ${mode} に対応していません`);
+      return mode;
     };
     const manifestUrl = new URL("browser-pack/manifest.json", win.location.href).href;
 
-    const showDetail = async (ref, el) => {
+    const updateEngineInfo = () => {
+      if (!$("engine-info")) return;
+      $("engine-info").innerHTML = renderEngineInfoHtml({
+        manifest,
+        openReply,
+        result: current?.result,
+        elapsedMs: current?.elapsedMs,
+        cacheState
+      });
+    };
+
+    const syncOutputControls = () => {
+      const none = rubyTarget() === "none";
+      $("notation-group")?.setAttribute("aria-disabled", none ? "true" : "false");
+      for (const radio of doc.querySelectorAll('input[name="rubyNotation"]')) radio.disabled = none;
+    };
+
+    const closeDetail = ({ restoreFocus = false } = {}) => {
+      $("detail").hidden = true;
+      if (selected) {
+        selected.setAttribute("aria-pressed", "false");
+        if (restoreFocus) selected.focus();
+      }
+      selected = null;
+    };
+
+    const renderCurrent = () => {
       if (!current) return;
+      const diagnostic = resultView() === "diagnostic";
+      const inspect = diagnostic && Boolean($("inspect")?.checked);
+      $("result").innerHTML = renderResultHtml(current.result, { diagnostic, inspect });
+      $("summary").innerHTML = renderSummaryHtml(current.result, { diagnostic });
+      $("diagnostic-legend").hidden = !diagnostic;
+      $("diagnostic-options").hidden = !diagnostic;
+      if (!diagnostic) closeDetail();
+      updateEngineInfo();
+    };
+
+    const showDetail = async (ref, element) => {
+      if (!current || resultView() !== "diagnostic") return;
       if (selected) selected.setAttribute("aria-pressed", "false");
-      selected = el;
-      el.setAttribute("aria-pressed", "true");
+      selected = element;
+      element.setAttribute("aria-pressed", "true");
       const panel = $("detail");
       panel.hidden = false;
       $("detail-body").innerHTML = '<p class="muted">詳細を読み込み中…</p>';
@@ -187,36 +319,54 @@
     };
 
     const convert = async () => {
-      const text = $("source").value;
-      status("変換中…");
+      if (!client) return;
+      status("必要な辞書データを確認し、変換しています…");
       try {
-        const reply = await client.transform(text, profile(), renderMode());
+        const reply = await client.transform($("source").value, profile(), renderMode());
         if (reply.stale) return;
         current = reply;
-        $("result").innerHTML = renderResultHtml(reply.result, { inspect: $("inspect")?.checked });
-        $("summary").innerHTML = renderSummaryHtml(reply.result);
+        cacheState = await readBrowserCacheState(win);
         $("copy").disabled = false;
-        $("detail").hidden = true;
+        closeDetail();
+        renderCurrent();
         status(`変換しました（${reply.elapsedMs} ms）。`);
       } catch (error) {
         status(`変換できませんでした: ${error.message}`, "error", recover);
       }
     };
 
+    const sw = win.navigator.serviceWorker;
+    const pruneCache = (currentManifest) => {
+      const base = new URL(manifestUrl, win.location.href);
+      const keep = currentManifest.sections.map((section) => {
+        const url = new URL(section.path, base);
+        url.searchParams.set("v", section.sha256);
+        return url.href;
+      });
+      sw?.controller?.postMessage({ type: "prune", keep });
+    };
+
     const loadPolicy = async () => {
+      status("辞書データを準備しています…");
       try {
-        const reply = await client.open();
-        const manifest = await (await win.fetch(manifestUrl, { cache: "no-cache" })).json();
-        const profileSection = manifest.sections.find((s) => s.kind === "profile-policy" && s.profileId === profile());
+        cacheState = await readBrowserCacheState(win);
+        openReply = await client.open();
+        manifest = await (await win.fetch(manifestUrl, { cache: "no-cache" })).json();
+        const profileSection = manifest.sections.find((section) => section.kind === "profile-policy" && section.profileId === profile());
         const policy = profileSection ? await (await win.fetch(new URL(profileSection.path, manifestUrl))).json() : null;
         pruneCache(manifest);
-        // output format (Ruby) is shown only when the pack's engine supports it (#196 E)
-        const modes = reply.renderModes ?? ["plain"];
-        $("render-modes").hidden = modes.length < 2;
-        for (const radio of doc.querySelectorAll('input[name="renderMode"]')) radio.disabled = !modes.includes(radio.value);
+
+        supportedRenderModes = new Set(openReply.renderModes ?? ["plain"]);
+        $("render-modes").hidden = supportedRenderModes.size < 2;
+        syncOutputControls();
         $("policy").innerHTML = renderPolicyHtml(terms, policy, profile());
         terms.bindHelp($("policy"));
-        status(`準備完了（辞書 ${reply.packDigest.slice(0, 12)}…）。文章を入力して「変換」を押してください。`);
+        updateEngineInfo();
+        $("convert").disabled = false;
+        const cacheNote = cacheState.available
+          ? (cacheState.reuse ? `端末キャッシュ ${cacheState.sectionCount} sectionを再利用可能` : "初回状態")
+          : "cache状態不明";
+        status(`準備完了（${cacheNote} / 辞書 ${openReply.packDigest.slice(0, 12)}…）。`);
         return true;
       } catch (error) {
         status(`辞書データを読み込めませんでした: ${error.message}`, "error", recover);
@@ -224,29 +374,28 @@
       }
     };
 
-    // Service worker (#185 H): only site files and content-addressed pack sections are cached;
-    // text typed by the user is never stored.
-    const sw = win.navigator.serviceWorker;
-    const pruneCache = (manifest) => {
-      const base = new URL(manifestUrl, win.location.href);
-      const keep = manifest.sections.map((s) => { const u = new URL(s.path, base); u.searchParams.set("v", s.sha256); return u.href; });
-      sw?.controller?.postMessage({ type: "prune", keep });
-    };
     const clearCache = async () => {
       try {
-        if (win.caches) for (const name of await win.caches.keys()) await win.caches.delete(name);
-        status("キャッシュを消去しました。辞書データを再取得します。");
+        if (win.caches) {
+          await win.caches.delete("browser-pack-sections");
+          await win.caches.delete("browser-pack-shell-v1");
+        }
+        cacheState = await readBrowserCacheState(win);
+        updateEngineInfo();
+        status("辞書キャッシュを消去しました。再読み込みします。");
         await recover();
       } catch (error) {
         status(`キャッシュを消去できませんでした: ${error.message}`, "error");
       }
     };
-    if (sw && win.location.protocol !== "file:") sw.register("sw.js").catch(() => { /* caching is optional */ });
-    $("clear-cache")?.addEventListener("click", clearCache);
 
     const recover = async () => {
+      const shouldRetryTransform = Boolean(current) || $("auto").checked || $("source").value.length > 0;
       client.restart();
-      if (await loadPolicy()) await convert();
+      current = null;
+      $("copy").disabled = true;
+      $("convert").disabled = true;
+      if (await loadPolicy() && shouldRetryTransform) await convert();
     };
 
     const start = async () => {
@@ -257,47 +406,86 @@
         status(`用語集を読み込めませんでした: ${error.message}`, "error", () => win.location.reload());
         return;
       }
-      client = win.WorkerClient.createWorkerClient({ createWorker: () => new win.Worker("runtime/browser-transform-worker.js"), manifestUrl });
-      if (await loadPolicy()) await convert();
+      client = win.WorkerClient.createWorkerClient({
+        createWorker: () => new win.Worker("runtime/browser-transform-worker.js"),
+        manifestUrl
+      });
+      await loadPolicy();
     };
 
+    if (sw && win.location.protocol !== "file:") sw.register("sw.js").catch(() => {});
+    const refreshConnectivity = async () => {
+      cacheState = await readBrowserCacheState(win);
+      updateEngineInfo();
+      if (cacheState.online === false) status("オフラインです。利用可能な端末キャッシュから変換を試みます。");
+    };
+    win.addEventListener?.("online", refreshConnectivity);
+    win.addEventListener?.("offline", refreshConnectivity);
+    $("clear-cache")?.addEventListener("click", clearCache);
     $("convert").addEventListener("click", convert);
-    $("inspect")?.addEventListener("change", () => {
-      if (current) $("result").innerHTML = renderResultHtml(current.result, { inspect: $("inspect").checked });
-    });
-    for (const radio of doc.querySelectorAll('input[name="renderMode"]')) radio.addEventListener("change", () => convert());
-    for (const radio of doc.querySelectorAll('input[name="profile"]')) radio.addEventListener("change", () => { loadPolicy().then((ok) => ok && convert()); });
+
+    $("inspect")?.addEventListener("change", renderCurrent);
+    for (const radio of doc.querySelectorAll('input[name="resultView"]')) radio.addEventListener("change", renderCurrent);
+    for (const radio of doc.querySelectorAll('input[name="rubyTarget"], input[name="rubyNotation"]')) {
+      radio.addEventListener("change", () => {
+        syncOutputControls();
+        if (current || $("auto").checked) convert();
+      });
+    }
+    for (const radio of doc.querySelectorAll('input[name="profile"]')) {
+      radio.addEventListener("change", () => {
+        loadPolicy().then((ok) => {
+          if (ok && (current || $("auto").checked)) convert();
+        });
+      });
+    }
+
     let timer = null;
     $("source").addEventListener("input", () => {
       if (!$("auto").checked) return;
       win.clearTimeout(timer);
       timer = win.setTimeout(convert, 400);
     });
+
     $("copy").addEventListener("click", async () => {
       if (!current) return;
       try {
         await win.navigator.clipboard.writeText(copyText(current.result));
-        status("変換結果（プレーンテキスト）をコピーしました。");
+        status("変換結果をコピーしました。");
       } catch {
         status("コピーできませんでした。結果を選択して手動でコピーしてください。", "error");
       }
     });
+
     const activate = (event) => {
-      const el = event.target.closest?.(".diag[data-ref]");
-      if (!el) return;
+      const element = event.target.closest?.(".diag[data-ref]");
+      if (!element) return;
       if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
-      showDetail(el.dataset.ref, el);
+      showDetail(element.dataset.ref, element);
     };
     $("result").addEventListener("click", activate);
     $("result").addEventListener("keydown", activate);
-    $("detail-close").addEventListener("click", () => {
-      $("detail").hidden = true;
-      if (selected) { selected.setAttribute("aria-pressed", "false"); selected.focus(); }
+    $("detail-close").addEventListener("click", () => closeDetail({ restoreFocus: true }));
+    doc.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !$("detail").hidden) closeDetail({ restoreFocus: true });
     });
-    doc.addEventListener("keydown", (event) => { if (event.key === "Escape" && !$("detail").hidden) $("detail-close").click(); });
+
+    syncOutputControls();
     start();
   };
 
-  return { renderResultHtml, renderSummaryHtml, renderDetailHtml, renderPolicyHtml, renderUnitDetailHtml, copyText, boot, CERTAINTY_TEXT };
+  return {
+    renderModeFromControls,
+    readBrowserCacheState,
+    renderResultHtml,
+    renderSummaryHtml,
+    renderDetailHtml,
+    renderPolicyHtml,
+    renderUnitDetailHtml,
+    renderEngineInfoHtml,
+    copyText,
+    boot,
+    CERTAINTY_TEXT
+  };
 });

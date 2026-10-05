@@ -3,59 +3,105 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>表記変換デバッグ</title>
-  <meta name="description" content="日本語の現代表記・歴史的表記・KiNoTch 表記をブラウザ内で変換し、各箇所の確度と根拠を確認できるデバッグ用ツールです。入力した文章はサーバーに送信されません。">
+  <title>日本語表記変換</title>
+  <meta name="description" content="現代表記・歴史的表記・KiNoTch 表記をブラウザ内で変換します。入力した文章はサーバーへ送信されません。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="topbar">
-    <h1>表記変換デバッグ</h1>
-    <p class="lede">文章を貼り付けて変換すると、変換した箇所ごとに「確度」と「根拠」を確認できます。変換はすべてこのブラウザの中で行われ、入力した文章は送信されません。</p>
+    <div class="topbar-inner">
+      <div>
+        <h1>日本語表記変換</h1>
+        <p class="lede">現代表記・歴史的表記・KiNoTch 表記を、根拠を保ったままブラウザ内で変換します。</p>
+      </div>
+      <p class="privacy-note">端末内で処理・本文は送信しません</p>
+    </div>
   </header>
 
   <main class="layout">
     <section class="controls" aria-label="変換の設定">
-      <fieldset class="profiles">
-        <legend>変換プロファイル</legend>
-        <label><input type="radio" name="profile" value="historical" checked> 歴史的表記 <span class="hint">現代 → 歴史的</span></label>
-        <label><input type="radio" name="profile" value="modern"> 現代表記 <span class="hint">歴史的 → 現代</span></label>
-        <label><input type="radio" name="profile" value="kinotch-fixed"> KiNoTch <span class="hint">歴史的＋KiNoTch 独自</span></label>
-      </fieldset>
-      <fieldset class="profiles render-modes" id="render-modes" hidden>
-        <legend>出力形式 <span class="hint">output</span></legend>
-        <label><input type="radio" name="renderMode" value="plain" checked> 通常 <span class="hint">ルビなし</span></label>
-        <label><input type="radio" name="renderMode" value="ruby-whole-explicit"> 語全体にルビ <span class="hint">｜學校《がくかう》</span></label>
-        <label><input type="radio" name="renderMode" value="ruby-components-explicit"> 部分ルビ <span class="hint">構成要素ごと（情報がなければ語全体）</span></label>
-      </fieldset>
-      <div class="actions">
-        <button type="button" id="convert" class="primary">変換</button>
-        <label class="auto"><input type="checkbox" id="auto"> 入力中に自動で変換</label>
-        <label class="auto"><input type="checkbox" id="inspect"> 辞書情報表示 <span class="hint">変更のない語も調べる</span></label>
-        <button type="button" id="copy" disabled>結果をコピー</button>
+      <div class="control-row">
+        <fieldset class="control-group segmented profiles">
+          <legend>表記</legend>
+          <label><input type="radio" name="profile" value="historical" checked><span>歴史的表記</span></label>
+          <label><input type="radio" name="profile" value="modern"><span>現代表記</span></label>
+          <label><input type="radio" name="profile" value="kinotch-fixed"><span>KiNoTch</span></label>
+        </fieldset>
+
+        <fieldset class="control-group output-format" id="render-modes" hidden>
+          <legend>ルビ</legend>
+          <div class="segmented">
+            <label><input type="radio" name="rubyTarget" value="none" checked><span>なし</span></label>
+            <label><input type="radio" name="rubyTarget" value="whole"><span>語全体</span></label>
+            <label><input type="radio" name="rubyTarget" value="components"><span>漢字部分</span></label>
+          </div>
+          <div class="notation-group" id="notation-group" aria-label="ルビ記法">
+            <span class="sub-label">記法</span>
+            <div class="segmented compact">
+              <label><input type="radio" name="rubyNotation" value="implicit" checked><span>通常</span></label>
+              <label><input type="radio" name="rubyNotation" value="explicit"><span>｜付き</span></label>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="button" id="convert" class="primary" disabled>変換</button>
+          <label class="check-control"><input type="checkbox" id="auto"> 入力中に自動変換</label>
+        </div>
       </div>
+
       <details class="settings">
-        <summary>詳細設定</summary>
-        <div id="policy" class="policy"><p class="muted">辞書データの読み込み後に表示されます。</p></div>
-        <p class="cache-row"><button type="button" id="clear-cache">キャッシュを消去</button>
-          <span class="muted">2回目以降の起動を速くするため、辞書データだけを端末に保存しています（入力した文章は保存しません）。</span></p>
+        <summary>詳細設定・技術情報</summary>
+        <div class="settings-grid">
+          <section>
+            <h3>プロファイル</h3>
+            <div id="policy" class="policy"><p class="muted">辞書データの読み込み後に表示されます。</p></div>
+          </section>
+          <section>
+            <h3>実行環境</h3>
+            <div id="engine-info" class="engine-info"><p class="muted">準備後に表示されます。</p></div>
+          </section>
+        </div>
+        <p class="cache-row">
+          <button type="button" id="clear-cache">辞書キャッシュを消去</button>
+          <span class="muted">辞書データだけを端末に保存します。入力した文章は保存しません。</span>
+        </p>
       </details>
     </section>
 
     <section class="pane source-pane" aria-labelledby="source-label">
-      <h2 id="source-label">入力</h2>
-      <textarea id="source" spellcheck="false" placeholder="ここに文章を貼り付けてください" aria-describedby="source-help">溶接の装丁を円周に描いた台風の日のこと。</textarea>
-      <p id="source-help" class="muted">変換したい日本語の文章を入力または貼り付けます。</p>
+      <div class="pane-head">
+        <h2 id="source-label">入力</h2>
+        <span class="hint">貼り付け・直接入力</span>
+      </div>
+      <textarea id="source" spellcheck="false" placeholder="ここに文章を貼り付けてください" aria-describedby="source-help"></textarea>
+      <p id="source-help" class="muted">本文はこの端末内だけで処理されます。</p>
     </section>
 
     <section class="pane result-pane" aria-labelledby="result-label">
-      <h2 id="result-label">変換結果</h2>
+      <div class="pane-head">
+        <h2 id="result-label">変換結果</h2>
+        <button type="button" id="copy" class="copy-button" disabled>結果をコピー</button>
+      </div>
+
+      <div class="result-toolbar">
+        <fieldset class="view-switch segmented compact" aria-label="結果表示">
+          <label><input type="radio" name="resultView" value="clean" checked><span>通常表示</span></label>
+          <label><input type="radio" name="resultView" value="diagnostic"><span>診断表示</span></label>
+        </fieldset>
+        <div id="diagnostic-options" class="diagnostic-options" hidden>
+          <label class="check-control"><input type="checkbox" id="inspect"> 変更のない語も調べる</label>
+        </div>
+      </div>
+
       <div id="summary" class="summary" aria-live="polite"></div>
-      <div id="result" class="result" aria-live="polite"><p class="muted">「変換」を押すと結果がここに表示されます。</p></div>
-      <p class="legend">
+      <div id="result" class="result" aria-live="polite"><p class="muted">文章を入力して「変換」を押すと、結果がここに表示されます。</p></div>
+
+      <p class="legend" id="diagnostic-legend" hidden>
         <span class="diag diag-unique legend-chip">✓ 一意確定</span>
         <span class="diag diag-conditional legend-chip">◆ 条件付き確定</span>
         <span class="diag diag-unresolved legend-chip">! 未解決</span>
-        <span class="muted">色の付いた箇所をクリック（またはタップ・Enter）すると詳細を表示します。</span>
+        <span class="muted">診断箇所をクリック・タップ・Enterで詳しく確認できます。</span>
       </p>
     </section>
 
@@ -68,10 +114,10 @@
     </aside>
   </main>
 
-  <div id="status" class="status" role="status" aria-live="polite">辞書データを準備しています…</div>
+  <div id="status" class="status" role="status" aria-live="polite">画面を準備しました。辞書データを準備しています…</div>
 
   <footer class="footer">
-    <p>データ: JMdict（CC BY-SA 4.0, EDRDG）ほか、各出典は詳細表示の「出典・証拠」を参照してください。</p>
+    <p>データ: JMdict（CC BY-SA 4.0, EDRDG）ほか。各出典は診断表示の「出典・証拠」から確認できます。</p>
   </footer>
 
   <script src="terminology.js"></script>
