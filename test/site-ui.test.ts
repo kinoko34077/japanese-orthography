@@ -167,3 +167,13 @@ test('status文言は辞書準備・変換・完了・復旧可能errorを区別
   assert.match(source, /変換しました/);
   assert.match(source, /再読み込み/);
 });
+
+
+test('初期表示はcold変換を自動実行せず、最初の変換を利用者操作まで遅延する', async () => {
+  const html = await readFile('site/index.html', 'utf8');
+  const source = await readFile('site/app.js', 'utf8');
+  assert.match(html, /<textarea id="source"[^>]*><\/textarea>/);
+  assert.doesNotMatch(source, /if \(await loadPolicy\(\)\) await convert\(\);/);
+  assert.match(source, /await loadPolicy\(\);/);
+  assert.match(source, /if \(current \|\| \$\("auto"\)\.checked\) convert\(\);/);
+});
