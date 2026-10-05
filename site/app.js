@@ -390,11 +390,12 @@
     };
 
     const recover = async () => {
+      const shouldRestoreResult = Boolean(current);
       client.restart();
       current = null;
       $("copy").disabled = true;
       $("convert").disabled = true;
-      if (await loadPolicy()) await convert();
+      if (await loadPolicy() && shouldRestoreResult) await convert();
     };
 
     const start = async () => {
@@ -409,7 +410,7 @@
         createWorker: () => new win.Worker("runtime/browser-transform-worker.js"),
         manifestUrl
       });
-      if (await loadPolicy()) await convert();
+      await loadPolicy();
     };
 
     if (sw && win.location.protocol !== "file:") sw.register("sw.js").catch(() => {});
@@ -428,11 +429,15 @@
     for (const radio of doc.querySelectorAll('input[name="rubyTarget"], input[name="rubyNotation"]')) {
       radio.addEventListener("change", () => {
         syncOutputControls();
-        convert();
+        if (current || $("auto").checked) convert();
       });
     }
     for (const radio of doc.querySelectorAll('input[name="profile"]')) {
-      radio.addEventListener("change", () => { loadPolicy().then((ok) => ok && convert()); });
+      radio.addEventListener("change", () => {
+        loadPolicy().then((ok) => {
+          if (ok && (current || $("auto").checked)) convert();
+        });
+      });
     }
 
     let timer = null;
