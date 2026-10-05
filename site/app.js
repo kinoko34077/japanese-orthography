@@ -390,12 +390,12 @@
     };
 
     const recover = async () => {
-      const shouldRestoreResult = Boolean(current);
+      const shouldRetryTransform = Boolean(current) || $("auto").checked || $("source").value.length > 0;
       client.restart();
       current = null;
       $("copy").disabled = true;
       $("convert").disabled = true;
-      if (await loadPolicy() && shouldRestoreResult) await convert();
+      if (await loadPolicy() && shouldRetryTransform) await convert();
     };
 
     const start = async () => {
