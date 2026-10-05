@@ -70,11 +70,13 @@ test('transformText passes lexical hypotheses to scoped Rule Programs', async ()
   assert.ok(result.trace.executedProgramIds.length > 0);
 });
 
-test('worker executes the hot VM beside the legacy route and returns actual ProgramIds', async () => {
+test('worker defaults to VM-authoritative output after the parity gate', async () => {
   const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
   const service = createTransformService({ openPack: async () => pack });
   const result = await service.handle({ type: 'transform', requestId: 'r6', text: '学', profileId: 'historical', renderMode: 'plain' });
   assert.equal(result.type, 'result');
+  assert.equal(result.result.executionMode, 'vm-authoritative');
+  assert.equal(result.result.renderedText, '學');
   assert.deepEqual(result.result.programTrace.executedProgramIds, [28]);
   assert.deepEqual(result.result.programTrace.runs.map((run: { stage: string; direction: string; channel: string }) => [run.stage, run.direction, run.channel]), [['orthographic', 'to-historical', 'surface']]);
 });
