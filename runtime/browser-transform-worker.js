@@ -61,9 +61,8 @@
       if (profileId === "kinotch-fixed") return ["to-historical", "to-modern"];
       return [period === "historical" ? "to-historical" : "to-modern"];
     };
-    const transformWithProgram = async (p, hot, text, profileId, renderMode) => {
+    const assembleProgramObservation = (text, profileId, observation, renderMode) => {
       if (renderMode && renderMode !== "plain") throw new RangeError("vm-authoritative mode currently exposes plain output only; Ruby rendering remains in parity mode");
-      const observation = await hot.transformText(text, profileId, { directions: programDirection(p, profileId) });
       const charBoundaries = [];
       for (let i = 0; i < text.length;) {
         const end = i + planner.charAt(text, i).length;
@@ -73,6 +72,17 @@
       const raw = planner.assemble(text, profileId, planner.lexicalDag(text.length, [], charBoundaries), observation.candidates ?? [], observation.contextual ?? [], { lexicalMatchCount: observation.lexicalMatchCount ?? 0 });
       return { ...raw, engine: "rule-program", renderMode: renderMode ?? "plain", programTrace: observation.trace, executionMode: "vm-authoritative" };
     };
+    const transformWithProgram = async (p, hot, text, profileId, renderMode) =>
+      assembleProgramObservation(text, profileId, await hot.transformText(text, profileId, { directions: programDirection(p, profileId) }), renderMode);
+    const compareProgramOutput = (legacy, program) => ({
+      equivalent: legacy.renderedText === program.renderedText
+        && (legacy.spans?.length ?? 0) === (program.spans?.length ?? 0),
+      legacyRenderedText: legacy.renderedText,
+      programRenderedText: program.renderedText,
+      legacySpanCount: legacy.spans?.length ?? 0,
+      programSpanCount: program.spans?.length ?? 0,
+      authority: "legacy"
+    });
     const transformLegacy = async (p, text, profileId, renderMode) => {
       if (selectedAdapter && selectedLexicalRuntime && typeof p.hasSection === "function" && p.hasSection("lexical-directory")) {
         if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
@@ -108,7 +118,11 @@
               if (hot && typeof hot.transformText === "function") {
                 const observation = await hot.transformText(source, message.profileId, { directions: programDirection(p, message.profileId) });
                 raw.programTrace = observation.trace;
-                raw.programParity = { candidateCount: observation.candidates?.length ?? 0, renderedText: null, authority: "legacy" };
+                if ((message.renderMode ?? "plain") === "plain") {
+                  raw.programParity = compareProgramOutput(raw, assembleProgramObservation(source, message.profileId, observation, "plain"));
+                } else {
+                  raw.programParity = { candidateCount: observation.candidates?.length ?? 0, renderedText: null, authority: "legacy" };
+                }
               }
             }
           }

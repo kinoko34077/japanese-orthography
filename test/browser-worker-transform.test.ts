@@ -93,3 +93,35 @@ test('parity mode observes one VM scan and never calls traceText as a second exe
   assert.equal(reply.result.executionMode, 'parity');
   assert.deepEqual(reply.result.programTrace.executedProgramIds, [9]);
 });
+
+test('parity mode compares the legacy rendered output with the assembled VM output', async () => {
+  const vmPack = { ...pack, hasSection: () => true };
+  const programRuntime = {
+    createBrowserProgramRuntime: async () => ({
+      transformText: async () => ({
+        candidates: [{ start: 0, end: 1, output: '乙', policy: 'anywhere', origin: 'program', ref: 'program:7', programIds: [7] }],
+        contextual: [],
+        lexicalMatchCount: 0,
+        trace: { executedProgramIds: [7], runs: [] }
+      })
+    })
+  };
+  const adapter = {
+    transformWithResolver: async () => ({
+      profileId: 'historical', sourceText: '甲', renderedText: '乙', offsetUnit: 'utf16-code-unit',
+      spans: [{ start: 0, end: 1, sourceText: '甲', renderedText: '乙', state: 'applied', reasons: [], winners: [], blocked: [], contextual: [] }],
+      units: []
+    })
+  };
+  const service = createTransformService({ openPack: async () => vmPack, executionMode: 'parity', programRuntime, adapter, lexicalRuntime: { createBrowserLexicalRuntime: () => ({}) } });
+  const reply = await service.handle({ type: 'transform', requestId: 'parity-compare', text: '甲', profileId: 'historical', renderMode: 'plain' });
+  assert.equal(reply.type, 'result', reply.message);
+  assert.deepEqual(reply.result.programParity, {
+    equivalent: true,
+    legacyRenderedText: '乙',
+    programRenderedText: '乙',
+    legacySpanCount: 1,
+    programSpanCount: 1,
+    authority: 'legacy'
+  });
+});
