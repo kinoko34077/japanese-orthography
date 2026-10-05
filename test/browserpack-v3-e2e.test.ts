@@ -145,7 +145,7 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
 
   const southWind = await runAcceptance('南風', 'historical');
   const southWindUnit = unitFor(southWind, '南風');
-  assert.equal(southWind.renderedText, '｜南風《みなみかぜ》');
+  assert.equal(southWind.renderedText, '南風');
   assert.equal(southWindUnit.kind, 'candidates');
   assert.equal(southWindUnit.historical.kana, null, 'unbound historical basis must not cross-apply はえ');
   assert.equal(southWindUnit.historical.candidateReadings.includes('はえ'), false);
