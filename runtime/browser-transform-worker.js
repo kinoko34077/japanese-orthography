@@ -546,6 +546,9 @@
           ? { explicit: rubyParts.some((entry) => entry.explicit), component: true }
           : null;
         const rubyEvidence = exactRubyEvidence ?? componentRubyEvidence;
+        const resolverInput = rubyEvidence?.reading
+          ? `${rubyEvidence.explicit ? "｜" : ""}${surface}《${rubyEvidence.reading}》`
+          : surface;
         const lexicalCandidates = (scope.candidatesFor(match.start, match.end) ?? []).filter((candidate) => !rubyEvidence?.reading
           || candidate.reading === rubyEvidence.reading
           || (candidate.modernReadings ?? []).includes(rubyEvidence.reading));
@@ -576,11 +579,11 @@
                 ...provenance
               })
             });
-            resolved = unitResolver.resolveUnit(surface);
+            resolved = unitResolver.resolveUnit(resolverInput);
           }
         } else if (period !== "historical") {
           const unitResolver = resolverFor(p, text, match.start, match.end, () => lexicalCandidates);
-          resolved = unitResolver.resolveUnit(surface);
+          resolved = unitResolver.resolveUnit(resolverInput);
         }
         if (period === "historical" && !resolved && lexicalCandidates.length === 1 && lexicalCandidates[0].reading) {
           const components = await sinoComponentsFor(p);
@@ -611,7 +614,7 @@
         }
         if (!resolved) {
           const unitResolver = resolverFor(p, text, match.start, match.end, () => lexicalCandidates);
-          resolved = unitResolver.resolveUnit(surface);
+          resolved = unitResolver.resolveUnit(resolverInput);
         }
         const summarized = typeof selectedAdapter?.summarizeUnit === "function"
           ? selectedAdapter.summarizeUnit(resolved)
@@ -773,7 +776,10 @@
                   const program = assembleProgramObservation(programSource, message.profileId, { ...observation, candidates: surfaceCandidates }, "plain", { lexicalMatches: scope.lexicalMatches });
                   raw.programParity = compareProgramOutput(raw, restoreRubyInputRanges(program, source, normalizedRuby));
                 } else {
-                  const program = await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { scope, observation, rubyEvidence: normalizedRuby?.ranges ?? [] });
+                  const parityProgramRenderMode = normalizedRuby && (message.renderMode ?? "plain") === "plain"
+                    ? "ruby-whole-explicit"
+                    : message.renderMode;
+                  const program = await transformWithProgramRuby(p, hot, programSource, message.profileId, parityProgramRenderMode, { scope, observation });
                   const parityLegacy = normalizedRuby
                     ? await transformLegacy(p, programSource, message.profileId, (message.renderMode ?? "plain") === "plain" ? "ruby-whole-explicit" : message.renderMode)
                     : raw;
