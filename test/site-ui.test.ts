@@ -10,7 +10,7 @@ const { createTerminology } = require('../site/terminology.js');
 const { createTransformService } = require('../runtime/browser-transform-worker.js');
 const terms = createTerminology(JSON.parse(await readFile('site/terminology-ja.json', 'utf8')));
 const { pack } = await plannerPack();
-const service = createTransformService({ openPack: async () => pack });
+const service = createTransformService({ executionMode: 'legacy-only', openPack: async () => pack });
 const convert = async (text: string, profileId = 'historical') => service.handle({ type: 'transform', requestId: `r-${text}-${profileId}`, text, profileId });
 const stripTags = (html: string) => html.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 

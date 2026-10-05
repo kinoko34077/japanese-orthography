@@ -32,7 +32,7 @@
     contextual: span.contextual.map((c) => ({ output: c.output, ref: c.fact.detailRef }))
   });
 
-  const createTransformService = ({ openPack, executionMode = "parity", adapter: adapterOverride, lexicalRuntime: lexicalRuntimeOverride, programRuntime: programRuntimeOverride }) => {
+  const createTransformService = ({ openPack, executionMode = "vm-authoritative", adapter: adapterOverride, lexicalRuntime: lexicalRuntimeOverride, programRuntime: programRuntimeOverride }) => {
     const selectedAdapter = adapterOverride ?? adapter;
     const selectedLexicalRuntime = lexicalRuntimeOverride ?? lexicalRuntime;
     const selectedProgramRuntime = programRuntimeOverride ?? programRuntime;
@@ -657,6 +657,7 @@
   const attachToWorkerScope = (scope) => {
     let manifestUrl = null;
     const service = createTransformService({
+      executionMode: "vm-authoritative",
       openPack: async () => {
         if (!manifestUrl) throw new Error("pack location not configured");
         const manifest = await (await fetch(manifestUrl, { cache: "no-cache" })).json();

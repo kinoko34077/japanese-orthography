@@ -14,7 +14,7 @@ const hasTypedArrayOrFunction = (value: unknown): boolean => {
 
 test('the worker service opens the pack once and serves repeated requests', async () => {
   let opens = 0;
-  const service = createTransformService({ openPack: async () => { opens += 1; return pack; } });
+  const service = createTransformService({ executionMode: 'legacy-only', openPack: async () => { opens += 1; return pack; } });
   const opened = await service.handle({ type: 'open', requestId: 1 });
   assert.equal(opened.type, 'opened');
   assert.deepEqual(opened.executionModes, ['legacy-only', 'parity', 'vm-authoritative']);
@@ -27,7 +27,7 @@ test('the worker service opens the pack once and serves repeated requests', asyn
 });
 
 test('only plain compact JSON crosses the worker boundary', async () => {
-  const service = createTransformService({ openPack: async () => pack });
+  const service = createTransformService({ executionMode: 'legacy-only', openPack: async () => pack });
   const reply = await service.handle({ type: 'transform', requestId: 1, text: '装丁と溶接と円', profileId: 'historical' });
   assert.equal(hasTypedArrayOrFunction(reply), false);
   assert.deepEqual(structuredClone(reply), reply);
@@ -36,7 +36,7 @@ test('only plain compact JSON crosses the worker boundary', async () => {
 
 test('failures are reported as messages and the pack can be reopened after a failed open', async () => {
   let attempts = 0;
-  const service = createTransformService({ openPack: async () => { attempts += 1; if (attempts === 1) throw new Error('network down'); return pack; } });
+  const service = createTransformService({ executionMode: 'legacy-only', openPack: async () => { attempts += 1; if (attempts === 1) throw new Error('network down'); return pack; } });
   const failed = await service.handle({ type: 'transform', requestId: 1, text: '溶接', profileId: 'historical' });
   assert.deepEqual([failed.type, failed.message], ['error', 'network down']);
   const ok = await service.handle({ type: 'transform', requestId: 2, text: '溶接', profileId: 'historical' });

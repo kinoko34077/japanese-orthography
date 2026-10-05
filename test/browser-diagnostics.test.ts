@@ -182,7 +182,7 @@ test('rejected candidates carry reason codes in the detail of a conflict', async
 });
 
 test('the worker serves summaries and lazy details through the message contract', async () => {
-  const service = createTransformService({ openPack: async () => pack });
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'legacy-only' });
   const result = await service.handle({ type: 'transform', requestId: 'r1', text: '溶接', profileId: 'historical' });
   assert.equal(result.result.spans[0].certainty, 'unique');
   const detail = await service.handle({ type: 'detail', requestId: 'd1', resultId: 'r1', detailRef: '0' });
