@@ -116,8 +116,11 @@
           const sequenceId = pool.find(sequence);
           if (sequenceId < 0) continue;
           const segment = source.slice(offsets[start], offsets[end]);
+          const suppliedSymbol = typeof options.symbolFor === "function" ? options.symbolFor(offsets[start], offsets[end], segment) : undefined;
+          const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
+          const lexemes = typeof options.lexemesFor === "function" ? options.lexemesFor(offsets[start], offsets[end], segment) : undefined;
           for (const stage of stages) for (const direction of directions) for (const channel of channels) {
-            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: length === 1 ? tokens[start] : undefined });
+            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes });
             if (!result.executedProgramIds.length) continue;
             for (const id of result.executedProgramIds) executedProgramIds.add(id);
             runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, ...result });
@@ -126,7 +129,7 @@
               candidates.push({
                 start: offsets[start], end: offsets[end], output: edge.output,
                 policy: stage === "orthographic" && length === 1 ? "anywhere" : stage === "lexical" ? "lexical_boundary" : "whole_lexeme",
-                origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate),
+                origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
                 key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${edge.output}`
               });
             }
@@ -146,7 +149,7 @@
       }
       return { executedProgramIds: [...new Set(runs.flatMap((x) => x.executedProgramIds))], runs };
     };
-    return Object.freeze({ run, transformText, traceText, sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); }, programCount: programView.count, sequenceCount: pool.count });
+    return Object.freeze({ run, transformText, traceText, symbolId: (atom) => symbolizer.idOf(atom), sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); }, programCount: programView.count, sequenceCount: pool.count });
   };
 
   return { createBrowserProgramRuntime };

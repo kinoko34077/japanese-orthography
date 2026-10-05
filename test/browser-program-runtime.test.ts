@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import test from 'node:test';
 import { compileBrowserPack } from '../tools/browser-pack-compiler.ts';
+import { lexicalLayer } from '../tools/browser-pack-lexical-compiler.ts';
 import { BROWSER_PACK_V2_COMPILER_VERSION } from '../tools/browser-pack-model.ts';
 import { transcodeToV3 } from '../tools/browser-pack-v3.ts';
 import { HISTORICAL_PROFILE, KINOTCH_PROFILE, MODERN_PROFILE } from '../tools/orthography-policy.ts';
@@ -14,12 +15,14 @@ import { compileRuleIR } from '../tools/rule-ir.ts';
 const require = createRequire(import.meta.url);
 const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
 const { createBrowserProgramRuntime } = require('../runtime/browser-program-runtime.js');
+const { createBrowserLexicalRuntime } = require('../runtime/browser-lexical-runtime.js');
 const { createTransformService } = require('../runtime/browser-transform-worker.js');
 
 const graph = canonicalizeOrthographyKnowledge(adapterFixture());
 const registry = JSON.parse(await readFile(new URL(`../${SYMBOL_REGISTRY}`, import.meta.url), 'utf8')) as SymbolRegistry;
 const v2 = compileBrowserPack(graph, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
-  compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION
+  compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION,
+  layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
 });
 const v3 = transcodeToV3(v2, registry, { evidence: { graph, ir: compileRuleIR(graph) } });
 
@@ -37,6 +40,20 @@ test('BrowserPack v3 carries the shared hot Rule Program sections and executes b
   const direct = runtime.run({ stage: 'lexical', direction: 'reconstruct', channel: 'reading', text: 'ドイツ', profileId: 'modern' });
   assert.deepEqual(direct.edges.map((edge: { output: string }) => edge.output), ['独乙', '独逸']);
   assert.deepEqual(direct.executedProgramIds, [0]);
+});
+
+test('transformText passes lexical hypotheses to scoped Rule Programs', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const runtime = await createBrowserProgramRuntime(pack);
+  const lexical = createBrowserLexicalRuntime(pack);
+  await lexical.prepare('学校');
+  const school = lexical.lookupSurfaceSync('学校');
+  const result = runtime.transformText('学校', 'historical', {
+    stages: ['diachronic'], directions: ['to-historical'], channels: ['reading'],
+    lexemesFor: () => new Set(school.map((candidate: { lexemeId: number }) => candidate.lexemeId))
+  });
+  assert.ok(result.candidates.some((candidate: { output: string }) => candidate.output === 'がくかう'));
+  assert.ok(result.trace.executedProgramIds.length > 0);
 });
 
 test('worker executes the hot VM beside the legacy route and returns actual ProgramIds', async () => {
