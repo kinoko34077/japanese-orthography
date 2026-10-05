@@ -73,17 +73,27 @@ test('component Ruby mode falls back to whole-word Ruby without component eviden
   assert.equal((await run('学校', 'ruby-components-explicit')).renderedText, '｜學校《がくかう》');
 });
 
-test('Pages: output format is separate from the profile, shown only when the engine supports Ruby', async () => {
+test('Pages: output format is profileと分離し、5 runtime modeを二軸UIへ完全対応付けする', async () => {
   const { readFile } = await import('node:fs/promises');
   const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
   const fieldset = html.slice(html.indexOf('id="render-modes"'), html.indexOf('</fieldset>', html.indexOf('id="render-modes"')));
-  assert.match(html, /<fieldset class="profiles render-modes" id="render-modes" hidden>/);
-  for (const mode of ['plain', 'ruby-whole-explicit', 'ruby-components-explicit']) assert.match(fieldset, new RegExp(`name="renderMode" value="${mode}"`));
+  assert.match(html, /<fieldset class="control-group output-format" id="render-modes" hidden>/);
+  for (const target of ['none', 'whole', 'components']) assert.match(fieldset, new RegExp(`name="rubyTarget" value="${target}"`));
+  for (const notation of ['implicit', 'explicit']) assert.match(fieldset, new RegExp(`name="rubyNotation" value="${notation}"`));
   assert.doesNotMatch(fieldset, /name="profile"/);
+
+  const app = require('../site/app.js');
+  assert.equal(app.renderModeFromControls('none', 'implicit'), 'plain');
+  assert.equal(app.renderModeFromControls('whole', 'implicit'), 'ruby-whole-implicit');
+  assert.equal(app.renderModeFromControls('whole', 'explicit'), 'ruby-whole-explicit');
+  assert.equal(app.renderModeFromControls('components', 'implicit'), 'ruby-components-implicit');
+  assert.equal(app.renderModeFromControls('components', 'explicit'), 'ruby-components-explicit');
 
   const { createTransformService } = require('../runtime/browser-transform-worker.js');
   const v2 = await createTransformService({ openPack: async () => pack }).handle({ type: 'open', requestId: 1 });
-  assert.ok(v2.renderModes.includes('ruby-whole-explicit'));
+  for (const mode of ['plain', 'ruby-whole-implicit', 'ruby-whole-explicit', 'ruby-components-implicit', 'ruby-components-explicit']) {
+    assert.ok(v2.renderModes.includes(mode), mode);
+  }
   const { plannerPack } = await import('./fixtures/browser-pack-fixture.ts');
   const v1pack = (await plannerPack()).pack;
   const v1 = await createTransformService({ openPack: async () => v1pack }).handle({ type: 'open', requestId: 1 });
@@ -97,6 +107,6 @@ test('Pages: output format is separate from the profile, shown only when the eng
     postMessage: (m: any) => { posted.push(m); queueMicrotask(() => listeners.message!({ data: { type: 'result', requestId: m.requestId, result: {} } })); },
     terminate: () => {}
   }) });
-  await client.transform('学校', 'historical', 'ruby-whole-explicit');
-  assert.equal(posted[0].renderMode, 'ruby-whole-explicit');
+  await client.transform('学校', 'historical', 'ruby-components-implicit');
+  assert.equal(posted[0].renderMode, 'ruby-components-implicit');
 });
