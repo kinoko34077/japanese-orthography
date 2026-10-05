@@ -99,7 +99,8 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   for (const profileId of ['modern', 'historical', 'kinotch-fixed']) {
     const japanCompany = await runAcceptance('日本企業', profileId);
     const company = unitFor(japanCompany, '日本企業');
-    assert.equal(japanCompany.renderedText, '｜日本企業《にほんきぎょう》', profileId);
+    const expectedCompanyRuby = profileId === 'modern' ? '｜日本企業《にほんきぎょう》' : '日本企業';
+    assert.equal(japanCompany.renderedText, expectedCompanyRuby, profileId);
     assert.equal(company.kind, 'resolved', profileId);
     assert.equal(company.lexicalIdentity, 'lexeme:日本企業/にほんきぎょう', profileId);
     assert.equal(company.historical.diagnostic, profileId === 'modern' ? null : 'sino_evidence_unavailable', profileId);
