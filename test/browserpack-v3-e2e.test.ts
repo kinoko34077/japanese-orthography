@@ -116,8 +116,8 @@ test('Rule Program parity preserves offsets across multiple explicit Ruby spans'
   });
   assert.equal(result.type, 'result', result.message);
   assert.equal(result.result.renderedText, source);
-  assert.equal(result.result.programParity?.equivalent, true);
-  assert.equal(result.result.programParity?.semanticEquivalent, true);
+  assert.equal(result.result.programParity?.equivalent, true, JSON.stringify(result.result.programParity));
+  assert.equal(result.result.programParity?.semanticEquivalent, true, JSON.stringify(result.result.programParity));
 });
 
 test('v3 measurements are recorded for the current pack', async () => {

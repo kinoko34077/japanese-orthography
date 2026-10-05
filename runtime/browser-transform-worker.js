@@ -185,7 +185,10 @@
         // only the output licensed by this component evidence, while still
         // failing closed when the VM does not expose that output at all.
         const output = outputs.find((item) => item.output === part.historicalReading);
-        if (!output) return null;
+        // Identity components are licensed directly by the source-backed compact
+        // row and therefore do not need a Rule Program edge. A changed component
+        // must still have the exact source-selected VM output.
+        if (!output && part.historicalReading !== part.modernReading) return null;
         historicalParts.push({ ...part, historicalReading: output?.output ?? part.historicalReading });
         for (const id of output?.programIds ?? []) if (!programIds.includes(id)) programIds.push(id);
       }

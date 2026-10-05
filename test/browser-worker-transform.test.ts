@@ -98,11 +98,18 @@ test('parity mode observes one VM scan and never calls traceText as a second exe
 });
 
 test('parity mode compares the legacy rendered output with the assembled VM output', async () => {
-  const vmPack = { ...pack, hasSection: () => true };
+  const vmPack = {
+    ...pack,
+    hasSection: () => true,
+    loadProgramEvidence: async (programId: number) => programId === 7 ? { canonicalIds: ['rule:fixture'] } : null
+  };
   const programRuntime = {
     createBrowserProgramRuntime: async () => ({
       transformText: async () => ({
-        candidates: [{ start: 0, end: 1, output: '乙', policy: 'anywhere', origin: 'program', ref: 'program:7', programIds: [7] }],
+        candidates: [{
+          start: 0, end: 1, output: '乙', policy: 'anywhere', origin: 'program', ref: 'program:7', programIds: [7],
+          unit: { kind: 'resolved', historical: { status: 'resolved', sourceRefs: ['fixture'], evidenceRefs: ['fixture'], canonicalIds: ['rule:fixture'] } }
+        }],
         contextual: [],
         lexicalMatchCount: 0,
         trace: { executedProgramIds: [7], runs: [] }
