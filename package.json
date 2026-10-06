@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "bench:resolver": "node --import tsx tools/bench-orthography-resolution.ts --json",
     "check:profile": "node --import tsx tools/check-profile.ts",
-    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm run validate:browser-pack && npm run validate:symbol-registry && npm run validate:rule-ir && npm run validate:rule-programs && npm run validate:ijidokun && npm run validate:tar-parity && npm run validate:tar-runtime-parity && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
+    "check": "npm run validate && npm run validate:profile && npm run validate:intake && npm run validate:native-kana && npm run validate:sino-kana && npm run validate:kinotch-profile-intake && npm run validate:jmdict-intake && npm run validate:lexical-join && npm run validate:tar-simple-exact && npm run validate:orthography-accounting && npm run validate:orthography-v2-bundle && npm run validate:browser-pack && npm run validate:symbol-registry && npm run validate:rule-ir && npm run validate:rule-programs && npm run validate:ijidokun && npm run validate:tar-parity && npm run validate:tar-runtime-parity && npm test && npm run typecheck && node --import tsx tools/check.ts && npm run check:profile",
     "generate:native-kana": "node --import tsx tools/generate-native-kana.ts",
     "validate:native-kana": "node --import tsx tools/validate-native-kana.ts",
     "generate:sino-kana": "node --import tsx tools/sino-kana.ts",
@@ -53,7 +53,9 @@
     "generate:tar-parity": "node --import tsx tools/tar-parity.ts",
     "validate:tar-parity": "node --import tsx tools/tar-parity.ts --check",
     "generate:tar-runtime-parity": "node --import tsx tools/tar-runtime-parity.ts",
-    "validate:tar-runtime-parity": "node --import tsx tools/tar-runtime-parity.ts --check"
+    "validate:tar-runtime-parity": "node --import tsx tools/tar-runtime-parity.ts --check",
+    "bootstrap:tar-simple-exact": "node --import tsx tools/tar-simple-exact.ts --bootstrap",
+    "validate:tar-simple-exact": "node --import tsx tools/tar-simple-exact.ts"
   },
   "repository": {
     "type": "git",
