@@ -131,6 +131,13 @@ function splitCandidates(value: unknown): string[] {
   return cells;
 }
 
+const normalizeExpectedOutputs = (value: unknown, regex = false): string[] => {
+  const raw = String(value ?? '');
+  if (regex) return [raw];
+  const candidates = splitCandidates(raw);
+  return candidates.length > 0 ? candidates : [raw];
+};
+
 const pairKey = (from: string, to: string) => from + '\u0000' + to;
 
 function hasPayload(value: unknown): boolean {
