@@ -136,7 +136,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
   if (service.opens() !== 1) throw new Error('TAR runtime parity must reuse one BrowserPack instance');
 
   const records: RuntimeParityRecord[] = fixture.records.map((record) => {
-    let status = tentative.get(record.id);
+    let status: RuntimeParityStatus | null = tentative.get(record.id) ?? null;
     let actualOutput: string | null = null;
     let reason: string | null = null;
 
@@ -157,6 +157,8 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     } else if (status === 'DISABLED') {
       reason = 'TAR source rule is disabled';
     }
+
+    if (status === null) throw new Error('TAR runtime parity status remained unresolved for ' + record.id);
 
     return {
       caseId: record.id,
