@@ -17,6 +17,14 @@ test('TAR parity source union is complete and two-origin vocabulary is enforced'
   assert.deepEqual([...new Set(fixture.records.map((record) => record.origin))], ['tar']);
 });
 
+test('TAR parity differential does not overclaim static direct coverage as final runtime parity', async () => {
+  const { diff, summary } = await artifactsPromise;
+  assert.equal(diff.comparison.mode, 'rule-ir-direct-conservative');
+  assert.equal(diff.comparison.finalExecutionParity, false);
+  assert.equal(diff.comparison.requiredNextGate, 'runtime-parity');
+  assert.deepEqual(summary.comparison, diff.comparison);
+});
+
 test('TAR parity fixture preserves the condition-sensitive まま / よう rules', async () => {
   const { fixture } = await artifactsPromise;
 
