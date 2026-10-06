@@ -2,6 +2,17 @@
   "schemaVersion": "1",
   "kind": "tar-parity-diff",
   "owner": "japanese-orthography#283",
+  "comparison": {
+    "mode": "rule-ir-direct-conservative",
+    "finalExecutionParity": false,
+    "statusSemantics": {
+      "PASS": "direct equivalent Rule IR exists for kinotch-fixed and the TAR case is structurally simple",
+      "FAIL": "no direct equivalent Rule IR was found; composition/productive runtime coverage is not excluded",
+      "AMBIGUOUS": "a direct equivalent exists but TAR conditions/candidates/pattern semantics require runtime parity verification",
+      "DISABLED": "the TAR source behavior is disabled"
+    },
+    "requiredNextGate": "runtime-parity"
+  },
   "baseline": {
     "profileId": "kinotch-fixed",
     "ruleIrDigest": "9e3c3ed117addf537464c56d6b8154dc5b926b5a6bdda445a444148a2fcb2083",
