@@ -56,6 +56,35 @@ test('TAR parity fixture preserves the condition-sensitive まま / よう rules
   assert.deepEqual(nounYou.conditions, { current: { pos: '名詞', pos1: '非自立' } });
 });
 
+test('TAR fixture preserves rule type and TAR bracket candidate semantics', async () => {
+  const { fixture } = await artifactsPromise;
+
+  const renyou = fixture.records.find((record) =>
+    record.sourceKind === 'structured'
+    && record.from === '悩み'
+    && record.expectedOutputs.includes('悩')
+  );
+  assert.ok(renyou);
+  assert.equal(renyou.ruleType, 'renyou');
+
+  const compound = fixture.records.find((record) =>
+    record.sourceKind === 'structured'
+    && record.from === '書き出す'
+    && record.expectedOutputs.includes('書出す')
+  );
+  assert.ok(compound);
+  assert.equal(compound.ruleType, 'compound');
+
+  const wakaru = fixture.records.find((record) =>
+    record.sourceKind === 'structured'
+    && record.from === 'わかる'
+    && record.rawTo === '[分,解]る'
+  );
+  assert.ok(wakaru);
+  assert.deepEqual(wakaru.expectedOutputs, ['分る', '解る']);
+  assert.equal(wakaru.ruleType, 'verb');
+});
+
 test('regex source is atomic even when exported from_options is malformed', async () => {
   const { fixture } = await artifactsPromise;
   const regexCases = fixture.records.filter((record) => record.regex);
