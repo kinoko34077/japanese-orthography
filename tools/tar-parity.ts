@@ -427,6 +427,17 @@ export async function buildTarParityArtifacts(rootDir: string) {
     schemaVersion: '1',
     kind: 'tar-parity-diff',
     owner: 'japanese-orthography#283',
+    comparison: {
+      mode: 'rule-ir-direct-conservative',
+      finalExecutionParity: false,
+      statusSemantics: {
+        PASS: 'direct equivalent Rule IR exists for kinotch-fixed and the TAR case is structurally simple',
+        FAIL: 'no direct equivalent Rule IR was found; composition/productive runtime coverage is not excluded',
+        AMBIGUOUS: 'a direct equivalent exists but TAR conditions/candidates/pattern semantics require runtime parity verification',
+        DISABLED: 'the TAR source behavior is disabled'
+      },
+      requiredNextGate: 'runtime-parity'
+    },
     baseline: {
       profileId: KINOTCH_PROFILE.profileId,
       ruleIrDigest: ir.digest,
@@ -441,6 +452,7 @@ export async function buildTarParityArtifacts(rootDir: string) {
     kind: 'tar-parity-summary',
     owner: 'japanese-orthography#283',
     sourceCommit: TAR_PARITY_COMMIT,
+    comparison: diff.comparison,
     fixtureDigest: createHash('sha256').update(JSON.stringify(fixture.records)).digest('hex'),
     diffDigest: createHash('sha256').update(JSON.stringify(diff.records)).digest('hex'),
     accounting: fixture.accounting,
