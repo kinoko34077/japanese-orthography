@@ -68,6 +68,7 @@ export interface TarParityCase {
   priority: number;
   regex: boolean;
   wildcard: boolean;
+  ruleType: string | null;
   nodePath: string[];
   nodeKind: string | null;
   conditions: unknown;
@@ -90,18 +91,117 @@ interface FlatRecord {
 
 const asText = (value: unknown): string => String(value ?? '').trim();
 
-function splitCandidates(value: unknown): string[] {
-  const source = asText(value);
-  if (!source) return [];
-  const cells: string[] = [];
-  let current = '';
-  let quoted = false;
-  let bracketDepth = 0;
-  let escaped = false;
+const ESCAPE_SENTINEL = '\u0000';
 
-  for (const char of source) {
-    if (escaped) {
+const tokenizeTarEscapes = (value: unknown): string => {
+  const source = String(value ?? '');
+  let output = '';
+  for (let index = 0; index < source.length; index++) {
+    const char = source[index]!;
+    if (char === '\\' && index + 1 < source.length) {
+      const next = source[index + 1]!;
+      if (next === '[' || next === ']' || next === ',' || next === '*' || next === '-' || next === '\\') {
+        output += ESCAPE_SENTINEL + next;
+        index++;
+        continue;
+      }
+    }
+    output += char;
+  }
+  return output;
+};
+
+const unescapeTarCandidate = (value: string): string => value
+  .replaceAll(ESCAPE_SENTINEL + '[', '[')
+  .replaceAll(ESCAPE_SENTINEL + ']', ']')
+  .replaceAll(ESCAPE_SENTINEL + ',', ',')
+  .replaceAll(ESCAPE_SENTINEL + '*', '\\*')
+  .replaceAll(ESCAPE_SENTINEL + '-', '\\-')
+  .replaceAll(ESCAPE_SENTINEL + '\\', '\\');
+
+const splitTarTopLevelCandidates = (value: unknown): string[] => {
+  const text = tokenizeTarEscapes(value);
+  const parts: string[] = [];
+  let current = '';
+  let bracketDepth = 0;
+  for (const char of text) {
+    if (char === '[' && !current.endsWith(ESCAPE_SENTINEL)) {
+      bracketDepth++;
       current += char;
+      continue;
+    }
+    if (char === ']' && !current.endsWith(ESCAPE_SENTINEL)) {
+      bracketDepth = Math.max(0, bracketDepth - 1);
+      current += char;
+      continue;
+    }
+    if (char === ',' && bracketDepth === 0 && current[current.length - 1] !== ESCAPE_SENTINEL) {
+      parts.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  if (current || text.endsWith(',')) parts.push(current.trim());
+  return parts.map((entry) => entry.trim()).filter(Boolean);
+};
+
+const expandTarBracketAlternatives = (value: unknown): string[] => {
+  const text = tokenizeTarEscapes(String(value ?? '').trim());
+  if (!text) return [''];
+  let openIndex = -1;
+  for (let index = 0; index < text.length; index++) {
+    if (text[index] === '[' && text[index - 1] !== ESCAPE_SENTINEL) {
+      openIndex = index;
+      break;
+    }
+  }
+  if (openIndex < 0) return [text];
+
+  let depth = 0;
+  let closeIndex = -1;
+  for (let index = openIndex; index < text.length; index++) {
+    const char = text[index]!;
+    if (char === '[' && text[index - 1] !== ESCAPE_SENTINEL) depth++;
+    else if (char === ']' && text[index - 1] !== ESCAPE_SENTINEL) {
+      depth--;
+      if (depth === 0) {
+        closeIndex = index;
+        break;
+      }
+    }
+  }
+  if (closeIndex < 0) return [text];
+
+  const prefix = text.slice(0, openIndex);
+  const inner = text.slice(openIndex + 1, closeIndex);
+  const suffix = text.slice(closeIndex + 1);
+  const branches = splitTarTopLevelCandidates(inner);
+  if (branches.length === 0) return [text];
+
+  return branches.flatMap((branch) => expandTarBracketAlternatives(prefix + branch + suffix));
+};
+
+const splitTarCandidates = (value: unknown): string[] => {
+  const values = Array.isArray(value) ? value : [value];
+  return values
+    .flatMap((entry) => splitTarTopLevelCandidates(entry))
+    .flatMap((entry) => expandTarBracketAlternatives(entry))
+    .map((entry) => unescapeTarCandidate(String(entry ?? '').trim()))
+    .filter(Boolean);
+};
+
+const normalizeExpectedOutputs = (value: unknown, regex = false): string[] => {
+  const raw = String(value ?? '');
+  if (regex) return raw ? [raw] : [];
+  const candidates = splitTarCandidates(value);
+  return candidates.length > 0 ? candidates : (raw ? [raw] : []);
+};
+
+const hasOperationalWildcard = (value: string): boolean => {
+  let escaped = false;
+  for (const char of value) {
+    if (escaped) {
       escaped = false;
       continue;
     }
@@ -109,33 +209,9 @@ function splitCandidates(value: unknown): string[] {
       escaped = true;
       continue;
     }
-    if (char === '"') {
-      quoted = !quoted;
-      continue;
-    }
-    if (!quoted) {
-      if (char === '[') bracketDepth++;
-      else if (char === ']') bracketDepth = Math.max(0, bracketDepth - 1);
-      else if (char === ',' && bracketDepth === 0) {
-        const cell = current.trim();
-        if (cell) cells.push(cell);
-        current = '';
-        continue;
-      }
-    }
-    current += char;
+    if (char === '*') return true;
   }
-  if (escaped) current += '\\';
-  const tail = current.trim();
-  if (tail) cells.push(tail);
-  return cells;
-}
-
-const normalizeExpectedOutputs = (value: unknown, regex = false): string[] => {
-  const raw = String(value ?? '');
-  if (regex) return [raw];
-  const candidates = splitCandidates(raw);
-  return candidates.length > 0 ? candidates : [raw];
+  return false;
 };
 
 const pairKey = (from: string, to: string) => from + '\u0000' + to;
@@ -190,9 +266,7 @@ function collectStructured(settings: any): { cases: TarParityCase[]; ruleObjects
           const regex = rule.regex === true || rule.is_regex === true;
           const fromOptions = regex
             ? [from]
-            : (Array.isArray(rule.from_options) && rule.from_options.length > 0
-                ? rule.from_options.map(asText).filter(Boolean)
-                : splitCandidates(from));
+            : splitTarCandidates(rule.from_options ?? from);
           const expectedOutputs = normalizeExpectedOutputs(rawTo, regex);
           if (fromOptions.length === 0) {
             throw new Error('structured TAR rule has no normalized alternatives at ' + locator);
@@ -217,7 +291,8 @@ function collectStructured(settings: any): { cases: TarParityCase[]; ruleObjects
               migrationRequired: nodeEnabled && rule.enabled !== false,
               priority: Number.isFinite(Number(rule.priority)) ? Number(rule.priority) : 0,
               regex,
-              wildcard: option.includes('*'),
+              wildcard: hasOperationalWildcard(option),
+              ruleType: asText(rule.type) || null,
               nodePath,
               nodeKind: asText(node.kind) || null,
               conditions: rule.conditions ?? null,
@@ -348,7 +423,8 @@ export async function buildTarParityArtifacts(rootDir: string) {
       migrationRequired: true,
       priority: 0,
       regex: false,
-      wildcard: record.from.includes('*'),
+      wildcard: hasOperationalWildcard(record.from),
+      ruleType: null,
       nodePath: [],
       nodeKind: null,
       conditions: null,
