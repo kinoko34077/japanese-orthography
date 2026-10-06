@@ -48,11 +48,11 @@ interface SourceRef {
   kind: 'structured' | 'flat';
   path: string;
   locator: string;
-  sourceId?: string;
-  groupId?: string;
-  groupLabel?: string;
-  status?: string;
-  sourceCategory?: string;
+  sourceId?: string | undefined;
+  groupId?: string | undefined;
+  groupLabel?: string | undefined;
+  status?: string | undefined;
+  sourceCategory?: string | undefined;
 }
 
 export interface TarParityCase {
@@ -173,8 +173,9 @@ function collectStructured(settings: any): { cases: TarParityCase[]; ruleObjects
           const rule = records[recordIndex] ?? {};
           const locator = nodeLocator + '.' + bucket + '[' + recordIndex + ']';
           const from = asText(rule.from);
-          const rawTo = asText(rule.to);
-          if (!from || !rawTo) throw new Error('structured TAR rule lacks from/to at ' + locator);
+          const hasTo = Object.prototype.hasOwnProperty.call(rule, 'to') && rule.to !== null && rule.to !== undefined;
+          const rawTo = hasTo ? String(rule.to) : '';
+          if (!from || !hasTo) throw new Error('structured TAR rule lacks from/to at ' + locator);
 
           ruleObjects++;
           if (rule.enabled !== false) ownEnabled++;
@@ -185,8 +186,8 @@ function collectStructured(settings: any): { cases: TarParityCase[]; ruleObjects
             : (Array.isArray(rule.from_options) && rule.from_options.length > 0
                 ? rule.from_options.map(asText).filter(Boolean)
                 : splitCandidates(from));
-          const expectedOutputs = regex ? [rawTo] : splitCandidates(rawTo);
-          if (fromOptions.length === 0 || expectedOutputs.length === 0) {
+          const expectedOutputs = normalizeExpectedOutputs(rawTo, regex);
+          if (fromOptions.length === 0) {
             throw new Error('structured TAR rule has no normalized alternatives at ' + locator);
           }
 
@@ -239,9 +240,10 @@ async function collectFlat(rootDir: string): Promise<FlatRecord[]> {
       for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
         const entry = entries[entryIndex] ?? {};
         const from = asText(entry.from);
-        const to = asText(entry.to);
+        const hasTo = Object.prototype.hasOwnProperty.call(entry, 'to') && entry.to !== null && entry.to !== undefined;
+        const to = hasTo ? String(entry.to) : '';
         const locator = 'groups[' + groupIndex + '].entries[' + entryIndex + ']';
-        if (!from || !to) throw new Error('flat TAR record lacks from/to at ' + file + '#' + locator);
+        if (!from || !hasTo) throw new Error('flat TAR record lacks from/to at ' + file + '#' + locator);
         out.push({
           id: 'tar:flat:' + file + '#' + locator,
           path: file,
@@ -334,7 +336,7 @@ export async function buildTarParityArtifacts(rootDir: string) {
       }],
       from: record.from,
       rawTo: record.to,
-      expectedOutputs: splitCandidates(record.to),
+      expectedOutputs: normalizeExpectedOutputs(record.to),
       sourceEnabled: null,
       migrationRequired: true,
       priority: 0,
