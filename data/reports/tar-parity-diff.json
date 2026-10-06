@@ -19,8 +19,8 @@
     "ruleCount": 191358
   },
   "statuses": {
-    "FAIL": 3095,
-    "AMBIGUOUS": 774,
+    "FAIL": 3086,
+    "AMBIGUOUS": 783,
     "DISABLED": 28,
     "PASS": 139
   },
@@ -21334,9 +21334,7 @@
       "origin": "tar",
       "status": "FAIL",
       "from": "おんぷ",
-      "expectedOutputs": [
-        ""
-      ],
+      "expectedOutputs": [],
       "sourceEnabled": null,
       "migrationRequired": true,
       "sourceKind": "flat-only",
@@ -32536,15 +32534,18 @@
     {
       "caseId": "tar:structured:entry-mpzbtsa7-m5:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "わかる",
       "expectedOutputs": [
-        "[分,解]る"
+        "分る",
+        "解る"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:730ddbb9fa93fd77"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mpzbvqrb-m6:from[0]",
@@ -32594,15 +32595,19 @@
     {
       "caseId": "tar:structured:entry-mpzbzk10-ma:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "ない",
       "expectedOutputs": [
-        "[無,没,莫]い"
+        "無い",
+        "没い",
+        "莫い"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:ae146c0f164a8f76"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mpzc2w1a-mc:from[0]",
@@ -33090,12 +33095,15 @@
       "status": "DISABLED",
       "from": "いう",
       "expectedOutputs": [
-        "[言,云]う"
+        "言う",
+        "云う"
       ],
       "sourceEnabled": false,
       "migrationRequired": false,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:0c5f8eab37cbbb76"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mpzdmppl-nc:from[0]",
@@ -33233,15 +33241,19 @@
     {
       "caseId": "tar:structured:entry-mpzlxt1f-lt:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "さまよう",
       "expectedOutputs": [
-        "[彷,徨,彷徨]う"
+        "彷う",
+        "徨う",
+        "彷徨う"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:5f88548d3d4e7eb7"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mpzm12qc-lv:from[0]",
@@ -48177,7 +48189,8 @@
       "status": "FAIL",
       "from": "によって",
       "expectedOutputs": [
-        "に[依,因]て"
+        "に依て",
+        "に因て"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
@@ -48190,7 +48203,8 @@
       "status": "FAIL",
       "from": "によ*",
       "expectedOutputs": [
-        "に[依,因]*"
+        "に依*",
+        "に因*"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
@@ -48259,7 +48273,9 @@
       "status": "FAIL",
       "from": "いい",
       "expectedOutputs": [
-        "[良,好,善]い"
+        "良い",
+        "好い",
+        "善い"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
@@ -48269,28 +48285,35 @@
     {
       "caseId": "tar:structured:entry-mq2gyzcn-lt:from[1]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "よい",
       "expectedOutputs": [
-        "[良,好,善]い"
+        "良い",
+        "好い",
+        "善い"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:b5dd1749fe7a72b4"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mq9fwrpr-lr:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "こだわり",
       "expectedOutputs": [
-        "[拘,執]り"
+        "拘り",
+        "執り"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:d64202d70c73d6db"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mq9fwrpr-ls:from[0]",
@@ -53923,15 +53946,18 @@
     {
       "caseId": "tar:structured:entry-mqb4jsb8-lu:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "いただける",
       "expectedOutputs": [
-        "[頂,戴]ける"
+        "頂ける",
+        "戴ける"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:d511bca441e53c0f"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mqb4m3ca-lx:from[0]",
@@ -53949,15 +53975,18 @@
     {
       "caseId": "tar:structured:entry-mqb4nq5s-lz:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "または",
       "expectedOutputs": [
-        "[亦,又]は"
+        "亦は",
+        "又は"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:210d7b2a72dd5d13"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mqb4phrw-m0:from[0]",
@@ -54128,15 +54157,18 @@
     {
       "caseId": "tar:structured:entry-mqb6aep2-lz:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "いただく",
       "expectedOutputs": [
-        "[頂,戴]く"
+        "頂く",
+        "戴く"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:51b81924c0bcfe69"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mqb6fs3e-m0:from[0]",
@@ -54307,15 +54339,18 @@
     {
       "caseId": "tar:structured:entry-mqb7j4b1-mb:from[0]",
       "origin": "tar",
-      "status": "FAIL",
+      "status": "AMBIGUOUS",
       "from": "いただく",
       "expectedOutputs": [
-        "[頂,戴]く"
+        "頂く",
+        "戴く"
       ],
       "sourceEnabled": true,
       "migrationRequired": true,
       "sourceKind": "structured",
-      "matchingRuleIds": []
+      "matchingRuleIds": [
+        "ir:exact:reconstruct:51b81924c0bcfe69"
+      ]
     },
     {
       "caseId": "tar:structured:entry-mqb7kn6b-mc:from[0]",

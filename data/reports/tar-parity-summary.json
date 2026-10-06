@@ -14,8 +14,8 @@
     },
     "requiredNextGate": "runtime-parity"
   },
-  "fixtureDigest": "a1a813335c6690514a470bc7ced668cc987b32db893070a98b0ea2644b628be4",
-  "diffDigest": "487db921a2f0ef5051318e98f75a3bd871fe7f75bdb4e0ab257f1e6641a758b8",
+  "fixtureDigest": "09e903eab9828c7903a2617042e10886da0b9e868f828914548d55fd812960ce",
+  "diffDigest": "484ba2e0687a1f03208a5d5b7a22e8094c825f8ff5d758e08b88e22c7fef799f",
   "accounting": {
     "structuredRuleObjects": 2279,
     "structuredOwnEnabled": 2251,
@@ -28,8 +28,8 @@
     "unaccountedFlat": 0
   },
   "statuses": {
-    "FAIL": 3095,
-    "AMBIGUOUS": 774,
+    "FAIL": 3086,
+    "AMBIGUOUS": 783,
     "DISABLED": 28,
     "PASS": 139
   },
