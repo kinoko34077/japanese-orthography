@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildTarParityArtifacts, verifyTarParitySourceBlobs } from '../tools/tar-parity.ts';
 
+const artifactsPromise = buildTarParityArtifacts(process.cwd());
+
 test('TAR parity source union is complete and two-origin vocabulary is enforced', async () => {
   verifyTarParitySourceBlobs();
-  const { fixture } = await buildTarParityArtifacts(process.cwd());
+  const { fixture } = await artifactsPromise;
 
   assert.equal(fixture.accounting.flatRecords, 3438);
   assert.equal(fixture.accounting.structuredRuleObjects, 2279);
@@ -16,7 +18,7 @@ test('TAR parity source union is complete and two-origin vocabulary is enforced'
 });
 
 test('TAR parity fixture preserves the condition-sensitive まま / よう rules', async () => {
-  const { fixture } = await buildTarParityArtifacts(process.cwd());
+  const { fixture } = await artifactsPromise;
 
   const nounMama = fixture.records.find((record) =>
     record.sourceKind === 'structured'
@@ -47,7 +49,7 @@ test('TAR parity fixture preserves the condition-sensitive まま / よう rules
 });
 
 test('regex source is atomic even when exported from_options is malformed', async () => {
-  const { fixture } = await buildTarParityArtifacts(process.cwd());
+  const { fixture } = await artifactsPromise;
   const regexCases = fixture.records.filter((record) => record.regex);
   assert.equal(regexCases.length, 1);
   assert.equal(regexCases[0]!.from, '(\\d{4})年(\\d{1,2})月(\\d{1,2})日');
