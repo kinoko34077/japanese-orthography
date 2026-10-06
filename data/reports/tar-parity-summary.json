@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1",
+  "kind": "tar-parity-summary",
+  "owner": "japanese-orthography#283",
+  "sourceCommit": "198f8560613d23417cb0f87172ae8662e722ca30",
+  "fixtureDigest": "a1a813335c6690514a470bc7ced668cc987b32db893070a98b0ea2644b628be4",
+  "diffDigest": "487db921a2f0ef5051318e98f75a3bd871fe7f75bdb4e0ab257f1e6641a758b8",
+  "accounting": {
+    "structuredRuleObjects": 2279,
+    "structuredOwnEnabled": 2251,
+    "structuredSemanticEdges": 2354,
+    "flatRecords": 3438,
+    "flatCrossReferenced": 1756,
+    "flatOnly": 1682,
+    "fixtureRecords": 4036,
+    "unaccountedStructured": 0,
+    "unaccountedFlat": 0
+  },
+  "statuses": {
+    "FAIL": 3095,
+    "AMBIGUOUS": 774,
+    "DISABLED": 28,
+    "PASS": 139
+  },
+  "origins": {
+    "tar": 4036
+  },
+  "baseline": {
+    "profileId": "kinotch-fixed",
+    "ruleIrDigest": "9e3c3ed117addf537464c56d6b8154dc5b926b5a6bdda445a444148a2fcb2083",
+    "ruleCount": 191358
+  }
+}
