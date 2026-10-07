@@ -338,6 +338,127 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     }
   }
 
+  // --- TAR candidate / alternative rules (#290) --------------------------------------------------
+  // The candidate lane deliberately preserves ambiguity. Explicit multi-output source rules become
+  // one-to-many Rule Programs, while otherwise-simple same-input conflicts are grouped into one
+  // candidate Rule so the resolver cannot silently freeze source order or priority into a winner.
+  {
+    const path = 'data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/candidate-rules.json';
+    const doc = await readJson(rootDir, path);
+    if (doc.kind !== 'tar-candidate-rules' || !Array.isArray(doc.records) || !Array.isArray(doc.groups)) {
+      throw new Error('invalid TAR candidate migration corpus');
+    }
+    const sourceId = b.source(sourceIdFor(path), {
+      path,
+      role: 'tar-operational-candidate',
+      owner: 'japanese-orthography#290',
+      migrationOrigin: 'tar'
+    });
+    const records = doc.records as Json[];
+    const recordIds = new Map<string, string>();
+    for (const r of records) {
+      if (r.origin !== 'tar' || typeof r.id !== 'string' || typeof r.sourceCaseId !== 'string'
+        || typeof r.from !== 'string' || !Array.isArray(r.expectedOutputs)) {
+        throw new Error('invalid TAR candidate record');
+      }
+      recordIds.set(r.id, b.record(sourceId, r.id));
+    }
+
+    const groupRuleIds = new Map<string, string>();
+    for (const g of doc.groups as Json[]) {
+      if (typeof g.id !== 'string' || typeof g.input !== 'string' || !Array.isArray(g.outputs)
+        || g.outputs.length < 2 || !Array.isArray(g.memberRecordIds)) {
+        throw new Error('invalid TAR candidate conflict group');
+      }
+      const members = records.filter((r) => r.candidateGroupId === g.id);
+      if (members.length !== g.memberRecordIds.length || members.length < 2) {
+        throw new Error('TAR candidate conflict group membership drift: ' + g.id);
+      }
+      const evidence = members.flatMap((r) => [
+        `tar-candidate:${r.sourceCaseId}`,
+        ...((r.sourceRefs ?? []) as Json[]).map((ref) => `tar-source:${ref.path}#${ref.locator}`)
+      ]);
+      const ruleId = b.rule({
+        id: `rule:tar:candidate-group:${g.id.replace(/^tar:candidate-group:/, '')}`,
+        class: 'orthographic',
+        directionality: 'forward_only',
+        lossiness: 'one_to_many',
+        from: [g.input],
+        to: [...g.outputs],
+        dependencies: [],
+        predicate: {
+          channel: 'surface',
+          exactToken: true,
+          migrationOrigin: 'tar',
+          family: 'tar-candidate',
+          candidateKind: 'same-input-conflict',
+          candidateGroupId: g.id
+        },
+        origin: 'tar'
+      }, sourceId, evidence);
+      groupRuleIds.set(g.id, ruleId);
+    }
+
+    for (const r of records) {
+      const recordId = recordIds.get(r.id)!;
+      if (r.runtimeDisposition === 'review-required') {
+        b.dispose(recordId, 'excluded_with_reason', [],
+          'review-needed empty replacement/deletion intent is preserved as evidence and is not admitted as automatic runtime deletion');
+        continue;
+      }
+      if (r.candidateKind === 'same-input-conflict') {
+        const ruleId = groupRuleIds.get(r.candidateGroupId);
+        if (!ruleId) throw new Error('missing TAR candidate group Rule for ' + r.id);
+        b.dispose(recordId, 'rule_definition', [ruleId]);
+        continue;
+      }
+      if (r.candidateKind !== 'explicit-alternatives' || r.expectedOutputs.length < 2) {
+        throw new Error('invalid executable TAR candidate record ' + r.id);
+      }
+      const typed = Boolean(r.ruleType)
+        || [r.conditions, r.sequence, r.matchOptions, r.matchTarget].some((value) =>
+          value !== null && value !== undefined
+          && (Array.isArray(value) ? value.length > 0
+            : typeof value === 'object' ? Object.keys(value).length > 0
+              : String(value).trim().length > 0));
+      const evidence = [
+        `tar-candidate:${r.sourceCaseId}`,
+        ...((r.sourceRefs ?? []) as Json[]).map((ref) => `tar-source:${ref.path}#${ref.locator}`)
+      ];
+      const ruleId = b.rule({
+        id: `rule:tar:candidate:${r.id.replace(/^tar:candidate:/, '')}`,
+        class: 'orthographic',
+        directionality: 'forward_only',
+        lossiness: 'one_to_many',
+        from: [r.from],
+        to: [...r.expectedOutputs],
+        dependencies: [],
+        predicate: {
+          channel: 'surface',
+          exactToken: true,
+          migrationOrigin: 'tar',
+          family: 'tar-candidate',
+          candidateKind: 'explicit-alternatives',
+          ...(typed ? {
+            tokenContext: {
+              sourceCaseId: r.sourceCaseId,
+              from: r.from,
+              priority: r.priority,
+              ruleType: r.ruleType,
+              conditions: r.conditions,
+              sequence: r.sequence,
+              matchOptions: r.matchOptions,
+              matchTarget: r.matchTarget
+            }
+          } : {})
+        },
+        origin: 'tar'
+      }, sourceId, evidence);
+      b.dispose(recordId, 'rule_definition', [ruleId]);
+    }
+  }
+
+
   // --- 字音 in-word derivation conventions (accepted Phase-4.6E runtime) as first-class rules ----
   {
     const sourceId = b.source('derivation/phase46e-sino-conventions', { path: 'runtime/historical-sino-runtime.js', role: 'derivation-convention', owner: 'japanese-orthography#168' });
