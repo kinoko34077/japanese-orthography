@@ -491,7 +491,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     report,
     summary,
     texts: {
-      [TAR_RUNTIME_PARITY_REPORT]: JSON.stringify(report, null, 2) + '\n',
+      [TAR_RUNTIME_PARITY_REPORT]: JSON.stringify(report) + '\n',
       [TAR_RUNTIME_PARITY_SUMMARY]: JSON.stringify(summary, null, 2) + '\n'
     }
   };
