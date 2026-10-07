@@ -78,7 +78,8 @@ test('104 TAR candidate Rules lower to 216 candidate branches only for kinotch-f
 
   const tada = rules.find((rule) => rule.input === 'ただ');
   assert.deepEqual(tada?.branches.map((branch) => branch.output), ['徒', '唯', '只']);
-  assert.equal(tada?.predicate?.tokenContext?.conditions?.current?.pos, '接続詞');
+  const tadaContext = tada?.predicate?.tokenContext as any;
+  assert.equal(tadaContext?.conditions?.current?.pos, '接続詞');
 
   const meguru = rules.find((rule) => rule.input === 'めぐる');
   assert.deepEqual(meguru?.branches.map((branch) => branch.output), ['巡る', '廻る']);
