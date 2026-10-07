@@ -75,7 +75,7 @@ export const HISTORICAL_PROFILE: OrthographyProfilePolicy = {
 };
 export const KINOTCH_PROFILE: OrthographyProfilePolicy = {
   profileId: 'kinotch-fixed', targetPeriod: 'historical', enableRules: ['rule:profile:kinotch:koto-ligature', ...KINOTCH_STYLE_RULES.map((r) => r.id)], disableRules: [],
-  thresholds: { renderIterationMarks: true }, candidatePolicy: 'profile_choice', allowOrigins: ['historically_attested', 'project_defined']
+  thresholds: { renderIterationMarks: true }, candidatePolicy: 'profile_choice', allowOrigins: ['historically_attested', 'project_defined', 'tar']
 };
 
 function validateThresholds(profile: OrthographyProfilePolicy, graph: OrthographyKnowledgeGraph) {

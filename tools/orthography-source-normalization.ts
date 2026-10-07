@@ -277,7 +277,7 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
         to: [r.to],
         dependencies: [],
         predicate: { channel: 'surface', migrationOrigin: 'tar', family: 'tar-simple-exact' },
-        origin: 'project_defined'
+        origin: 'tar'
       }, sourceId, evidence);
       b.dispose(recordId, 'rule_definition', [ruleId]);
     }

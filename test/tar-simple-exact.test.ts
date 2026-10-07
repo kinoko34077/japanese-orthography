@@ -39,7 +39,7 @@ test('all TAR simple-exact rules lower through Rule IR only for kinotch-fixed', 
     assert.equal(rule.kind, 'profile-style');
     assert.equal(rule.stage, 'profile');
     assert.equal(rule.scope, 'anywhere');
-    assert.equal(rule.origin, 'project_defined');
+    assert.equal(rule.origin, 'tar');
     assert.deepEqual(rule.enabledBy, ['kinotch-fixed']);
     assert.equal(rule.branches.length, 1);
   }

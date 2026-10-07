@@ -136,7 +136,7 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
     let kind: RuleKind;
     let stage: RuleStage;
     let scope: RuleScope;
-    if (r.origin === 'project_defined' || r.origin === 'kinotch_derived') { kind = 'profile-style'; stage = 'profile'; scope = p.exactToken ? 'whole-token' : 'anywhere'; }
+    if (r.origin === 'project_defined' || r.origin === 'kinotch_derived' || r.origin === 'tar') { kind = 'profile-style'; stage = 'profile'; scope = p.exactToken ? 'whole-token' : 'anywhere'; }
     else if (r.class === 'render') { kind = 'render'; stage = 'render'; scope = 'anywhere'; }
     else if (r.class === 'orthographic' && channel === 'surface' && r.from.length === 1 && r.to.length === 1 && !p.mechanism) { kind = 'deterministic-char'; stage = 'orthographic'; scope = 'anywhere'; }
     // reading-channel productive rules (字音 / kana conventions / sino mechanisms) form one diachronic derivation

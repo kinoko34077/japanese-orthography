@@ -16,7 +16,7 @@
     ruleClass: ["diachronic", "phonological", "orthographic", "render"],
     directionality: ["forward_only", "reverse_traversable", "forward_infer_reverse"],
     lossiness: ["lossless", "many_to_one", "one_to_many", "contextual"],
-    origin: ["historically_attested", "project_defined", "kinotch_derived"],
+    origin: ["historically_attested", "project_defined", "kinotch_derived", "tar"],
     derivationMechanism: ["inverse", "analogy", "composition", "other"]
   };
 

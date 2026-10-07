@@ -24,7 +24,7 @@
   const MANIFEST_KIND = "japanese-orthography-browser-pack";
   const OFFSET_UNIT = "utf16-code-unit";
   const FACT_KINDS = ["literal_form", "literal_reading", "form_relation", "reading_relation", "render_equivalence"];
-  const ORIGINS = ["historically_attested", "project_defined", "kinotch_derived"];
+  const ORIGINS = ["historically_attested", "project_defined", "kinotch_derived", "tar"];
   const RULE_CLASSES = ["diachronic", "phonological", "orthographic", "render"];
   const DIRECTIONALITIES = ["forward_only", "reverse_traversable", "forward_infer_reverse"];
   const LOSSINESS = ["lossless", "many_to_one", "one_to_many", "contextual"];
