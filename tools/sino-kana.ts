@@ -14,6 +14,7 @@ export const PHASE46E_INTAKE_PATH = 'data/intake/phase46e-sino-kana.json';
 export const PHASE46E_COVERAGE_REPORT_PATH = 'data/reports/phase46e-sino-kana-coverage.json';
 export const PHASE46E_ARTIFACT_PATH = 'data/historical/sino/phase46e-sino-kana.json';
 const IDENTITY_SLICE_PATH = 'data/historical/sino/kkh-jion-first-slice.json';
+export const PHASE46E_SYMBOL_REGISTRY_GENERATION = 1;
 
 export const PHASE46E_SINO_SOURCE_SNAPSHOT: SourceSnapshot = {
   sourceId: 'phase46e-sino-table',
@@ -221,7 +222,18 @@ export async function buildPhase46eSinoArtifacts(rootDir: string) {
   const coverageReport = buildPhase46eCoverageReport(bundle, parsed, readingClass);
   const identitySlice = JSON.parse(await readFile(resolve(rootDir, IDENTITY_SLICE_PATH), 'utf8')) as JsonRecord;
   const symbolRegistry = JSON.parse(await readFile(resolve(rootDir, 'data/runtime/symbol-registry.json'), 'utf8')) as JsonRecord;
-  const runtimeSymbols = new Set((symbolRegistry.atoms as unknown[]).filter((atom): atom is string => typeof atom === 'string'));
+  // Phase 4.6E identity projection was accepted against the first append-only Symbol Registry
+  // generation. Later profile/migration atoms (for example TAR) must not silently expand generic
+  // historical-sino authority. Keep the accepted prefix as the projection boundary.
+  const projectionGeneration = (symbolRegistry.generations as JsonRecord[] | undefined)
+    ?.find((generation) => generation.generation === PHASE46E_SYMBOL_REGISTRY_GENERATION);
+  if (!projectionGeneration || !Number.isInteger(projectionGeneration.size)
+    || projectionGeneration.size < 1 || projectionGeneration.size > symbolRegistry.atoms.length) {
+    throw new Error('Phase 4.6E Symbol Registry projection generation is missing or invalid');
+  }
+  const runtimeSymbols = new Set((symbolRegistry.atoms as unknown[])
+    .slice(0, projectionGeneration.size)
+    .filter((atom): atom is string => typeof atom === 'string'));
   const artifact = compileSinoKanaArtifact(bundle, parsed, identitySlice, readingClass, runtimeSymbols);
   return {
     parsed,
