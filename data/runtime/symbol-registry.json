@@ -19,6 +19,14 @@
       "added": 441,
       "tombstoned": 0,
       "reactivated": 0
+    },
+    {
+      "generation": 3,
+      "size": 6964,
+      "prefixSha256": "c581ccb1467994d510c353b60ddb1f744b622162370e3e884dcd552ef04dc775",
+      "added": 3,
+      "tombstoned": 0,
+      "reactivated": 0
     }
   ],
   "atoms": [
@@ -6982,6 +6990,9 @@
     "｀",
     "｛",
     "｝",
-    "￥"
+    "￥",
+    "卡",
+    "頴",
+    "既"
   ]
 }
