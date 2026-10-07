@@ -143,7 +143,7 @@
     const decision = OccurrenceArbitration.arbitrate({
       length: text.length,
       lexical,
-      candidates: candidates.map((c) => ({ key: c.key, start: c.start, end: c.end, output: c.output, policy: c.policy, precedence: c.precedence ?? 0, source: c }))
+      candidates: candidates.map((c) => ({ key: c.key, start: c.start, end: c.end, output: c.output, policy: c.policy, precedence: c.precedence ?? 0, candidate: c.candidate === true, source: c }))
     });
 
     // ---- assemble spans ---------------------------------------------------------------------------
