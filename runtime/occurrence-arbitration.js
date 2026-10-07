@@ -243,6 +243,24 @@
       else blocked.push({ candidate, reason: verdict.reason });
     }
 
+    // Candidate alternatives are evidence of ambiguity, not an instruction to erase an already
+    // deterministic result for the exact same occurrence. Preserve the candidate in diagnostics,
+    // but keep it out of render arbitration when a non-candidate peer covers the identical span.
+    // Candidate-only groups continue through the ordinary conflict path and therefore remain unresolved.
+    const renderLive = [];
+    for (const candidate of live) {
+      const deterministicPeer = candidate.candidate === true && live.some((other) =>
+        other !== candidate
+        && other.candidate !== true
+        && other.start === candidate.start
+        && other.end === candidate.end);
+      if (deterministicPeer) {
+        blocked.push({ candidate, reason: "candidate_alternative" });
+        continue;
+      }
+      renderLive.push(candidate);
+    }
+
     // Explicit profile/TAR precedence is applied only when supplied by the producer. Ordinary
     // candidates default to 0, preserving existing arbitration semantics. A higher-precedence
     // overlay suppresses overlapping lower-stage candidates. Within the same positive precedence,
@@ -251,9 +269,9 @@
     const overlaps = (left, right) => left.start < right.end && right.start < left.end;
     const contains = (outer, inner) => outer.start <= inner.start && outer.end >= inner.end;
     const precedenceLive = [];
-    for (const candidate of live) {
+    for (const candidate of renderLive) {
       const precedence = precedenceOf(candidate);
-      const higher = live.some((other) => other !== candidate && overlaps(other, candidate) && precedenceOf(other) > precedence);
+      const higher = renderLive.some((other) => other !== candidate && overlaps(other, candidate) && precedenceOf(other) > precedence);
       if (higher) {
         blocked.push({ candidate, reason: "shadowed_by_higher_precedence" });
         continue;
