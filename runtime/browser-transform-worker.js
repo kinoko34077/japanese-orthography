@@ -325,7 +325,9 @@
     const surfaceCandidatesOf = (observation, options = {}) => {
       const surface = (observation.candidates ?? [])
         .filter((candidate) => (!candidate.channel || candidate.channel === "surface")
-          && (!options.sourceText || candidate.output !== options.sourceText.slice(candidate.start, candidate.end)));
+          && (!options.sourceText
+            || candidate.output !== options.sourceText.slice(candidate.start, candidate.end)
+            || candidate.stage === "profile"));
       if (surface.length > 0) return surface;
       if (!/^[ぁ-ゟ゠-ヿ]+$/u.test(options.sourceText ?? "")) return [];
       // Some source-backed native-kana rules are indexed on the reading
@@ -418,8 +420,10 @@
           continue;
         }
         const provenance = await programEvidenceFor(p, candidate.programIds ?? []);
+        const tarRule = provenance.sourceRefs.some((ref) => ref.startsWith("migrations/tar/"));
         annotated.push({
           ...candidate,
+          ...(tarRule ? { precedence: Math.max(2, Number(candidate.precedence) || 0) } : {}),
           ...(provenance.projectRule ? { authority: "project_rule" } : {}),
           provenance: {
             ...(candidate.provenance ?? {}),
@@ -499,6 +503,7 @@
           end: match.end,
           output,
           policy: "lexical_boundary",
+          precedence: Math.max(0, ...local.map(({ candidate }) => Number(candidate.precedence) || 0)),
           origin: "program",
           ref: `program:surface:${match.start}:${match.end}`,
           programIds: [...new Set(local.flatMap(({ candidate }) => candidate.programIds ?? []))],

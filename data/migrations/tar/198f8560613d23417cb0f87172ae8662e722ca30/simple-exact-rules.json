@@ -13,13 +13,15 @@
     "runtimeReportDigest": "7c36e2fee0084a95b3cc72014a4689848f96e029decc5a6c9525117f2e76ee30"
   },
   "accounting": {
+    "baselineExecutableCases": 3166,
+    "baselinePassCases": 31,
     "baselineFailCases": 3135,
-    "uniqueRelations": 3132,
-    "uniqueInputs": 3132,
+    "uniqueRelations": 3163,
+    "uniqueInputs": 3163,
     "conflictingInputs": 0,
     "duplicateCaseExcess": 3
   },
-  "recordsDigest": "ad1a72e0d4e5ae2228e43d360d43415224ad930225a24a5bd970ab958c5da2de",
+  "recordsDigest": "8eb0acdad1f57ce2a90c5290978da17a462a7c208bc1d7eba72ccfe15617de8e",
   "records": [
     {
       "id": "tar:exact:3e924b29cf5ef339",
@@ -7784,6 +7786,54 @@
       ]
     },
     {
+      "id": "tar:exact:09c5dceeb59a8112",
+      "origin": "tar",
+      "from": "いまし",
+      "to": "ゐまし",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[0]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[0]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "部分一致と語尾省略系"
+      ]
+    },
+    {
+      "id": "tar:exact:6e6bfceb64a76574",
+      "origin": "tar",
+      "from": "います",
+      "to": "ゐます",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[1]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[1]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[1]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "部分一致と語尾省略系"
+      ]
+    },
+    {
       "id": "tar:exact:3203e2de5a6181c1",
       "origin": "tar",
       "from": "いませ",
@@ -8226,6 +8276,36 @@
       ]
     },
     {
+      "id": "tar:exact:a5ab21bcb710d259",
+      "origin": "tar",
+      "from": "ヴァ",
+      "to": "ヷ",
+      "sourceCaseIds": [
+        "tar:structured:entry-mq13vc91-1ea:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[9].entries[0]",
+          "sourceId": "entry-mq13vc91-1ea"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[6].entries[530]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[6].entries[530]",
+          "groupId": "review-needed",
+          "groupLabel": "要レビュー保留 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "特殊仮名"
+      ]
+    },
+    {
       "id": "tar:exact:756497fa92d3e9a8",
       "origin": "tar",
       "from": "ヴァイオリン",
@@ -8265,6 +8345,36 @@
           "path": "tongwentang_pref6_current_json/存在したもの.json",
           "locator": "groups[6].entries[65]",
           "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[6].entries[65]",
+          "groupId": "review-needed",
+          "groupLabel": "要レビュー保留 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "特殊仮名"
+      ]
+    },
+    {
+      "id": "tar:exact:6cf1e2d56d524858",
+      "origin": "tar",
+      "from": "ヴィ",
+      "to": "ヸ",
+      "sourceCaseIds": [
+        "tar:structured:entry-mq13vc91-1eb:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[9].entries[1]",
+          "sourceId": "entry-mq13vc91-1eb"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[6].entries[531]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[6].entries[531]",
           "groupId": "review-needed",
           "groupLabel": "要レビュー保留 に既存だったもの",
           "status": "already-present",
@@ -8450,6 +8560,36 @@
       ]
     },
     {
+      "id": "tar:exact:16a49dee75b46d78",
+      "origin": "tar",
+      "from": "ヴェ",
+      "to": "ヹ",
+      "sourceCaseIds": [
+        "tar:structured:entry-mq13vc91-1ec:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[9].entries[2]",
+          "sourceId": "entry-mq13vc91-1ec"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[6].entries[532]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[6].entries[532]",
+          "groupId": "review-needed",
+          "groupLabel": "要レビュー保留 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "特殊仮名"
+      ]
+    },
+    {
       "id": "tar:exact:06f18f9232a39fcd",
       "origin": "tar",
       "from": "ウェーブ",
@@ -8523,6 +8663,36 @@
           "path": "transform-settings (8).json",
           "locator": "roots[9].entries[4]",
           "sourceId": "entry-mq13vc91-1ed"
+        }
+      ],
+      "families": [
+        "特殊仮名"
+      ]
+    },
+    {
+      "id": "tar:exact:41ec1ea9944a279a",
+      "origin": "tar",
+      "from": "ヴォ",
+      "to": "ヺ",
+      "sourceCaseIds": [
+        "tar:structured:entry-mq144rlh-1er:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[9].entries[3]",
+          "sourceId": "entry-mq144rlh-1er"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[6].entries[533]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[6].entries[533]",
+          "groupId": "review-needed",
+          "groupLabel": "要レビュー保留 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "09_general_phrases_misc"
         }
       ],
       "families": [
@@ -19447,6 +19617,30 @@
       ]
     },
     {
+      "id": "tar:exact:6fcbb80569057bdc",
+      "origin": "tar",
+      "from": "コト",
+      "to": "ヿ",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[44]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[5].entries[44]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[44]",
+          "groupId": "ultra-short-compactions",
+          "groupLabel": "超短縮語",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "超短縮語"
+      ]
+    },
+    {
       "id": "tar:exact:2e6f7ba4381a4578",
       "origin": "tar",
       "from": "ことある",
@@ -24073,6 +24267,30 @@
       ]
     },
     {
+      "id": "tar:exact:138dfa66da0c74f3",
+      "origin": "tar",
+      "from": "じゃな",
+      "to": "ぢゃな",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[8]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[8]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[8]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "部分一致と語尾省略系"
+      ]
+    },
+    {
       "id": "tar:exact:1c09370a2eb62874",
       "origin": "tar",
       "from": "しゃべ",
@@ -26750,6 +26968,30 @@
       ],
       "families": [
         "かな熟語から当て字 さ行"
+      ]
+    },
+    {
+      "id": "tar:exact:b26d6c331c55433e",
+      "origin": "tar",
+      "from": "せや",
+      "to": "せや",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[10]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[5].entries[10]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[10]",
+          "groupId": "ultra-short-compactions",
+          "groupLabel": "超短縮語",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "超短縮語"
       ]
     },
     {
@@ -30348,6 +30590,30 @@
       ],
       "families": [
         "かな熟語から当て字 た行"
+      ]
+    },
+    {
+      "id": "tar:exact:bacafaadad99ebcf",
+      "origin": "tar",
+      "from": "つつ",
+      "to": "つゝ",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[14]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[5].entries[14]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[14]",
+          "groupId": "ultra-short-compactions",
+          "groupLabel": "超短縮語",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "超短縮語"
       ]
     },
     {
@@ -36682,6 +36948,26 @@
       ],
       "families": [
         "かな熟語から当て字 は行"
+      ]
+    },
+    {
+      "id": "tar:exact:1be11cded03754f1",
+      "origin": "tar",
+      "from": "バッター",
+      "to": "バッター",
+      "sourceCaseIds": [
+        "tar:structured:exclude-batter:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[11].rules[0]",
+          "sourceId": "exclude-batter"
+        }
+      ],
+      "families": [
+        "カタカナ長音省略"
       ]
     },
     {
@@ -43681,6 +43967,26 @@
       ]
     },
     {
+      "id": "tar:exact:b81211dd93f4c0b1",
+      "origin": "tar",
+      "from": "マネー",
+      "to": "マネー",
+      "sourceCaseIds": [
+        "tar:structured:entry-mqb4gsyw-lr:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[11].rules[1]",
+          "sourceId": "entry-mqb4gsyw-lr"
+        }
+      ],
+      "families": [
+        "カタカナ長音省略"
+      ]
+    },
+    {
       "id": "tar:exact:8c442540b1aa44a9",
       "origin": "tar",
       "from": "マホメット",
@@ -49263,6 +49569,30 @@
       ]
     },
     {
+      "id": "tar:exact:792401bb1e220447",
+      "origin": "tar",
+      "from": "れてい",
+      "to": "れてゐ",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[15]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[15]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[15]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "部分一致と語尾省略系"
+      ]
+    },
+    {
       "id": "tar:exact:fac9956d00e95cfc",
       "origin": "tar",
       "from": "レディ",
@@ -52149,6 +52479,36 @@
       ]
     },
     {
+      "id": "tar:exact:ca6be08429a55af0",
+      "origin": "tar",
+      "from": "円",
+      "to": "圓",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpo5725s-eu:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[26]",
+          "sourceId": "entry-mpo5725s-eu"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[5].entries[18]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[5].entries[18]",
+          "groupId": "general-character-replacements",
+          "groupLabel": "一般単漢字置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "families": [
+        "旧字体"
+      ]
+    },
+    {
       "id": "tar:exact:c45e0f4f8a90f2e3",
       "origin": "tar",
       "from": "園",
@@ -52432,6 +52792,36 @@
           "path": "transform-settings (8).json",
           "locator": "roots[8].entries[82]",
           "sourceId": "entry-mpo5725s-ge"
+        }
+      ],
+      "families": [
+        "旧字体"
+      ]
+    },
+    {
+      "id": "tar:exact:03dc183dabd0a394",
+      "origin": "tar",
+      "from": "応",
+      "to": "應",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpo5725s-hl:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[124]",
+          "sourceId": "entry-mpo5725s-hl"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[5].entries[83]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[5].entries[83]",
+          "groupId": "general-character-replacements",
+          "groupLabel": "一般単漢字置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "03_kanji_single_variants"
         }
       ],
       "families": [
@@ -54423,6 +54813,26 @@
       ]
     },
     {
+      "id": "tar:exact:eb691a37b57bca9e",
+      "origin": "tar",
+      "from": "学",
+      "to": "學",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpo5725s-gj:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[87]",
+          "sourceId": "entry-mpo5725s-gj"
+        }
+      ],
+      "families": [
+        "旧字体"
+      ]
+    },
+    {
       "id": "tar:exact:d703616c2f773263",
       "origin": "tar",
       "from": "学ば",
@@ -54720,6 +55130,30 @@
       ],
       "families": [
         "旧版の混在短縮句"
+      ]
+    },
+    {
+      "id": "tar:exact:76a29b559e6a3285",
+      "origin": "tar",
+      "from": "叶",
+      "to": "叶",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[0]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[0]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
       ]
     },
     {
@@ -59945,6 +60379,30 @@
       ]
     },
     {
+      "id": "tar:exact:8749a508ccd92f03",
+      "origin": "tar",
+      "from": "御確認",
+      "to": "御確認",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[7]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[7]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[7]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
+      ]
+    },
+    {
       "id": "tar:exact:b448f65873d8a23b",
       "origin": "tar",
       "from": "御客様",
@@ -59966,6 +60424,30 @@
       ],
       "families": [
         "漢字熟語の表記差"
+      ]
+    },
+    {
+      "id": "tar:exact:afb0d19b705656b5",
+      "origin": "tar",
+      "from": "御契約",
+      "to": "御契約",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[5]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[5]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[5]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
       ]
     },
     {
@@ -60089,6 +60571,30 @@
       ]
     },
     {
+      "id": "tar:exact:15573f9899e69f2e",
+      "origin": "tar",
+      "from": "御相談",
+      "to": "御相談",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[6]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[6]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[6]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
+      ]
+    },
+    {
       "id": "tar:exact:d459ba2b4ee73f3f",
       "origin": "tar",
       "from": "御知らせ",
@@ -60161,6 +60667,78 @@
       ]
     },
     {
+      "id": "tar:exact:d4216e414093cae8",
+      "origin": "tar",
+      "from": "御返信",
+      "to": "御返信",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[8]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[8]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[8]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
+      ]
+    },
+    {
+      "id": "tar:exact:a5f5a0a85d6f9abc",
+      "origin": "tar",
+      "from": "御報告",
+      "to": "御報告",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[4]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[4]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[4]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
+      ]
+    },
+    {
+      "id": "tar:exact:f2a414acf50e8871",
+      "origin": "tar",
+      "from": "御問合せ",
+      "to": "御問合せ",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[63]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[63]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[63]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "families": [
+        "部分一致と語尾省略系"
+      ]
+    },
+    {
       "id": "tar:exact:28a644e00a91e979",
       "origin": "tar",
       "from": "御予約",
@@ -60206,6 +60784,30 @@
       ],
       "families": [
         "漢字熟語の表記差"
+      ]
+    },
+    {
+      "id": "tar:exact:a59a0e9e8f356886",
+      "origin": "tar",
+      "from": "御利用",
+      "to": "御利用",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[3]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[3]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[3]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
       ]
     },
     {
@@ -65240,6 +65842,30 @@
       ],
       "families": [
         "告示・同音書換復元 > し行"
+      ]
+    },
+    {
+      "id": "tar:exact:655532ce4371e16a",
+      "origin": "tar",
+      "from": "諸",
+      "to": "諸",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[2]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[2]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[2]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
       ]
     },
     {
@@ -70876,6 +71502,60 @@
       ],
       "families": [
         "字数圧縮を伴う熟語"
+      ]
+    },
+    {
+      "id": "tar:exact:9cee31f7b9ff3716",
+      "origin": "tar",
+      "from": "台頭",
+      "to": "擡頭",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[36]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[36]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[36]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "漢字熟語の表記差"
+      ]
+    },
+    {
+      "id": "tar:exact:4271b2484b650c4b",
+      "origin": "tar",
+      "from": "台風",
+      "to": "颱風",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpqi7eh4-8x:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[14].entries[3]",
+          "sourceId": "entry-mpqi7eh4-8x"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[4].entries[58]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[4].entries[58]",
+          "groupId": "homophone-kanji",
+          "groupLabel": "同音漢字置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "告示・同音書換復元 > た行"
       ]
     },
     {
@@ -78005,6 +78685,26 @@
       ]
     },
     {
+      "id": "tar:exact:62ec781f3035835a",
+      "origin": "tar",
+      "from": "宝",
+      "to": "寶",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpo5725s-gk:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[88]",
+          "sourceId": "entry-mpo5725s-gk"
+        }
+      ],
+      "families": [
+        "旧字体"
+      ]
+    },
+    {
       "id": "tar:exact:9687ec9754aa02d9",
       "origin": "tar",
       "from": "崩壊",
@@ -80309,6 +81009,36 @@
       ]
     },
     {
+      "id": "tar:exact:db474004110544d9",
+      "origin": "tar",
+      "from": "溶接",
+      "to": "熔接",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpqi7eh4-b2:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[29].entries[3]",
+          "sourceId": "entry-mpqi7eh4-b2"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[4].entries[148]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[4].entries[148]",
+          "groupId": "homophone-kanji",
+          "groupLabel": "同音漢字置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "families": [
+        "告示・同音書換復元 > よ行"
+      ]
+    },
+    {
       "id": "tar:exact:da2aecae0bb5d5d3",
       "origin": "tar",
       "from": "用い",
@@ -81216,6 +81946,36 @@
           "path": "tongwentang_pref6_current_json/存在したもの.json",
           "locator": "groups[5].entries[280]",
           "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[5].entries[280]",
+          "groupId": "general-character-replacements",
+          "groupLabel": "一般単漢字置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "families": [
+        "旧字体"
+      ]
+    },
+    {
+      "id": "tar:exact:12ed1e7280bc2f87",
+      "origin": "tar",
+      "from": "竜",
+      "to": "龍",
+      "sourceCaseIds": [
+        "tar:structured:entry-mpo5725v-ly:from[0]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[281]",
+          "sourceId": "entry-mpo5725v-ly"
+        },
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[5].entries[193]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[5].entries[193]",
           "groupId": "general-character-replacements",
           "groupLabel": "一般単漢字置換 に既存だったもの",
           "status": "already-present",
@@ -82734,6 +83494,30 @@
       ],
       "families": [
         "一般置換 > 弁系熟語"
+      ]
+    },
+    {
+      "id": "tar:exact:77cabdc52651ef38",
+      "origin": "tar",
+      "from": "緖",
+      "to": "緖",
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[1]"
+      ],
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[1].entries[1]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[1].entries[1]",
+          "groupId": "single-character-noops",
+          "groupLabel": "自己写像や no-op",
+          "status": "review-needed",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "families": [
+        "自己写像や no-op"
       ]
     }
   ]

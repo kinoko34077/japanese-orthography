@@ -106,15 +106,19 @@ export async function buildTarSimpleExactBootstrap(rootDir: string) {
   }
 
   const fixtureById = new Map<string, FixtureRecord>(fixture.records.map((record: FixtureRecord) => [record.id, record]));
-  const fail = (report.records as RuntimeRecord[]).filter((record) => record.status === 'FAIL');
-  if (fail.length !== 3135) throw new Error('expected 3135 #285 runtime FAIL cases, got ' + fail.length);
+  const selected = (report.records as RuntimeRecord[]).filter((record) => record.status === 'PASS' || record.status === 'FAIL');
+  const baselinePassCases = selected.filter((record) => record.status === 'PASS').length;
+  const baselineFailCases = selected.filter((record) => record.status === 'FAIL').length;
+  if (selected.length !== 3166 || baselinePassCases !== 31 || baselineFailCases !== 3135) {
+    throw new Error('expected #285 simple baseline PASS=31 / FAIL=3135 / total=3166');
+  }
 
   const grouped = new Map<string, TarSimpleExactRecord>();
   const outputsByInput = new Map<string, Set<string>>();
-  for (const runtime of fail) {
+  for (const runtime of selected) {
     const source = fixtureById.get(runtime.caseId);
-    if (!source) throw new Error('runtime FAIL references missing fixture case ' + runtime.caseId);
-    if (!isSimpleExact(source)) throw new Error('runtime FAIL is not simple exact: ' + runtime.caseId);
+    if (!source) throw new Error('runtime simple case references missing fixture case ' + runtime.caseId);
+    if (!isSimpleExact(source)) throw new Error('runtime selected case is not simple exact: ' + runtime.caseId);
     const to = source.expectedOutputs[0]!;
     if (runtime.input !== source.from || runtime.expectedOutputs.length !== 1 || runtime.expectedOutputs[0] !== to) {
       throw new Error('runtime/fixture mismatch for ' + runtime.caseId);
@@ -154,7 +158,7 @@ export async function buildTarSimpleExactBootstrap(rootDir: string) {
     }))
     .sort((a, b) => a.from.localeCompare(b.from, 'ja') || a.to.localeCompare(b.to, 'ja'));
 
-  if (records.length !== 3132) throw new Error('expected 3132 unique simple exact relations, got ' + records.length);
+  if (records.length !== 3163) throw new Error('expected 3163 unique simple exact relations, got ' + records.length);
 
   return {
     schemaVersion: '1',
@@ -168,11 +172,13 @@ export async function buildTarSimpleExactBootstrap(rootDir: string) {
       runtimeReportDigest: BASELINE_REPORT_DIGEST
     },
     accounting: {
-      baselineFailCases: fail.length,
+      baselineExecutableCases: selected.length,
+      baselinePassCases,
+      baselineFailCases,
       uniqueRelations: records.length,
       uniqueInputs: outputsByInput.size,
       conflictingInputs: conflicts.length,
-      duplicateCaseExcess: fail.length - records.length
+      duplicateCaseExcess: selected.length - records.length
     },
     recordsDigest: createHash('sha256').update(JSON.stringify(records)).digest('hex'),
     records
@@ -188,7 +194,7 @@ export async function validateTarSimpleExactCorpus(rootDir: string) {
   if (doc.selection?.sourceCommit !== TAR_COMMIT || doc.selection?.baselineMain !== BASELINE_MAIN || doc.selection?.runtimeReportDigest !== BASELINE_REPORT_DIGEST) {
     throw new Error('TAR simple-exact corpus baseline drift');
   }
-  if (!Array.isArray(doc.records) || doc.records.length !== 3132) throw new Error('TAR simple-exact corpus must contain 3132 relations');
+  if (!Array.isArray(doc.records) || doc.records.length !== 3163) throw new Error('TAR simple-exact corpus must contain 3163 relations');
 
   const fixtureById = new Map<string, FixtureRecord>(fixture.records.map((record: FixtureRecord) => [record.id, record]));
   const ids = new Set<string>();
@@ -215,10 +221,14 @@ export async function validateTarSimpleExactCorpus(rootDir: string) {
     }
   }
 
-  if (caseIds.size !== 3135) throw new Error('TAR simple-exact corpus must cover 3135 baseline FAIL cases');
+  if (caseIds.size !== 3166) throw new Error('TAR simple-exact corpus must cover all 3166 baseline executable simple cases');
   const digest = createHash('sha256').update(JSON.stringify(doc.records)).digest('hex');
   if (doc.recordsDigest !== digest) throw new Error('TAR simple-exact corpus recordsDigest drift');
-  if (doc.accounting?.uniqueRelations !== 3132 || doc.accounting?.baselineFailCases !== 3135 || doc.accounting?.conflictingInputs !== 0) {
+  if (doc.accounting?.uniqueRelations !== 3163
+    || doc.accounting?.baselineExecutableCases !== 3166
+    || doc.accounting?.baselinePassCases !== 31
+    || doc.accounting?.baselineFailCases !== 3135
+    || doc.accounting?.conflictingInputs !== 0) {
     throw new Error('TAR simple-exact accounting drift');
   }
   return doc;
@@ -234,7 +244,7 @@ async function main() {
     return;
   }
   const doc = await validateTarSimpleExactCorpus(rootDir);
-  console.log('TAR simple-exact OK: ' + doc.records.length + ' rules / ' + doc.accounting.baselineFailCases + ' source FAIL cases');
+  console.log('TAR simple-exact OK: ' + doc.records.length + ' rules / ' + doc.accounting.baselineExecutableCases + ' baseline simple cases');
 }
 
 if (process.argv[1]?.endsWith('tar-simple-exact.ts')) await main();

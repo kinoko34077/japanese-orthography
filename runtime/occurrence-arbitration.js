@@ -243,13 +243,41 @@
       else blocked.push({ candidate, reason: verdict.reason });
     }
 
+    // Explicit profile/TAR precedence is applied only when supplied by the producer. Ordinary
+    // candidates default to 0, preserving existing arbitration semantics. A higher-precedence
+    // overlay suppresses overlapping lower-stage candidates. Within the same positive precedence,
+    // a longer containing exact intent suppresses its shorter component intents.
+    const precedenceOf = (candidate) => Number.isFinite(candidate.precedence) ? candidate.precedence : 0;
+    const overlaps = (left, right) => left.start < right.end && right.start < left.end;
+    const contains = (outer, inner) => outer.start <= inner.start && outer.end >= inner.end;
+    const precedenceLive = [];
+    for (const candidate of live) {
+      const precedence = precedenceOf(candidate);
+      const higher = live.some((other) => other !== candidate && overlaps(other, candidate) && precedenceOf(other) > precedence);
+      if (higher) {
+        blocked.push({ candidate, reason: "shadowed_by_higher_precedence" });
+        continue;
+      }
+      const longerPeer = precedence > 0 && live.some((other) => (
+        other !== candidate
+        && precedenceOf(other) === precedence
+        && contains(other, candidate)
+        && (other.end - other.start) > (candidate.end - candidate.start)
+      ));
+      if (longerPeer) {
+        blocked.push({ candidate, reason: "shadowed_by_longer_high_precedence" });
+        continue;
+      }
+      precedenceLive.push(candidate);
+    }
+
     // same-start: the longest admissible match shadows shorter ones (accepted 4.7 behaviour)
     const longestAt = new Map();
-    for (const candidate of live) {
+    for (const candidate of precedenceLive) {
       longestAt.set(candidate.start, Math.max(longestAt.get(candidate.start) ?? 0, candidate.end - candidate.start));
     }
     const contenders = [];
-    for (const candidate of live) {
+    for (const candidate of precedenceLive) {
       if (candidate.end - candidate.start < longestAt.get(candidate.start)) blocked.push({ candidate, reason: "shadowed_by_longer_match" });
       else contenders.push(candidate);
     }

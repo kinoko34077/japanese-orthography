@@ -137,6 +137,7 @@
               candidates.push({
                 start: offsets[start], end: offsets[end], output: edge.output,
                 policy,
+                precedence: stage === "profile" ? 1 : 0,
                 origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
                 key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${edge.output}`
               });
