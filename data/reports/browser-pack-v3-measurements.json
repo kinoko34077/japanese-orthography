@@ -2,26 +2,26 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524",
+  "packDigest": "ce52d6bfc229aa92f94830e8dd38cdd9f0f893fc9d7bccdf7516b642aa8ea639",
   "sections": 1846,
   "sizes": {
-    "total": 187158072,
-    "totalGzip": 73141364,
+    "total": 187549956,
+    "totalGzip": 73224507,
     "byLoading": {
       "eager": {
         "sections": 10,
-        "bytes": 837284,
-        "gzipBytes": 298978
+        "bytes": 885524,
+        "gzipBytes": 313020
       },
       "lazy": {
         "sections": 483,
-        "bytes": 74997144,
-        "gzipBytes": 25015935
+        "bytes": 75084980,
+        "gzipBytes": 25056296
       },
       "on-demand": {
         "sections": 1353,
-        "bytes": 111323644,
-        "gzipBytes": 47826451
+        "bytes": 111579452,
+        "gzipBytes": 47855191
       }
     },
     "byKind": {
@@ -37,8 +37,8 @@
       },
       "evidence-map": {
         "sections": 141,
-        "bytes": 44160132,
-        "gzipBytes": 14962237
+        "bytes": 44240604,
+        "gzipBytes": 14999033
       },
       "knowledge-bundle": {
         "sections": 330,
@@ -72,13 +72,13 @@
       },
       "profile-policy": {
         "sections": 3,
-        "bytes": 261086,
-        "gzipBytes": 63469
+        "bytes": 309326,
+        "gzipBytes": 77511
       },
       "program-evidence": {
         "sections": 12,
-        "bytes": 2533600,
-        "gzipBytes": 1316330
+        "bytes": 2540964,
+        "gzipBytes": 1319895
       },
       "reading-index": {
         "sections": 468,
@@ -92,18 +92,18 @@
       },
       "rule-predicates": {
         "sections": 1,
-        "bytes": 1050240,
-        "gzipBytes": 74916
+        "bytes": 1254376,
+        "gzipBytes": 88001
       },
       "rule-program-index": {
         "sections": 1,
-        "bytes": 2795720,
-        "gzipBytes": 1495763
+        "bytes": 2805124,
+        "gzipBytes": 1500908
       },
       "rule-programs": {
         "sections": 1,
-        "bytes": 6787560,
-        "gzipBytes": 2877673
+        "bytes": 6826408,
+        "gzipBytes": 2885729
       },
       "rule-runtime-meta": {
         "sections": 1,
@@ -117,8 +117,8 @@
       },
       "sequence-pool": {
         "sections": 1,
-        "bytes": 5530664,
-        "gzipBytes": 2642385
+        "bytes": 5534084,
+        "gzipBytes": 2644839
       },
       "shard-directory": {
         "sections": 1,
@@ -153,24 +153,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 10,
-        "bytes": 837284,
-        "gzipBytes": 301598,
-        "openMs": 82
+        "bytes": 885524,
+        "gzipBytes": 315803,
+        "openMs": 267
       },
       "coldFirstResult": {
         "requests": 72,
         "bytes": 4234896,
         "gzipBytes": 1875270,
-        "ms": 580
+        "ms": 1312
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 11
+        "ms": 44
       },
-      "detailLatencyMs": 55,
-      "unitDetailLatencyMs": 92,
-      "residentArrayBufferBytes": 9499476,
-      "jsHeapDeltaBytes": 34437048,
+      "detailLatencyMs": 141,
+      "unitDetailLatencyMs": 165,
+      "residentArrayBufferBytes": 9553640,
+      "jsHeapDeltaBytes": 34506816,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -179,24 +179,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 10,
-        "bytes": 837284,
-        "gzipBytes": 301598,
-        "openMs": 53
+        "bytes": 885524,
+        "gzipBytes": 315803,
+        "openMs": 132
       },
       "coldFirstResult": {
         "requests": 153,
         "bytes": 8596764,
         "gzipBytes": 3737193,
-        "ms": 713
+        "ms": 1303
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 23
+        "ms": 30
       },
-      "detailLatencyMs": 43,
-      "unitDetailLatencyMs": 26,
-      "residentArrayBufferBytes": 11640464,
-      "jsHeapDeltaBytes": 13977088,
+      "detailLatencyMs": 44,
+      "unitDetailLatencyMs": 20,
+      "residentArrayBufferBytes": 11687264,
+      "jsHeapDeltaBytes": 13853152,
       "spans": 7,
       "inspectableUnits": 23
     }

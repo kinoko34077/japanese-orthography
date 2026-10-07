@@ -2,28 +2,28 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-compiled",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524",
-  "canonicalGraphSha256": "f013287c1d97e945eb46809b0539e2ebdc2bc6f4ea9478d80c397f2275ca2082",
+  "packDigest": "ce52d6bfc229aa92f94830e8dd38cdd9f0f893fc9d7bccdf7516b642aa8ea639",
+  "canonicalGraphSha256": "7295dc07c04a32ffbae87e21e7368a940515660c76aca6a422aa870b152a3b96",
   "totals": {
     "sections": 1846,
-    "bytes": 187158072,
-    "gzipBytes": 73141364
+    "bytes": 187549956,
+    "gzipBytes": 73224507
   },
   "byLoading": {
     "eager": {
       "sections": 10,
-      "bytes": 837284,
-      "gzipBytes": 298978
+      "bytes": 885524,
+      "gzipBytes": 313020
     },
     "lazy": {
       "sections": 483,
-      "bytes": 74997144,
-      "gzipBytes": 25015935
+      "bytes": 75084980,
+      "gzipBytes": 25056296
     },
     "on-demand": {
       "sections": 1353,
-      "bytes": 111323644,
-      "gzipBytes": 47826451
+      "bytes": 111579452,
+      "gzipBytes": 47855191
     }
   },
   "byKind": {
@@ -39,8 +39,8 @@
     },
     "evidence-map": {
       "sections": 141,
-      "bytes": 44160132,
-      "gzipBytes": 14962237
+      "bytes": 44240604,
+      "gzipBytes": 14999033
     },
     "knowledge-bundle": {
       "sections": 330,
@@ -74,13 +74,13 @@
     },
     "profile-policy": {
       "sections": 3,
-      "bytes": 261086,
-      "gzipBytes": 63469
+      "bytes": 309326,
+      "gzipBytes": 77511
     },
     "program-evidence": {
       "sections": 12,
-      "bytes": 2533600,
-      "gzipBytes": 1316330
+      "bytes": 2540964,
+      "gzipBytes": 1319895
     },
     "reading-index": {
       "sections": 468,
@@ -94,18 +94,18 @@
     },
     "rule-predicates": {
       "sections": 1,
-      "bytes": 1050240,
-      "gzipBytes": 74916
+      "bytes": 1254376,
+      "gzipBytes": 88001
     },
     "rule-program-index": {
       "sections": 1,
-      "bytes": 2795720,
-      "gzipBytes": 1495763
+      "bytes": 2805124,
+      "gzipBytes": 1500908
     },
     "rule-programs": {
       "sections": 1,
-      "bytes": 6787560,
-      "gzipBytes": 2877673
+      "bytes": 6826408,
+      "gzipBytes": 2885729
     },
     "rule-runtime-meta": {
       "sections": 1,
@@ -119,8 +119,8 @@
     },
     "sequence-pool": {
       "sections": 1,
-      "bytes": 5530664,
-      "gzipBytes": 2642385
+      "bytes": 5534084,
+      "gzipBytes": 2644839
     },
     "shard-directory": {
       "sections": 1,
