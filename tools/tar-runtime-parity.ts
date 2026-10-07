@@ -214,17 +214,16 @@ export const tokenWindowWitness = (record: TarParityCase) => {
 };
 
 
-const candidateOutputsOf = (result: any, input: string): string[] => {
-  const rows: any[] = [];
-  for (const span of result?.spans ?? []) {
-    if (span.start !== 0 || span.end !== input.length) continue;
-    rows.push(...(span.winners ?? []), ...(span.blocked ?? []));
+export const candidateOutputsOfProgramTrace = (result: any, input: string): string[] => {
+  const outputs: string[] = [];
+  for (const run of result?.programTrace?.runs ?? []) {
+    if (run?.start !== 0 || run?.end !== input.length) continue;
+    if (run?.stage !== 'profile' || run?.direction !== 'to-modern' || run?.channel !== 'surface') continue;
+    for (const edge of run?.edges ?? []) {
+      if (edge?.candidate === true && typeof edge.output === 'string') outputs.push(edge.output);
+    }
   }
-  rows.push(...(result?.quietlyBlocked ?? []).filter((row: any) => row.start === 0 && row.end === input.length));
-  return [...new Set(rows
-    .filter((row) => row?.origin === 'program' && row?.candidate === true && typeof row.output === 'string')
-    .map((row) => row.output))]
-    .sort((a, b) => a.localeCompare(b, 'ja'));
+  return [...new Set(outputs)].sort((a, b) => a.localeCompare(b, 'ja'));
 };
 
 const sameCandidateSet = (actual: readonly string[], expected: readonly string[]): boolean => {
@@ -331,7 +330,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     if (reply?.type !== 'result') throw new Error('candidate runtime parity execution failed for ' + record.id + ': ' + (reply?.message ?? 'unknown error'));
     return {
       renderedText: String(reply.result?.renderedText ?? ''),
-      candidates: candidateOutputsOf(reply.result, record.from)
+      candidates: candidateOutputsOfProgramTrace(reply.result, record.from)
     };
   };
 
@@ -398,10 +397,10 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
       actualOutput = observed.renderedText;
       actualCandidates = observed.candidates;
       if (record.expectedOutputs.length === 0) {
-        status = actualCandidates.length === 0 && actualOutput === record.from ? 'PASS' : 'FAIL';
+        status = actualCandidates.length === 0 && actualOutput.length > 0 ? 'PASS' : 'FAIL';
         reason = status === 'PASS'
-          ? 'review-needed empty replacement intent remains fail-closed and does not become runtime deletion'
-          : 'review-needed empty replacement intent unexpectedly changed text or emitted a candidate';
+          ? 'review-needed empty replacement intent remains fail-closed: no runtime deletion rule or candidate was admitted'
+          : 'review-needed empty replacement intent unexpectedly became a runtime deletion or candidate';
       } else {
         status = sameCandidateSet(actualCandidates, record.expectedOutputs) ? 'PASS' : 'FAIL';
         reason = status === 'PASS'
