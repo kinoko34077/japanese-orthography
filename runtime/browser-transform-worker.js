@@ -523,7 +523,7 @@
       const observation = supplied.observation ?? await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
-        context: programContextFor(p)
+        context: supplied.programContext ?? programContextFor(p)
       });
       const rawSurfaceCandidates = await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" }));
       const surfaceCandidates = [...new Map(rawSurfaceCandidates.map((candidate) => {
@@ -674,12 +674,16 @@
         units
       };
     };
-    const transformWithProgram = async (p, hot, text, profileId, renderMode) => {
-      const scope = await lexicalScopeFor(p, text);
+    const transformWithProgram = async (p, hot, text, profileId, renderMode, suppliedProgramContext = undefined) => {
+      let scope = await lexicalScopeFor(p, text);
+      if (suppliedProgramContext?.tokenWindow
+        && !scope.lexicalMatches.some((entry) => entry.start === 0 && entry.end === text.length)) {
+        scope = { ...scope, lexicalMatches: [...scope.lexicalMatches, { start: 0, end: text.length }] };
+      }
       const observation = await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
-        context: programContextFor(p)
+        context: suppliedProgramContext ?? programContextFor(p)
       });
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
@@ -691,7 +695,8 @@
       );
       return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
         scope,
-        observation: { ...observation, candidates: surfaceCandidates }
+        observation: { ...observation, candidates: surfaceCandidates },
+        programContext: suppliedProgramContext
       });
     };
     const compareProgramOutput = (legacy, program) => {
@@ -752,9 +757,13 @@
           if (mode === "vm-authoritative") {
             const hot = await programForPack(p);
             if (!hot || typeof hot.transformText !== "function") throw new Error("Rule Program VM admission failed: required hot sections are unavailable");
+            const baseContext = programContextFor(p);
+            const programContext = message.tokenWindow
+              ? { ...(baseContext ?? {}), tokenWindow: message.tokenWindow }
+              : baseContext;
             raw = (message.renderMode ?? "plain") === "plain" && !normalizedRuby
-              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode)
-              : await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { rubyEvidence: normalizedRuby?.ranges ?? [] });
+              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode, programContext)
+              : await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { rubyEvidence: normalizedRuby?.ranges ?? [], programContext });
             raw = restoreRubyInputRanges(raw, source, normalizedRuby);
             raw.renderMode = message.renderMode ?? "plain";
           } else {

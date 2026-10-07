@@ -72,9 +72,74 @@
       inputLengths.add(pool.symbols(input).length);
     }
 
-    const runSequence = ({ stage, direction, channel, sequenceId, text, profileId, symbol, lexemes, context }) => {
+    // #289: context rules may be selected by an observed token's basic form or by a
+    // kana-insensitive spelling. Keep those alternate lookups restricted to Programs that
+    // actually carry a TAR tokenContext predicate so unrelated exact/profile Programs cannot leak.
+    const tokenContextByProgram = new Map();
+    const arity = { 0: 0, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 0, 8: 1 };
+    for (let programId = 0; programId < programView.count; programId += 1) {
+      if (programView.direct(programId)) continue;
+      const code = programView.code(programId);
+      for (let pc = 0; pc < code.length;) {
+        const op = code[pc];
+        if (op === RuleProgramVM.OP.TEST_PRED) {
+          const predicate = predicates[code[pc + 1]];
+          if (predicate?.tokenContext) tokenContextByProgram.set(programId, predicate.tokenContext);
+        }
+        if (op === RuleProgramVM.OP.END) break;
+        pc += 1 + (arity[op] ?? 0);
+      }
+    }
+    const toHiragana = (value) => Array.from(String(value ?? ""), (ch) => {
+      const code = ch.codePointAt(0);
+      return code >= 0x30a1 && code <= 0x30f6 ? String.fromCodePoint(code - 0x60) : ch;
+    }).join("");
+    const toKatakana = (value) => Array.from(String(value ?? ""), (ch) => {
+      const code = ch.codePointAt(0);
+      return code >= 0x3041 && code <= 0x3096 ? String.fromCodePoint(code + 0x60) : ch;
+    }).join("");
+    const sharedSuffix = (left, right) => {
+      const a = Array.from(String(left ?? ""));
+      const b = Array.from(String(right ?? ""));
+      let n = 0;
+      while (n < a.length && n < b.length && a[a.length - 1 - n] === b[b.length - 1 - n]) n += 1;
+      return n ? a.slice(a.length - n).join("") : "";
+    };
+    const usesBasicForm = (rule) => {
+      const current = Array.isArray(rule?.conditions?.current)
+        ? rule.conditions.current : rule?.conditions?.current ? [rule.conditions.current] : [];
+      return rule?.matchTarget === "basic_form" || rule?.ruleType === "verb" || rule?.ruleType === "adjective"
+        || current.some((condition) => condition && typeof condition === "object"
+          && ("basic" in condition || "basic_form" in condition || condition.pos === "動詞"));
+    };
+    const adaptTarOutput = (output, rule, context) => {
+      if (!rule || !usesBasicForm(rule)) return output;
+      const window = context?.tokenWindow;
+      const token = window?.tokens?.[window.index];
+      if (!token || token.basic_form !== rule.from || token.surface_form === rule.from) return output;
+      if (rule.ruleType === "adjective" && String(rule.from).endsWith("い") && String(output).endsWith("い")) {
+        const fromStem = String(rule.from).slice(0, -1);
+        const toStem = String(output).slice(0, -1);
+        const variants = [
+          [rule.from, output], [fromStem + "く", toStem + "く"], [fromStem + "かっ", toStem + "かっ"],
+          [fromStem + "けれ", toStem + "けれ"], [fromStem + "かれ", toStem + "かれ"], [fromStem + "さ", toStem + "さ"]
+        ];
+        const hit = variants.find(([from]) => from === token.surface_form);
+        return hit ? hit[1] : token.surface_form;
+      }
+      const suffix = sharedSuffix(rule.from, output);
+      if (!suffix) return output;
+      const fromStem = String(rule.from).slice(0, String(rule.from).length - suffix.length);
+      const toStem = String(output).slice(0, String(output).length - suffix.length);
+      return fromStem && String(token.surface_form).startsWith(fromStem)
+        ? toStem + String(token.surface_form).slice(fromStem.length)
+        : output;
+    };
+
+    const runSequence = ({ stage, direction, channel, sequenceId, text, profileId, symbol, lexemes, context, contextOnly = false }) => {
       if (sequenceId < 0) return { text, sequenceId, edges: [], preserved: false, mechanisms: [], executedProgramIds: [], trace: [] };
-      const programIds = index.get(keyOf(stage, direction, channel, sequenceId)) ?? [];
+      const programIds = (index.get(keyOf(stage, direction, channel, sequenceId)) ?? [])
+        .filter((programId) => !contextOnly || tokenContextByProgram.has(programId));
       const state = { profileId, symbol, lexemes: lexemes instanceof Set ? lexemes : new Set(lexemes ?? []), context };
       const edges = [], trace = [], mechanisms = [];
       let preserved = false;
@@ -107,7 +172,8 @@
       const stages = options.stages ?? STAGES;
       const directions = options.directions ?? DIRECTIONS;
       const channels = options.channels ?? CHANNELS;
-      const lengths = [...inputLengths].sort((a, b) => a - b);
+      const contextualLookup = options.context !== undefined || typeof options.contextFor === "function";
+      const lengths = [...new Set([...inputLengths, ...(contextualLookup ? [tokens.length] : [])])].sort((a, b) => a - b);
       const candidates = [], runs = [];
       const contextFor = typeof options.contextFor === "function" ? options.contextFor : () => options.context;
       const executedProgramIds = new Set();
@@ -118,31 +184,52 @@
           const sequence = tokens.slice(start, end);
           if (!sequence.every((token) => typeof token === "number")) continue;
           const sequenceId = pool.find(sequence);
-          if (sequenceId < 0) continue;
           const segment = source.slice(offsets[start], offsets[end]);
           const suppliedSymbol = typeof options.symbolFor === "function" ? options.symbolFor(offsets[start], offsets[end], segment) : undefined;
           const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
           const lexemes = typeof options.lexemesFor === "function" ? options.lexemesFor(offsets[start], offsets[end], segment) : undefined;
+          const context = contextFor(offsets[start], offsets[end], segment);
+          const lookupIds = new Map();
+          if (sequenceId >= 0) lookupIds.set(sequenceId, false);
+          const window = context?.tokenWindow;
+          const current = window?.tokens?.[window.index];
+          const alternateTexts = [
+            typeof current?.basic_form === "string" ? current.basic_form : null,
+            toHiragana(segment),
+            toKatakana(segment)
+          ].filter((value) => value && value !== segment);
+          for (const alternate of alternateTexts) {
+            const symbols = symbolizer.sequenceOf(alternate);
+            const alternateId = symbols === null ? -1 : pool.find(symbols);
+            if (alternateId >= 0 && !lookupIds.has(alternateId)) lookupIds.set(alternateId, true);
+          }
+          if (!lookupIds.size) continue;
           for (const stage of stages) for (const direction of directions) for (const channel of channels) {
-            const result = runSequence({ stage, direction, channel, sequenceId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes, context: contextFor(offsets[start], offsets[end], segment) });
-            if (!result.executedProgramIds.length) continue;
-            for (const id of result.executedProgramIds) executedProgramIds.add(id);
-            runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, ...result });
-            for (const edge of result.edges) {
-              const programId = edge.programs.at(-1);
-              const rootProgramId = edge.programs[0] ?? programId;
-              const programScope = rootProgramId === undefined ? undefined : SCOPES[programSection.value("scope", rootProgramId)];
-              const policy = programScope === "anywhere" ? "anywhere"
-                : programScope === "whole-token" ? "whole_lexeme"
-                  : stage === "orthographic" && length === 1 ? "anywhere"
-                    : stage === "lexical" ? "lexical_boundary" : "whole_lexeme";
-              candidates.push({
-                start: offsets[start], end: offsets[end], output: edge.output,
-                policy,
-                precedence: stage === "profile" ? 1 : 0,
-                origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
-                key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${edge.output}`
-              });
+            for (const [lookupId, contextOnly] of lookupIds) {
+              const result = runSequence({ stage, direction, channel, sequenceId: lookupId, text: segment, profileId, symbol: symbol ?? (length === 1 ? tokens[start] : undefined), lexemes, context, contextOnly });
+              if (!result.executedProgramIds.length) continue;
+              for (const id of result.executedProgramIds) executedProgramIds.add(id);
+              runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, lookupSequenceId: lookupId, ...result });
+              for (const edge of result.edges) {
+                const programId = edge.programs.at(-1);
+                const rootProgramId = edge.programs[0] ?? programId;
+                const programScope = rootProgramId === undefined ? undefined : SCOPES[programSection.value("scope", rootProgramId)];
+                const policy = programScope === "anywhere" ? "anywhere"
+                  : programScope === "whole-token" ? "whole_lexeme"
+                    : stage === "orthographic" && length === 1 ? "anywhere"
+                      : stage === "lexical" ? "lexical_boundary" : "whole_lexeme";
+                const tarRule = rootProgramId === undefined ? null : tokenContextByProgram.get(rootProgramId);
+                const output = tarRule ? adaptTarOutput(edge.output, tarRule, context) : edge.output;
+                candidates.push({
+                  start: offsets[start], end: offsets[end], output,
+                  policy,
+                  // Structured TAR semantics are more specific than the naked simple-exact migration
+                  // lane. Within the structured lane, preserve the pinned TAR numeric priority.
+                  precedence: tarRule ? 1000 + (Number(tarRule.priority) || 0) : stage === "profile" ? 1 : 0,
+                  origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
+                  key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${output}`
+                });
+              }
             }
           }
         }

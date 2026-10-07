@@ -4,30 +4,31 @@
   "owner": "japanese-orthography#285",
   "finalExecutionParity": false,
   "requiredNextGates": [
-    "context-parity",
     "candidate-parity",
     "pattern-parity"
   ],
   "sourceFixtureDigest": "09e903eab9828c7903a2617042e10886da0b9e868f828914548d55fd812960ce",
-  "reportDigest": "df18ea10a39dc64c26c5b55c6253535659f9c257dd143a6e4f62d166726441a8",
+  "reportDigest": "c1e482725826c6b971f585ac571eb1d6c614308faafa91c0814563519990de63",
   "baseline": {
     "profileId": "kinotch-fixed",
     "executionMode": "vm-authoritative",
     "browserPackCompilerVersion": "3",
-    "browserPackDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524"
+    "browserPackDigest": "ce52d6bfc229aa92f94830e8dd38cdd9f0f893fc9d7bccdf7516b642aa8ea639"
   },
   "accounting": {
     "fixtureRecords": 4036,
     "reportRecords": 4036,
     "dropped": 0,
     "uniqueSimpleInputsExecuted": 3163,
-    "executableCasesTested": 3166,
+    "contextCasesExecuted": 670,
+    "contextSourceUnreachable": 2,
+    "contextShadowedByHigherPriority": 1,
+    "executableCasesTested": 3836,
     "conflictingSimpleInputsDeferred": 60
   },
   "statuses": {
-    "PASS": 3166,
+    "PASS": 3836,
     "CANDIDATE_REQUIRED": 165,
-    "CONTEXT_REQUIRED": 670,
     "DISABLED": 28,
     "PATTERN_REQUIRED": 7
   },

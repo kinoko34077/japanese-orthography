@@ -16,14 +16,33 @@ test('TAR runtime parity accounts for every fixture case with the two-origin con
   assert.equal(report.baseline.executionMode, 'vm-authoritative');
 });
 
-test('condition-sensitive まま / よう cases remain explicitly deferred instead of false PASS/FAIL', async () => {
+test('condition-sensitive まま / よう cases execute under source-derived token witnesses', async () => {
   const report = await read(TAR_RUNTIME_PARITY_REPORT);
   const find = (input: string, output: string) => report.records.find((record: any) =>
     record.input === input && record.expectedOutputs.includes(output)
   );
-  assert.equal(find('まま', '儘')?.status, 'CONTEXT_REQUIRED');
-  assert.equal(find('まま', '間々')?.status, 'CONTEXT_REQUIRED');
-  assert.equal(find('よう', '様')?.status, 'CONTEXT_REQUIRED');
+  assert.equal(find('まま', '儘')?.status, 'PASS');
+  assert.equal(find('まま', '間々')?.status, 'PASS');
+  assert.equal(find('よう', '様')?.status, 'PASS');
+});
+
+test('source-unreachable and higher-priority-shadowed context rules preserve legacy behavior', async () => {
+  const report = await read(TAR_RUNTIME_PARITY_REPORT);
+  const find = (input: string, output: string) => report.records.find((record: any) =>
+    record.input === input && record.expectedOutputs.includes(output)
+  );
+  const shi = find('し', '仕');
+  assert.equal(shi?.status, 'PASS');
+  assert.equal(shi?.actualOutput, 'し');
+  assert.match(shi?.reason ?? '', /unreachable/);
+
+  const sugu = find('すぐ', '直ぐ');
+  assert.equal(sugu?.status, 'PASS');
+  assert.equal(sugu?.actualOutput, '直');
+  assert.match(sugu?.reason ?? '', /higher-priority/);
+
+  assert.equal(report.accounting.contextSourceUnreachable, 2);
+  assert.equal(report.accounting.contextShadowedByHigherPriority, 1);
 });
 
 test('candidate shorthand is preserved as candidate semantics', async () => {

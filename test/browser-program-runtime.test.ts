@@ -63,6 +63,61 @@ const profileAnywhereV3 = transcodeToV3(profileAnywhereV2, registry, {
   evidence: { graph: profileAnywhereCanonical, ir: compileRuleIR(profileAnywhereCanonical) }
 });
 
+const tarContextGraph = adapterFixture();
+tarContextGraph.sources.push({ sourceId: 'src:tar-context', path: 'fixture/tar-context', role: 'test-source' });
+tarContextGraph.rules.push(
+  {
+    id: 'rule:tar:test:mama-noun', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['まま'], to: ['儘'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'まま', conditions: { current: { pos: '名詞', pos1: '非自立' } } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:mama-noun']
+  },
+  {
+    id: 'rule:tar:test:mama-adverb', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['まま'], to: ['間々'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'まま', conditions: { current: { pos: '副詞' } } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:mama-adverb']
+  },
+  {
+    id: 'rule:tar:test:naru', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['なる'], to: ['成る'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'なる', ruleType: 'verb', matchTarget: 'basic_form', conditions: { current: { basic: 'なる', pos: '動詞', pos1: '自立' } } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:naru']
+  },
+  {
+    id: 'rule:tar:test:kana-insensitive', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['カナ'], to: ['仮名'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'カナ', matchOptions: { kana_insensitive: true } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:kana-insensitive']
+  },
+  {
+    id: 'rule:tar:test:mama-simple', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['まま'], to: ['真'], dependencies: [],
+    predicate: { channel: 'surface', migrationOrigin: 'tar', family: 'tar-simple-exact' },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:mama-simple']
+  },
+  {
+    id: 'rule:tar:test:sugu-high', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['すぐ'], to: ['直'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'すぐ', priority: 90, conditions: { current: { pos: '副詞' } } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:sugu-high']
+  },
+  {
+    id: 'rule:tar:test:sugu-low', class: 'orthographic', directionality: 'forward_only', lossiness: 'lossless',
+    from: ['すぐ'], to: ['直ぐ'], dependencies: [],
+    predicate: { channel: 'surface', exactToken: true, tokenContext: { from: 'すぐ', priority: 50, conditions: { current: { pos: '副詞' } } } },
+    origin: 'tar', sourceRefs: ['src:tar-context'], evidenceRefs: ['ev:sugu-low']
+  }
+);
+const tarContextCanonical = canonicalizeOrthographyKnowledge(tarContextGraph);
+const tarContextV2 = compileBrowserPack(tarContextCanonical, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
+  compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION,
+  layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
+});
+const tarContextV3 = transcodeToV3(tarContextV2, registry, {
+  evidence: { graph: tarContextCanonical, ir: compileRuleIR(tarContextCanonical) }
+});
+
 test('BrowserPack v3 carries the shared hot Rule Program sections and executes by SequenceId', async () => {
   const kinds = new Set(v3.manifest.sections.map((section) => section.kind));
   for (const kind of ['sequence-pool', 'rule-programs', 'rule-program-index', 'rule-predicates', 'rule-lexeme-sets', 'rule-runtime-meta'] as const) {
@@ -179,4 +234,33 @@ test('vm-authoritative reconstructs 必要 from compact class evidence and symbo
   assert.equal(result.result.renderedText, '｜必要《ひつえう》');
   assert.equal(result.result.spans[0].authority, 'source_rule');
   assert.equal(result.result.spans[0].certainty, 'unique');
+});
+
+
+test('TAR tokenWindow runs through the production Browser Program path with POS, basic-form inflection and kana-insensitive lookup', async () => {
+  const pack = await openBrowserPack(tarContextV3.manifest, async (section: { path: string }) => tarContextV3.files.get(section.path)!);
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const token = (surface: string, basic: string, pos: string, pos1 = '') => ({
+    surface_form: surface, basic_form: basic, pos, pos_detail_1: pos1,
+    pos_detail_2: '', pos_detail_3: '', conjugated_type: '', conjugated_form: '', reading: '',
+    pronunciation: '', word_type: ''
+  });
+  const convert = async (id: string, text: string, current: ReturnType<typeof token>) => {
+    const reply = await service.handle({
+      type: 'transform', requestId: id, text, profileId: 'kinotch-fixed', renderMode: 'plain',
+      tokenWindow: { tokens: [current], index: 0 }
+    });
+    assert.equal(reply.type, 'result', reply.message);
+    return reply.result.renderedText;
+  };
+
+  // Matching structured context outranks a naked TAR simple-exact rule for the same input.
+  assert.equal(await convert('ctx-mama-noun', 'まま', token('まま', 'まま', '名詞', '非自立')), '儘');
+  assert.equal(await convert('ctx-mama-adv', 'まま', token('まま', 'まま', '副詞')), '間々');
+  // Without either context predicate, the naked simple-exact fallback remains available.
+  assert.equal(await convert('ctx-mama-negative', 'まま', token('まま', 'まま', '助動詞')), '真');
+  assert.equal(await convert('ctx-naru-inflected', 'なった', token('なった', 'なる', '動詞', '自立')), '成った');
+  assert.equal(await convert('ctx-kana-insensitive', 'かな', token('かな', 'かな', '名詞')), '仮名');
+  // Two equally applicable structured intents are resolved by the pinned TAR numeric priority.
+  assert.equal(await convert('ctx-sugu-priority', 'すぐ', token('すぐ', 'すぐ', '副詞')), '直');
 });
