@@ -136,7 +136,7 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
     let kind: RuleKind;
     let stage: RuleStage;
     let scope: RuleScope;
-    if (r.origin === 'project_defined' || r.origin === 'kinotch_derived') { kind = 'profile-style'; stage = 'profile'; scope = p.exactToken ? 'whole-token' : 'anywhere'; }
+    if (r.origin === 'project_defined' || r.origin === 'kinotch_derived' || r.origin === 'tar') { kind = 'profile-style'; stage = 'profile'; scope = p.exactToken ? 'whole-token' : 'anywhere'; }
     else if (r.class === 'render') { kind = 'render'; stage = 'render'; scope = 'anywhere'; }
     else if (r.class === 'orthographic' && channel === 'surface' && r.from.length === 1 && r.to.length === 1 && !p.mechanism) { kind = 'deterministic-char'; stage = 'orthographic'; scope = 'anywhere'; }
     // reading-channel productive rules (字音 / kana conventions / sino mechanisms) form one diachronic derivation
@@ -203,24 +203,62 @@ export function orderRules(rules: readonly IRRule[]): Map<string, number> {
       dependents.set(dep, [...(dependents.get(dep) ?? []), r.ruleId]);
     }
   }
-  const ready = rules.filter((r) => indegree.get(r.ruleId) === 0).map((r) => r.ruleId);
-  const key = (id: string) => [RULE_STAGES.indexOf(byId.get(id)!.stage), id] as const;
-  const sortReady = () => ready.sort((a, b) => key(a)[0] - key(b)[0] || cmp(a, b));
-  sortReady();
+
+  // Kahn with a binary min-heap. This is semantically identical to sorting the full ready array
+  // after every insertion, but avoids O(n²) Array.shift/sort behaviour on the ~200k-rule corpus.
+  const compareReady = (a: string, b: string) => {
+    const stage = RULE_STAGES.indexOf(byId.get(a)!.stage) - RULE_STAGES.indexOf(byId.get(b)!.stage);
+    return stage || cmp(a, b);
+  };
+  const ready: string[] = [];
+  const pushReady = (id: string) => {
+    let i = ready.length;
+    ready.push(id);
+    while (i > 0) {
+      const parent = (i - 1) >> 1;
+      if (compareReady(ready[parent]!, id) <= 0) break;
+      ready[i] = ready[parent]!;
+      i = parent;
+    }
+    ready[i] = id;
+  };
+  const popReady = () => {
+    const first = ready[0]!;
+    const last = ready.pop()!;
+    if (ready.length) {
+      let i = 0;
+      while (true) {
+        const left = i * 2 + 1;
+        if (left >= ready.length) break;
+        const right = left + 1;
+        let child = left;
+        if (right < ready.length && compareReady(ready[right]!, ready[left]!) < 0) child = right;
+        if (compareReady(last, ready[child]!) <= 0) break;
+        ready[i] = ready[child]!;
+        i = child;
+      }
+      ready[i] = last;
+    }
+    return first;
+  };
+
+  for (const r of rules) if (indegree.get(r.ruleId) === 0) pushReady(r.ruleId);
+
   const order = new Map<string, number>();
   while (ready.length) {
-    const id = ready.shift()!;
+    const id = popReady();
     order.set(id, order.size);
-    let changed = false;
     for (const next of dependents.get(id) ?? []) {
       indegree.set(next, indegree.get(next)! - 1);
-      if (indegree.get(next) === 0) { ready.push(next); changed = true; }
+      if (indegree.get(next) === 0) pushReady(next);
     }
-    if (changed) sortReady();
   }
   if (order.size !== rules.length) throw new Error(`IR rule dependency cycle among: ${rules.filter((r) => !order.has(r.ruleId)).map((r) => r.ruleId).slice(0, 5).join(', ')}`);
   // stage order is total: a dependency-free later-stage rule never precedes an earlier stage
-  const final = [...order.keys()].sort((a, b) => key(a)[0] - key(b)[0] || order.get(a)! - order.get(b)!);
+  const final = [...order.keys()].sort((a, b) =>
+    RULE_STAGES.indexOf(byId.get(a)!.stage) - RULE_STAGES.indexOf(byId.get(b)!.stage)
+    || order.get(a)! - order.get(b)!
+  );
   return new Map(final.map((id, i) => [id, i]));
 }
 

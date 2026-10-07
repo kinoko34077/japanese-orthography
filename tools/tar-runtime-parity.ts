@@ -210,7 +210,12 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     kind: 'tar-runtime-parity-summary',
     owner: 'japanese-orthography#285',
     finalExecutionParity: false,
-    requiredNextGates: ['context-parity', 'candidate-parity', 'pattern-parity', 'runtime-fail-repair'],
+    requiredNextGates: [
+      ...(statusCounts.CONTEXT_REQUIRED ? ['context-parity'] : []),
+      ...(statusCounts.CANDIDATE_REQUIRED ? ['candidate-parity'] : []),
+      ...(statusCounts.PATTERN_REQUIRED ? ['pattern-parity'] : []),
+      ...(statusCounts.FAIL ? ['runtime-fail-repair'] : [])
+    ],
     sourceFixtureDigest: createHash('sha256').update(JSON.stringify(fixture.records)).digest('hex'),
     reportDigest: createHash('sha256').update(JSON.stringify(records)).digest('hex'),
     baseline: report.baseline,

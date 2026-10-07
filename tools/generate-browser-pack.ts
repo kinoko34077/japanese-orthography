@@ -91,9 +91,15 @@ async function acceptedInputs(rootDir: string, graph?: AcceptedGraph) {
   const g = graph ?? (await normalizeAcceptedOrthographySources(rootDir)).graph;
   const fullGraph = withProfileRules(g);
   const sino = await sinoComponentProjection(rootDir, fullGraph);
+  // TAR migration rules execute through BrowserPack v3 Rule Programs. Keeping the same
+  // rules in the legacy v1/v2 canonical rule table duplicates runtime authority and
+  // makes the eager rules section scale with the migration corpus. Keep the full graph
+  // for identity/evidence and v3 IR compilation, but omit TAR rows from legacy tables.
+  const tarRuleIds = new Set(fullGraph.rules.filter((rule) => rule.origin === 'tar').map((rule) => rule.id));
+  const omitRuleIds = new Set([...(sino.omitRuleIds ?? []), ...tarRuleIds]);
   let terminology: unknown;
   try { terminology = JSON.parse(await readFile(resolve(rootDir, 'site/terminology-ja.json'), 'utf8')); } catch { terminology = undefined; }
-  return { graph: fullGraph, options: { ...(terminology === undefined ? {} : { terminology }), ...sino } };
+  return { graph: fullGraph, options: { ...(terminology === undefined ? {} : { terminology }), ...sino, omitRuleIds } };
 }
 
 export async function buildAcceptedBrowserPack(rootDir: string, graph?: AcceptedGraph): Promise<BrowserPackBuild> {

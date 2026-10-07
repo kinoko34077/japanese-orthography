@@ -13,6 +13,7 @@
   const STAGES = ["lexical", "semantic", "diachronic", "orthographic", "profile", "render"];
   const DIRECTIONS = ["to-historical", "to-modern", "reconstruct"];
   const CHANNELS = ["surface", "reading"];
+  const SCOPES = ["exact-surface", "exact-reading", "whole-token", "symbol", "anywhere"];
   const modes = ["all", "some", "none"];
   const keyOf = (stage, direction, channel, sequenceId) => `${stage}|${direction}|${channel}|${sequenceId}`;
 
@@ -127,9 +128,16 @@
             runs.push({ start: offsets[start], end: offsets[end], stage, direction, channel, ...result });
             for (const edge of result.edges) {
               const programId = edge.programs.at(-1);
+              const rootProgramId = edge.programs[0] ?? programId;
+              const programScope = rootProgramId === undefined ? undefined : SCOPES[programSection.value("scope", rootProgramId)];
+              const policy = programScope === "anywhere" ? "anywhere"
+                : programScope === "whole-token" ? "whole_lexeme"
+                  : stage === "orthographic" && length === 1 ? "anywhere"
+                    : stage === "lexical" ? "lexical_boundary" : "whole_lexeme";
               candidates.push({
                 start: offsets[start], end: offsets[end], output: edge.output,
-                policy: stage === "orthographic" && length === 1 ? "anywhere" : stage === "lexical" ? "lexical_boundary" : "whole_lexeme",
+                policy,
+                precedence: stage === "profile" ? 1 : 0,
                 origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
                 key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${edge.output}`
               });

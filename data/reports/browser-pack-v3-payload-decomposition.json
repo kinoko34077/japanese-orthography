@@ -2,9 +2,9 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
-  "totalBytes": 186242248,
-  "classTotalBytes": 186242248,
+  "packDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524",
+  "totalBytes": 187158072,
+  "classTotalBytes": 187158072,
   "classes": {
     "bundle-container": {
       "sections": 330,
@@ -17,13 +17,13 @@
       "jsonBytes": 0
     },
     "evidence-map": {
-      "sections": 140,
-      "bytes": 43770520,
-      "unicodeStringBytes": 3718781,
-      "stringOffsetBytes": 1807676,
-      "symbolTokenBytes": 15820744,
-      "integerBytes": 22378682,
-      "overheadBytes": 44637,
+      "sections": 141,
+      "bytes": 44160132,
+      "unicodeStringBytes": 3921376,
+      "stringOffsetBytes": 1832996,
+      "symbolTokenBytes": 15858726,
+      "integerBytes": 22502063,
+      "overheadBytes": 44971,
       "jsonBytes": 0
     },
     "knowledge-facts": {
@@ -98,22 +98,22 @@
     },
     "profile": {
       "sections": 3,
-      "bytes": 1714,
+      "bytes": 261086,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
       "integerBytes": 0,
       "overheadBytes": 0,
-      "jsonBytes": 1714
+      "jsonBytes": 261086
     },
     "program-evidence": {
       "sections": 12,
-      "bytes": 2498760,
-      "unicodeStringBytes": 869,
-      "stringOffsetBytes": 188,
-      "symbolTokenBytes": 306,
-      "integerBytes": 2495150,
-      "overheadBytes": 2247,
+      "bytes": 2533600,
+      "unicodeStringBytes": 903,
+      "stringOffsetBytes": 192,
+      "symbolTokenBytes": 312,
+      "integerBytes": 2529943,
+      "overheadBytes": 2250,
       "jsonBytes": 0
     },
     "provenance-evidence": {
@@ -148,32 +148,32 @@
     },
     "rule-program-index": {
       "sections": 1,
-      "bytes": 2748228,
+      "bytes": 2795720,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
-      "integerBytes": 2748075,
-      "overheadBytes": 153,
+      "integerBytes": 2795573,
+      "overheadBytes": 147,
       "jsonBytes": 0
     },
     "rule-programs": {
       "sections": 1,
-      "bytes": 6629388,
+      "bytes": 6787560,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
-      "integerBytes": 6629108,
-      "overheadBytes": 280,
+      "integerBytes": 6787272,
+      "overheadBytes": 288,
       "jsonBytes": 0
     },
     "rule-runtime-meta": {
       "sections": 1,
-      "bytes": 292,
+      "bytes": 156,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
-      "integerBytes": 186,
-      "overheadBytes": 106,
+      "integerBytes": 52,
+      "overheadBytes": 104,
       "jsonBytes": 0
     },
     "rules-bindings": {
@@ -188,11 +188,11 @@
     },
     "sequence-pool": {
       "sections": 1,
-      "bytes": 5507100,
+      "bytes": 5530664,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
-      "integerBytes": 5507064,
+      "integerBytes": 5530628,
       "overheadBytes": 36,
       "jsonBytes": 0
     },
@@ -208,9 +208,9 @@
     },
     "symbol-registry": {
       "sections": 1,
-      "bytes": 45740,
-      "unicodeStringBytes": 19555,
-      "stringOffsetBytes": 26084,
+      "bytes": 48648,
+      "unicodeStringBytes": 20699,
+      "stringOffsetBytes": 27848,
       "symbolTokenBytes": 0,
       "integerBytes": 1,
       "overheadBytes": 100,
@@ -220,23 +220,23 @@
   "textualPayload": {
     "occurrences": {
       "orthographic": {
-        "count": 2161182,
-        "bytes": 30972252
+        "count": 2161536,
+        "bytes": 30973309
       },
       "identifier": {
-        "count": 2255077,
-        "bytes": 65811073
+        "count": 2261494,
+        "bytes": 66013789
       }
     },
-    "distinctStrings": 1530381,
-    "distinctOrthographicStrings": 477378,
-    "occurrenceBytes": 96783325,
-    "distinctBytes": 42919959,
-    "duplicateBytes": 53863366,
+    "distinctStrings": 1537149,
+    "distinctOrthographicStrings": 477732,
+    "occurrenceBytes": 96987098,
+    "distinctBytes": 43123642,
+    "duplicateBytes": 53863456,
     "note": "string occurrences are counted per shard-local pool entry; duplicateBytes is what one pack-wide pool would save before any Symbol encoding"
   },
   "orthographicAtoms": {
-    "distinct": 6538,
+    "distinct": 6889,
     "top": [
       {
         "atom": "う",

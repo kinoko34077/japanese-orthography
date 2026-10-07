@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
-import { buildPhase46eSinoArtifacts } from '../tools/sino-kana.ts';
+import { buildPhase46eSinoArtifacts, PHASE46E_SYMBOL_REGISTRY_GENERATION } from '../tools/sino-kana.ts';
 import { buildResolverBundleArtifact } from '../tools/resolver-bundle.ts';
 import { normalizeCheckoutText } from '../tools/verification-text.ts';
 
@@ -52,6 +52,21 @@ test('canonical 字音 artifacts are reproducible byte-for-byte', async () => {
   for (const [path, text] of Object.entries(texts)) {
     assert.equal(normalizeCheckoutText(await readFile(path, 'utf8')), text, path);
   }
+});
+
+test('Phase 4.6E identity projection stays pinned to its accepted Symbol Registry generation', async () => {
+  const registry = await json('data/runtime/symbol-registry.json');
+  const generation = registry.generations.find((entry: any) => entry.generation === PHASE46E_SYMBOL_REGISTRY_GENERATION);
+  assert.equal(generation?.size, 6520);
+
+  const appendedId = registry.atoms.indexOf('僞') + 1;
+  assert.ok(appendedId > generation.size, 'representative TAR-era atom must be outside the Phase 4.6E prefix');
+
+  const { artifact } = await buildPhase46eSinoArtifacts(process.cwd());
+  assert.equal(
+    artifact.componentRelations.find((relation: any) => relation.character === '僞' && relation.modernReading === 'か'),
+    undefined
+  );
 });
 
 test('XLSXの分類はHTMLのcatch-all根拠付きidentityだけを追加する', async () => {

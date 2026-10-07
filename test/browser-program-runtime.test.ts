@@ -40,6 +40,29 @@ const necessaryV2 = compileBrowserPack(necessaryCanonical, [MODERN_PROFILE, HIST
 });
 const necessaryV3 = transcodeToV3(necessaryV2, registry, { evidence: { graph: necessaryCanonical, ir: compileRuleIR(necessaryCanonical) } });
 
+const profileAnywhereGraph = adapterFixture();
+profileAnywhereGraph.rules.push({
+  id: 'rule:fixture:profile-anywhere',
+  class: 'orthographic',
+  directionality: 'forward_only',
+  lossiness: 'lossless',
+  from: ['校'],
+  to: ['學'],
+  dependencies: [],
+  predicate: { channel: 'surface' },
+  origin: 'project_defined',
+  sourceRefs: ['src:fixture'],
+  evidenceRefs: ['ev:fixture']
+});
+const profileAnywhereCanonical = canonicalizeOrthographyKnowledge(profileAnywhereGraph);
+const profileAnywhereV2 = compileBrowserPack(profileAnywhereCanonical, [MODERN_PROFILE, HISTORICAL_PROFILE, KINOTCH_PROFILE], {
+  compilerVersion: BROWSER_PACK_V2_COMPILER_VERSION,
+  layers: [lexicalLayer({ lexemeShardSize: 4, indexShardBudgetBytes: 128 })]
+});
+const profileAnywhereV3 = transcodeToV3(profileAnywhereV2, registry, {
+  evidence: { graph: profileAnywhereCanonical, ir: compileRuleIR(profileAnywhereCanonical) }
+});
+
 test('BrowserPack v3 carries the shared hot Rule Program sections and executes by SequenceId', async () => {
   const kinds = new Set(v3.manifest.sections.map((section) => section.kind));
   for (const kind of ['sequence-pool', 'rule-programs', 'rule-program-index', 'rule-predicates', 'rule-lexeme-sets', 'rule-runtime-meta'] as const) {
@@ -68,6 +91,25 @@ test('transformText passes lexical hypotheses to scoped Rule Programs', async ()
   });
   assert.ok(result.candidates.some((candidate: { output: string }) => candidate.output === 'がくかう'));
   assert.ok(result.trace.executedProgramIds.length > 0);
+});
+
+test('profile-stage Rule Programs preserve explicit anywhere scope through runtime arbitration', async () => {
+  const pack = await openBrowserPack(profileAnywhereV3.manifest, async (section: { path: string }) => profileAnywhereV3.files.get(section.path)!);
+  const runtime = await createBrowserProgramRuntime(pack);
+  const observation = runtime.transformText('校', 'kinotch-fixed', {
+    stages: ['profile'], directions: ['to-modern'], channels: ['surface']
+  });
+  const candidate = observation.candidates.find((entry: { output: string }) => entry.output === '學');
+  assert.ok(candidate);
+  assert.equal(candidate.policy, 'anywhere');
+
+  const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
+  const kinotch = await service.handle({ type: 'transform', requestId: 'scope-kinotch', text: '校', profileId: 'kinotch-fixed', renderMode: 'plain' });
+  const modern = await service.handle({ type: 'transform', requestId: 'scope-modern', text: '校', profileId: 'modern', renderMode: 'plain' });
+  assert.equal(kinotch.type, 'result', kinotch.message);
+  assert.equal(kinotch.result.renderedText, '學');
+  assert.equal(modern.type, 'result', modern.message);
+  assert.equal(modern.result.renderedText, '校');
 });
 
 test('worker defaults to VM-authoritative output after the parity gate', async () => {

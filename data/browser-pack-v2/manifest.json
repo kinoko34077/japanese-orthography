@@ -1,9 +1,9 @@
 {
-  "canonicalGraphSha256": "71aca5a931ed25b10169c1814b373f59fb58e79cf14993424688a7f3794a5497",
+  "canonicalGraphSha256": "f013287c1d97e945eb46809b0539e2ebdc2bc6f4ea9478d80c397f2275ca2082",
   "compilerVersion": "2",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "3491990fe2e35eb352932155d64ab3aa0e975e4d597c035b69e574ca86705a7f",
+  "packDigest": "fb5623f387d7ded2dc990404cf680224980ac676b87c9a93db40f93839d0b25b",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -12,7 +12,7 @@
     },
     {
       "policySectionId": "profile-policy@kinotch-fixed",
-      "profileDigest": "23d6433664cd24264d35f891c035c62a19a4c890eb7dd1fbaaee42d8f931c617",
+      "profileDigest": "f6fa672660694cd1215a4d9ca7646300bd3d9550b317677d2002e5665f80aaf2",
       "profileId": "kinotch-fixed"
     },
     {
@@ -15514,34 +15514,34 @@
       "sha256": "5362c691d801479cfea6e09d4d33c636ade830f40b4844dc8c4ca0d3a0c261bd"
     },
     {
-      "byteLength": 585,
+      "byteLength": 130268,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-historical.json",
       "profileId": "historical",
       "sectionId": "profile-policy@historical",
-      "sha256": "c29af0886e9692848c446d5d2b4b1f63d79755094b1a757128b6cfc27f84bf34"
+      "sha256": "dfd0a2fe08ab76f254711004f6fbcf8829f412db8a0160418f7b3a6c2aee6c57"
     },
     {
-      "byteLength": 610,
+      "byteLength": 616,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-kinotch-fixed.json",
       "profileId": "kinotch-fixed",
       "sectionId": "profile-policy@kinotch-fixed",
-      "sha256": "2f2fa0003fd9fa94c810279be41f44392f18e0f7c802b85ad42d921db51560f6"
+      "sha256": "32dcca6a2f9e7d504ee03273c807f9f0091445fdc3564c686f96f5be3489b806"
     },
     {
-      "byteLength": 519,
+      "byteLength": 130202,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-modern.json",
       "profileId": "modern",
       "sectionId": "profile-policy@modern",
-      "sha256": "217f191cff3261d1314fdd326caced21a1052f542a278ca2d9331fd0d66cccc3"
+      "sha256": "977cd051a372ecd767e0aece169db3935b015eb9c37d77d10997a29051a7f19f"
     },
     {
       "byteLength": 10048,
@@ -36701,5 +36701,5 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "cd7d496a230bf3bff3bffd7e79ae37d178285c30a9cf6f28864fd38568bedebc"
+  "sourceSetDigest": "92664f83017fadba586a30e4631219ae5bd9ce5b58dfd6b92dab9ec655d74631"
 }

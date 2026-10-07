@@ -143,7 +143,7 @@
     const decision = OccurrenceArbitration.arbitrate({
       length: text.length,
       lexical,
-      candidates: candidates.map((c) => ({ key: c.key, start: c.start, end: c.end, output: c.output, policy: c.policy, source: c }))
+      candidates: candidates.map((c) => ({ key: c.key, start: c.start, end: c.end, output: c.output, policy: c.policy, precedence: c.precedence ?? 0, source: c }))
     });
 
     // ---- assemble spans ---------------------------------------------------------------------------
@@ -212,7 +212,7 @@
       // opt-in measurement seam (#196 A): what was looked up, promoted and decided. No effect on output.
       ...(options.trace ? { trace: {
         matchedFacts: options.matchedFacts ?? [],
-        candidates: candidates.map((c) => ({ key: c.key, origin: c.origin, ref: c.ref, factIndex: c.fact?.factIndex ?? null, start: c.start, end: c.end, output: c.output, policy: c.policy })),
+        candidates: candidates.map((c) => ({ key: c.key, origin: c.origin, ref: c.ref, factIndex: c.fact?.factIndex ?? null, start: c.start, end: c.end, output: c.output, policy: c.policy, precedence: c.precedence ?? 0 })),
         contextual: contextual.map((c) => ({ factIndex: c.fact.factIndex, start: c.start, end: c.end, output: c.output })),
         accepted: decision.accepted.map((a) => a.key),
         blocked: decision.blocked.map((b) => ({ key: b.candidate.key, reason: b.reason })),

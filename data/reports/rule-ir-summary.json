@@ -2,9 +2,9 @@
   "schemaVersion": "1",
   "kind": "rule-ir-summary",
   "owner": "japanese-orthography#211 D (spec #208 §3-4)",
-  "digest": "9e3c3ed117addf537464c56d6b8154dc5b926b5a6bdda445a444148a2fcb2083",
-  "rules": 191358,
-  "branches": 277976,
+  "digest": "6899c475c814aeb8c7e943ff1e572baf946d8ec832e492719e3d18c1cf84362b",
+  "rules": 194521,
+  "branches": 281139,
   "multiBranchRules": 44733,
   "byKind": {
     "contextual": 18,
@@ -12,21 +12,21 @@
     "exact": 179863,
     "preserve": 3,
     "productive": 11457,
-    "profile-style": 5,
+    "profile-style": 3168,
     "render": 7
   },
   "byStage": {
     "diachronic": 18914,
     "lexical": 163461,
     "orthographic": 8950,
-    "profile": 5,
+    "profile": 3168,
     "render": 7,
     "semantic": 21
   },
   "byDirection": {
     "reconstruct": 163461,
     "to-historical": 20748,
-    "to-modern": 7149
+    "to-modern": 10312
   },
   "byEvidenceType": {
     "binding/diachronic/reverse_traversable/lossless": 10964,
@@ -39,6 +39,7 @@
     "merged_character": 8,
     "orthographic/forward_infer_reverse/many_to_one": 4,
     "orthographic/forward_only/contextual": 1,
+    "orthographic/forward_only/lossless": 3163,
     "orthographic/reverse_traversable/lossless": 5,
     "phonological/forward_infer_reverse/contextual": 1,
     "phonological/forward_infer_reverse/many_to_one": 1,

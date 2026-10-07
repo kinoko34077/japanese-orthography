@@ -27,9 +27,9 @@ export const FACT_KINDS: readonly OrthographyFactKind[] = ['literal_form', 'lite
 export const RULE_CLASSES: readonly RuleClass[] = ['diachronic', 'phonological', 'orthographic', 'render'];
 export const RULE_DIRECTIONALITIES: readonly RuleDirectionality[] = ['forward_only', 'reverse_traversable', 'forward_infer_reverse'];
 export const RULE_LOSSINESS: readonly RuleLossiness[] = ['lossless', 'many_to_one', 'one_to_many', 'contextual'];
-export type KnowledgeOrigin = 'historically_attested' | 'project_defined' | 'kinotch_derived';
+export type KnowledgeOrigin = 'historically_attested' | 'project_defined' | 'kinotch_derived' | 'tar';
 export type DerivationMechanism = 'inverse' | 'analogy' | 'composition' | 'other';
-export const KNOWLEDGE_ORIGINS: readonly KnowledgeOrigin[] = ['historically_attested', 'project_defined', 'kinotch_derived'];
+export const KNOWLEDGE_ORIGINS: readonly KnowledgeOrigin[] = ['historically_attested', 'project_defined', 'kinotch_derived', 'tar'];
 export const DERIVATION_MECHANISMS: readonly DerivationMechanism[] = ['inverse', 'analogy', 'composition', 'other'];
 
 /** #163 §11: absent origin means historically attested source knowledge. */
