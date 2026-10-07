@@ -2,32 +2,32 @@
   "schemaVersion": "1",
   "kind": "rule-program-summary",
   "owner": "japanese-orthography#211 E (spec #208 §8)",
-  "irDigest": "6899c475c814aeb8c7e943ff1e572baf946d8ec832e492719e3d18c1cf84362b",
-  "programs": 194521,
+  "irDigest": "7e655aa331e267fa1d79df2d4e1e136512c354da769406e40729ee5bb1de4a48",
+  "programs": 195191,
   "directPrograms": 179821,
-  "bytecodePrograms": 14700,
-  "codeWords": 99465,
-  "predicates": 10973,
+  "bytecodePrograms": 15370,
+  "codeWords": 104825,
+  "predicates": 11643,
   "mechanisms": 0,
   "lexemeSets": 537,
-  "sequences": 410736,
-  "indexKeys": 183395,
+  "sequences": 411053,
+  "indexKeys": 184006,
   "sections": {
     "programs": {
-      "bytes": 6787560,
-      "gzipBytes": 2877673
+      "bytes": 6826408,
+      "gzipBytes": 2885729
     },
     "pool": {
-      "bytes": 5530664,
-      "gzipBytes": 2642385
+      "bytes": 5534084,
+      "gzipBytes": 2644839
     },
     "index": {
-      "bytes": 2795720,
-      "gzipBytes": 1495763
+      "bytes": 2805124,
+      "gzipBytes": 1500908
     },
     "predicates": {
-      "bytes": 1050240,
-      "gzipBytes": 74916
+      "bytes": 1254376,
+      "gzipBytes": 88001
     },
     "lexemeSets": {
       "bytes": 4900,
@@ -38,5 +38,5 @@
       "gzipBytes": 134
     }
   },
-  "digest": "1d72a8c5c89bf392a40dab3165dc3660d3c787a1778e5f9d04e6f79bcb05b11c"
+  "digest": "eb460b05051ac81de658daf4facc3d042fda8136cfaebbb36847fee238ed997a"
 }

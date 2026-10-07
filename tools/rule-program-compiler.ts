@@ -46,7 +46,7 @@ export interface CompiledPrograms {
   kind: number[]; stage: number[]; direction: number[]; channel: number[]; scope: number[];
   inputs: number[][]; direct: boolean[]; outputs: number[][]; flags: number[][]; code: number[][];
   evidence: Array<{ ruleId: string; canonicalIds: string[]; evidenceType: string }>;
-  predicates: Array<Record<string, string>>;
+  predicates: Array<Record<string, unknown>>;
   mechanisms: string[];
   lexemeSets: number[][];
   lexemeSetModes: Array<'all' | 'some' | 'none'>;
@@ -68,7 +68,7 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
   const seq = (v: string) => pool.idOf.get(v)!;
   const programOf = new Map(ir.rules.map((r, i) => [r.ruleId, i]));
   const profileBits = Object.fromEntries(PROFILE_IDS.map((p, i) => [p, 1 << i]));
-  const predicates: Array<Record<string, string>> = [];
+  const predicates: Array<Record<string, unknown>> = [];
   const predicateId = new Map<string, number>();
   const mechanisms: string[] = [];
   const lexemeSets: number[][] = [];
@@ -129,7 +129,7 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
       if (predicate) {
         const key = JSON.stringify(predicate);
         let p = predicateId.get(key);
-        if (p === undefined) { p = predicates.length; predicates.push({ ...predicate } as Record<string, string>); predicateId.set(key, p); }
+        if (p === undefined) { p = predicates.length; predicates.push({ ...predicate } as Record<string, unknown>); predicateId.set(key, p); }
         code.push(OP.TEST_PRED, p);
       }
       if (r.kind === 'preserve') code.push(OP.PRESERVE);
@@ -154,7 +154,7 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
 
 /** Hot binary sections of a compiled program set (no type-name strings; integers only). */
 export function programSections(p: CompiledPrograms) {
-  const bytesOf = (value: string) => [...new TextEncoder().encode(value)];
+  const bytesOf = (value: unknown) => [...new TextEncoder().encode(String(value ?? ''))];
   const programs = encodeSection([
     { name: 'kind', kind: 'scalar', values: p.kind }, { name: 'stage', kind: 'scalar', values: p.stage }, { name: 'direction', kind: 'scalar', values: p.direction },
     { name: 'channel', kind: 'scalar', values: p.channel }, { name: 'scope', kind: 'scalar', values: p.scope }, { name: 'direct', kind: 'scalar', values: p.direct.map(Number) },
@@ -171,7 +171,8 @@ export function programSections(p: CompiledPrograms) {
     { name: 'constraint', kind: 'list', values: p.predicates.map((x) => bytesOf(x.constraint ?? '')) },
     { name: 'usage', kind: 'list', values: p.predicates.map((x) => bytesOf(x.usage ?? '')) },
     { name: 'period', kind: 'list', values: p.predicates.map((x) => bytesOf(x.period ?? '')) },
-    { name: 'sense', kind: 'list', values: p.predicates.map((x) => bytesOf(x.sense ?? '')) }
+    { name: 'sense', kind: 'list', values: p.predicates.map((x) => bytesOf(x.sense ?? '')) },
+    { name: 'tokenContext', kind: 'list', values: p.predicates.map((x) => bytesOf(x.tokenContext ? JSON.stringify(x.tokenContext) : '')) }
   ]);
   const meta = encodeSection([
     { name: 'profileIds', kind: 'list', values: PROFILE_IDS.map(bytesOf) },

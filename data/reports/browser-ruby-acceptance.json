@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "kind": "browser-ruby-acceptance",
   "owner": "japanese-orthography#225",
-  "packDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524",
+  "packDigest": "ce52d6bfc229aa92f94830e8dd38cdd9f0f893fc9d7bccdf7516b642aa8ea639",
   "source": {
     "jmdictSnapshot": "2026-10-01",
     "jmdictExtractSha256": "96a0e8874fe075ad61ee580f006aad6a5a4fcd3e6956fc2495c0d7e739fe8651",
