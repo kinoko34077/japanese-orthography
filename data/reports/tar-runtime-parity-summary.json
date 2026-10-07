@@ -14,7 +14,7 @@
     "profileId": "kinotch-fixed",
     "executionMode": "vm-authoritative",
     "browserPackCompilerVersion": "3",
-    "browserPackDigest": "bdfc9fe478bd69b9277624f5b9aa3a3b6ee753fb5d388a8a31f8a80bff89f510"
+    "browserPackDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524"
   },
   "accounting": {
     "fixtureRecords": 4036,

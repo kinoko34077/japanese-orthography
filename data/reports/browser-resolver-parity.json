@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "kind": "browser-resolver-parity",
   "owner": "japanese-orthography#196 D",
-  "packDigest": "e260aee2afba19d1e5893366d59fd57e253d5355e8d3c302815cae3a76a74803",
+  "packDigest": "fb5623f387d7ded2dc990404cf680224980ac676b87c9a93db40f93839d0b25b",
   "differenceKinds": {
     "lexicon-granularity": "core lexicon has one candidate per UniDic conjugation row of the same lemma, so the core unit is `candidates`; the browser resolves the one JMdict lexeme (same headword)",
     "browser-wider-lexicon": "the browser lexicon (JMdict) has further lexemes for the same input; the core identity is among the browser candidates and nothing is selected",

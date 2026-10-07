@@ -3,38 +3,38 @@
   "kind": "symbol-sequence-encoding-comparison",
   "owner": "japanese-orthography#211 C (spec #208 §6.6, §16.2)",
   "registry": {
-    "size": 6520,
-    "generation": 1
+    "size": 6961,
+    "generation": 2
   },
   "dataset": {
-    "distinctSequences": 474391,
-    "symbols": 2399642,
-    "symbolsBelow255": 1959896,
+    "distinctSequences": 476562,
+    "symbols": 2404469,
+    "symbolsBelow255": 1962078,
     "maxSequenceLength": 37
   },
   "encodings": {
     "utf8-strings": {
-      "bytes": 9096657,
-      "gzipBytes": 3342059,
-      "scanMs": 266,
+      "bytes": 9118704,
+      "gzipBytes": 3349974,
+      "scanMs": 181.2,
       "randomAccess": "O(1) per string; per-character access needs UTF-8 decoding"
     },
     "fixed-uint16": {
-      "bytes": 6696852,
-      "gzipBytes": 3061971,
-      "scanMs": 42.4,
+      "bytes": 6715190,
+      "gzipBytes": 3072641,
+      "scanMs": 34.9,
       "randomAccess": "O(1) per symbol (offset + index); TypedArray view, no decode"
     },
     "short-id-escape": {
-      "bytes": 5176702,
-      "gzipBytes": 2987561,
-      "scanMs": 12.8,
+      "bytes": 5195503,
+      "gzipBytes": 2996368,
+      "scanMs": 9.8,
       "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
     },
     "varint": {
-      "bytes": 4943497,
-      "gzipBytes": 2984095,
-      "scanMs": 16.8,
+      "bytes": 4959993,
+      "gzipBytes": 2995013,
+      "scanMs": 16.3,
       "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
     }
   },

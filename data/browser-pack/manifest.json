@@ -3,7 +3,7 @@
   "compilerVersion": "1",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "f3a0019db22555010c7c10c6c080c72e7320c775d5796ae263dfc7c19e0c9051",
+  "packDigest": "71f2b8108dfaccf388c7fa6d8da8bbd464bc0d79c9f32a7c07c15e1efb68dc53",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -26471,14 +26471,14 @@
       }
     },
     {
-      "byteLength": 1325428,
+      "byteLength": 220940,
       "encoding": "binary-columnar",
       "kind": "rules",
       "loading": "eager",
       "path": "rules.bin",
-      "rowCount": 3366,
+      "rowCount": 203,
       "sectionId": "rules",
-      "sha256": "55860f7eae600420628888b482292e60dbd6be7b07e89c7d5fb21f8d4820f055"
+      "sha256": "a3d25a5ccc5903063b0d19ade16f59771e6dc18893de727534144922fb3805d8"
     },
     {
       "byteLength": 15440,
