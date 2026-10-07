@@ -65,6 +65,129 @@
       }
     };
 
+    const tarKana = (value) => Array.from(`${value ?? ""}`, (ch) => {
+      const code = ch.codePointAt(0);
+      return code >= 0x30a1 && code <= 0x30f6 ? String.fromCodePoint(code - 0x60) : ch;
+    }).join("");
+
+    const tarAliases = {
+      pos: { "名": "名詞", "動": "動詞", "形": "形容詞", "助": "助詞", "助動": "助動詞", "副": "副詞", "連体": "連体詞", "接続": "接続詞", "記": "記号" },
+      pos_detail_1: { "一般": "一般", "自立": "自立", "非自立": "非自立", "接尾": "接尾", "格助": "格助詞", "係助": "係助詞", "副可": "副詞可能", "サ変": "サ変接続" },
+      conjugated_form: { "基本": "基本形", "連用": "連用形", "連体": "連体形", "未然": "未然形", "命令": "命令形", "仮定": "仮定形" },
+      conjugated_type: { "一段": "一段", "五段": "五段・ワ行促音便", "サ変": "サ変・スル", "カ変": "カ変・クル", "形容詞": "形容詞・アウオ段" }
+    };
+    const tarConditionField = (key) => ({
+      surface: "surface_form", surface_form: "surface_form",
+      basic: "basic_form", basic_form: "basic_form",
+      pos: "pos", pos1: "pos_detail_1", pos_detail_1: "pos_detail_1",
+      pos2: "pos_detail_2", pos_detail_2: "pos_detail_2",
+      pos3: "pos_detail_3", pos_detail_3: "pos_detail_3",
+      ctype: "conjugated_type", conjugated_type: "conjugated_type",
+      cform: "conjugated_form", conjugated_form: "conjugated_form",
+      reading: "reading", pronunciation: "pronunciation", word_type: "word_type"
+    })[key] ?? key;
+    const tarExpectedValues = (field, expected) => {
+      const values = Array.isArray(expected)
+        ? expected.flatMap((value) => typeof value === "string" ? value.split(",") : [value])
+        : typeof expected === "string" ? expected.split(",") : [expected];
+      return values.map((value) => {
+        if (typeof value !== "string") return value;
+        const text = value.trim();
+        const neg = text.startsWith("-") && !text.startsWith("\\-");
+        const raw = neg ? text.slice(1).trim() : text;
+        const normalized = tarAliases[field]?.[raw] ?? raw;
+        return neg ? "-" + normalized : normalized;
+      }).filter((value) => value !== "");
+    };
+    const tarGlob = (actual, expected, kanaInsensitive) => {
+      const left = kanaInsensitive ? tarKana(actual) : `${actual ?? ""}`;
+      const right = kanaInsensitive ? tarKana(expected) : `${expected ?? ""}`;
+      if (!right.includes("*")) return left === right;
+      const escaped = right.replace(/[.*+?^$()|[\]{}\\]/g, "\\$&").replace(/\\\*/g, ".*");
+      return new RegExp("^" + escaped + "$", "u").test(left);
+    };
+    const tarValueMatches = (actual, expected, kanaInsensitive = false, field = "") => {
+      if (expected === undefined || expected === null) return true;
+      const values = tarExpectedValues(field, expected);
+      const negative = values.filter((value) => typeof value === "string" && value.startsWith("-")).map((value) => value.slice(1));
+      if (negative.some((value) => tarGlob(actual, value, kanaInsensitive))) return false;
+      const positive = values.filter((value) => !(typeof value === "string" && value.startsWith("-")));
+      return positive.length === 0 || positive.some((value) =>
+        typeof actual === "string" && typeof value === "string"
+          ? tarGlob(actual, value, kanaInsensitive)
+          : actual === value
+      );
+    };
+    const tarTokenMatches = (token, condition, kanaInsensitive = false) => {
+      if (!token || !condition) return false;
+      if (typeof condition === "string") {
+        return ["surface_form", "basic_form", "pos", "pos_detail_1", "pos_detail_2", "pos_detail_3", "conjugated_form"]
+          .some((field) => tarValueMatches(token[field], condition, kanaInsensitive, field));
+      }
+      for (const [rawKey, expected] of Object.entries(condition)) {
+        if (rawKey === "sequence") continue;
+        const field = tarConditionField(rawKey);
+        if (!tarValueMatches(token[field], expected, kanaInsensitive, field)) return false;
+      }
+      return true;
+    };
+    const tarSequenceMatches = (tokens, start, sequence, kanaInsensitive = false) => {
+      if (!Array.isArray(sequence) || sequence.length === 0 || start < 0) return false;
+      return sequence.every((condition, offset) => tarTokenMatches(tokens[start + offset], condition, kanaInsensitive));
+    };
+    const tarBranchMatches = (tokens, conditionList, anchorIndex, sequenceStart, expectedLength, kanaInsensitive) => {
+      if (!conditionList) return true;
+      const list = Array.isArray(conditionList) ? conditionList : [conditionList];
+      return list.some((condition) => {
+        const token = tokens[anchorIndex];
+        if (!tarTokenMatches(token, condition, kanaInsensitive)) return false;
+        if (!Array.isArray(condition?.sequence) || condition.sequence.length === 0) return true;
+        if (expectedLength !== null && condition.sequence.length !== expectedLength) return false;
+        const start = typeof sequenceStart === "function" ? sequenceStart(condition) : sequenceStart;
+        return tarSequenceMatches(tokens, start, condition.sequence, kanaInsensitive);
+      });
+    };
+    const tarContextMatches = (rule, context) => {
+      const window = context?.tokenWindow;
+      if (!window || !Array.isArray(window.tokens) || !Number.isInteger(window.index)) return false;
+      const tokens = window.tokens;
+      const index = window.index;
+      const kanaInsensitive = rule?.matchOptions?.kana_insensitive === true;
+      let length = 1;
+      if (Array.isArray(rule?.sequence) && rule.sequence.length > 0) {
+        if (!tarSequenceMatches(tokens, index, rule.sequence, kanaInsensitive)) return false;
+        length = rule.sequence.length;
+      } else {
+        const token = tokens[index];
+        if (!token) return false;
+        if (rule?.ruleType === "verb" && token.pos !== "動詞") return false;
+        if (rule?.ruleType === "adjective" && token.pos !== "形容詞") return false;
+        const currentConditions = Array.isArray(rule?.conditions?.current)
+          ? rule.conditions.current
+          : rule?.conditions?.current ? [rule.conditions.current] : [];
+        const usesBasic = rule?.matchTarget === "basic_form"
+          || rule?.ruleType === "verb"
+          || rule?.ruleType === "adjective"
+          || currentConditions.some((condition) => condition && typeof condition === "object"
+            && ("basic" in condition || "basic_form" in condition || condition.pos === "動詞"));
+        const strictBasic = rule?.matchTarget === "basic_form"
+          || rule?.ruleType === "verb"
+          || rule?.ruleType === "adjective"
+          || currentConditions.some((condition) => condition && typeof condition === "object"
+            && ("basic" in condition || "basic_form" in condition));
+        const surfaceMatch = tarValueMatches(token.surface_form, rule.from, kanaInsensitive, "surface_form");
+        const basicMatch = usesBasic && tarValueMatches(token.basic_form, rule.from, kanaInsensitive, "basic_form");
+        if (strictBasic ? !basicMatch : !(surfaceMatch || basicMatch)) return false;
+      }
+      const conditions = rule?.conditions ?? {};
+      if (!tarBranchMatches(tokens, conditions.current, index, index, length, kanaInsensitive)) return false;
+      if (!tarBranchMatches(tokens, conditions.prev, index - 1, (condition) =>
+        index - (Array.isArray(condition?.sequence) && condition.sequence.length > 0 ? condition.sequence.length : 1),
+        null, kanaInsensitive)) return false;
+      if (!tarBranchMatches(tokens, conditions.next, index + length, index + length, null, kanaInsensitive)) return false;
+      return true;
+    };
+
     const satisfies = (pred, context) => {
       if (!pred) return true;
       // Binding instances with the same symbol/input form a contextual candidate group. An
@@ -79,6 +202,7 @@
       if (pred.constraint && !(context?.constraints ?? []).includes(pred.constraint)) return false;
       if (pred.usage && context?.usage !== pred.usage) return false;
       if (pred.period && context?.period !== pred.period) return false;
+      if (pred.tokenContext && !tarContextMatches(pred.tokenContext, context)) return false;
       // a sense condition excludes a rule only when the context states a different sense; without
       // sense evidence every sense stays a candidate (#208 §12)
       if (pred.sense && context?.sense !== undefined && context.sense !== pred.sense) return false;

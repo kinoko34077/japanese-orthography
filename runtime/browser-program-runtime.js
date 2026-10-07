@@ -48,6 +48,8 @@
         const value = predicateText(name, i);
         if (value !== undefined) predicate[name] = value;
       }
+      const tokenContext = predicateText("tokenContext", i);
+      if (tokenContext !== undefined) predicate.tokenContext = JSON.parse(tokenContext);
       predicates.push(predicate);
     }
     const lexemeSets = [];

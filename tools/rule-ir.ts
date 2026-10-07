@@ -47,7 +47,14 @@ export interface IRRule {
   branches: IRBranch[];
   /** applicability scope: the rule applies only where these lexemes / symbols are in play */
   lexicalScope: string[];
-  predicate: { context?: string; usage?: string; period?: string; constraint?: string } | null;
+  predicate: {
+    context?: string;
+    usage?: string;
+    period?: string;
+    constraint?: string;
+    sense?: string;
+    tokenContext?: Record<string, unknown>;
+  } | null;
   origin: KnowledgeOrigin;
   /** profiles whose policy leaves this rule enabled (graph rules only; facts are always available) */
   enabledBy: string[] | null;
@@ -145,7 +152,9 @@ export function compileRuleIR(graph: OrthographyKnowledgeGraph, profiles: readon
     const ir: IRRule = {
       ruleId: r.id, kind, stage, direction: r.directionality === 'forward_only' ? 'to-modern' : 'to-historical', channel, scope,
       input: r.to.join('|'), branches: r.from.map((output) => ({ output, candidate: r.from.length > 1 && r.lossiness !== 'lossless', canonicalId: r.id })),
-      lexicalScope: [], predicate: typeof p.period === 'string' ? { period: p.period } : null, origin: r.origin ?? 'historically_attested',
+      lexicalScope: [], predicate: p.tokenContext && typeof p.tokenContext === 'object'
+        ? { tokenContext: structuredClone(p.tokenContext as Record<string, unknown>) }
+        : typeof p.period === 'string' ? { period: p.period } : null, origin: r.origin ?? 'historically_attested',
       enabledBy: enabledBy(r.id), dependsOn, canonicalIds: [r.id], evidenceType: `${r.class}/${r.directionality}/${r.lossiness}`
     };
     // project/style and render rules read from -> to (forward); attested reverse-traversable rules project to historical

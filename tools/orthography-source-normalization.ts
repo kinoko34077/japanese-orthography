@@ -283,6 +283,61 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
     }
   }
 
+
+  // --- TAR operational typed-context rules (#289) -----------------------------------------------
+  // Each source case stays separate because equal surface pairs may carry different POS / sequence
+  // applicability. The typed TAR predicate is lowered by Rule IR / Rule Program; it is not generic
+  // historical authority and remains available only to the TAR-enabled KiNoTch profile.
+  {
+    const path = 'data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/context-rules.json';
+    const doc = await readJson(rootDir, path);
+    if (doc.kind !== 'tar-context-rules' || !Array.isArray(doc.records)) throw new Error('invalid TAR context migration corpus');
+    const sourceId = b.source(sourceIdFor(path), {
+      path,
+      role: 'tar-operational-context',
+      owner: 'japanese-orthography#289',
+      migrationOrigin: 'tar'
+    });
+    for (const r of doc.records as Json[]) {
+      if (r.origin !== 'tar' || typeof r.id !== 'string' || typeof r.from !== 'string' || typeof r.to !== 'string'
+        || typeof r.sourceCaseId !== 'string') {
+        throw new Error('invalid TAR context record');
+      }
+      const recordId = b.record(sourceId, r.id);
+      const evidence = [
+        `tar-context:${r.sourceCaseId}`,
+        ...((r.sourceRefs ?? []) as Json[]).map((ref) => `tar-source:${ref.path}#${ref.locator}`)
+      ];
+      const ruleId = b.rule({
+        id: `rule:tar:context:${r.id.replace(/^tar:context:/, '')}`,
+        class: 'orthographic',
+        directionality: 'forward_only',
+        lossiness: 'lossless',
+        from: [r.from],
+        to: [r.to],
+        dependencies: [],
+        predicate: {
+          channel: 'surface',
+          exactToken: true,
+          migrationOrigin: 'tar',
+          family: 'tar-context',
+          tokenContext: {
+            sourceCaseId: r.sourceCaseId,
+            from: r.from,
+            priority: r.priority,
+            ruleType: r.ruleType,
+            conditions: r.conditions,
+            sequence: r.sequence,
+            matchOptions: r.matchOptions,
+            matchTarget: r.matchTarget
+          }
+        },
+        origin: 'tar'
+      }, sourceId, evidence);
+      b.dispose(recordId, 'rule_definition', [ruleId]);
+    }
+  }
+
   // --- 字音 in-word derivation conventions (accepted Phase-4.6E runtime) as first-class rules ----
   {
     const sourceId = b.source('derivation/phase46e-sino-conventions', { path: 'runtime/historical-sino-runtime.js', role: 'derivation-convention', owner: 'japanese-orthography#168' });
