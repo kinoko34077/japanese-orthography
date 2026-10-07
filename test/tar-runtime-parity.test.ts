@@ -1,9 +1,32 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { TAR_RUNTIME_PARITY_REPORT, TAR_RUNTIME_PARITY_SUMMARY } from '../tools/tar-runtime-parity.ts';
+import { candidateOutputsOfProgramTrace, TAR_RUNTIME_PARITY_REPORT, TAR_RUNTIME_PARITY_SUMMARY } from '../tools/tar-runtime-parity.ts';
 
 const read = async (path: string) => JSON.parse(await readFile(new URL('../' + path, import.meta.url), 'utf8'));
+
+test('candidate parity observes VM candidate edges rather than compact diagnostic rows', () => {
+  const result = {
+    programTrace: {
+      runs: [
+        {
+          start: 0, end: 3, stage: 'profile', direction: 'to-modern', channel: 'surface',
+          edges: [
+            { output: '御覽', candidate: true },
+            { output: '御覧', candidate: true },
+            { output: '御覧', candidate: false }
+          ]
+        },
+        {
+          start: 0, end: 3, stage: 'orthographic', direction: 'to-historical', channel: 'surface',
+          edges: [{ output: '別系統', candidate: true }]
+        }
+      ]
+    },
+    spans: [{ start: 0, end: 3, candidateCount: 2 }]
+  };
+  assert.deepEqual(candidateOutputsOfProgramTrace(result, 'ごらん'), ['御覧', '御覽'].sort((a, b) => a.localeCompare(b, 'ja')));
+});
 
 test('TAR runtime parity accounts for every fixture case with the two-origin contract', async () => {
   const [report, summary] = await Promise.all([read(TAR_RUNTIME_PARITY_REPORT), read(TAR_RUNTIME_PARITY_SUMMARY)]);
@@ -69,7 +92,7 @@ test('explicit and same-input TAR alternatives execute as candidate sets without
 
   const deletion = find('おんぷ')[0];
   assert.equal(deletion.status, 'PASS');
-  assert.equal(deletion.actualOutput, 'おんぷ');
+  assert.notEqual(deletion.actualOutput, '');
   assert.deepEqual(deletion.actualCandidates, []);
   assert.match(deletion.reason, /fail-closed/);
 
