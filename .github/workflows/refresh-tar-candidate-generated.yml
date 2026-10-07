@@ -20,6 +20,8 @@ jobs:
       - run: npm ci
       - name: 生成物を更新
         run: |
+          npm run generate:symbol-registry
+          npm run validate:symbol-registry
           npm run generate:orthography-accounting
           npm run validate:orthography-accounting
           npm run generate:tar-runtime-parity
@@ -28,6 +30,7 @@ jobs:
         shell: bash
         run: |
           for file in \
+            data/runtime/symbol-registry.json \
             data/reports/orthography-v2-source-accounting.json \
             data/reports/tar-runtime-parity.json \
             data/reports/tar-runtime-parity-summary.json
@@ -41,6 +44,7 @@ jobs:
         with:
           name: tar-candidate-generated
           path: |
+            data/runtime/symbol-registry.json
             data/reports/orthography-v2-source-accounting.json
             data/reports/tar-runtime-parity.json
             data/reports/tar-runtime-parity-summary.json
