@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const require = createRequire(import.meta.url);
 const { assemble } = require('../runtime/browser-span-planner.js');
+const { certaintyOf } = require('../runtime/browser-diagnostic-contract.js');
 
 const wholeLexeme = (length: number) => ({
   dag: {
@@ -33,6 +34,7 @@ test('deterministic whole-span winner survives candidate alternatives on the sam
     new Set(raw.spans[0].blocked.filter((row: any) => row.reason === 'candidate_alternative').map((row: any) => row.output)),
     new Set(['装釘', '装幀'])
   );
+  assert.equal(certaintyOf(raw.spans[0]), 'conditional');
 });
 
 test('candidate-only whole-span alternatives remain unresolved rather than choosing a silent winner', () => {
