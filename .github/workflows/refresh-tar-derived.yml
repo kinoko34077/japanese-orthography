@@ -1,0 +1,51 @@
+name: Refresh TAR derived artifacts (temporary read-only)
+
+on:
+  push:
+    branches:
+      - migration/tar-candidate-290
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Rebuild impacted derived artifacts
+        run: |
+          npm run generate:orthography-v2-bundle
+          npm run generate:browser-pack
+          npm run generate:rule-ir
+          npm run generate:rule-programs
+          npm run generate:ijidokun
+          npm run generate:tar-runtime-parity
+      - name: Full local validation
+        run: npm run check
+      - name: List and encode generated changes
+        shell: bash
+        run: |
+          git status --short
+          git diff --name-only -z > /tmp/tar-changed
+          while IFS= read -r -d '' file; do
+            echo "__GENERATED_FILE_BEGIN__:$file"
+            wc -c "$file"
+            base64 -w 0 "$file" | fold -w 60000
+            echo "__GENERATED_FILE_END__:$file"
+          done < /tmp/tar-changed
+      - name: Preserve changed output
+        shell: bash
+        run: |
+          git diff --name-only -z | tar --null -T - -czf /tmp/tar-changed.tar.gz
+          cp /tmp/tar-changed.tar.gz tar-changed.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tar-derived-generated
+          path: tar-changed.tar.gz
+          retention-days: 1
