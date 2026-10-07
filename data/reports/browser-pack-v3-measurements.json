@@ -2,48 +2,48 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "53f821189ff9612343da3d8214ff617aec28f6f25784c5e96e7821dfc159e814",
-  "sections": 1845,
+  "packDigest": "21876a5c0ed39e7a4b24802492ad9a84a1ea4a70d59c69f30c1a2fad2d732524",
+  "sections": 1846,
   "sizes": {
-    "total": 186242248,
-    "totalGzip": 72852978,
+    "total": 187158072,
+    "totalGzip": 73141364,
     "byLoading": {
       "eager": {
         "sections": 10,
-        "bytes": 575004,
-        "gzipBytes": 233971
+        "bytes": 837284,
+        "gzipBytes": 298978
       },
       "lazy": {
-        "sections": 482,
-        "bytes": 74572692,
-        "gzipBytes": 24867169
+        "sections": 483,
+        "bytes": 74997144,
+        "gzipBytes": 25015935
       },
       "on-demand": {
         "sections": 1353,
-        "bytes": 111094552,
-        "gzipBytes": 47751838
+        "bytes": 111323644,
+        "gzipBytes": 47826451
       }
     },
     "byKind": {
       "bindings": {
         "sections": 1,
         "bytes": 200932,
-        "gzipBytes": 64085
+        "gzipBytes": 64171
       },
       "detail-shard": {
         "sections": 330,
         "bytes": 28303412,
-        "gzipBytes": 8743205
+        "gzipBytes": 8737368
       },
       "evidence-map": {
-        "sections": 140,
-        "bytes": 43770520,
-        "gzipBytes": 14824186
+        "sections": 141,
+        "bytes": 44160132,
+        "gzipBytes": 14962237
       },
       "knowledge-bundle": {
         "sections": 330,
         "bytes": 18339024,
-        "gzipBytes": 8473188
+        "gzipBytes": 8473185
       },
       "lexeme-forms": {
         "sections": 54,
@@ -53,37 +53,37 @@
       "lexeme-readings": {
         "sections": 54,
         "bytes": 19358596,
-        "gzipBytes": 7373958
+        "gzipBytes": 7373870
       },
       "lexeme-table": {
         "sections": 54,
         "bytes": 7969868,
-        "gzipBytes": 3421224
+        "gzipBytes": 3420732
       },
       "lexical-directory": {
         "sections": 1,
         "bytes": 36492,
-        "gzipBytes": 20789
+        "gzipBytes": 20779
       },
       "morphology-table": {
         "sections": 1,
         "bytes": 115292,
-        "gzipBytes": 54363
+        "gzipBytes": 54366
       },
       "profile-policy": {
         "sections": 3,
-        "bytes": 1714,
-        "gzipBytes": 871
+        "bytes": 261086,
+        "gzipBytes": 63469
       },
       "program-evidence": {
         "sections": 12,
-        "bytes": 2498760,
-        "gzipBytes": 1299778
+        "bytes": 2533600,
+        "gzipBytes": 1316330
       },
       "reading-index": {
         "sections": 468,
         "bytes": 21976988,
-        "gzipBytes": 9287394
+        "gzipBytes": 9286580
       },
       "rule-lexeme-sets": {
         "sections": 1,
@@ -97,28 +97,28 @@
       },
       "rule-program-index": {
         "sections": 1,
-        "bytes": 2748228,
-        "gzipBytes": 1469145
+        "bytes": 2795720,
+        "gzipBytes": 1495763
       },
       "rule-programs": {
         "sections": 1,
-        "bytes": 6629388,
-        "gzipBytes": 2838735
+        "bytes": 6787560,
+        "gzipBytes": 2877673
       },
       "rule-runtime-meta": {
         "sections": 1,
-        "bytes": 292,
-        "gzipBytes": 198
+        "bytes": 156,
+        "gzipBytes": 134
       },
       "rules": {
         "sections": 1,
         "bytes": 150124,
-        "gzipBytes": 50746
+        "gzipBytes": 50766
       },
       "sequence-pool": {
         "sections": 1,
-        "bytes": 5507100,
-        "gzipBytes": 2630003
+        "bytes": 5530664,
+        "gzipBytes": 2642385
       },
       "shard-directory": {
         "sections": 1,
@@ -128,17 +128,17 @@
       "sino-component-index": {
         "sections": 1,
         "bytes": 352292,
-        "gzipBytes": 179272
+        "gzipBytes": 179193
       },
       "surface-index": {
         "sections": 386,
         "bytes": 20269236,
-        "gzipBytes": 8581876
+        "gzipBytes": 8580091
       },
       "symbol-registry": {
         "sections": 1,
-        "bytes": 45740,
-        "gzipBytes": 31132
+        "bytes": 48648,
+        "gzipBytes": 33442
       },
       "terminology": {
         "sections": 1,
@@ -153,24 +153,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 10,
-        "bytes": 575004,
-        "gzipBytes": 235270,
-        "openMs": 85
+        "bytes": 837284,
+        "gzipBytes": 301598,
+        "openMs": 82
       },
       "coldFirstResult": {
         "requests": 72,
         "bytes": 4234896,
-        "gzipBytes": 1875536,
-        "ms": 791
+        "gzipBytes": 1875270,
+        "ms": 580
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 12
+        "ms": 11
       },
-      "detailLatencyMs": 59,
-      "unitDetailLatencyMs": 97,
-      "residentArrayBufferBytes": 9143476,
-      "jsHeapDeltaBytes": 33930528,
+      "detailLatencyMs": 55,
+      "unitDetailLatencyMs": 92,
+      "residentArrayBufferBytes": 9499476,
+      "jsHeapDeltaBytes": 34437048,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -179,24 +179,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 10,
-        "bytes": 575004,
-        "gzipBytes": 235270,
-        "openMs": 67
+        "bytes": 837284,
+        "gzipBytes": 301598,
+        "openMs": 53
       },
       "coldFirstResult": {
         "requests": 153,
         "bytes": 8596764,
-        "gzipBytes": 3737823,
-        "ms": 1060
+        "gzipBytes": 3737193,
+        "ms": 713
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 46
+        "ms": 23
       },
-      "detailLatencyMs": 113,
-      "unitDetailLatencyMs": 31,
-      "residentArrayBufferBytes": 11319304,
-      "jsHeapDeltaBytes": 13884344,
+      "detailLatencyMs": 43,
+      "unitDetailLatencyMs": 26,
+      "residentArrayBufferBytes": 11640464,
+      "jsHeapDeltaBytes": 13977088,
       "spans": 7,
       "inspectableUnits": 23
     }
