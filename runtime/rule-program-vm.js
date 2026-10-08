@@ -202,7 +202,10 @@
       if (pred.constraint && !(context?.constraints ?? []).includes(pred.constraint)) return false;
       if (pred.usage && context?.usage !== pred.usage) return false;
       if (pred.period && context?.period !== pred.period) return false;
-      if (pred.tokenContext && !tarContextMatches(pred.tokenContext, context)) return false;
+      // Pinned TAR date pattern has no token/POS gate. The pattern scanner supplies the match;
+      // it still passes through TEST_PROFILE, TEST_PRED and MECH, not a separate runtime authority.
+      if (pred.tokenContext && !(pred.tokenContext.tarPattern?.regex === true && !pred.tokenContext.conditions)
+        && !tarContextMatches(pred.tokenContext, context)) return false;
       // a sense condition excludes a rule only when the context states a different sense; without
       // sense evidence every sense stays a candidate (#208 §12)
       if (pred.sense && context?.sense !== undefined && context.sense !== pred.sense) return false;
