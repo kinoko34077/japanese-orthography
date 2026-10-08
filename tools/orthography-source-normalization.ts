@@ -459,6 +459,60 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
   }
 
 
+  // --- TAR wildcard/regex source patterns (#291) ----------------------------------------------
+  // Pattern literal/template semantics are not ordinary exact text. The source prefix indexes a
+  // profile Rule Program; the predicate carries the pinned full pattern for a bounded mechanism.
+  {
+    const path = 'data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/pattern-rules.json';
+    const doc = await readJson(rootDir, path);
+    if (doc.kind !== 'tar-pattern-rules' || doc.accounting?.sourceCases !== 7
+      || doc.accounting?.dropped !== 0 || !Array.isArray(doc.records) || doc.records.length !== 7) {
+      throw new Error('invalid TAR pattern migration corpus');
+    }
+    const sourceId = b.source(sourceIdFor(path), {
+      path, role: 'tar-operational-pattern', owner: 'japanese-orthography#291', migrationOrigin: 'tar'
+    });
+    for (const r of doc.records as Json[]) {
+      if (!r.sourceEnabled || typeof r.from !== 'string' || !Array.isArray(r.expectedPatterns)
+        || !r.expectedPatterns.length || r.regex === r.wildcard) {
+        throw new Error('invalid active TAR pattern rule ' + r.sourceCaseId);
+      }
+      const prefix = r.wildcard ? r.from.slice(0, -1) : '年';
+      if (!prefix || (r.wildcard && (r.from.indexOf('*') !== r.from.length - 1))) {
+        throw new Error('unsupported TAR wildcard pattern shape ' + r.from);
+      }
+      const sourceRecordId = b.record(sourceId, r.sourceCaseId);
+      const ruleId = b.rule({
+        id: 'rule:tar:pattern:' + r.sourceRuleId,
+        class: 'orthographic',
+        directionality: 'forward_only',
+        lossiness: r.expectedPatterns.length > 1 ? 'one_to_many' : 'lossless',
+        from: [prefix],
+        to: [...r.expectedPatterns],
+        dependencies: [],
+        predicate: {
+          channel: 'surface',
+          migrationOrigin: 'tar',
+          family: 'tar-pattern',
+          tokenContext: {
+            sourceCaseId: r.sourceCaseId, from: r.from, priority: r.priority,
+            ruleType: r.ruleType, conditions: r.conditions,
+            sequence: r.sequence, matchOptions: r.matchOptions, matchTarget: r.matchTarget,
+            tarPattern: {
+              sourceRuleId: r.sourceRuleId, from: r.from,
+              outputs: [...r.expectedPatterns], regex: r.regex === true, wildcard: r.wildcard === true
+            }
+          }
+        },
+        origin: 'tar'
+      }, sourceId, [
+        'tar-pattern:' + r.sourceCaseId,
+        'tar-source:transform-settings (8).json#' + r.locator
+      ]);
+      b.dispose(sourceRecordId, 'rule_definition', [ruleId]);
+    }
+  }
+
   // --- 字音 in-word derivation conventions (accepted Phase-4.6E runtime) as first-class rules ----
   {
     const sourceId = b.source('derivation/phase46e-sino-conventions', { path: 'runtime/historical-sino-runtime.js', role: 'derivation-convention', owner: 'japanese-orthography#168' });
