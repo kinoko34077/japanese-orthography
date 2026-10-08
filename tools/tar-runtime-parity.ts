@@ -351,6 +351,42 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
   if (actualByCandidateCase.size !== 165) {
     throw new Error('expected 165 candidate cases to execute, got ' + actualByCandidateCase.size);
   }
+
+  const actualByPatternCase = new Map<string, { renderedText: string; observedOutputs: string[] }>();
+  const patternRecords = fixture.records.filter((record) => tentative.get(record.id) === 'PATTERN_REQUIRED');
+  if (patternRecords.length !== 7) throw new Error('TAR pattern lane must execute exactly seven source cases');
+  for (const record of patternRecords) {
+    const text = record.regex ? '2026年10月8日' : record.from.slice(0, -1);
+    const window = record.regex ? null : tokenWindowWitness(record);
+    if (window) {
+      window.tokens[window.index]!.surface_form = text;
+      window.tokens[window.index]!.basic_form = text;
+    }
+    const reply = await service.handle({
+      type: 'transform',
+      requestId: ++requestId,
+      text,
+      profileId: KINOTCH_PROFILE.profileId,
+      renderMode: 'plain',
+      executionMode: 'vm-authoritative',
+      ...(window ? { tokenWindow: window } : {})
+    });
+    if (reply?.type !== 'result') throw new Error('pattern runtime parity execution failed: ' + record.id);
+    const outputs = new Set<string>();
+    for (const run of reply.result?.programTrace?.runs ?? []) {
+      if (run?.lookupSequenceId !== -1 || run?.stage !== 'profile'
+        || run?.direction !== 'to-modern' || run?.channel !== 'surface'
+        || run?.start !== 0 || run?.end !== text.length) continue;
+      for (const edge of run.edges ?? []) if (typeof edge.output === 'string') {
+        outputs.add(record.wildcard ? edge.output + '*' : edge.output);
+      }
+    }
+    actualByPatternCase.set(record.id, {
+      renderedText: String(reply.result?.renderedText ?? ''),
+      observedOutputs: [...outputs].sort((a, b) => a.localeCompare(b, 'ja'))
+    });
+  }
+
   if (service.opens() !== 1) throw new Error('TAR runtime parity must reuse one BrowserPack instance');
 
   const records: RuntimeParityRecord[] = fixture.records.map((record) => {
@@ -408,7 +444,14 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
           : 'vm-authoritative candidate set differs from TAR source alternatives';
       }
     } else if (status === 'PATTERN_REQUIRED') {
-      reason = 'TAR rule requires regex/wildcard pattern semantics';
+      const observed = actualByPatternCase.get(record.id);
+      if (!observed) throw new Error('missing TAR pattern runtime observation for ' + record.id);
+      actualOutput = observed.renderedText;
+      const expected = record.regex ? ['2026/10/8'] : record.expectedOutputs;
+      status = sameCandidateSet(observed.observedOutputs, expected) ? 'PASS' : 'FAIL';
+      reason = status === 'PASS'
+        ? 'pinned TAR wildcard/regex Rule Program mechanism preserves pattern outputs'
+        : 'TAR pattern Rule Program output set differs from source-derived witness';
     } else if (status === 'DISABLED') {
       reason = 'TAR source rule is disabled';
     }
@@ -440,7 +483,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     schemaVersion: '1',
     kind: 'tar-runtime-parity',
     owner: 'japanese-orthography#285',
-    finalExecutionParity: false,
+    finalExecutionParity: records.every((record) => record.status === 'PASS' || record.status === 'DISABLED'),
     sourceFixture: TAR_PARITY_FIXTURE,
     baseline: {
       profileId: KINOTCH_PROFILE.profileId,
@@ -457,6 +500,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
       contextSourceUnreachable: records.filter((record) => record.reason?.startsWith('legacy source rule is unreachable:')).length,
       contextShadowedByHigherPriority: records.filter((record) => record.reason?.startsWith('legacy source rule is shadowed by higher-priority')).length,
       candidateCasesExecuted: actualByCandidateCase.size,
+      patternCasesExecuted: actualByPatternCase.size,
       candidateConflictGroupsExecuted: conflictInputs.size,
       candidateReviewRequired: records.filter((record) => record.reason?.startsWith('review-needed empty replacement intent')).length,
       executableCasesTested: records.filter((record) => record.status === 'PASS' || record.status === 'FAIL').length,
@@ -471,7 +515,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     schemaVersion: '1',
     kind: 'tar-runtime-parity-summary',
     owner: 'japanese-orthography#285',
-    finalExecutionParity: false,
+    finalExecutionParity: records.every((record) => record.status === 'PASS' || record.status === 'DISABLED'),
     requiredNextGates: [
       ...(statusCounts.CONTEXT_REQUIRED ? ['context-parity'] : []),
       ...(statusCounts.CANDIDATE_REQUIRED ? ['candidate-parity'] : []),
