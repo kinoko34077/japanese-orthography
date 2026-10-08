@@ -7,19 +7,19 @@
   "compilerVersion": "1",
   "baseline": {
     "source": "data/reports/orthography-v2-measurements.json",
-    "canonicalGraphSha256": "7295dc07c04a32ffbae87e21e7368a940515660c76aca6a422aa870b152a3b96",
-    "canonicalGraphBytes": 169498651,
-    "hotArtifactBytes": 69467757,
-    "hotArtifactGzipBytes": 10366321,
-    "hotInflateMs": 13082,
-    "hotInflateHeapMb": 1014
+    "canonicalGraphSha256": "5c575c5a356d1f491cd493c43ca97344bba5d1ee5d1c934eb1e89abe1a1bbe74",
+    "canonicalGraphBytes": 169582641,
+    "hotArtifactBytes": 69539121,
+    "hotArtifactGzipBytes": 10373174,
+    "hotInflateMs": 4965,
+    "hotInflateHeapMb": 1013
   },
   "counts": {
     "facts": 561488,
-    "rules": 4343,
+    "rules": 4447,
     "bindings": 10964,
-    "sources": 31,
-    "strings": 981066
+    "sources": 32,
+    "strings": 981655
   },
   "candidate": {
     "sections": [
@@ -27,16 +27,16 @@
         "sectionId": "string-pool",
         "kind": "string-pool",
         "loading": "on-demand",
-        "rowCount": 981066,
-        "bytes": 29457503,
+        "rowCount": 981655,
+        "bytes": 29511652,
         "columns": [
           {
             "name": "utf8",
             "width": 1,
-            "elements": 25533235
+            "elements": 25585028
           }
         ],
-        "gzipBytes": 5168669
+        "gzipBytes": 5173148
       },
       {
         "sectionId": "facts",
@@ -111,8 +111,8 @@
         "sectionId": "rules",
         "kind": "rules",
         "loading": "eager",
-        "rowCount": 4343,
-        "bytes": 165382,
+        "rowCount": 4447,
+        "bytes": 169782,
         "columns": [
           {
             "name": "id",
@@ -145,12 +145,12 @@
           {
             "name": "from",
             "width": 4,
-            "elements": 4385
+            "elements": 4489
           },
           {
             "name": "to",
             "width": 4,
-            "elements": 4377
+            "elements": 4593
           },
           {
             "name": "dependencies",
@@ -222,8 +222,8 @@
         "sectionId": "provenance-index",
         "kind": "provenance-index",
         "loading": "on-demand",
-        "rowCount": 576795,
-        "bytes": 2307180,
+        "rowCount": 576899,
+        "bytes": 2307596,
         "columns": [
           {
             "name": "detailRef",
@@ -236,18 +236,18 @@
         "sectionId": "detail-shard",
         "kind": "detail-shard",
         "loading": "lazy",
-        "rowCount": 243524,
-        "bytes": 4012184,
+        "rowCount": 243628,
+        "bytes": 4014744,
         "columns": [
           {
             "name": "sourceRefs",
             "width": 4,
-            "elements": 243608
+            "elements": 243712
           },
           {
             "name": "evidenceRefs",
             "width": 4,
-            "elements": 272388
+            "elements": 272716
           }
         ],
         "note": "lazy: never fetched to render the UI shell or a compact diagnostic summary"
@@ -266,8 +266,8 @@
         "kind": "profile-policy",
         "loading": "eager",
         "rowCount": 1,
-        "bytes": 154128,
-        "gzipBytes": 38430,
+        "bytes": 158440,
+        "gzipBytes": 39572,
         "note": "resolved projection policy only; it carries no knowledge table, which is what keeps the three profiles on one pack"
       },
       {
@@ -275,8 +275,8 @@
         "kind": "profile-policy",
         "loading": "eager",
         "rowCount": 1,
-        "bytes": 154159,
-        "gzipBytes": 38471,
+        "bytes": 158471,
+        "gzipBytes": 39609,
         "note": "resolved projection policy only; it carries no knowledge table, which is what keeps the three profiles on one pack"
       },
       {
@@ -298,9 +298,9 @@
         "note": "the Japanese-first label/help dictionary is authored by unit F; no size is estimated here"
       }
     ],
-    "eagerBytes": 682123,
-    "onDemandBytes": 61583131,
-    "lazyBytes": 4012184,
+    "eagerBytes": 695147,
+    "onDemandBytes": 61637696,
+    "lazyBytes": 4014744,
     "shardPlan": {
       "targetShardBytes": 262144,
       "sections": [
@@ -308,10 +308,10 @@
           "sectionId": "string-pool",
           "kind": "string-pool",
           "loading": "on-demand",
-          "bytes": 29457503,
-          "rowCount": 981066,
+          "bytes": 29511652,
+          "rowCount": 981655,
           "shardCount": 113,
-          "rowsPerShard": 8682
+          "rowsPerShard": 8688
         },
         {
           "sectionId": "facts",
@@ -335,55 +335,55 @@
           "sectionId": "provenance-index",
           "kind": "provenance-index",
           "loading": "on-demand",
-          "bytes": 2307180,
-          "rowCount": 576795,
+          "bytes": 2307596,
+          "rowCount": 576899,
           "shardCount": 9,
-          "rowsPerShard": 64089
+          "rowsPerShard": 64100
         },
         {
           "sectionId": "detail-shard",
           "kind": "detail-shard",
           "loading": "lazy",
-          "bytes": 4012184,
-          "rowCount": 243524,
+          "bytes": 4014744,
+          "rowCount": 243628,
           "shardCount": 16,
-          "rowsPerShard": 15221
+          "rowsPerShard": 15227
         }
       ],
       "totalShards": 252,
       "note": "shard counts are the arithmetic consequence of the measured section bytes at the target shard size; they are a budget for unit B, not an accepted physical layout"
     },
     "measuredOpen": {
-      "node": "v24.21.0",
-      "declaredBytes": 682123,
-      "sectionBytesResident": 682125,
+      "node": "v22.23.3",
+      "declaredBytes": 695147,
+      "sectionBytesResident": 695149,
       "alignmentPaddingBytes": 2,
       "views": 28,
-      "openMs": 0.55,
+      "openMs": 0.113,
       "viewObjectHeapMb": 0.1
     },
     "measuredFullyResident": {
-      "declaredBytes": 66277438,
-      "sectionBytesResident": 66277441,
-      "alignmentPaddingBytes": 3,
+      "declaredBytes": 66347587,
+      "sectionBytesResident": 66347589,
+      "alignmentPaddingBytes": 2,
       "views": 56,
-      "openMs": 0.184,
+      "openMs": 0.09,
       "viewObjectHeapMb": 0
     }
   },
   "reduction": {
     "totalVsHotArtifactBytes": 0.9541,
-    "eagerVsHotArtifactBytes": 0.009819,
+    "eagerVsHotArtifactBytes": 0.009996,
     "fullyResidentHeapVsHotInflateHeap": 0
   },
   "findings": [
     {
-      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 66277438 bytes against the 69467757-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 66277441-byte ArrayBuffer, against the 1014 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 682123 bytes — and never by the encoding choice.",
+      "finding": "Binary columnar encoding alone buys no bytes at all. The whole candidate pack is 66347587 bytes against the 69539121-byte v2 hot artifact — slightly larger, because dense 4-byte row ids and offset arrays cost about what the JSON they replace did. What the encoding does buy is heap: even with every shard resident the JS heap carries only 0 MB of view objects over a 66347589-byte ArrayBuffer, against the 1013 MB object graph a full v2 inflate builds. #184 §12.2 (no full object-graph inflate) is therefore met by the view model, but the §10 \"practical on a contemporary mobile browser\" requirement is met only by demand-loaded shards — the eager shell is 695147 bytes — and never by the encoding choice.",
       "evidence": "candidate.sections, candidate.measuredOpen, candidate.measuredFullyResident, baseline.hotInflateHeapMb",
       "consequence": "unit B must compile sharded on-demand knowledge sections plus a small eager shard directory; a fully eager pack is not admissible"
     },
     {
-      "finding": "Two sections dominate: the string pool at 29457503 bytes (5168669 gzipped) and the facts table at 25946164 bytes, together 83.6% of the pack. Both scale with the 561488 normalized v2 facts, which are overwhelmingly JMdict forms and readings.",
+      "finding": "Two sections dominate: the string pool at 29511652 bytes (5173148 gzipped) and the facts table at 25946164 bytes, together 83.6% of the pack. Both scale with the 561488 normalized v2 facts, which are overwhelmingly JMdict forms and readings.",
       "evidence": "candidate.sections[string-pool], candidate.sections[facts], counts.facts",
       "consequence": "the shard key must partition these two together; sharding anything else first moves no meaningful bytes"
     },
