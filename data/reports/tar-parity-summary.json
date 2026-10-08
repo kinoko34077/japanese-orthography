@@ -15,7 +15,7 @@
     "requiredNextGate": "runtime-parity"
   },
   "fixtureDigest": "09e903eab9828c7903a2617042e10886da0b9e868f828914548d55fd812960ce",
-  "diffDigest": "9fde931da8ea847041d85572890d36514d4d19ffc503fdc359b55bee9d2ecfa5",
+  "diffDigest": "3cb2553052e1edf2040791ba7cf920dd933a72349ca9081fa3dbd6d4061875a7",
   "accounting": {
     "structuredRuleObjects": 2279,
     "structuredOwnEnabled": 2251,
@@ -28,17 +28,17 @@
     "unaccountedFlat": 0
   },
   "statuses": {
-    "AMBIGUOUS": 2332,
-    "FAIL": 128,
+    "AMBIGUOUS": 2397,
+    "FAIL": 8,
     "DISABLED": 28,
-    "PASS": 1548
+    "PASS": 1603
   },
   "origins": {
     "tar": 4036
   },
   "baseline": {
     "profileId": "kinotch-fixed",
-    "ruleIrDigest": "7e655aa331e267fa1d79df2d4e1e136512c354da769406e40729ee5bb1de4a48",
-    "ruleCount": 195191
+    "ruleIrDigest": "646b7cbd311aaa7eecad37eb5ea88adf8d7fb205a16d405af1fa27950c323cb1",
+    "ruleCount": 195295
   }
 }
