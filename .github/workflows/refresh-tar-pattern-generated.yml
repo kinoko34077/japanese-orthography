@@ -1,0 +1,69 @@
+name: Refresh TAR pattern generated evidence (temporary read-only)
+
+on:
+  push:
+    branches:
+      - migration/tar-pattern-291
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Generate canonical registry, graph and compilation reports
+        run: |
+          npm run generate:symbol-registry
+          npm run generate:orthography-accounting
+          npm run generate:orthography-v2-bundle
+          npm run generate:rule-ir
+          npm run generate:rule-programs
+      - name: Generate native BrowserPack and runtime parity reports
+        run: |
+          npm run generate:browser-pack
+          npm run generate:tar-parity
+          npm run generate:tar-runtime-parity
+      - name: Regenerate measurements affected by pattern rule addition
+        run: |
+          npm run measure:orthography-v2
+          npm run measure:browser-pack
+          npm run measure:browser-pack-v2
+          npm run measure:browser-pack-v2 -- --v3
+          npm run measure:browser-capability
+          npm run measure:browser-capability -- --v2
+          npm run measure:browser-capability -- --v3
+          npm run measure:browser-ruby
+          npm run measure:pack-payload
+          npm run measure:sequence-encoding
+          npm run measure:browser-rule-program
+      - name: Run full local acceptance on generated checkout
+        run: npm run check
+      - name: Export generated changed files (no write to repo)
+        if: always()
+        shell: bash
+        run: |
+          git status --short
+          git diff --name-only -- data | tee /tmp/tar-pattern-changed.txt
+          if [ -s /tmp/tar-pattern-changed.txt ]; then
+            tar -czf /tmp/tar-pattern-generated.tar.gz -T /tmp/tar-pattern-changed.txt
+          else
+            tar -czf /tmp/tar-pattern-generated.tar.gz --files-from /dev/null
+          fi
+          echo "TAR_PATTERN_ARCHIVE_BYTES=$(wc -c </tmp/tar-pattern-generated.tar.gz)"
+      - name: Upload changed file manifest and archive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tar-pattern-generated-evidence
+          path: |
+            /tmp/tar-pattern-changed.txt
+            /tmp/tar-pattern-generated.tar.gz
+          retention-days: 2
