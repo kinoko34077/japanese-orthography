@@ -2,63 +2,63 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v3-measurements",
   "owner": "japanese-orthography#211 F",
-  "packDigest": "ce52d6bfc229aa92f94830e8dd38cdd9f0f893fc9d7bccdf7516b642aa8ea639",
+  "packDigest": "0be1f9441b921847d888c63cb4d9af75c6ad6d6e39f00d2288082c4ea8a244c6",
   "sections": 1846,
   "sizes": {
-    "total": 187549956,
-    "totalGzip": 73224507,
+    "total": 187592900,
+    "totalGzip": 73237793,
     "byLoading": {
       "eager": {
         "sections": 10,
-        "bytes": 885524,
-        "gzipBytes": 313020
+        "bytes": 894168,
+        "gzipBytes": 315296
       },
       "lazy": {
         "sections": 483,
-        "bytes": 75084980,
-        "gzipBytes": 25056296
+        "bytes": 75102148,
+        "gzipBytes": 25063492
       },
       "on-demand": {
         "sections": 1353,
-        "bytes": 111579452,
-        "gzipBytes": 47855191
+        "bytes": 111596584,
+        "gzipBytes": 47859005
       }
     },
     "byKind": {
       "bindings": {
         "sections": 1,
         "bytes": 200932,
-        "gzipBytes": 64171
+        "gzipBytes": 64173
       },
       "detail-shard": {
         "sections": 330,
         "bytes": 28303412,
-        "gzipBytes": 8737368
+        "gzipBytes": 8738088
       },
       "evidence-map": {
         "sections": 141,
-        "bytes": 44240604,
-        "gzipBytes": 14999033
+        "bytes": 44256580,
+        "gzipBytes": 15004975
       },
       "knowledge-bundle": {
         "sections": 330,
         "bytes": 18339024,
-        "gzipBytes": 8473185
+        "gzipBytes": 8473182
       },
       "lexeme-forms": {
         "sections": 54,
         "bytes": 6888400,
-        "gzipBytes": 3418983
+        "gzipBytes": 3418984
       },
       "lexeme-readings": {
         "sections": 54,
         "bytes": 19358596,
-        "gzipBytes": 7373870
+        "gzipBytes": 7373878
       },
       "lexeme-table": {
         "sections": 54,
         "bytes": 7969868,
-        "gzipBytes": 3420732
+        "gzipBytes": 3420437
       },
       "lexical-directory": {
         "sections": 1,
@@ -72,18 +72,18 @@
       },
       "profile-policy": {
         "sections": 3,
-        "bytes": 309326,
-        "gzipBytes": 77511
+        "bytes": 317950,
+        "gzipBytes": 79785
       },
       "program-evidence": {
         "sections": 12,
-        "bytes": 2540964,
-        "gzipBytes": 1319895
+        "bytes": 2542156,
+        "gzipBytes": 1320429
       },
       "reading-index": {
         "sections": 468,
         "bytes": 21976988,
-        "gzipBytes": 9286580
+        "gzipBytes": 9286975
       },
       "rule-lexeme-sets": {
         "sections": 1,
@@ -92,18 +92,18 @@
       },
       "rule-predicates": {
         "sections": 1,
-        "bytes": 1254376,
-        "gzipBytes": 88001
+        "bytes": 1262832,
+        "gzipBytes": 88612
       },
       "rule-program-index": {
         "sections": 1,
-        "bytes": 2805124,
-        "gzipBytes": 1500908
+        "bytes": 2806412,
+        "gzipBytes": 1501495
       },
       "rule-programs": {
         "sections": 1,
-        "bytes": 6826408,
-        "gzipBytes": 2885729
+        "bytes": 6833224,
+        "gzipBytes": 2888037
       },
       "rule-runtime-meta": {
         "sections": 1,
@@ -113,17 +113,17 @@
       "rules": {
         "sections": 1,
         "bytes": 150124,
-        "gzipBytes": 50766
+        "gzipBytes": 50756
       },
       "sequence-pool": {
         "sections": 1,
-        "bytes": 5534084,
-        "gzipBytes": 2644839
+        "bytes": 5534656,
+        "gzipBytes": 2645243
       },
       "shard-directory": {
         "sections": 1,
         "bytes": 12736,
-        "gzipBytes": 7868
+        "gzipBytes": 7869
       },
       "sino-component-index": {
         "sections": 1,
@@ -133,12 +133,12 @@
       "surface-index": {
         "sections": 386,
         "bytes": 20269236,
-        "gzipBytes": 8580091
+        "gzipBytes": 8579889
       },
       "symbol-registry": {
         "sections": 1,
-        "bytes": 48648,
-        "gzipBytes": 33442
+        "bytes": 48668,
+        "gzipBytes": 33451
       },
       "terminology": {
         "sections": 1,
@@ -153,24 +153,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 10,
-        "bytes": 885524,
-        "gzipBytes": 315803,
-        "openMs": 267
+        "bytes": 894168,
+        "gzipBytes": 318142,
+        "openMs": 52
       },
       "coldFirstResult": {
         "requests": 72,
         "bytes": 4234896,
-        "gzipBytes": 1875270,
-        "ms": 1312
+        "gzipBytes": 1875341,
+        "ms": 370
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 44
+        "ms": 8
       },
-      "detailLatencyMs": 141,
-      "unitDetailLatencyMs": 165,
-      "residentArrayBufferBytes": 9553640,
-      "jsHeapDeltaBytes": 34506816,
+      "detailLatencyMs": 42,
+      "unitDetailLatencyMs": 67,
+      "residentArrayBufferBytes": 9566972,
+      "jsHeapDeltaBytes": 34524928,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -179,24 +179,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 10,
-        "bytes": 885524,
-        "gzipBytes": 315803,
-        "openMs": 132
+        "bytes": 894168,
+        "gzipBytes": 318142,
+        "openMs": 36
       },
       "coldFirstResult": {
         "requests": 153,
         "bytes": 8596764,
-        "gzipBytes": 3737193,
-        "ms": 1303
+        "gzipBytes": 3737213,
+        "ms": 488
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 30
+        "ms": 28
       },
-      "detailLatencyMs": 44,
-      "unitDetailLatencyMs": 20,
-      "residentArrayBufferBytes": 11687264,
-      "jsHeapDeltaBytes": 13853152,
+      "detailLatencyMs": 41,
+      "unitDetailLatencyMs": 17,
+      "residentArrayBufferBytes": 11699404,
+      "jsHeapDeltaBytes": 13970968,
       "spans": 7,
       "inspectableUnits": 23
     }

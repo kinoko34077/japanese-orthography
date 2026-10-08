@@ -1,9 +1,9 @@
 {
-  "canonicalGraphSha256": "7295dc07c04a32ffbae87e21e7368a940515660c76aca6a422aa870b152a3b96",
+  "canonicalGraphSha256": "5c575c5a356d1f491cd493c43ca97344bba5d1ee5d1c934eb1e89abe1a1bbe74",
   "compilerVersion": "2",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "b5f9842d069df6d77b8635034973c61e163fef94e99dbc6dd24d5d322e215892",
+  "packDigest": "38850e90e70ed1b05c2138dc0228005aa1511b998f92665870658462fc07de38",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -15514,14 +15514,14 @@
       "sha256": "5362c691d801479cfea6e09d4d33c636ade830f40b4844dc8c4ca0d3a0c261bd"
     },
     {
-      "byteLength": 154388,
+      "byteLength": 158700,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-historical.json",
       "profileId": "historical",
       "sectionId": "profile-policy@historical",
-      "sha256": "e8ff65cc560fb39a967584c1174bb54c169ef8218cd65a20102fc3c600eeeb50"
+      "sha256": "fd34c90482118ba161d772223df90c9afdebb73ba2224c7a3cb1a98636dea7f1"
     },
     {
       "byteLength": 616,
@@ -15534,14 +15534,14 @@
       "sha256": "32dcca6a2f9e7d504ee03273c807f9f0091445fdc3564c686f96f5be3489b806"
     },
     {
-      "byteLength": 154322,
+      "byteLength": 158634,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-modern.json",
       "profileId": "modern",
       "sectionId": "profile-policy@modern",
-      "sha256": "59e2f198362780ae464a06d14603bb434c8b485e3add8596e81e416bfed8db48"
+      "sha256": "0c7faf56f2bb679181247f1a123c57a74afeda7ed83bd35b84476fad998520a8"
     },
     {
       "byteLength": 10048,
@@ -36701,5 +36701,5 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "7bfe04ad7c68dcf9f34a608417414db5175e8ccd57feccd1255548767a3eab85"
+  "sourceSetDigest": "28e22e22629574fc85095b1b34bd816f192b64c9a4939e0be9ef221dcede675c"
 }

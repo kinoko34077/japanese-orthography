@@ -38,6 +38,7 @@ interface RuntimeParityRecord {
   input: string;
   expectedOutputs: string[];
   actualOutput: string | null;
+  actualCandidates: string[] | null;
   sourceKind: TarParityCase['sourceKind'];
   sourceEnabled: boolean | null;
   sourceRefs: TarParityCase['sourceRefs'];
@@ -212,6 +213,25 @@ export const tokenWindowWitness = (record: TarParityCase) => {
   return { tokens, index };
 };
 
+
+export const candidateOutputsOfProgramTrace = (result: any, input: string): string[] => {
+  const outputs: string[] = [];
+  for (const run of result?.programTrace?.runs ?? []) {
+    if (run?.start !== 0 || run?.end !== input.length) continue;
+    if (run?.stage !== 'profile' || run?.direction !== 'to-modern' || run?.channel !== 'surface') continue;
+    for (const edge of run?.edges ?? []) {
+      if (edge?.candidate === true && typeof edge.output === 'string') outputs.push(edge.output);
+    }
+  }
+  return [...new Set(outputs)].sort((a, b) => a.localeCompare(b, 'ja'));
+};
+
+const sameCandidateSet = (actual: readonly string[], expected: readonly string[]): boolean => {
+  const left = [...new Set(actual)].sort((a, b) => a.localeCompare(b, 'ja'));
+  const right = [...new Set(expected)].sort((a, b) => a.localeCompare(b, 'ja'));
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+};
+
 export async function buildTarRuntimeParityArtifacts(rootDir: string) {
   const fixture = JSON.parse(await readFile(resolve(rootDir, TAR_PARITY_FIXTURE), 'utf8')) as FixtureDocument;
   if (fixture.accounting.fixtureRecords !== fixture.records.length) throw new Error('TAR runtime parity fixture count mismatch');
@@ -254,6 +274,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
 
   const actualByInput = new Map<string, string>();
   const actualByContextCase = new Map<string, string>();
+  const actualByCandidateCase = new Map<string, { renderedText: string; candidates: string[] }>();
   let requestId = 0;
   for (const input of uniqueInputs) {
     const reply = await service.handle({
@@ -295,16 +316,59 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     actualByContextCase.set(record.id, String(reply.result?.renderedText ?? ''));
     if (actualByContextCase.size % 100 === 0) console.log('TAR context parity executed ' + actualByContextCase.size + '/' + contextRecords.length);
   }
+
+  const executeCandidate = async (record: TarParityCase, tokenWindow?: ReturnType<typeof tokenWindowWitness>) => {
+    const reply = await service.handle({
+      type: 'transform',
+      requestId: ++requestId,
+      text: record.from,
+      profileId: KINOTCH_PROFILE.profileId,
+      renderMode: 'plain',
+      executionMode: 'vm-authoritative',
+      ...(tokenWindow ? { tokenWindow } : {})
+    });
+    if (reply?.type !== 'result') throw new Error('candidate runtime parity execution failed for ' + record.id + ': ' + (reply?.message ?? 'unknown error'));
+    return {
+      renderedText: String(reply.result?.renderedText ?? ''),
+      candidates: candidateOutputsOfProgramTrace(reply.result, record.from)
+    };
+  };
+
+  // Otherwise-simple same-input conflicts are one candidate group per naked input.
+  for (const input of [...conflictInputs].sort((a, b) => a.localeCompare(b, 'ja'))) {
+    const members = simpleByInput.get(input) ?? [];
+    if (!members.length) throw new Error('missing conflict members for ' + input);
+    const observed = await executeCandidate(members[0]!);
+    for (const member of members) actualByCandidateCase.set(member.id, observed);
+  }
+
+  // Explicit source alternatives retain their own typed applicability witness.
+  const explicitCandidates = fixture.records.filter((record) => tentative.get(record.id) === 'CANDIDATE_REQUIRED');
+  for (const record of explicitCandidates) {
+    const observed = await executeCandidate(record, requiresContext(record) ? tokenWindowWitness(record) : undefined);
+    actualByCandidateCase.set(record.id, observed);
+  }
+  if (actualByCandidateCase.size !== 165) {
+    throw new Error('expected 165 candidate cases to execute, got ' + actualByCandidateCase.size);
+  }
   if (service.opens() !== 1) throw new Error('TAR runtime parity must reuse one BrowserPack instance');
 
   const records: RuntimeParityRecord[] = fixture.records.map((record) => {
     let status: RuntimeParityStatus | null = tentative.get(record.id) ?? null;
     let actualOutput: string | null = null;
+    let actualCandidates: string[] | null = null;
     let reason: string | null = null;
 
     if (status === null && conflictInputs.has(record.from)) {
-      status = 'CANDIDATE_REQUIRED';
-      reason = 'multiple active simple TAR intents share this input with different expected outputs';
+      const observed = actualByCandidateCase.get(record.id);
+      if (!observed) throw new Error('missing candidate runtime result for ' + record.id);
+      const expected = [...new Set((simpleByInput.get(record.from) ?? []).flatMap((member) => member.expectedOutputs))];
+      actualOutput = observed.renderedText;
+      actualCandidates = observed.candidates;
+      status = sameCandidateSet(actualCandidates, expected) ? 'PASS' : 'FAIL';
+      reason = status === 'PASS'
+        ? 'same-input TAR intent group preserved as an unresolved candidate set'
+        : 'runtime candidate set differs from same-input TAR intent group';
     } else if (status === null) {
       actualOutput = actualByInput.get(record.from) ?? null;
       if (actualOutput === null) throw new Error('missing runtime result for ' + record.id);
@@ -328,7 +392,21 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
         reason = 'vm-authoritative output under the source-derived token witness differs from TAR expected output';
       }
     } else if (status === 'CANDIDATE_REQUIRED') {
-      reason = 'TAR rule requires candidate/alternative semantics';
+      const observed = actualByCandidateCase.get(record.id);
+      if (!observed) throw new Error('missing explicit candidate runtime result for ' + record.id);
+      actualOutput = observed.renderedText;
+      actualCandidates = observed.candidates;
+      if (record.expectedOutputs.length === 0) {
+        status = actualCandidates.length === 0 && actualOutput.length > 0 ? 'PASS' : 'FAIL';
+        reason = status === 'PASS'
+          ? 'review-needed empty replacement intent remains fail-closed: no runtime deletion rule or candidate was admitted'
+          : 'review-needed empty replacement intent unexpectedly became a runtime deletion or candidate';
+      } else {
+        status = sameCandidateSet(actualCandidates, record.expectedOutputs) ? 'PASS' : 'FAIL';
+        reason = status === 'PASS'
+          ? 'source alternative set preserved by vm-authoritative candidate semantics'
+          : 'vm-authoritative candidate set differs from TAR source alternatives';
+      }
     } else if (status === 'PATTERN_REQUIRED') {
       reason = 'TAR rule requires regex/wildcard pattern semantics';
     } else if (status === 'DISABLED') {
@@ -345,6 +423,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
       input: record.from,
       expectedOutputs: record.expectedOutputs,
       actualOutput,
+      actualCandidates,
       sourceKind: record.sourceKind,
       sourceEnabled: record.sourceEnabled,
       sourceRefs: record.sourceRefs,
@@ -377,8 +456,11 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
       contextCasesExecuted: contextRecords.length,
       contextSourceUnreachable: records.filter((record) => record.reason?.startsWith('legacy source rule is unreachable:')).length,
       contextShadowedByHigherPriority: records.filter((record) => record.reason?.startsWith('legacy source rule is shadowed by higher-priority')).length,
+      candidateCasesExecuted: actualByCandidateCase.size,
+      candidateConflictGroupsExecuted: conflictInputs.size,
+      candidateReviewRequired: records.filter((record) => record.reason?.startsWith('review-needed empty replacement intent')).length,
       executableCasesTested: records.filter((record) => record.status === 'PASS' || record.status === 'FAIL').length,
-      conflictingSimpleInputsDeferred: conflictInputs.size
+      conflictingSimpleInputsDeferred: 0
     },
     statuses: statusCounts,
     familyFail: familyFailSorted,
@@ -409,7 +491,7 @@ export async function buildTarRuntimeParityArtifacts(rootDir: string) {
     report,
     summary,
     texts: {
-      [TAR_RUNTIME_PARITY_REPORT]: JSON.stringify(report, null, 2) + '\n',
+      [TAR_RUNTIME_PARITY_REPORT]: JSON.stringify(report) + '\n',
       [TAR_RUNTIME_PARITY_SUMMARY]: JSON.stringify(summary, null, 2) + '\n'
     }
   };

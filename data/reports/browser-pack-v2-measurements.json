@@ -2,16 +2,16 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-measurements",
   "owner": "japanese-orthography#196 I",
-  "packDigest": "b5f9842d069df6d77b8635034973c61e163fef94e99dbc6dd24d5d322e215892",
+  "packDigest": "38850e90e70ed1b05c2138dc0228005aa1511b998f92665870658462fc07de38",
   "sections": 2016,
   "sizes": {
-    "total": 149643812,
-    "totalGzip": 55186894,
+    "total": 149652436,
+    "totalGzip": 55189168,
     "byLoading": {
       "eager": {
         "sections": 9,
-        "bytes": 965892,
-        "gzipBytes": 272413
+        "bytes": 974516,
+        "gzipBytes": 274687
       },
       "lazy": {
         "sections": 330,
@@ -67,8 +67,8 @@
       },
       "profile-policy": {
         "sections": 3,
-        "bytes": 309326,
-        "gzipBytes": 77511
+        "bytes": 317950,
+        "gzipBytes": 79785
       },
       "provenance-index": {
         "sections": 330,
@@ -113,24 +113,24 @@
       "renderedText": "熔接の装丁を圓周に描いた颱風の日のこと。",
       "eager": {
         "requests": 9,
-        "bytes": 965892,
-        "gzipBytes": 277052,
-        "openMs": 86
+        "bytes": 974516,
+        "gzipBytes": 279384,
+        "openMs": 52
       },
       "coldFirstResult": {
         "requests": 72,
         "bytes": 5313064,
         "gzipBytes": 2021053,
-        "ms": 540
+        "ms": 368
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 12
+        "ms": 7
       },
-      "detailLatencyMs": 2,
-      "unitDetailLatencyMs": 92,
-      "residentArrayBufferBytes": 9294452,
-      "jsHeapDeltaBytes": 36071064,
+      "detailLatencyMs": 1,
+      "unitDetailLatencyMs": 82,
+      "residentArrayBufferBytes": 9303076,
+      "jsHeapDeltaBytes": 36108544,
       "spans": 4,
       "inspectableUnits": 8
     },
@@ -139,24 +139,24 @@
       "renderedText": "今日は學校で分からないことを調べた。｜學校《がくかう》の帰りに圓周率を考へ、颱風の進路を思ふと、ドイツの友人に手紙を書きます。味わおう、みる、法律。",
       "eager": {
         "requests": 9,
-        "bytes": 965892,
-        "gzipBytes": 277052,
-        "openMs": 55
+        "bytes": 974516,
+        "gzipBytes": 279384,
+        "openMs": 39
       },
       "coldFirstResult": {
         "requests": 153,
         "bytes": 10516444,
         "gzipBytes": 4025230,
-        "ms": 730
+        "ms": 497
       },
       "warmRepeat": {
         "requests": 0,
-        "ms": 27
+        "ms": 24
       },
-      "detailLatencyMs": 1,
-      "unitDetailLatencyMs": 23,
-      "residentArrayBufferBytes": 12248408,
-      "jsHeapDeltaBytes": 10356056,
+      "detailLatencyMs": 0,
+      "unitDetailLatencyMs": 25,
+      "residentArrayBufferBytes": 12257032,
+      "jsHeapDeltaBytes": 10435704,
       "spans": 7,
       "inspectableUnits": 23
     }

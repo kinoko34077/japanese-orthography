@@ -19,7 +19,7 @@
   // The compact summary is what the UI renders; `expandDetail` produces the full inspection payload
   // lazily from the pack (provenance shards are only fetched here).
 
-  const COMPETITION_REASONS = new Set(["outranked_by_overlap", "shadowed_by_longer_match", "equivalent_overlap"]);
+  const COMPETITION_REASONS = new Set(["outranked_by_overlap", "shadowed_by_longer_match", "equivalent_overlap", "candidate_alternative"]);
   const CERTAINTY = { unique: "unique", conditional: "conditional", unresolved: "unresolved" };
 
   const authorityOf = (winner, ruleOrigin) => {

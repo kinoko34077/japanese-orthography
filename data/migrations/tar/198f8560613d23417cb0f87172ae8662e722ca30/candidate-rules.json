@@ -1,0 +1,6757 @@
+{
+  "schemaVersion": "1",
+  "kind": "tar-candidate-rules",
+  "owner": "japanese-orthography#290",
+  "originVocabulary": [
+    "kinotch",
+    "tar"
+  ],
+  "selection": {
+    "sourceCommit": "198f8560613d23417cb0f87172ae8662e722ca30",
+    "parityFixture": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/parity-fixture.json",
+    "criterion": "active non-pattern explicit alternatives plus otherwise-simple same-input output conflicts"
+  },
+  "accounting": {
+    "sourceCases": 165,
+    "explicitAlternativeCases": 44,
+    "conflictSourceCases": 120,
+    "conflictGroups": 60,
+    "executableCandidateCases": 164,
+    "reviewRequiredCases": 1,
+    "dropped": 0
+  },
+  "recordsDigest": "679cc77ac5afb377f3e893795cb7e9c4edd289859e0406736c60cf4b9960f241",
+  "groupsDigest": "fa14c9e90298b7c23cbe12e615e7a71e91ab57d4bf4dd82a601de489ba1172b0",
+  "groups": [
+    {
+      "id": "tar:candidate-group:bf1ef362fe5f9f50",
+      "input": "あらゆる",
+      "outputs": [
+        "所有",
+        "所有る"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[1].entries[6]",
+        "tar:structured:entry-mq9g2fvr-lt:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:92c1bcd28d23c157",
+        "tar:candidate:a79e0d3c279c32e8"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2ea08761f42c6cb8",
+      "input": "いずれ",
+      "outputs": [
+        "孰",
+        "[何"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[1].entries[70]",
+        "tar:structured:entry-mq9g2fvs-lv:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:fc65938fd75e9c1c",
+        "tar:candidate:bb3804797ff68993"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:e1fe4a3986c02035",
+      "input": "カード",
+      "outputs": [
+        "札",
+        "卡"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[38]",
+        "tar:structured:entry-mq13j70r-so:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:a8cf737955ae7be8",
+        "tar:candidate:a33327362c2957c7"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:a38afcdcf04d01e4",
+      "input": "ごらん",
+      "outputs": [
+        "御覽",
+        "御覧"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[2].entries[161]",
+        "tar:structured:entry-mqb5vole-lu:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:9b48c00e22a3ec7b",
+        "tar:candidate:07a6f141cf60cd33"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:db3080736562aab1",
+      "input": "ドミナント",
+      "outputs": [
+        "屬",
+        "属"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[39]",
+        "tar:structured:entry-mq13j70t-12v:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:d4221a0f7536934a",
+        "tar:candidate:111fd65a3dc78be1"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2e21d527ecedc776",
+      "input": "ひらがな",
+      "outputs": [
+        "平假名",
+        "平仮名"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[6].entries[54]",
+        "tar:structured:entry-mqb6q1vr-m3:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:a66687bd4e3f8907",
+        "tar:candidate:9682781760a388bc"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:991096c5c8443e05",
+      "input": "プロジェクト",
+      "outputs": [
+        "PRJ",
+        "prj"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[53]",
+        "tar:structured:entry-mpznz7y2-lr:from[0]"
+      ],
+      "priorities": [
+        0,
+        90
+      ],
+      "memberRecordIds": [
+        "tar:candidate:9f25d5eb0e057648",
+        "tar:candidate:522969adcd0fc755"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:4e5a3bae4ce0d2a4",
+      "input": "英才",
+      "outputs": [
+        "穎才",
+        "頴才"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[145]",
+        "tar:structured:entry-mpqi7eh3-3p:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:926f9c073186b940",
+        "tar:candidate:e45842fe7f3eedf3"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:4393f0444bee9e88",
+      "input": "憶説",
+      "outputs": [
+        "臆說",
+        "臆説"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[70]",
+        "tar:structured:entry-mpqi7eh3-3t:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:3082fcdd4f277dc0",
+        "tar:candidate:b48e6e67fa09cd2a"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:201b1d6b877e5f00",
+      "input": "火炎",
+      "outputs": [
+        "火焰",
+        "火焔"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[110]",
+        "tar:structured:entry-mpqi7eh3-3w:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:1d36cf546da07ccb",
+        "tar:candidate:71dfc2d2bcb9879f"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:d612c3582f2f276f",
+      "input": "回虫",
+      "outputs": [
+        "蛔蟲",
+        "蛔虫"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[39]",
+        "tar:structured:entry-mpqi7eh3-40:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:79be8751682a8a1e",
+        "tar:candidate:382a5dfb118cd468"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:cc3fccc6df761c28",
+      "input": "回転",
+      "outputs": [
+        "廻轉",
+        "廻転"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[40]",
+        "tar:structured:entry-mpqi7eh3-41:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:e0979e450a4454f1",
+        "tar:candidate:8aed702351bf5ee4"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:e6281861d93ca492",
+      "input": "壊乱",
+      "outputs": [
+        "潰亂",
+        "潰乱"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[44]",
+        "tar:structured:entry-mpqi7eh3-45:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:61e78d5db6205816",
+        "tar:candidate:83516252228d6702"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:329d43b62e56eae6",
+      "input": "皆既食",
+      "outputs": [
+        "皆既蝕",
+        "皆既蝕"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[125]",
+        "tar:structured:entry-mpqi7eh3-48:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:5783100caa5f448b",
+        "tar:candidate:3990d77238d634e2"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2b05dfc3b6de4193",
+      "input": "格闘",
+      "outputs": [
+        "挌鬭",
+        "挌闘"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[92]",
+        "tar:structured:entry-mpqi7eh3-4b:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:975bc61634b09603",
+        "tar:candidate:7ce72e27b831bcb5"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:3e952fc01d9cd45b",
+      "input": "間欠",
+      "outputs": [
+        "閒歇",
+        "間歇"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[162]",
+        "tar:structured:entry-mpqi7eh3-4j:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:4a9b96a37812d967",
+        "tar:candidate:8beb7d6950818b9e"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:8db31c0b653c0cc3",
+      "input": "希釈",
+      "outputs": [
+        "稀釋",
+        "稀釈"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[50]",
+        "tar:structured:entry-mpqi7eh3-4p:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:9671250ba07e5705",
+        "tar:candidate:7af899d7ed0b2aa8"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:d51a0be8e4a630c7",
+      "input": "気炎",
+      "outputs": [
+        "氣焰",
+        "気焔"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[99]",
+        "tar:structured:entry-mpqi7eh3-4v:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:ed765f942f39d796",
+        "tar:candidate:8fa1f0a846da2ff0"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:cbe547242ac1f32e",
+      "input": "技量",
+      "outputs": [
+        "伎倆",
+        "技倆"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[72]",
+        "tar:structured:entry-mpqi7eh3-4y:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:135f262499745dee",
+        "tar:candidate:aa1fff74814484c3"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:8ccf1b1cb9c89446",
+      "input": "糾弾",
+      "outputs": [
+        "糺彈",
+        "糺弾"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[132]",
+        "tar:structured:entry-mpqi7eh3-50:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:e20455a7baad9093",
+        "tar:candidate:5ad289089dae0cf6"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:a0fb3fd7bb47da39",
+      "input": "旧跡",
+      "outputs": [
+        "舊蹟",
+        "旧蹟"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[85]",
+        "tar:structured:entry-mpqi7eh3-52:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:0467146791e2818f",
+        "tar:candidate:7137de1251493801"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:13dd2712b370bd42",
+      "input": "供応",
+      "outputs": [
+        "饗應",
+        "饗応"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[16]",
+        "tar:structured:entry-mpqi7eh3-54:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:3689a8aae7626e24",
+        "tar:candidate:de42b5d9966a313d"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:8e5b815710782685",
+      "input": "凶器",
+      "outputs": [
+        "兇器",
+        "兇器"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[28]",
+        "tar:structured:entry-mpqi7eh3-57:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:9a623dfc4916e46a",
+        "tar:candidate:5a0dde3e30a2a076"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:9448c7b595068855",
+      "input": "強欲",
+      "outputs": [
+        "强慾",
+        "強慾"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[57]",
+        "tar:structured:entry-mpqi7eh3-5y:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:a9d18cf9de5d2ca8",
+        "tar:candidate:9ac70cdf26203d8b"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:d5b46eccfb32798e",
+      "input": "区画",
+      "outputs": [
+        "區劃",
+        "区劃"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[33]",
+        "tar:structured:entry-mpqi7eh3-5g:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:efc5791b1340640e",
+        "tar:candidate:bbcad9f93d0d14a2"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2c741bff42f00dcf",
+      "input": "係争",
+      "outputs": [
+        "繋爭",
+        "繋争"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[17]",
+        "tar:structured:entry-mpqi7eh3-5m:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:3f88c6c271d4139d",
+        "tar:candidate:9c4995596ea045ba"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:62b3f195b770e0f5",
+      "input": "係属",
+      "outputs": [
+        "繋屬",
+        "繋属"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[18]",
+        "tar:structured:entry-mpqi7eh3-5n:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:1a5e76598865af94",
+        "tar:candidate:3ec186d07adea9d1"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:ee1f7baf60e70de7",
+      "input": "研摩",
+      "outputs": [
+        "硏磨",
+        "研磨"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[127]",
+        "tar:structured:entry-mpqi7eh3-5t:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:5ddfcca56277bc27",
+        "tar:candidate:836ecd9e41f419bf"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:4049c8f46afaac30",
+      "input": "弦楽",
+      "outputs": [
+        "絃樂",
+        "絃楽"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[56]",
+        "tar:structured:entry-mpqi7eh3-4h:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:c8ebde2fdd4e15df",
+        "tar:candidate:b276f4850ff2db9f"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:b89bfebebc375288",
+      "input": "御者",
+      "outputs": [
+        "馭者",
+        "馭者"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[64]",
+        "tar:structured:entry-mpqi7eh3-5f:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:7cf3b99e55e280d0",
+        "tar:candidate:d083346308d77944"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:b69a10837bfc3ee0",
+      "input": "広範",
+      "outputs": [
+        "廣汎",
+        "広汎"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[52]",
+        "tar:structured:entry-mpqi7eh3-68:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:d846ac3ffd663b6f",
+        "tar:candidate:9e4d3d52e508cb3e"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:37c3966733003e84",
+      "input": "座視",
+      "outputs": [
+        "坐視",
+        "坐視"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[53]",
+        "tar:structured:entry-mpqi7eh3-6o:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:949d42717b498561",
+        "tar:candidate:a2fc91c928ec8916"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:adcd7fc5f4bd9f2e",
+      "input": "雑踏",
+      "outputs": [
+        "雜沓",
+        "雑沓"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[167]",
+        "tar:structured:entry-mpqi7eh3-6r:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:ae81c65ef5826478",
+        "tar:candidate:0a5fa449e312c73e"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:8604a85e5d1ff87e",
+      "input": "賛辞",
+      "outputs": [
+        "讃辭",
+        "讃辞"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[154]",
+        "tar:structured:entry-mpqi7eh3-6w:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:e22f9dcae2eadedd",
+        "tar:candidate:4a8d6997815fdc0b"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:ee1e60aa5d4616e3",
+      "input": "賛嘆",
+      "outputs": [
+        "讃嘆",
+        "讃嘆"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[153]",
+        "tar:structured:entry-mpqi7eh3-6x:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:a01f390fbb2b133f",
+        "tar:candidate:ca6548a8ea1aab34"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:de1053a63a516cfe",
+      "input": "死体",
+      "outputs": [
+        "屍體",
+        "屍体"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[96]",
+        "tar:structured:entry-mpqi7eh3-72:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:79f1cfd81e4ec124",
+        "tar:candidate:31aa2a23ee81cf14"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:23fa008e98c103cc",
+      "input": "車両",
+      "outputs": [
+        "車輛",
+        "車輌"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[156]",
+        "tar:structured:entry-mpqi7eh3-77:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:984c375ef70e5f14",
+        "tar:candidate:2e50532ba65339f7"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:7d54f3cafaf771ea",
+      "input": "奨",
+      "outputs": [
+        "獎",
+        "奬"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[9]",
+        "tar:structured:entry-mpo5725s-gf:from[0]"
+      ],
+      "priorities": [
+        0,
+        10
+      ],
+      "memberRecordIds": [
+        "tar:candidate:1c2cb68fe53529d8",
+        "tar:candidate:57e2ce38b0a2dc65"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:39d270c273587c0a",
+      "input": "昇叙",
+      "outputs": [
+        "陞敘",
+        "陞叙"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[86]",
+        "tar:structured:entry-mpqi7eh3-7g:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:1173f666a7cf166f",
+        "tar:candidate:91e2627a11cc36c5"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:fc07a5a44034b90c",
+      "input": "消却",
+      "outputs": [
+        "銷卻",
+        "銷却"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[104]",
+        "tar:structured:entry-mpqi7eh3-7i:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:dce3a283b34523a4",
+        "tar:candidate:e6757ac539cd929c"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:fbc7ac0573b5499e",
+      "input": "消沈",
+      "outputs": [
+        "銷鎭",
+        "銷鎮"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[105]",
+        "tar:structured:entry-mpqi7eh3-7j:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:26206f68ecb11ebc",
+        "tar:candidate:0d64cd9ce36ccd85"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:d744eeac43b8e38f",
+      "input": "称賛",
+      "outputs": [
+        "稱讃",
+        "称讃"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[130]",
+        "tar:structured:entry-mpqi7eh3-7l:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:9d4e1b7b37739304",
+        "tar:candidate:32780ee76e1bb514"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:c69a8d697dd7d5f1",
+      "input": "障害",
+      "outputs": [
+        "障礙",
+        "障碍"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[165]",
+        "tar:structured:entry-mpqi7eh3-7m:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:609f952d60defc81",
+        "tar:candidate:3d08e61a87c38b4a"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:69cc094fb61e0863",
+      "input": "蒸留",
+      "outputs": [
+        "蒸餾",
+        "蒸溜"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[147]",
+        "tar:structured:entry-mpqi7eh3-7p:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:905fb2779a96ca6f",
+        "tar:candidate:054b82b9a1032463"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:c2d90414060041ba",
+      "input": "真跡",
+      "outputs": [
+        "眞蹟",
+        "真蹟"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[126]",
+        "tar:structured:entry-mpqi7eh3-7y:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:147125721d402381",
+        "tar:candidate:94008f32d998f208"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:3474f794724a5e25",
+      "input": "絶賛",
+      "outputs": [
+        "絕讃",
+        "絶讃"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[136]",
+        "tar:structured:entry-mpqi7eh4-85:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:ac0e95415a8a53fd",
+        "tar:candidate:3a51433834dbee58"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:d391661534253456",
+      "input": "先鋭",
+      "outputs": [
+        "尖銳",
+        "尖鋭"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[25]",
+        "tar:structured:entry-mpqi7eh4-86:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:e79d205d5942bf0e",
+        "tar:candidate:0d5961517326eca9"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:90f3ee0654f029cf",
+      "input": "専断",
+      "outputs": [
+        "擅斷",
+        "擅断"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[47]",
+        "tar:structured:entry-mpqi7eh4-88:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:552c7433bf4ca4ab",
+        "tar:candidate:a40314a994763d79"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:9ccc84e2ba37d71c",
+      "input": "暖炉",
+      "outputs": [
+        "煖爐",
+        "煖炉"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[88]",
+        "tar:structured:entry-mpqi7eh4-95:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:fec66e1afbb32d97",
+        "tar:candidate:aa7a32b3aba76bcb"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:e96065e985cc678c",
+      "input": "注釈",
+      "outputs": [
+        "註釋",
+        "註釈"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[103]",
+        "tar:structured:entry-mpqi7eh4-9a:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:44e53675114fec17",
+        "tar:candidate:d9702b88611982e3"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:7ebafdd25d84cc06",
+      "input": "低回",
+      "outputs": [
+        "徊",
+        "彽徊"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[7]",
+        "tar:structured:entry-mpqi7eh4-9h:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:89b32afae3e537ee",
+        "tar:candidate:687adfa0b30e19b9"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:f6e6735fd537f07f",
+      "input": "転覆",
+      "outputs": [
+        "顛覆",
+        "顚覆"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/50-official-homophone-restoration.json#groups[0].entries[1]",
+        "tar:structured:entry-mpqi7eh4-9l:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:02ec5fc3f0fa6201",
+        "tar:candidate:e1ddd472efc67ac3"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:eda00aa3148e7217",
+      "input": "背徳",
+      "outputs": [
+        "悖德",
+        "悖徳"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[140]",
+        "tar:structured:entry-mpqi7eh4-9t:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:d12d48116013cc50",
+        "tar:candidate:009ef57b482a37f6"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:90b3eff4a86aab09",
+      "input": "発酵",
+      "outputs": [
+        "醱酵",
+        "醗酵"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[123]",
+        "tar:structured:entry-mpqi7eh4-9v:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:00acea3b94a063e0",
+        "tar:candidate:60b61345517dcc24"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:5a53075793f556e5",
+      "input": "反旗",
+      "outputs": [
+        "旗",
+        "叛旗"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[9]",
+        "tar:structured:entry-mpqi7eh4-9x:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:d18025cd08fba269",
+        "tar:candidate:5d3a625ec364f197"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2302d4e76a86e5f4",
+      "input": "反乱",
+      "outputs": [
+        "叛亂",
+        "叛乱"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[35]",
+        "tar:structured:entry-mpqi7eh4-a0:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:1e4f9dd5686866c2",
+        "tar:candidate:2025355e1260a779"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:57fcfad3d07f13c5",
+      "input": "没",
+      "outputs": [
+        "歿",
+        "沒"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[25]",
+        "tar:structured:entry-mpo5725t-jt:from[0]"
+      ],
+      "priorities": [
+        0,
+        10
+      ],
+      "memberRecordIds": [
+        "tar:candidate:2529c7ea6239ed46",
+        "tar:candidate:cd76588c173dcf3d"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:2bb8462da43fa61f",
+      "input": "里謡",
+      "outputs": [
+        "俚謠",
+        "俚謡"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[161]",
+        "tar:structured:entry-mpqi7eh4-b7:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:3ba4ea56a6763faf",
+        "tar:candidate:c495bbb1257e2227"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:32f1a2ae38e1d709",
+      "input": "連係",
+      "outputs": [
+        "連繫",
+        "連繋"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[157]",
+        "tar:structured:entry-mpqi7eh4-bf:from[0]"
+      ],
+      "priorities": [
+        0,
+        50
+      ],
+      "memberRecordIds": [
+        "tar:candidate:82cb2b3fd37ddc10",
+        "tar:candidate:e22ac7af5caa5caa"
+      ]
+    },
+    {
+      "id": "tar:candidate-group:19ce3fd1e549f2b1",
+      "input": "湾",
+      "outputs": [
+        "彎",
+        "灣"
+      ],
+      "sourceCaseIds": [
+        "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[28]",
+        "tar:structured:entry-mpo5725t-k8:from[0]"
+      ],
+      "priorities": [
+        0,
+        10
+      ],
+      "memberRecordIds": [
+        "tar:candidate:c95323e9c8ab5f49",
+        "tar:candidate:b7bfe5e614af4419"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "tar:candidate:fc65938fd75e9c1c",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[1].entries[70]",
+      "sourceOrder": 199,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2ea08761f42c6cb8",
+      "from": "いずれ",
+      "expectedOutputs": [
+        "孰"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/20-lexical-replacements.json",
+          "locator": "groups[1].entries[70]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[1].entries[70]",
+          "groupId": "kana-idioms-a",
+          "groupLabel": "かな熟語から当て字 あ行",
+          "status": "review-needed",
+          "sourceCategory": "04_kana_idioms_to_ateji"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:9b48c00e22a3ec7b",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[2].entries[161]",
+      "sourceOrder": 318,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:a38afcdcf04d01e4",
+      "from": "ごらん",
+      "expectedOutputs": [
+        "御覽"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/20-lexical-replacements.json",
+          "locator": "groups[2].entries[161]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[2].entries[161]",
+          "groupId": "kana-idioms-ka",
+          "groupLabel": "かな熟語から当て字 か行",
+          "status": "review-needed",
+          "sourceCategory": "04_kana_idioms_to_ateji"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:a66687bd4e3f8907",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[6].entries[54]",
+      "sourceOrder": 759,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2e21d527ecedc776",
+      "from": "ひらがな",
+      "expectedOutputs": [
+        "平假名"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/20-lexical-replacements.json",
+          "locator": "groups[6].entries[54]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/20-lexical-replacements.json#groups[6].entries[54]",
+          "groupId": "kana-idioms-ha",
+          "groupLabel": "かな熟語から当て字 は行",
+          "status": "review-needed",
+          "sourceCategory": "04_kana_idioms_to_ateji"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:02ec5fc3f0fa6201",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/50-official-homophone-restoration.json#groups[0].entries[1]",
+      "sourceOrder": 1303,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:f6e6735fd537f07f",
+      "from": "転覆",
+      "expectedOutputs": [
+        "顛覆"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/50-official-homophone-restoration.json",
+          "locator": "groups[0].entries[1]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/50-official-homophone-restoration.json#groups[0].entries[1]",
+          "groupId": "official-restoration-phrases",
+          "groupLabel": "告示系の固定熟語",
+          "status": "active-candidate",
+          "sourceCategory": "07_homophone_restoration_phrases"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:44e53675114fec17",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[103]",
+      "sourceOrder": 1310,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e96065e985cc678c",
+      "from": "注釈",
+      "expectedOutputs": [
+        "註釋"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[103]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[103]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:dce3a283b34523a4",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[104]",
+      "sourceOrder": 1311,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:fc07a5a44034b90c",
+      "from": "消却",
+      "expectedOutputs": [
+        "銷卻"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[104]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[104]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:26206f68ecb11ebc",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[105]",
+      "sourceOrder": 1312,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:fbc7ac0573b5499e",
+      "from": "消沈",
+      "expectedOutputs": [
+        "銷鎭"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[105]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[105]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:1d36cf546da07ccb",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[110]",
+      "sourceOrder": 1318,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:201b1d6b877e5f00",
+      "from": "火炎",
+      "expectedOutputs": [
+        "火焰"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[110]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[110]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:00acea3b94a063e0",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[123]",
+      "sourceOrder": 1332,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:90b3eff4a86aab09",
+      "from": "発酵",
+      "expectedOutputs": [
+        "醱酵"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[123]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[123]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:5783100caa5f448b",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[125]",
+      "sourceOrder": 1334,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:329d43b62e56eae6",
+      "from": "皆既食",
+      "expectedOutputs": [
+        "皆既蝕"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[125]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[125]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:147125721d402381",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[126]",
+      "sourceOrder": 1335,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:c2d90414060041ba",
+      "from": "真跡",
+      "expectedOutputs": [
+        "眞蹟"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[126]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[126]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:5ddfcca56277bc27",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[127]",
+      "sourceOrder": 1336,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:ee1f7baf60e70de7",
+      "from": "研摩",
+      "expectedOutputs": [
+        "硏磨"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[127]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[127]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:9d4e1b7b37739304",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[130]",
+      "sourceOrder": 1340,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d744eeac43b8e38f",
+      "from": "称賛",
+      "expectedOutputs": [
+        "稱讃"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[130]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[130]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:e20455a7baad9093",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[132]",
+      "sourceOrder": 1342,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8ccf1b1cb9c89446",
+      "from": "糾弾",
+      "expectedOutputs": [
+        "糺彈"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[132]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[132]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:ac0e95415a8a53fd",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[136]",
+      "sourceOrder": 1346,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:3474f794724a5e25",
+      "from": "絶賛",
+      "expectedOutputs": [
+        "絕讃"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[136]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[136]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:d12d48116013cc50",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[140]",
+      "sourceOrder": 1351,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:eda00aa3148e7217",
+      "from": "背徳",
+      "expectedOutputs": [
+        "悖德"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[140]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[140]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:926f9c073186b940",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[145]",
+      "sourceOrder": 1356,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4e5a3bae4ce0d2a4",
+      "from": "英才",
+      "expectedOutputs": [
+        "穎才"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[145]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[145]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:905fb2779a96ca6f",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[147]",
+      "sourceOrder": 1358,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:69cc094fb61e0863",
+      "from": "蒸留",
+      "expectedOutputs": [
+        "蒸餾"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[147]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[147]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:a01f390fbb2b133f",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[153]",
+      "sourceOrder": 1365,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:ee1e60aa5d4616e3",
+      "from": "賛嘆",
+      "expectedOutputs": [
+        "讃嘆"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[153]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[153]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:e22f9dcae2eadedd",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[154]",
+      "sourceOrder": 1366,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8604a85e5d1ff87e",
+      "from": "賛辞",
+      "expectedOutputs": [
+        "讃辭"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[154]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[154]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:984c375ef70e5f14",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[156]",
+      "sourceOrder": 1368,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:23fa008e98c103cc",
+      "from": "車両",
+      "expectedOutputs": [
+        "車輛"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[156]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[156]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:82cb2b3fd37ddc10",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[157]",
+      "sourceOrder": 1369,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:32f1a2ae38e1d709",
+      "from": "連係",
+      "expectedOutputs": [
+        "連繫"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[157]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[157]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:3689a8aae7626e24",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[16]",
+      "sourceOrder": 1372,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:13dd2712b370bd42",
+      "from": "供応",
+      "expectedOutputs": [
+        "饗應"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[16]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[16]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:3ba4ea56a6763faf",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[161]",
+      "sourceOrder": 1374,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2bb8462da43fa61f",
+      "from": "里謡",
+      "expectedOutputs": [
+        "俚謠"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[161]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[161]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:4a9b96a37812d967",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[162]",
+      "sourceOrder": 1375,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:3e952fc01d9cd45b",
+      "from": "間欠",
+      "expectedOutputs": [
+        "閒歇"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[162]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[162]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:609f952d60defc81",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[165]",
+      "sourceOrder": 1378,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:c69a8d697dd7d5f1",
+      "from": "障害",
+      "expectedOutputs": [
+        "障礙"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[165]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[165]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:ae81c65ef5826478",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[167]",
+      "sourceOrder": 1380,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:adcd7fc5f4bd9f2e",
+      "from": "雑踏",
+      "expectedOutputs": [
+        "雜沓"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[167]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[167]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:3f88c6c271d4139d",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[17]",
+      "sourceOrder": 1383,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2c741bff42f00dcf",
+      "from": "係争",
+      "expectedOutputs": [
+        "繋爭"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[17]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[17]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:1a5e76598865af94",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[18]",
+      "sourceOrder": 1391,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:62b3f195b770e0f5",
+      "from": "係属",
+      "expectedOutputs": [
+        "繋屬"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[18]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[18]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:e79d205d5942bf0e",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[25]",
+      "sourceOrder": 1399,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d391661534253456",
+      "from": "先鋭",
+      "expectedOutputs": [
+        "尖銳"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[25]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[25]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:9a623dfc4916e46a",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[28]",
+      "sourceOrder": 1402,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8e5b815710782685",
+      "from": "凶器",
+      "expectedOutputs": [
+        "兇器"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[28]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[28]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:efc5791b1340640e",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[33]",
+      "sourceOrder": 1408,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d5b46eccfb32798e",
+      "from": "区画",
+      "expectedOutputs": [
+        "區劃"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[33]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[33]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:1e4f9dd5686866c2",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[35]",
+      "sourceOrder": 1410,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2302d4e76a86e5f4",
+      "from": "反乱",
+      "expectedOutputs": [
+        "叛亂"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[35]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[35]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:79be8751682a8a1e",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[39]",
+      "sourceOrder": 1414,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d612c3582f2f276f",
+      "from": "回虫",
+      "expectedOutputs": [
+        "蛔蟲"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[39]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[39]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:e0979e450a4454f1",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[40]",
+      "sourceOrder": 1416,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:cc3fccc6df761c28",
+      "from": "回転",
+      "expectedOutputs": [
+        "廻轉"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[40]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[40]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:61e78d5db6205816",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[44]",
+      "sourceOrder": 1420,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e6281861d93ca492",
+      "from": "壊乱",
+      "expectedOutputs": [
+        "潰亂"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[44]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[44]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:552c7433bf4ca4ab",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[47]",
+      "sourceOrder": 1423,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:90f3ee0654f029cf",
+      "from": "専断",
+      "expectedOutputs": [
+        "擅斷"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[47]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[47]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:9671250ba07e5705",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[50]",
+      "sourceOrder": 1427,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8db31c0b653c0cc3",
+      "from": "希釈",
+      "expectedOutputs": [
+        "稀釋"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[50]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[50]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:d846ac3ffd663b6f",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[52]",
+      "sourceOrder": 1429,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:b69a10837bfc3ee0",
+      "from": "広範",
+      "expectedOutputs": [
+        "廣汎"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[52]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[52]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:949d42717b498561",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[53]",
+      "sourceOrder": 1430,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:37c3966733003e84",
+      "from": "座視",
+      "expectedOutputs": [
+        "坐視"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[53]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[53]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:c8ebde2fdd4e15df",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[56]",
+      "sourceOrder": 1433,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4049c8f46afaac30",
+      "from": "弦楽",
+      "expectedOutputs": [
+        "絃樂"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[56]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[56]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:a9d18cf9de5d2ca8",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[57]",
+      "sourceOrder": 1434,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:9448c7b595068855",
+      "from": "強欲",
+      "expectedOutputs": [
+        "强慾"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[57]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[57]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:7cf3b99e55e280d0",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[64]",
+      "sourceOrder": 1442,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:b89bfebebc375288",
+      "from": "御者",
+      "expectedOutputs": [
+        "馭者"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[64]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[64]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:3082fcdd4f277dc0",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[70]",
+      "sourceOrder": 1449,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4393f0444bee9e88",
+      "from": "憶説",
+      "expectedOutputs": [
+        "臆說"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[70]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[70]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:135f262499745dee",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[72]",
+      "sourceOrder": 1451,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:cbe547242ac1f32e",
+      "from": "技量",
+      "expectedOutputs": [
+        "伎倆"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[72]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[72]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:0467146791e2818f",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[85]",
+      "sourceOrder": 1465,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:a0fb3fd7bb47da39",
+      "from": "旧跡",
+      "expectedOutputs": [
+        "舊蹟"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[85]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[85]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:1173f666a7cf166f",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[86]",
+      "sourceOrder": 1466,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:39d270c273587c0a",
+      "from": "昇叙",
+      "expectedOutputs": [
+        "陞敘"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[86]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[86]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:fec66e1afbb32d97",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[88]",
+      "sourceOrder": 1468,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:9ccc84e2ba37d71c",
+      "from": "暖炉",
+      "expectedOutputs": [
+        "煖爐"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[88]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[88]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:975bc61634b09603",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[92]",
+      "sourceOrder": 1473,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2b05dfc3b6de4193",
+      "from": "格闘",
+      "expectedOutputs": [
+        "挌鬭"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[92]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[92]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:79f1cfd81e4ec124",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[96]",
+      "sourceOrder": 1477,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:de1053a63a516cfe",
+      "from": "死体",
+      "expectedOutputs": [
+        "屍體"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[96]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[96]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:ed765f942f39d796",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[99]",
+      "sourceOrder": 1480,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d51a0be8e4a630c7",
+      "from": "気炎",
+      "expectedOutputs": [
+        "氣焰"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[1].entries[99]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[1].entries[99]",
+          "groupId": "kanji-phrase-variants",
+          "groupLabel": "漢字熟語の表記差",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:89b32afae3e537ee",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[7]",
+      "sourceOrder": 1498,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:7ebafdd25d84cc06",
+      "from": "低回",
+      "expectedOutputs": [
+        "徊"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[2].entries[7]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[7]",
+          "groupId": "compressed-kanji-phrases",
+          "groupLabel": "字数圧縮を伴う熟語",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:d18025cd08fba269",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[9]",
+      "sourceOrder": 1500,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:5a53075793f556e5",
+      "from": "反旗",
+      "expectedOutputs": [
+        "旗"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/55-homophone-kanji.json",
+          "locator": "groups[2].entries[9]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/55-homophone-kanji.json#groups[2].entries[9]",
+          "groupId": "compressed-kanji-phrases",
+          "groupLabel": "字数圧縮を伴う熟語",
+          "status": "review-needed",
+          "sourceCategory": "08_kanji_phrase_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:2529c7ea6239ed46",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[25]",
+      "sourceOrder": 1525,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:57fcfad3d07f13c5",
+      "from": "没",
+      "expectedOutputs": [
+        "歿"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/60-general-character-replacements.json",
+          "locator": "groups[0].entries[25]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[25]",
+          "groupId": "single-kanji-variants",
+          "groupLabel": "単漢字の異体字",
+          "status": "active-candidate",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:c95323e9c8ab5f49",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[28]",
+      "sourceOrder": 1528,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:19ce3fd1e549f2b1",
+      "from": "湾",
+      "expectedOutputs": [
+        "彎"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/60-general-character-replacements.json",
+          "locator": "groups[0].entries[28]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[28]",
+          "groupId": "single-kanji-variants",
+          "groupLabel": "単漢字の異体字",
+          "status": "active-candidate",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:1c2cb68fe53529d8",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[9]",
+      "sourceOrder": 1555,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:7d54f3cafaf771ea",
+      "from": "奨",
+      "expectedOutputs": [
+        "獎"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/60-general-character-replacements.json",
+          "locator": "groups[0].entries[9]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/60-general-character-replacements.json#groups[0].entries[9]",
+          "groupId": "single-kanji-variants",
+          "groupLabel": "単漢字の異体字",
+          "status": "active-candidate",
+          "sourceCategory": "03_kanji_single_variants"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:967193c501a1e585",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[3].entries[0]",
+      "sourceOrder": 1574,
+      "candidateKind": "review-empty-output",
+      "runtimeDisposition": "review-required",
+      "candidateGroupId": null,
+      "from": "おんぷ",
+      "expectedOutputs": [],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[3].entries[0]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[3].entries[0]",
+          "groupId": "deletions",
+          "groupLabel": "削除系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:a8cf737955ae7be8",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[38]",
+      "sourceOrder": 1605,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e1fe4a3986c02035",
+      "from": "カード",
+      "expectedOutputs": [
+        "札"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[5].entries[38]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[5].entries[38]",
+          "groupId": "ultra-short-compactions",
+          "groupLabel": "超短縮語",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:d4221a0f7536934a",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[39]",
+      "sourceOrder": 1667,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:db3080736562aab1",
+      "from": "ドミナント",
+      "expectedOutputs": [
+        "屬"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[39]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[39]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:9f25d5eb0e057648",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[53]",
+      "sourceOrder": 1671,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:991096c5c8443e05",
+      "from": "プロジェクト",
+      "expectedOutputs": [
+        "PRJ"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/90-review-needed.json",
+          "locator": "groups[6].entries[53]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/90-review-needed.json#groups[6].entries[53]",
+          "groupId": "substring-and-morphology-shortcuts",
+          "groupLabel": "部分一致と語尾省略系",
+          "status": "review-needed",
+          "sourceCategory": "09_general_phrases_misc"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:92c1bcd28d23c157",
+      "origin": "tar",
+      "sourceCaseId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[1].entries[6]",
+      "sourceOrder": 1680,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:bf1ef362fe5f9f50",
+      "from": "あらゆる",
+      "expectedOutputs": [
+        "所有"
+      ],
+      "priority": 0,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "flat",
+          "path": "tongwentang_pref6_current_json/存在したもの.json",
+          "locator": "groups[1].entries[6]",
+          "sourceId": "tar:flat:tongwentang_pref6_current_json/存在したもの.json#groups[1].entries[6]",
+          "groupId": "lexical-replacements",
+          "groupLabel": "語彙置換 に既存だったもの",
+          "status": "already-present",
+          "sourceCategory": "04_kana_idioms_to_ateji"
+        }
+      ],
+      "nodePath": [],
+      "nodeKind": null
+    },
+    {
+      "id": "tar:candidate:57e2ce38b0a2dc65",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpo5725s-gf:from[0]",
+      "sourceOrder": 1777,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:7d54f3cafaf771ea",
+      "from": "奨",
+      "expectedOutputs": [
+        "奬"
+      ],
+      "priority": 10,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[83]",
+          "sourceId": "entry-mpo5725s-gf"
+        }
+      ],
+      "nodePath": [
+        "旧字体"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:cd76588c173dcf3d",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpo5725t-jt:from[0]",
+      "sourceOrder": 1898,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:57fcfad3d07f13c5",
+      "from": "没",
+      "expectedOutputs": [
+        "沒"
+      ],
+      "priority": 10,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[204]",
+          "sourceId": "entry-mpo5725t-jt"
+        }
+      ],
+      "nodePath": [
+        "旧字体"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:b7bfe5e614af4419",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpo5725t-k8:from[0]",
+      "sourceOrder": 1913,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:19ce3fd1e549f2b1",
+      "from": "湾",
+      "expectedOutputs": [
+        "灣"
+      ],
+      "priority": 10,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[8].entries[219]",
+          "sourceId": "entry-mpo5725t-k8"
+        }
+      ],
+      "nodePath": [
+        "旧字体"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:e45842fe7f3eedf3",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-3p:from[0]",
+      "sourceOrder": 2125,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4e5a3bae4ce0d2a4",
+      "from": "英才",
+      "expectedOutputs": [
+        "頴才"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[2].entries[0]",
+          "sourceId": "entry-mpqi7eh3-3p"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "え行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:b48e6e67fa09cd2a",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-3t:from[0]",
+      "sourceOrder": 2129,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4393f0444bee9e88",
+      "from": "憶説",
+      "expectedOutputs": [
+        "臆説"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[3].entries[0]",
+          "sourceId": "entry-mpqi7eh3-3t"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "お行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:71dfc2d2bcb9879f",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-3w:from[0]",
+      "sourceOrder": 2132,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:201b1d6b877e5f00",
+      "from": "火炎",
+      "expectedOutputs": [
+        "火焔"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[0]",
+          "sourceId": "entry-mpqi7eh3-3w"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:382a5dfb118cd468",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-40:from[0]",
+      "sourceOrder": 2136,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d612c3582f2f276f",
+      "from": "回虫",
+      "expectedOutputs": [
+        "蛔虫"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[4]",
+          "sourceId": "entry-mpqi7eh3-40"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:8aed702351bf5ee4",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-41:from[0]",
+      "sourceOrder": 2137,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:cc3fccc6df761c28",
+      "from": "回転",
+      "expectedOutputs": [
+        "廻転"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[5]",
+          "sourceId": "entry-mpqi7eh3-41"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:83516252228d6702",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-45:from[0]",
+      "sourceOrder": 2141,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e6281861d93ca492",
+      "from": "壊乱",
+      "expectedOutputs": [
+        "潰乱"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[9]",
+          "sourceId": "entry-mpqi7eh3-45"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:3990d77238d634e2",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-48:from[0]",
+      "sourceOrder": 2144,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:329d43b62e56eae6",
+      "from": "皆既食",
+      "expectedOutputs": [
+        "皆既蝕"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[12]",
+          "sourceId": "entry-mpqi7eh3-48"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:7ce72e27b831bcb5",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4b:from[0]",
+      "sourceOrder": 2147,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2b05dfc3b6de4193",
+      "from": "格闘",
+      "expectedOutputs": [
+        "挌闘"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[15]",
+          "sourceId": "entry-mpqi7eh3-4b"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:b276f4850ff2db9f",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4h:from[0]",
+      "sourceOrder": 2153,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:4049c8f46afaac30",
+      "from": "弦楽",
+      "expectedOutputs": [
+        "絃楽"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[21]",
+          "sourceId": "entry-mpqi7eh3-4h"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:8beb7d6950818b9e",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4j:from[0]",
+      "sourceOrder": 2155,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:3e952fc01d9cd45b",
+      "from": "間欠",
+      "expectedOutputs": [
+        "間歇"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[4].entries[23]",
+          "sourceId": "entry-mpqi7eh3-4j"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "か行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:7af899d7ed0b2aa8",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4p:from[0]",
+      "sourceOrder": 2161,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8db31c0b653c0cc3",
+      "from": "希釈",
+      "expectedOutputs": [
+        "稀釈"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[5]",
+          "sourceId": "entry-mpqi7eh3-4p"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:8fa1f0a846da2ff0",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4v:from[0]",
+      "sourceOrder": 2167,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d51a0be8e4a630c7",
+      "from": "気炎",
+      "expectedOutputs": [
+        "気焔"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[11]",
+          "sourceId": "entry-mpqi7eh3-4v"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:aa1fff74814484c3",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-4y:from[0]",
+      "sourceOrder": 2170,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:cbe547242ac1f32e",
+      "from": "技量",
+      "expectedOutputs": [
+        "技倆"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[14]",
+          "sourceId": "entry-mpqi7eh3-4y"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:5ad289089dae0cf6",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-50:from[0]",
+      "sourceOrder": 2172,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8ccf1b1cb9c89446",
+      "from": "糾弾",
+      "expectedOutputs": [
+        "糺弾"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[16]",
+          "sourceId": "entry-mpqi7eh3-50"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:7137de1251493801",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-52:from[0]",
+      "sourceOrder": 2174,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:a0fb3fd7bb47da39",
+      "from": "旧跡",
+      "expectedOutputs": [
+        "旧蹟"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[18]",
+          "sourceId": "entry-mpqi7eh3-52"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:de42b5d9966a313d",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-54:from[0]",
+      "sourceOrder": 2176,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:13dd2712b370bd42",
+      "from": "供応",
+      "expectedOutputs": [
+        "饗応"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[20]",
+          "sourceId": "entry-mpqi7eh3-54"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:5a0dde3e30a2a076",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-57:from[0]",
+      "sourceOrder": 2179,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8e5b815710782685",
+      "from": "凶器",
+      "expectedOutputs": [
+        "兇器"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[23]",
+          "sourceId": "entry-mpqi7eh3-57"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:d083346308d77944",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5f:from[0]",
+      "sourceOrder": 2187,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:b89bfebebc375288",
+      "from": "御者",
+      "expectedOutputs": [
+        "馭者"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[5].entries[31]",
+          "sourceId": "entry-mpqi7eh3-5f"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "き行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:bbcad9f93d0d14a2",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5g:from[0]",
+      "sourceOrder": 2188,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d5b46eccfb32798e",
+      "from": "区画",
+      "expectedOutputs": [
+        "区劃"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[6].entries[0]",
+          "sourceId": "entry-mpqi7eh3-5g"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "く行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:9c4995596ea045ba",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5m:from[0]",
+      "sourceOrder": 2194,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2c741bff42f00dcf",
+      "from": "係争",
+      "expectedOutputs": [
+        "繋争"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[7].entries[2]",
+          "sourceId": "entry-mpqi7eh3-5m"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "け行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:3ec186d07adea9d1",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5n:from[0]",
+      "sourceOrder": 2195,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:62b3f195b770e0f5",
+      "from": "係属",
+      "expectedOutputs": [
+        "繋属"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[7].entries[3]",
+          "sourceId": "entry-mpqi7eh3-5n"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "け行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:836ecd9e41f419bf",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5t:from[0]",
+      "sourceOrder": 2201,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:ee1f7baf60e70de7",
+      "from": "研摩",
+      "expectedOutputs": [
+        "研磨"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[7].entries[9]",
+          "sourceId": "entry-mpqi7eh3-5t"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "け行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:9ac70cdf26203d8b",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5y:from[0]",
+      "sourceOrder": 2206,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:9448c7b595068855",
+      "from": "強欲",
+      "expectedOutputs": [
+        "強慾"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[8].entries[0]",
+          "sourceId": "entry-mpqi7eh3-5y"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "こ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:2b062357208039da",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-5z:from[0]",
+      "sourceOrder": 2207,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "興奮",
+      "expectedOutputs": [
+        "昂奮",
+        "亢奮"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[8].entries[1]",
+          "sourceId": "entry-mpqi7eh3-5z"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "こ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:9e4d3d52e508cb3e",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-68:from[0]",
+      "sourceOrder": 2216,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:b69a10837bfc3ee0",
+      "from": "広範",
+      "expectedOutputs": [
+        "広汎"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[8].entries[10]",
+          "sourceId": "entry-mpqi7eh3-68"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "こ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:a2fc91c928ec8916",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-6o:from[0]",
+      "sourceOrder": 2232,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:37c3966733003e84",
+      "from": "座視",
+      "expectedOutputs": [
+        "坐視"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[9].entries[0]",
+          "sourceId": "entry-mpqi7eh3-6o"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "さ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:0a5fa449e312c73e",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-6r:from[0]",
+      "sourceOrder": 2235,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:adcd7fc5f4bd9f2e",
+      "from": "雑踏",
+      "expectedOutputs": [
+        "雑沓"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[9].entries[3]",
+          "sourceId": "entry-mpqi7eh3-6r"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "さ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:4a8d6997815fdc0b",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-6w:from[0]",
+      "sourceOrder": 2240,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:8604a85e5d1ff87e",
+      "from": "賛辞",
+      "expectedOutputs": [
+        "讃辞"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[9].entries[8]",
+          "sourceId": "entry-mpqi7eh3-6w"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "さ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:ca6548a8ea1aab34",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-6x:from[0]",
+      "sourceOrder": 2241,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:ee1e60aa5d4616e3",
+      "from": "賛嘆",
+      "expectedOutputs": [
+        "讃嘆"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[9].entries[9]",
+          "sourceId": "entry-mpqi7eh3-6x"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "さ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:31aa2a23ee81cf14",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-72:from[0]",
+      "sourceOrder": 2246,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:de1053a63a516cfe",
+      "from": "死体",
+      "expectedOutputs": [
+        "屍体"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[2]",
+          "sourceId": "entry-mpqi7eh3-72"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:2e50532ba65339f7",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-77:from[0]",
+      "sourceOrder": 2251,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:23fa008e98c103cc",
+      "from": "車両",
+      "expectedOutputs": [
+        "車輌"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[7]",
+          "sourceId": "entry-mpqi7eh3-77"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:91e2627a11cc36c5",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7g:from[0]",
+      "sourceOrder": 2260,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:39d270c273587c0a",
+      "from": "昇叙",
+      "expectedOutputs": [
+        "陞叙"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[16]",
+          "sourceId": "entry-mpqi7eh3-7g"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:e6757ac539cd929c",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7i:from[0]",
+      "sourceOrder": 2262,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:fc07a5a44034b90c",
+      "from": "消却",
+      "expectedOutputs": [
+        "銷却"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[18]",
+          "sourceId": "entry-mpqi7eh3-7i"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:0d64cd9ce36ccd85",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7j:from[0]",
+      "sourceOrder": 2263,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:fbc7ac0573b5499e",
+      "from": "消沈",
+      "expectedOutputs": [
+        "銷鎮"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[19]",
+          "sourceId": "entry-mpqi7eh3-7j"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:32780ee76e1bb514",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7l:from[0]",
+      "sourceOrder": 2265,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d744eeac43b8e38f",
+      "from": "称賛",
+      "expectedOutputs": [
+        "称讃"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[21]",
+          "sourceId": "entry-mpqi7eh3-7l"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:3d08e61a87c38b4a",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7m:from[0]",
+      "sourceOrder": 2266,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:c69a8d697dd7d5f1",
+      "from": "障害",
+      "expectedOutputs": [
+        "障碍"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[22]",
+          "sourceId": "entry-mpqi7eh3-7m"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:054b82b9a1032463",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7p:from[0]",
+      "sourceOrder": 2269,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:69cc094fb61e0863",
+      "from": "蒸留",
+      "expectedOutputs": [
+        "蒸溜"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[25]",
+          "sourceId": "entry-mpqi7eh3-7p"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:94008f32d998f208",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-7y:from[0]",
+      "sourceOrder": 2278,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:c2d90414060041ba",
+      "from": "真跡",
+      "expectedOutputs": [
+        "真蹟"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[10].entries[34]",
+          "sourceId": "entry-mpqi7eh3-7y"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "し行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:22de1650077e48a0",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-82:from[0]",
+      "sourceOrder": 2282,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "制御",
+      "expectedOutputs": [
+        "制馭",
+        "制禦"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[12].entries[0]",
+          "sourceId": "entry-mpqi7eh3-82"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "せ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:57bacb50df0ccc65",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh3-84:from[0]",
+      "sourceOrder": 2284,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "生息",
+      "expectedOutputs": [
+        "棲息",
+        "栖息"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[12].entries[2]",
+          "sourceId": "entry-mpqi7eh3-84"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "せ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:3a51433834dbee58",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-85:from[0]",
+      "sourceOrder": 2285,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:3474f794724a5e25",
+      "from": "絶賛",
+      "expectedOutputs": [
+        "絶讃"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[12].entries[3]",
+          "sourceId": "entry-mpqi7eh4-85"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "せ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:0d5961517326eca9",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-86:from[0]",
+      "sourceOrder": 2286,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:d391661534253456",
+      "from": "先鋭",
+      "expectedOutputs": [
+        "尖鋭"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[12].entries[4]",
+          "sourceId": "entry-mpqi7eh4-86"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "せ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:a40314a994763d79",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-88:from[0]",
+      "sourceOrder": 2288,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:90f3ee0654f029cf",
+      "from": "専断",
+      "expectedOutputs": [
+        "擅断"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[12].entries[6]",
+          "sourceId": "entry-mpqi7eh4-88"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "せ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:35bc88288ebe9248",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-8s:from[0]",
+      "sourceOrder": 2308,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "装丁",
+      "expectedOutputs": [
+        "装釘",
+        "装幀"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[13].entries[11]",
+          "sourceId": "entry-mpqi7eh4-8s"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "そ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:aa7a32b3aba76bcb",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-95:from[0]",
+      "sourceOrder": 2321,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:9ccc84e2ba37d71c",
+      "from": "暖炉",
+      "expectedOutputs": [
+        "煖炉"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[14].entries[11]",
+          "sourceId": "entry-mpqi7eh4-95"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "た行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:d9702b88611982e3",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9a:from[0]",
+      "sourceOrder": 2326,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e96065e985cc678c",
+      "from": "注釈",
+      "expectedOutputs": [
+        "註釈"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[15].entries[4]",
+          "sourceId": "entry-mpqi7eh4-9a"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "ち行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:687adfa0b30e19b9",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9h:from[0]",
+      "sourceOrder": 2333,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:7ebafdd25d84cc06",
+      "from": "低回",
+      "expectedOutputs": [
+        "彽徊"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[16].entries[3]",
+          "sourceId": "entry-mpqi7eh4-9h"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "て行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:0aa7d83819458e4f",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9j:from[0]",
+      "sourceOrder": 2335,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "抵触",
+      "expectedOutputs": [
+        "牴触",
+        "觝触"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[16].entries[5]",
+          "sourceId": "entry-mpqi7eh4-9j"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "て行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:e1ddd472efc67ac3",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9l:from[0]",
+      "sourceOrder": 2337,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:f6e6735fd537f07f",
+      "from": "転覆",
+      "expectedOutputs": [
+        "顚覆"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[16].entries[7]",
+          "sourceId": "entry-mpqi7eh4-9l"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "て行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:009ef57b482a37f6",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9t:from[0]",
+      "sourceOrder": 2345,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:eda00aa3148e7217",
+      "from": "背徳",
+      "expectedOutputs": [
+        "悖徳"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[19].entries[2]",
+          "sourceId": "entry-mpqi7eh4-9t"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "は行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:60b61345517dcc24",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9v:from[0]",
+      "sourceOrder": 2347,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:90b3eff4a86aab09",
+      "from": "発酵",
+      "expectedOutputs": [
+        "醗酵"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[19].entries[4]",
+          "sourceId": "entry-mpqi7eh4-9v"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "は行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:5d3a625ec364f197",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-9x:from[0]",
+      "sourceOrder": 2349,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:5a53075793f556e5",
+      "from": "反旗",
+      "expectedOutputs": [
+        "叛旗"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[19].entries[6]",
+          "sourceId": "entry-mpqi7eh4-9x"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "は行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:2025355e1260a779",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-a0:from[0]",
+      "sourceOrder": 2352,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2302d4e76a86e5f4",
+      "from": "反乱",
+      "expectedOutputs": [
+        "叛乱"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[19].entries[9]",
+          "sourceId": "entry-mpqi7eh4-a0"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "は行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:c495bbb1257e2227",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-b7:from[0]",
+      "sourceOrder": 2395,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2bb8462da43fa61f",
+      "from": "里謡",
+      "expectedOutputs": [
+        "俚謡"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[30].entries[4]",
+          "sourceId": "entry-mpqi7eh4-b7"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "ら行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:e22ac7af5caa5caa",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpqi7eh4-bf:from[0]",
+      "sourceOrder": 2403,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:32f1a2ae38e1d709",
+      "from": "連係",
+      "expectedOutputs": [
+        "連繋"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[5].children[31].entries[2]",
+          "sourceId": "entry-mpqi7eh4-bf"
+        }
+      ],
+      "nodePath": [
+        "告示・同音書換復元",
+        "れ行"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:7989ccb134490c26",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzb9xd3-m2:from[0]",
+      "sourceOrder": 2428,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "これ",
+      "expectedOutputs": [
+        "之",
+        "是"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[6]",
+          "sourceId": "entry-mpzb9xd3-m2"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:7bc3556b1ca533f7",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzbdrmv-m3:from[0]",
+      "sourceOrder": 2429,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "また",
+      "expectedOutputs": [
+        "又",
+        "亦",
+        "復"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "接続詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[7]",
+          "sourceId": "entry-mpzbdrmv-m3"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:512db04c56240b06",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzbescj-m4:from[0]",
+      "sourceOrder": 2430,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "なお",
+      "expectedOutputs": [
+        "尚",
+        "猶"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "接続詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[8]",
+          "sourceId": "entry-mpzbescj-m4"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:90aededa52b72a18",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzbtsa7-m5:from[0]",
+      "sourceOrder": 2431,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "わかる",
+      "expectedOutputs": [
+        "分る",
+        "解る"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "basic": "わかる",
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[0]",
+          "sourceId": "entry-mpzbtsa7-m5"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:58f3856cf78a68c1",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzbzk10-ma:from[0]",
+      "sourceOrder": 2435,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ない",
+      "expectedOutputs": [
+        "無い",
+        "没い",
+        "莫い"
+      ],
+      "priority": 10,
+      "ruleType": "adjective",
+      "conditions": {
+        "current": {
+          "basic": "ない",
+          "pos": "形容詞",
+          "pos1": "自立"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[1].rules[1]",
+          "sourceId": "entry-mpzbzk10-ma"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "形容詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:4f0f204018adb633",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzchtbu-mt:from[0]",
+      "sourceOrder": 2449,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ちょっと",
+      "expectedOutputs": [
+        "一寸",
+        "鳥渡"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞",
+          "pos1": "助詞類接続"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[20]",
+          "sourceId": "entry-mpzchtbu-mt"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:48172f77d51e89a8",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzcq20l-mv:from[0]",
+      "sourceOrder": 2451,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "すべて",
+      "expectedOutputs": [
+        "全て",
+        "総て",
+        "凡て"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "basic": "すべて",
+          "pos": "名詞",
+          "pos1": "副詞可能"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[21]",
+          "sourceId": "entry-mpzcq20l-mv"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:3578bdf4394ba0fd",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzlxt1f-lt:from[0]",
+      "sourceOrder": 2479,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "さまよう",
+      "expectedOutputs": [
+        "彷う",
+        "徨う",
+        "彷徨う"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "pos": "動詞",
+          "pos1": "自立"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[8]",
+          "sourceId": "entry-mpzlxt1f-lt"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:771744473310a41d",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpzn1csv-m7:from[0]",
+      "sourceOrder": 2493,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "うまれる",
+      "expectedOutputs": [
+        "生れる",
+        "産れる"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].rules[7]",
+          "sourceId": "entry-mpzn1csv-m7"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:522969adcd0fc755",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mpznz7y2-lr:from[0]",
+      "sourceOrder": 2513,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:991096c5c8443e05",
+      "from": "プロジェクト",
+      "expectedOutputs": [
+        "prj"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[10].rules[3]",
+          "sourceId": "entry-mpznz7y2-lr"
+        }
+      ],
+      "nodePath": [
+        "略語化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:73e7ebe4664cdad8",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70q-qo:from[0]",
+      "sourceOrder": 2776,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "オランダ",
+      "expectedOutputs": [
+        "和蘭",
+        "阿蘭陀"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[155]",
+          "sourceId": "entry-mq13j70q-qo"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:a33327362c2957c7",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70r-so:from[0]",
+      "sourceOrder": 2848,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:e1fe4a3986c02035",
+      "from": "カード",
+      "expectedOutputs": [
+        "卡"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[224]",
+          "sourceId": "entry-mq13j70r-so"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:f9cfc0e61d991e93",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70r-ue:from[0]",
+      "sourceOrder": 2907,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "グアム",
+      "expectedOutputs": [
+        "瓜姆",
+        "瓦無"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[281]",
+          "sourceId": "entry-mq13j70r-ue"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:6dbb7fa822ec353d",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70r-ue:from[1]",
+      "sourceOrder": 2908,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "グァム",
+      "expectedOutputs": [
+        "瓜姆",
+        "瓦無"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[281]",
+          "sourceId": "entry-mq13j70r-ue"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:111fd65a3dc78be1",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70t-12v:from[0]",
+      "sourceOrder": 3202,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:db3080736562aab1",
+      "from": "ドミナント",
+      "expectedOutputs": [
+        "属"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[564]",
+          "sourceId": "entry-mq13j70t-12v"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:02c409b353327c35",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq13j70u-14m:from[0]",
+      "sourceOrder": 3263,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ハンガリー",
+      "expectedOutputs": [
+        "洪牙利",
+        "匈牙利"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[0].rules[625]",
+          "sourceId": "entry-mq13j70u-14m"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "カタカナ漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:856f69d5bb1d60eb",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq2ecjmj-lx:from[0]",
+      "sourceOrder": 3603,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "によって",
+      "expectedOutputs": [
+        "に依て",
+        "に因て"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "助詞",
+          "pos1": "格助詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[0].rules[4]",
+          "sourceId": "entry-mq2ecjmj-lx"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "格助詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:07e7e2164ea0cf7f",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq2gyzcn-lt:from[0]",
+      "sourceOrder": 3609,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いい",
+      "expectedOutputs": [
+        "良い",
+        "好い",
+        "善い"
+      ],
+      "priority": 90,
+      "ruleType": "adjective",
+      "conditions": {
+        "current": {
+          "basic": "いい,よい",
+          "pos": "形容詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[1].rules[11]",
+          "sourceId": "entry-mq2gyzcn-lt"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "形容詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:91b7ae6080217ffa",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq2gyzcn-lt:from[1]",
+      "sourceOrder": 3610,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "よい",
+      "expectedOutputs": [
+        "良い",
+        "好い",
+        "善い"
+      ],
+      "priority": 90,
+      "ruleType": "adjective",
+      "conditions": {
+        "current": {
+          "basic": "いい,よい",
+          "pos": "形容詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].children[1].rules[11]",
+          "sourceId": "entry-mq2gyzcn-lt"
+        }
+      ],
+      "nodePath": [
+        "一般置換",
+        "形容詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:e9e0a18f2da38692",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq9fwrpr-lr:from[0]",
+      "sourceOrder": 3611,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "こだわり",
+      "expectedOutputs": [
+        "拘り",
+        "執り"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "basic": "こだわり",
+          "pos": "名詞",
+          "pos1": "一般",
+          "pos2": "*",
+          "pos3": "*",
+          "reading": "コダワリ",
+          "surface": "こだわり"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].rules[10]",
+          "sourceId": "entry-mq9fwrpr-lr"
+        }
+      ],
+      "nodePath": [
+        "一般置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:a79e0d3c279c32e8",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq9g2fvr-lt:from[0]",
+      "sourceOrder": 3613,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:bf1ef362fe5f9f50",
+      "from": "あらゆる",
+      "expectedOutputs": [
+        "所有る"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].rules[12]",
+          "sourceId": "entry-mq9g2fvr-lt"
+        }
+      ],
+      "nodePath": [
+        "一般置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:bb3804797ff68993",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mq9g2fvs-lv:from[0]",
+      "sourceOrder": 3615,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2ea08761f42c6cb8",
+      "from": "いずれ",
+      "expectedOutputs": [
+        "[何"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[7].rules[14]",
+          "sourceId": "entry-mq9g2fvs-lv"
+        }
+      ],
+      "nodePath": [
+        "一般置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:edd8d926ff4cae21",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-m1:from[0]",
+      "sourceOrder": 3698,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "かねて",
+      "expectedOutputs": [
+        "兼て",
+        "予て"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[15]",
+          "sourceId": "entry-mqat9qyb-m1"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:333141cbb9fb76b7",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-mj:from[0]",
+      "sourceOrder": 3716,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "あまねく",
+      "expectedOutputs": [
+        "普く",
+        "遍く"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[33]",
+          "sourceId": "entry-mqat9qyb-mj"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:6d2779e70ae7ba8c",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-mp:from[0]",
+      "sourceOrder": 3722,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いささか",
+      "expectedOutputs": [
+        "些か",
+        "聊か"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[39]",
+          "sourceId": "entry-mqat9qyb-mp"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:83e93531a5cda2ec",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-n0:from[0]",
+      "sourceOrder": 3733,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いよいよ",
+      "expectedOutputs": [
+        "弥々",
+        "愈々"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[50]",
+          "sourceId": "entry-mqat9qyb-n0"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:915c3fdaac73532e",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-n4:from[0]",
+      "sourceOrder": 3737,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "おどおど",
+      "expectedOutputs": [
+        "恟々",
+        "怖々"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[54]",
+          "sourceId": "entry-mqat9qyb-n4"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:6e88d3ccbac1c12e",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyb-na:from[0]",
+      "sourceOrder": 3743,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "かねがね",
+      "expectedOutputs": [
+        "兼々",
+        "予々"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[60]",
+          "sourceId": "entry-mqat9qyb-na"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:0d20d0d12f15115b",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyc-od:from[0]",
+      "sourceOrder": 3784,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ただ",
+      "expectedOutputs": [
+        "徒",
+        "唯",
+        "只"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "接続詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[99]",
+          "sourceId": "entry-mqat9qyc-od"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:717384cc9e8fa282",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyc-oh:from[0]",
+      "sourceOrder": 3789,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "たまさか",
+      "expectedOutputs": [
+        "偶さか",
+        "適さか"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[103]",
+          "sourceId": "entry-mqat9qyc-oh"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:88db03c403ab3260",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyd-oo:from[0]",
+      "sourceOrder": 3796,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "つくづく",
+      "expectedOutputs": [
+        "熟々",
+        "倩々"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[110]",
+          "sourceId": "entry-mqat9qyd-oo"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:97c616c4b559db9b",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyd-oo:from[1]",
+      "sourceOrder": 3797,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "つらつら",
+      "expectedOutputs": [
+        "熟々",
+        "倩々"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[110]",
+          "sourceId": "entry-mqat9qyd-oo"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:7ca5dd2a8989591c",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyd-p8:from[0]",
+      "sourceOrder": 3817,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "なお",
+      "expectedOutputs": [
+        "尚",
+        "猶"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[130]",
+          "sourceId": "entry-mqat9qyd-p8"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:018e892b256e6769",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyd-pv:from[0]",
+      "sourceOrder": 3840,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ほぼ",
+      "expectedOutputs": [
+        "粗",
+        "略"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[153]",
+          "sourceId": "entry-mqat9qyd-pv"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:054acf772256c293",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqat9qyd-q0:from[0]",
+      "sourceOrder": 3845,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "まさに",
+      "expectedOutputs": [
+        "将に",
+        "正に"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[158]",
+          "sourceId": "entry-mqat9qyd-q0"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:a427d49d27ce4197",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqavou0w-ly:from[0]",
+      "sourceOrder": 3900,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "きっと",
+      "expectedOutputs": [
+        "急度",
+        "屹度"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[212]",
+          "sourceId": "entry-mqavou0w-ly"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:e794169a8fa61b10",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqavou0w-mc:from[0]",
+      "sourceOrder": 3914,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "そろそろ",
+      "expectedOutputs": [
+        "徐々",
+        "漸々"
+      ],
+      "priority": 50,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "副詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[226]",
+          "sourceId": "entry-mqavou0w-mc"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:5b4915f9540534b9",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb0z0of-m2:from[0]",
+      "sourceOrder": 3970,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "めぐる",
+      "expectedOutputs": [
+        "巡る",
+        "廻る"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "basic": "めぐる",
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[14]",
+          "sourceId": "entry-mqb0z0of-m2"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:885337d13d0c0f5b",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb0znhd-m3:from[0]",
+      "sourceOrder": 3971,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "ゆるす",
+      "expectedOutputs": [
+        "許す",
+        "赦す"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "basic": "ゆるす",
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[15]",
+          "sourceId": "entry-mqb0znhd-m3"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:0f3f580e1a2ec42f",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb2ttpg-mq:from[0]",
+      "sourceOrder": 3991,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "すなわち",
+      "expectedOutputs": [
+        "即ち",
+        "則ち",
+        "乃ち"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "接続詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].children[1].rules[277]",
+          "sourceId": "entry-mqb2ttpg-mq"
+        }
+      ],
+      "nodePath": [
+        "語彙置換",
+        "副詞"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:37b155d4a216fde4",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb4jsb8-lu:from[0]",
+      "sourceOrder": 4002,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いただける",
+      "expectedOutputs": [
+        "頂ける",
+        "戴ける"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[23]",
+          "sourceId": "entry-mqb4jsb8-lu"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:ea682699dd5d1423",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb4nq5s-lz:from[0]",
+      "sourceOrder": 4004,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "または",
+      "expectedOutputs": [
+        "亦は",
+        "又は"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": {
+        "current": {
+          "pos": "接続詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[65]",
+          "sourceId": "entry-mqb4nq5s-lz"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:07a6f141cf60cd33",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb5vole-lu:from[0]",
+      "sourceOrder": 4012,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:a38afcdcf04d01e4",
+      "from": "ごらん",
+      "expectedOutputs": [
+        "御覧"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[68]",
+          "sourceId": "entry-mqb5vole-lu"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:b0c4e20280f8a3ce",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb6aep2-lz:from[0]",
+      "sourceOrder": 4017,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いただく",
+      "expectedOutputs": [
+        "頂く",
+        "戴く"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[2].children[0].rules[22]",
+          "sourceId": "entry-mqb6aep2-lz"
+        }
+      ],
+      "nodePath": [
+        "動詞_送り仮名省略",
+        "平仮名から漢字化"
+      ],
+      "nodeKind": "token-rules"
+    },
+    {
+      "id": "tar:candidate:9682781760a388bc",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb6q1vr-m3:from[0]",
+      "sourceOrder": 4021,
+      "candidateKind": "same-input-conflict",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": "tar:candidate-group:2e21d527ecedc776",
+      "from": "ひらがな",
+      "expectedOutputs": [
+        "平仮名"
+      ],
+      "priority": 90,
+      "ruleType": null,
+      "conditions": null,
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": null,
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[0].entries[2]",
+          "sourceId": "entry-mqb6q1vr-m3"
+        }
+      ],
+      "nodePath": [
+        "表層正規化"
+      ],
+      "nodeKind": "dictionary-rules"
+    },
+    {
+      "id": "tar:candidate:5df96cebf7c848d0",
+      "origin": "tar",
+      "sourceCaseId": "tar:structured:entry-mqb7j4b1-mb:from[0]",
+      "sourceOrder": 4030,
+      "candidateKind": "explicit-alternatives",
+      "runtimeDisposition": "candidate-set",
+      "candidateGroupId": null,
+      "from": "いただく",
+      "expectedOutputs": [
+        "頂く",
+        "戴く"
+      ],
+      "priority": 90,
+      "ruleType": "verb",
+      "conditions": {
+        "current": {
+          "pos": "動詞"
+        }
+      },
+      "sequence": null,
+      "matchOptions": null,
+      "matchTarget": "basic_form",
+      "sourceRefs": [
+        {
+          "kind": "structured",
+          "path": "transform-settings (8).json",
+          "locator": "roots[1].rules[75]",
+          "sourceId": "entry-mqb7j4b1-mb"
+        }
+      ],
+      "nodePath": [
+        "語彙置換"
+      ],
+      "nodeKind": "token-rules"
+    }
+  ]
+}

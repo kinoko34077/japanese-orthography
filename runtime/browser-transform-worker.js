@@ -526,10 +526,26 @@
         context: supplied.programContext ?? programContextFor(p)
       });
       const rawSurfaceCandidates = await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" }));
-      const surfaceCandidates = [...new Map(rawSurfaceCandidates.map((candidate) => {
+      const surfaceCandidates = [...rawSurfaceCandidates.reduce((byOutput, candidate) => {
         const key = `${candidate.start}:${candidate.end}:${candidate.output}`;
-        return [key, { ...candidate, programIds: [...new Set(candidate.programIds ?? [])] }];
-      })).values()];
+        const previous = byOutput.get(key);
+        if (!previous) {
+          byOutput.set(key, { ...candidate, programIds: [...new Set(candidate.programIds ?? [])] });
+          return byOutput;
+        }
+        // The same output may be emitted by an accepted deterministic Rule and also appear as one
+        // branch of a candidate set. Candidate evidence must not erase the deterministic policy or
+        // promote its precedence; retain the non-candidate producer while unioning provenance.
+        const preferred = previous.candidate !== true
+          ? previous
+          : candidate.candidate !== true ? candidate : candidate;
+        byOutput.set(key, {
+          ...preferred,
+          candidate: previous.candidate === true && candidate.candidate === true,
+          programIds: [...new Set([...(previous.programIds ?? []), ...(candidate.programIds ?? [])])]
+        });
+        return byOutput;
+      }, new Map()).values()];
       const readingCandidates = (observation.candidates ?? []).filter((candidate) => (
         candidate.channel === "reading" && candidate.stage === "diachronic" && candidate.direction === "to-historical"
       ));

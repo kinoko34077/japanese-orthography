@@ -2,18 +2,18 @@
   "schemaVersion": "1",
   "kind": "browser-pack-v2-compiled",
   "owner": "japanese-orthography#196 B",
-  "packDigest": "b5f9842d069df6d77b8635034973c61e163fef94e99dbc6dd24d5d322e215892",
-  "canonicalGraphSha256": "7295dc07c04a32ffbae87e21e7368a940515660c76aca6a422aa870b152a3b96",
+  "packDigest": "38850e90e70ed1b05c2138dc0228005aa1511b998f92665870658462fc07de38",
+  "canonicalGraphSha256": "5c575c5a356d1f491cd493c43ca97344bba5d1ee5d1c934eb1e89abe1a1bbe74",
   "totals": {
     "sections": 2016,
-    "bytes": 149643812,
-    "gzipBytes": 55186894
+    "bytes": 149652436,
+    "gzipBytes": 55189168
   },
   "byLoading": {
     "eager": {
       "sections": 9,
-      "bytes": 965892,
-      "gzipBytes": 272413
+      "bytes": 974516,
+      "gzipBytes": 274687
     },
     "lazy": {
       "sections": 330,
@@ -69,8 +69,8 @@
     },
     "profile-policy": {
       "sections": 3,
-      "bytes": 309326,
-      "gzipBytes": 77511
+      "bytes": 317950,
+      "gzipBytes": 79785
     },
     "provenance-index": {
       "sections": 330,
