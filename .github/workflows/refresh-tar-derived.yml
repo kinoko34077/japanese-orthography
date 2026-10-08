@@ -25,9 +25,8 @@ jobs:
           npm run generate:rule-ir
           npm run generate:rule-programs
           npm run generate:ijidokun
+          npm run generate:tar-parity
           npm run generate:tar-runtime-parity
-      - name: Full local validation
-        run: npm run check
       - name: List and encode generated changes
         shell: bash
         run: |
@@ -49,3 +48,5 @@ jobs:
           name: tar-derived-generated
           path: tar-changed.tar.gz
           retention-days: 1
+      - name: Full local validation
+        run: npm run check
