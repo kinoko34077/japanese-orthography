@@ -90,6 +90,38 @@
         pc += 1 + (arity[op] ?? 0);
       }
     }
+    // #291: constrained TAR pattern mechanisms. These are indexed Rule Programs: the VM is
+    // still the applicability/profile authority, while this scanner supplies dynamic captures.
+    // Do not permit arbitrary source-provided regular expressions to execute in the browser.
+    const acceptedPatternIds = new Set([
+      "entry-mqactr77-ls", "entry-mq2edvi1-lz", "entry-mqb527lq-lp",
+      "entry-mqavou0x-nd", "entry-mqb4rrlh-m3", "entry-mqb6ua4d-m5",
+      "entry-mqb02914-lq"
+    ]);
+    const patterns = [];
+    for (const [programId, rule] of tokenContextByProgram) {
+      const pattern = rule?.tarPattern;
+      if (!pattern) continue;
+      if (!acceptedPatternIds.has(pattern.sourceRuleId)
+        || STAGES[programSection.value("stage", programId)] !== "profile"
+        || DIRECTIONS[programSection.value("direction", programId)] !== "to-modern"
+        || CHANNELS[programSection.value("channel", programId)] !== "surface") {
+        throw new Error("unsupported TAR pattern Program " + programId);
+      }
+      if (pattern.regex) {
+        if (pattern.from !== "(\\d{4})年(\\d{1,2})月(\\d{1,2})日"
+          || pattern.outputs.length !== 1 || pattern.outputs[0] !== "$1/$2/$3") {
+          throw new Error("unsupported TAR regex contract");
+        }
+      } else if (!pattern.wildcard || !pattern.from.endsWith("*")
+        || pattern.from.indexOf("*") !== pattern.from.length - 1
+        || !pattern.outputs.length || !pattern.outputs.every((output) => output.endsWith("*"))) {
+        throw new Error("unsupported TAR wildcard contract");
+      }
+      patterns.push({ programId, rule, pattern });
+    }
+    if (patterns.length !== 7) throw new Error("TAR pattern Program accounting drift: " + patterns.length);
+
     const toHiragana = (value) => Array.from(String(value ?? ""), (ch) => {
       const code = ch.codePointAt(0);
       return code >= 0x30a1 && code <= 0x30f6 ? String.fromCodePoint(code - 0x60) : ch;
@@ -230,6 +262,60 @@
                   key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${output}`
                 });
               }
+            }
+          }
+        }
+      }
+      // Pattern-specific inputs are not exact SequenceId spans. A successful bounded match is
+      // authorized by its compiled profile Rule Program (TEST_PROFILE / TEST_PRED / MECH).
+      // TAR wildcard replacement with a trailing '*' is an unanchored lazy capture: the
+      // minimum capture is empty, so the matched prefix changes and the tail stays intact.
+      if (stages.includes("profile") && directions.includes("to-modern") && channels.includes("surface")) {
+        for (const { programId, rule, pattern } of patterns) {
+          const matches = [];
+          if (pattern.regex) {
+            for (const hit of source.matchAll(/(\d{4})年(\d{1,2})月(\d{1,2})日/gu)) {
+              matches.push({ start: hit.index, end: hit.index + hit[0].length, outputs: [
+                hit[1] + "/" + hit[2] + "/" + hit[3]
+              ] });
+            }
+          } else {
+            const prefix = pattern.from.slice(0, -1);
+            let start = source.indexOf(prefix);
+            while (start >= 0) {
+              matches.push({
+                start, end: start + prefix.length,
+                outputs: pattern.outputs.map((output) => output.slice(0, -1))
+              });
+              start = source.indexOf(prefix, start + 1);
+            }
+          }
+          for (const match of matches) {
+            const segment = source.slice(match.start, match.end);
+            const context = contextFor(match.start, match.end, segment);
+            const state = { profileId, context, lexemes: new Set() };
+            const evaluated = vm.run(programId, state);
+            if (!evaluated.mechanisms?.length) continue;
+            executedProgramIds.add(programId);
+            const edges = match.outputs.map((output) => ({
+              output, sequenceId: -1, candidate: match.outputs.length > 1,
+              programs: [programId]
+            }));
+            runs.push({
+              start: match.start, end: match.end, stage: "profile", direction: "to-modern",
+              channel: "surface", lookupSequenceId: -1, text: segment, sequenceId: -1,
+              edges, preserved: false, mechanisms: evaluated.mechanisms,
+              executedProgramIds: [programId], trace: evaluated.trace
+            });
+            for (const [i, edge] of edges.entries()) {
+              candidates.push({
+                start: match.start, end: match.end, output: edge.output,
+                policy: "anywhere", precedence: 1000 + (Number(rule.priority) || 0),
+                origin: "program", ref: "program:" + programId, programIds: [programId],
+                candidate: edge.candidate, stage: "profile", direction: "to-modern",
+                channel: "surface",
+                key: "program:pattern:" + programId + ":" + match.start + ":" + match.end + ":" + i
+              });
             }
           }
         }
