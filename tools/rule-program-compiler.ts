@@ -91,7 +91,8 @@ export function compilePrograms(ir: RuleIR, registry: SymbolRegistry, lexemeIdOf
     out.evidence.push({ ruleId: r.ruleId, canonicalIds: [...r.canonicalIds], evidenceType: r.evidenceType });
 
     const allProfiles = r.enabledBy === null || r.enabledBy.length === PROFILE_IDS.length;
-    const textual = r.branches.every((b) => isText(b.output));
+    // TAR pattern templates are dynamic mechanisms even when the literal atoms happen to be registered.
+    const textual = !r.predicate?.tokenContext?.tarPattern && r.branches.every((b) => isText(b.output));
     const symbols = r.lexicalScope.filter((x) => x.startsWith('symbol:'));
     const lexemes = r.lexicalScope.filter((x) => !x.startsWith('symbol:'));
     const direct = allProfiles && !symbols.length && !lexemes.length && !r.predicate && !r.dependsOn.length && textual && r.kind !== 'preserve';
