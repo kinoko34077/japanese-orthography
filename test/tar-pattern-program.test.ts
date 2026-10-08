@@ -62,9 +62,8 @@ test('VM pattern scan preserves wildcard suffix, candidate sets, POS gates and f
   const invalidSuffixPos = await execute('まずも', '名詞');
   assert.deepEqual(invalidSuffixPos.outputs, []);
 
-  // #291 acceptance: every one of the six source wildcard families must prove
-  // a positive prefix match and both a near-miss input and an invalid POS boundary.
-  // The VM emits only the matched prefix, preserving trailing source text unchanged.
+  // #291受入条件：原典wildcard全6種それぞれでprefix一致、近似入力の不一致、POS不一致を検証する。
+  // VMは一致したprefixのみ出力し、元の末尾文字列を変更しない。
   const wildcardBoundaries = [
     { source: 'によ*', positive: 'による', miss: 'にゆる', pos: '助詞', pos1: '格助詞', outputs: ['に依', 'に因'], negativePos: '動詞' },
     { source: 'にお*', positive: 'において', miss: 'にをいて', pos: '助詞', pos1: '格助詞', outputs: ['に於'], negativePos: '動詞' },

@@ -202,8 +202,8 @@
       if (pred.constraint && !(context?.constraints ?? []).includes(pred.constraint)) return false;
       if (pred.usage && context?.usage !== pred.usage) return false;
       if (pred.period && context?.period !== pred.period) return false;
-      // Pinned TAR date pattern has no token/POS gate. The pattern scanner supplies the match;
-      // it still passes through TEST_PROFILE, TEST_PRED and MECH, not a separate runtime authority.
+      // pinned TARの日付patternにはtoken/POS条件がない。pattern scanがmatchを与えるが、
+      // 独立した実行権限は持たず、TEST_PROFILE・TEST_PRED・MECHを必ず通過する。
       if (pred.tokenContext && !(pred.tokenContext.tarPattern?.regex === true && !pred.tokenContext.conditions)
         && !tarContextMatches(pred.tokenContext, context)) return false;
       // a sense condition excludes a rule only when the context states a different sense; without

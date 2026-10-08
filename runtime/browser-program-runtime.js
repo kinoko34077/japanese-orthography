@@ -90,9 +90,8 @@
         pc += 1 + (arity[op] ?? 0);
       }
     }
-    // #291: constrained TAR pattern mechanisms. These are indexed Rule Programs: the VM is
-    // still the applicability/profile authority, while this scanner supplies dynamic captures.
-    // Do not permit arbitrary source-provided regular expressions to execute in the browser.
+    // #291: TAR由来の限定pattern機構。適用条件とprofile権限は索引化済みRule ProgramのVMが担当し、
+    // このscanは動的captureのみを供給する。出典に含まれる任意のregexをBrowserで実行しない。
     const acceptedPatternIds = new Set([
       "entry-mqactr77-ls", "entry-mq2edvi1-lz", "entry-mqb527lq-lp",
       "entry-mqavou0x-nd", "entry-mqb4rrlh-m3", "entry-mqb6ua4d-m5",
@@ -266,10 +265,9 @@
           }
         }
       }
-      // Pattern-specific inputs are not exact SequenceId spans. A successful bounded match is
-      // authorized by its compiled profile Rule Program (TEST_PROFILE / TEST_PRED / MECH).
-      // TAR wildcard replacement with a trailing '*' is an unanchored lazy capture: the
-      // minimum capture is empty, so the matched prefix changes and the tail stays intact.
+      // patternの入力はexact SequenceId spanではない。限定matchはcompile済みprofile Rule Program
+      // （TEST_PROFILE / TEST_PRED / MECH）で許可する。
+      // TARの末尾'*'は非anchor・最短captureであり、prefixだけを変換して末尾文字列を保持する。
       if (stages.includes("profile") && directions.includes("to-modern") && channels.includes("surface")) {
         for (const { programId, rule, pattern } of patterns) {
           const matches = [];

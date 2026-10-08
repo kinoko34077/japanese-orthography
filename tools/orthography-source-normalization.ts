@@ -459,9 +459,9 @@ export async function normalizeAcceptedOrthographySources(rootDir: string): Prom
   }
 
 
-  // --- TAR wildcard/regex source patterns (#291) ----------------------------------------------
-  // Pattern literal/template semantics are not ordinary exact text. The source prefix indexes a
-  // profile Rule Program; the predicate carries the pinned full pattern for a bounded mechanism.
+  // --- TAR wildcard/regex原典pattern（#291） --------------------------------------------------
+  // pattern literal/templateは通常のexact文字列ではない。原典prefixをprofile Rule Programへ索引化し、
+  // predicateにpin済みの完全patternを持たせ、限定mechanismで評価する。
   {
     const path = 'data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/pattern-rules.json';
     const doc = await readJson(rootDir, path);
