@@ -1,4 +1,4 @@
-name: Refresh TAR pattern generated evidence (temporary read-only)
+name: Refresh TAR pattern generated evidence (temporary controlled write)
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - migration/tar-pattern-291
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate:
@@ -67,3 +67,51 @@ jobs:
             /tmp/tar-pattern-changed.txt
             /tmp/tar-pattern-generated.tar.gz
           retention-days: 2
+      - name: Commit the 26 verified generated artifacts only
+        if: success() && github.ref == 'refs/heads/migration/tar-pattern-291'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF" = 'refs/heads/migration/tar-pattern-291'
+          git diff --name-only -- data | LC_ALL=C sort > /tmp/tar-pattern-actual.txt
+          cat > /tmp/tar-pattern-expected.txt <<'EXPECTED'
+          data/browser-pack-v2/manifest.json
+          data/browser-pack-v3/manifest.json
+          data/browser-pack/manifest.json
+          data/reports/browser-capability-utilization-v1.json
+          data/reports/browser-capability-utilization-v2.json
+          data/reports/browser-capability-utilization-v3.json
+          data/reports/browser-pack-v1-compiled.json
+          data/reports/browser-pack-v1-measurements.json
+          data/reports/browser-pack-v2-compiled.json
+          data/reports/browser-pack-v2-measurements.json
+          data/reports/browser-pack-v2-payload-decomposition.json
+          data/reports/browser-pack-v3-compiled.json
+          data/reports/browser-pack-v3-measurements.json
+          data/reports/browser-resolver-parity-v3.json
+          data/reports/browser-resolver-parity.json
+          data/reports/browser-ruby-acceptance.json
+          data/reports/orthography-v2-measurements.json
+          data/reports/orthography-v2-source-accounting.json
+          data/reports/rule-ir-summary.json
+          data/reports/rule-program-summary.json
+          data/reports/symbol-sequence-encoding.json
+          data/reports/tar-parity-diff.json
+          data/reports/tar-parity-summary.json
+          data/reports/tar-runtime-parity-summary.json
+          data/reports/tar-runtime-parity.json
+          data/runtime/orthography-v2-bundle-section.json
+          EXPECTED
+          sed -i 's/^          //' /tmp/tar-pattern-expected.txt
+          LC_ALL=C sort -o /tmp/tar-pattern-expected.txt /tmp/tar-pattern-expected.txt
+          cmp /tmp/tar-pattern-expected.txt /tmp/tar-pattern-actual.txt
+          while IFS= read -r generated; do
+            git add -- "$generated"
+          done < /tmp/tar-pattern-expected.txt
+          git diff --cached --check
+          git diff --cached --name-only | LC_ALL=C sort | cmp /tmp/tar-pattern-expected.txt -
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m 'TAR pattern検証済み生成物26件を正規反映'
+          git push origin HEAD:refs/heads/migration/tar-pattern-291
