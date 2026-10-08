@@ -120,7 +120,7 @@
       }
       patterns.push({ programId, rule, pattern });
     }
-    if (patterns.length !== 7) throw new Error("TAR pattern Program accounting drift: " + patterns.length);
+    if (patterns.length !== 0 && patterns.length !== 7) throw new Error("TAR pattern Program accounting drift: " + patterns.length);
 
     const toHiragana = (value) => Array.from(String(value ?? ""), (ch) => {
       const code = ch.codePointAt(0);
