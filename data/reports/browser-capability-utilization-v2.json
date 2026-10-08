@@ -2,10 +2,10 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization-v2",
   "owner": "japanese-orthography#196 J",
-  "packDigest": "38850e90e70ed1b05c2138dc0228005aa1511b998f92665870658462fc07de38",
+  "packDigest": "cd6df7a0a3af9dfc7301ffde3456d90d0e5d9da0f99cf26acab336e6af475677",
   "oracle": {
     "report": "data/reports/browser-capability-utilization-v1.json",
-    "packDigest": "7526595afcca46b8c3f4dea7ce099e6419c9d330b4c06431129fe8c4089eeba4"
+    "packDigest": "29f563476c0c516f747f76b74fa014419566d2e7e00c24e853ba04e04efbde95"
   },
   "rows": [
     {
@@ -34,7 +34,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 123864
       },
       "v1": {
@@ -81,7 +81,7 @@
         "onDemand": 12
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1446224
       },
       "v1": {
@@ -128,7 +128,7 @@
         "onDemand": 12
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1446224
       },
       "v1": {
@@ -165,7 +165,7 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 256248
       },
       "v1": {
@@ -211,7 +211,7 @@
         "onDemand": 16
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1741536
       },
       "v1": {
@@ -257,7 +257,7 @@
         "onDemand": 16
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1741536
       },
       "v1": {
@@ -295,7 +295,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 122176
       },
       "v1": {
@@ -342,7 +342,7 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1980120
       },
       "v1": {
@@ -389,7 +389,7 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1980120
       },
       "v1": {
@@ -427,7 +427,7 @@
         "onDemand": 3
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 223144
       },
       "v1": {
@@ -474,7 +474,7 @@
         "onDemand": 11
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1369792
       },
       "v1": {
@@ -521,7 +521,7 @@
         "onDemand": 11
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1369792
       },
       "v1": {
@@ -559,7 +559,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 132272
       },
       "v1": {
@@ -606,7 +606,7 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1197936
       },
       "v1": {
@@ -653,7 +653,7 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1197936
       },
       "v1": {
@@ -691,7 +691,7 @@
         "onDemand": 4
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 257208
       },
       "v1": {
@@ -738,7 +738,7 @@
         "onDemand": 15
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1575404
       },
       "v1": {
@@ -785,7 +785,7 @@
         "onDemand": 15
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1575404
       },
       "v1": {
@@ -823,7 +823,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 120152
       },
       "v1": {
@@ -870,7 +870,7 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2038512
       },
       "v1": {
@@ -917,7 +917,7 @@
         "onDemand": 21
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2038512
       },
       "v1": {
@@ -955,7 +955,7 @@
         "onDemand": 2
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 122256
       },
       "v1": {
@@ -1002,7 +1002,7 @@
         "onDemand": 16
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1658456
       },
       "v1": {
@@ -1049,7 +1049,7 @@
         "onDemand": 16
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 1658456
       },
       "v1": {
@@ -1086,7 +1086,7 @@
         "onDemand": 8
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 458120
       },
       "v1": {
@@ -1132,7 +1132,7 @@
         "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2391848
       },
       "v1": {
@@ -1178,7 +1178,7 @@
         "onDemand": 27
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2391848
       },
       "v1": {
@@ -1215,7 +1215,7 @@
         "onDemand": 7
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 392968
       },
       "v1": {
@@ -1261,7 +1261,7 @@
         "onDemand": 30
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2533956
       },
       "v1": {
@@ -1307,7 +1307,7 @@
         "onDemand": 30
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2533956
       },
       "v1": {
@@ -1347,7 +1347,7 @@
         "onDemand": 6
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 369608
       },
       "v1": {
@@ -1387,7 +1387,7 @@
         "onDemand": 26
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2294136
       },
       "v1": {
@@ -1427,7 +1427,7 @@
         "onDemand": 26
       },
       "transferredBytes": {
-        "eager": 974516,
+        "eager": 975034,
         "onDemand": 2294136
       },
       "v1": {

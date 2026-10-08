@@ -2,31 +2,31 @@
   "schemaVersion": "1",
   "kind": "rule-ir-summary",
   "owner": "japanese-orthography#211 D (spec #208 §3-4)",
-  "digest": "646b7cbd311aaa7eecad37eb5ea88adf8d7fb205a16d405af1fa27950c323cb1",
-  "rules": 195295,
-  "branches": 282025,
-  "multiBranchRules": 44837,
+  "digest": "8c397f06dcdf2b6bfb8e0846067fdd05e91c5864f427b3de3ed80f9d598e83bd",
+  "rules": 195302,
+  "branches": 282033,
+  "multiBranchRules": 44838,
   "byKind": {
     "contextual": 18,
     "deterministic-char": 5,
     "exact": 179863,
     "preserve": 3,
     "productive": 11457,
-    "profile-style": 3942,
+    "profile-style": 3949,
     "render": 7
   },
   "byStage": {
     "diachronic": 18914,
     "lexical": 163461,
     "orthographic": 8950,
-    "profile": 3942,
+    "profile": 3949,
     "render": 7,
     "semantic": 21
   },
   "byDirection": {
     "reconstruct": 163461,
     "to-historical": 20748,
-    "to-modern": 11086
+    "to-modern": 11093
   },
   "byEvidenceType": {
     "binding/diachronic/reverse_traversable/lossless": 10964,
@@ -39,8 +39,8 @@
     "merged_character": 8,
     "orthographic/forward_infer_reverse/many_to_one": 4,
     "orthographic/forward_only/contextual": 1,
-    "orthographic/forward_only/lossless": 3833,
-    "orthographic/forward_only/one_to_many": 104,
+    "orthographic/forward_only/lossless": 3839,
+    "orthographic/forward_only/one_to_many": 105,
     "orthographic/reverse_traversable/lossless": 5,
     "phonological/forward_infer_reverse/contextual": 1,
     "phonological/forward_infer_reverse/many_to_one": 1,

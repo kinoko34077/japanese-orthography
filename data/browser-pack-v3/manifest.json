@@ -1,13 +1,13 @@
 {
-  "canonicalGraphSha256": "5c575c5a356d1f491cd493c43ca97344bba5d1ee5d1c934eb1e89abe1a1bbe74",
+  "canonicalGraphSha256": "759ec9bd0748becd1c9e8320e365616c748f00b7aca4d4192817dc50d36799cc",
   "compilerVersion": "3",
   "evidence": {
-    "aggregateDigest": "d6b9673e2bc84961c6f1b35153c33ec28d80806b6edaad0bf3a733c1e63b08ee",
+    "aggregateDigest": "8fce2383812d4ed49cbb68be8a06a538dea7a1b89487f49d3fb630854b968283",
     "schemaVersion": "1"
   },
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "0be1f9441b921847d888c63cb4d9af75c6ad6d6e39f00d2288082c4ea8a244c6",
+  "packDigest": "0aaa39bd627dda40e73413026fbf25dae5fcdff326cf9ea254f1920dadfd470b",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -28,7 +28,7 @@
   "ruleRuntime": {
     "compilerVersion": "rule-program-compiler-v1",
     "isaVersion": "rule-program-isa-v1",
-    "programDigest": "f435583d6a54e5a45899f5d22eff7bd4cb5ef2620e539775d9f51a33b5a6993b",
+    "programDigest": "2093ffc1f30615d3a56614fd9e2759301518fb0fcfd5ad531830a41da1ed8e32",
     "programFormatVersion": "rule-program-format-v1"
   },
   "runtimeContract": {
@@ -7423,7 +7423,7 @@
       "path": "evidence-map-canonical-139.bin",
       "rowCount": 4096,
       "sectionId": "evidence-map@canonical/139",
-      "sha256": "562c9e509b55846c857fadbf09335b849c8fa3c43dd377954a74125c1b7c4ca9",
+      "sha256": "cbc8c454c95be725ff2a15fd3919f1718b0ab0792a21db70a0b933d616fcb4a8",
       "shard": {
         "count": 141,
         "from": "fact:literal_reading:６角形|ろっかくけい|",
@@ -7450,14 +7450,14 @@
       }
     },
     {
-      "byteLength": 425124,
+      "byteLength": 426124,
       "encoding": "binary-columnar",
       "kind": "evidence-map",
       "loading": "lazy",
       "path": "evidence-map-canonical-140.bin",
-      "rowCount": 3459,
+      "rowCount": 3466,
       "sectionId": "evidence-map@canonical/140",
-      "sha256": "180091d3a073f4226871088c26e67238b648b36a62a3bb2e449d00013c766860",
+      "sha256": "da896ff06147ec88ed3a4ffb97da1738969efe27ee6fb2a35326b576c4b8b83d",
       "shard": {
         "count": 141,
         "from": "rule:tar:context:87e713a7433af84f",
@@ -17921,14 +17921,14 @@
       "sha256": "832d99f0036d94c95f7f96377049c256ba0f6e1be9fdacf24b17c6ff5e135a4e"
     },
     {
-      "byteLength": 158700,
+      "byteLength": 158959,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-historical.json",
       "profileId": "historical",
       "sectionId": "profile-policy@historical",
-      "sha256": "fd34c90482118ba161d772223df90c9afdebb73ba2224c7a3cb1a98636dea7f1"
+      "sha256": "4460c478accbfc738c260123eac6849f98ce18b1891eb8f5326cd5b83aa2ba59"
     },
     {
       "byteLength": 616,
@@ -17941,14 +17941,14 @@
       "sha256": "32dcca6a2f9e7d504ee03273c807f9f0091445fdc3564c686f96f5be3489b806"
     },
     {
-      "byteLength": 158634,
+      "byteLength": 158893,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-modern.json",
       "profileId": "modern",
       "sectionId": "profile-policy@modern",
-      "sha256": "0c7faf56f2bb679181247f1a123c57a74afeda7ed83bd35b84476fad998520a8"
+      "sha256": "c98b29180d36617c446be1f6a7c95c5bbb348f573aa42e4c6ce15b9e644b36aa"
     },
     {
       "byteLength": 214552,
@@ -18002,20 +18002,20 @@
       }
     },
     {
-      "byteLength": 174816,
+      "byteLength": 174896,
       "encoding": "binary-columnar",
       "kind": "program-evidence",
       "loading": "lazy",
       "path": "program-evidence-program-11.bin",
-      "rowCount": 15071,
+      "rowCount": 15078,
       "sectionId": "program-evidence@program/11",
-      "sha256": "f42ae9161e39e37ac621c98404e1f702ad27629c4646520a6b1d08eaa2bcd48d",
+      "sha256": "21b2d090d5e8a7dc482d4d312e2b19e02bb5254d347417821c2af15bc27b4473",
       "shard": {
         "count": 12,
         "from": "00180224",
         "index": 11,
         "key": "program",
-        "to": "00195294"
+        "to": "00195301"
       }
     },
     {
@@ -26121,44 +26121,44 @@
       "sha256": "b81db7056189ddef81bdda173347254dcfd0954ceed1bcbb05e42698642b17d2"
     },
     {
-      "byteLength": 1262832,
+      "byteLength": 1265404,
       "encoding": "binary-columnar",
       "kind": "rule-predicates",
       "loading": "on-demand",
       "path": "rule-predicates.bin",
-      "rowCount": 11677,
+      "rowCount": 11684,
       "sectionId": "rule-predicates",
-      "sha256": "3d1503a722cad59da696cb891a38b15c5d36b2cb65b006d9e094a35016ac5c58"
+      "sha256": "6f89f9d776675b8471523f945817355abdf2d93d1b72d27bd705832426ff6b3d"
     },
     {
-      "byteLength": 2806412,
+      "byteLength": 2806500,
       "encoding": "binary-columnar",
       "kind": "rule-program-index",
       "loading": "on-demand",
       "path": "rule-program-index.bin",
-      "rowCount": 184085,
+      "rowCount": 184091,
       "sectionId": "rule-program-index",
-      "sha256": "ec110479760b5474f2a862e2cc240105395793d685f5cba06f8ad0800c77f679"
+      "sha256": "4246f4eeccbb5e1b61c0a4481fabd96a01cf2e3d45b415e972d9b1f92f0f7f53"
     },
     {
-      "byteLength": 6833224,
+      "byteLength": 6833608,
       "encoding": "binary-columnar",
       "kind": "rule-programs",
       "loading": "on-demand",
       "path": "rule-programs.bin",
-      "rowCount": 195295,
+      "rowCount": 195302,
       "sectionId": "rule-programs",
-      "sha256": "6467f8340a2d3d398d6b7fae41f6fafcbff9db04945b67f945a499bec1acaa32"
+      "sha256": "0fa72b88c6c6afed5031a02626c4214f768af67b89ad8b28962f3957398e2273"
     },
     {
-      "byteLength": 156,
+      "byteLength": 424,
       "encoding": "binary-columnar",
       "kind": "rule-runtime-meta",
       "loading": "on-demand",
       "path": "rule-runtime-meta.bin",
       "rowCount": 1,
       "sectionId": "rule-runtime-meta",
-      "sha256": "134bb2b54395a77fad01433061998198753f7e69be87746275e309e3dcedef23"
+      "sha256": "1e8725020afcdb214a32c5fb69724ab37e439b61a25db7a46bdcb088942cfd3f"
     },
     {
       "byteLength": 150124,
@@ -26171,14 +26171,14 @@
       "sha256": "a383ee0cf25f7f7e583aab11d42dc68374f1903b131a58dd4cee8796199079f9"
     },
     {
-      "byteLength": 5534656,
+      "byteLength": 5534772,
       "encoding": "binary-columnar",
       "kind": "sequence-pool",
       "loading": "on-demand",
       "path": "sequence-pool.bin",
-      "rowCount": 411122,
+      "rowCount": 411133,
       "sectionId": "sequence-pool",
-      "sha256": "36fd99d6c96b64eae58f7a9e93e00f15ed1268350cda32833237de3b5f0a3908"
+      "sha256": "32e225604a076f2db44688e74e3ba46c5c3c6f2ec1252e91447ca2d78cbcba1c"
     },
     {
       "byteLength": 12736,
@@ -32782,7 +32782,7 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "28e22e22629574fc85095b1b34bd816f192b64c9a4939e0be9ef221dcede675c",
+  "sourceSetDigest": "a8a8ef5c8079e0911b5593cfb2df0c330b1e0e118207fa6fb835234d455a5b2c",
   "symbolRegistry": {
     "digest": "1d2e5b04dc9b3bb29d89b26954318d1b8d53708fe7b7804419c4a5aa58481abc",
     "generation": 3

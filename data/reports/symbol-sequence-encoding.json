@@ -7,34 +7,34 @@
     "generation": 3
   },
   "dataset": {
-    "distinctSequences": 476917,
-    "symbols": 2405585,
-    "symbolsBelow255": 1962930,
+    "distinctSequences": 476928,
+    "symbols": 2405620,
+    "symbolsBelow255": 1962942,
     "maxSequenceLength": 37
   },
   "encodings": {
     "utf8-strings": {
-      "bytes": 9123456,
-      "gzipBytes": 3352593,
-      "scanMs": 63.5,
+      "bytes": 9123575,
+      "gzipBytes": 3352710,
+      "scanMs": 84.1,
       "randomAccess": "O(1) per string; per-character access needs UTF-8 decoding"
     },
     "fixed-uint16": {
-      "bytes": 6718842,
-      "gzipBytes": 3074564,
-      "scanMs": 11.9,
+      "bytes": 6718956,
+      "gzipBytes": 3074676,
+      "scanMs": 22.7,
       "randomAccess": "O(1) per symbol (offset + index); TypedArray view, no decode"
     },
     "short-id-escape": {
-      "bytes": 5198567,
-      "gzipBytes": 2997885,
-      "scanMs": 4.3,
+      "bytes": 5198692,
+      "gzipBytes": 2997692,
+      "scanMs": 6.5,
       "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
     },
     "varint": {
-      "bytes": 4962984,
-      "gzipBytes": 2997888,
-      "scanMs": 6.8,
+      "bytes": 4963087,
+      "gzipBytes": 2997963,
+      "scanMs": 10,
       "randomAccess": "O(1) per sequence, O(length) per symbol (variable width)"
     }
   },
