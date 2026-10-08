@@ -62,6 +62,28 @@ test('VM pattern scan preserves wildcard suffix, candidate sets, POS gates and f
   const invalidSuffixPos = await execute('まずも', '名詞');
   assert.deepEqual(invalidSuffixPos.outputs, []);
 
+  // #291 acceptance: every one of the six source wildcard families must prove
+  // a positive prefix match and both a near-miss input and an invalid POS boundary.
+  // The VM emits only the matched prefix, preserving trailing source text unchanged.
+  const wildcardBoundaries = [
+    { source: 'によ*', positive: 'による', miss: 'にゆる', pos: '助詞', pos1: '格助詞', outputs: ['に依', 'に因'], negativePos: '動詞' },
+    { source: 'にお*', positive: 'において', miss: 'にをいて', pos: '助詞', pos1: '格助詞', outputs: ['に於'], negativePos: '動詞' },
+    { source: 'まず*', positive: 'まずも', miss: 'まづも', pos: '副詞', pos1: '', outputs: ['先ず'], negativePos: '名詞' },
+    { source: 'お客*', positive: 'お客様', miss: 'お容様', pos: '名詞', pos1: '', outputs: ['御客'], negativePos: '動詞' },
+    { source: 'にあた*', positive: 'にあたる', miss: 'にわたる', pos: '助詞', pos1: '格助詞', outputs: ['に当'], negativePos: '動詞' },
+    { source: 'それ*', positive: 'それから', miss: 'そらから', pos: '接続詞', pos1: '', outputs: ['其'], negativePos: '名詞' }
+  ] as const;
+  for (const boundary of wildcardBoundaries) {
+    const good = await execute(boundary.positive, boundary.pos, boundary.pos1);
+    assert.deepEqual(new Set(good.outputs), new Set(boundary.outputs), boundary.source + ': positive');
+    const miss = await execute(boundary.miss, boundary.pos, boundary.pos1);
+    assert.deepEqual(miss.outputs, [], boundary.source + ': mismatched prefix');
+    const invalidContext = await execute(boundary.positive, boundary.negativePos, boundary.pos1);
+    assert.deepEqual(invalidContext.outputs, [], boundary.source + ': invalid POS');
+    assert.ok(good.runs.every((run: any) => run.end - run.start === boundary.source.length - 1),
+      boundary.source + ': wildcard must preserve unmatched suffix');
+  }
+
   const regex = await execute('2026年10月8日');
   assert.deepEqual(regex.outputs, ['2026/10/8']);
   const invalidRegex = await execute('2026年123月8日');
