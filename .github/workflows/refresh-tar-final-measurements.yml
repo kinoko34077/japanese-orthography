@@ -1,0 +1,35 @@
+name: Refresh TAR final physical and real-text reports (temporary read-only)
+
+on:
+  push:
+    branches:
+      - migration/tar-candidate-290
+
+permissions:
+  contents: read
+
+jobs:
+  measurement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Regenerate directly affected physical and real-text reports
+        run: |
+          npm run measure:browser-pack-v2
+          npm run measure:browser-pack-v2 -- --v3
+          npm run measure:browser-ruby
+          npm run measure:orthography-v2
+      - name: Export only changed measurement reports
+        shell: bash
+        run: |
+          git diff --name-only -z -- data/reports/ > /tmp/measurement-changes
+          while IFS= read -r -d '' file; do
+            echo "__REPORT_BEGIN__:$file"
+            base64 -w 0 "$file" | fold -w 60000
+            echo "__REPORT_END__:$file"
+          done < /tmp/measurement-changes
