@@ -1,0 +1,39 @@
+name: Verify TAR pattern slice (temporary read-only)
+
+on:
+  push:
+    branches:
+      - migration/tar-pattern-291
+
+permissions:
+  contents: read
+
+jobs:
+  slice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate source and TypeScript
+        run: |
+          npm run validate:tar-pattern
+          npm run typecheck
+      - name: Source and full Rule Program boundary tests
+        run: node --import tsx --test test/tar-pattern.test.ts test/tar-pattern-program.test.ts
+      - name: Generate TAR runtime parity with actual seven pattern executions
+        run: npm run generate:tar-runtime-parity
+      - name: Display executable parity summary
+        run: node -e "const s=require('./data/reports/tar-runtime-parity-summary.json'); console.log(JSON.stringify(s, null, 2)); if(s.statuses.FAIL||!s.finalExecutionParity)process.exit(1)"
+      - name: Save parity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tar-pattern-parity
+          path: |
+            data/reports/tar-runtime-parity.json
+            data/reports/tar-runtime-parity-summary.json
+          retention-days: 3
