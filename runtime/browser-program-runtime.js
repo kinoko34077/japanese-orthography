@@ -90,6 +90,37 @@
         pc += 1 + (arity[op] ?? 0);
       }
     }
+    // #291: TAR由来の限定pattern機構。適用条件とprofile権限は索引化済みRule ProgramのVMが担当し、
+    // このscanは動的captureのみを供給する。出典に含まれる任意のregexをBrowserで実行しない。
+    const acceptedPatternIds = new Set([
+      "entry-mqactr77-ls", "entry-mq2edvi1-lz", "entry-mqb527lq-lp",
+      "entry-mqavou0x-nd", "entry-mqb4rrlh-m3", "entry-mqb6ua4d-m5",
+      "entry-mqb02914-lq"
+    ]);
+    const patterns = [];
+    for (const [programId, rule] of tokenContextByProgram) {
+      const pattern = rule?.tarPattern;
+      if (!pattern) continue;
+      if (!acceptedPatternIds.has(pattern.sourceRuleId)
+        || STAGES[programSection.value("stage", programId)] !== "profile"
+        || DIRECTIONS[programSection.value("direction", programId)] !== "to-modern"
+        || CHANNELS[programSection.value("channel", programId)] !== "surface") {
+        throw new Error("unsupported TAR pattern Program " + programId);
+      }
+      if (pattern.regex) {
+        if (pattern.from !== "(\\d{4})年(\\d{1,2})月(\\d{1,2})日"
+          || pattern.outputs.length !== 1 || pattern.outputs[0] !== "$1/$2/$3") {
+          throw new Error("unsupported TAR regex contract");
+        }
+      } else if (!pattern.wildcard || !pattern.from.endsWith("*")
+        || pattern.from.indexOf("*") !== pattern.from.length - 1
+        || !pattern.outputs.length || !pattern.outputs.every((output) => output.endsWith("*"))) {
+        throw new Error("unsupported TAR wildcard contract");
+      }
+      patterns.push({ programId, rule, pattern });
+    }
+    if (patterns.length !== 0 && patterns.length !== 7) throw new Error("TAR pattern Program accounting drift: " + patterns.length);
+
     const toHiragana = (value) => Array.from(String(value ?? ""), (ch) => {
       const code = ch.codePointAt(0);
       return code >= 0x30a1 && code <= 0x30f6 ? String.fromCodePoint(code - 0x60) : ch;
@@ -230,6 +261,59 @@
                   key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${output}`
                 });
               }
+            }
+          }
+        }
+      }
+      // patternの入力はexact SequenceId spanではない。限定matchはcompile済みprofile Rule Program
+      // （TEST_PROFILE / TEST_PRED / MECH）で許可する。
+      // TARの末尾'*'は非anchor・最短captureであり、prefixだけを変換して末尾文字列を保持する。
+      if (stages.includes("profile") && directions.includes("to-modern") && channels.includes("surface")) {
+        for (const { programId, rule, pattern } of patterns) {
+          const matches = [];
+          if (pattern.regex) {
+            for (const hit of source.matchAll(/(\d{4})年(\d{1,2})月(\d{1,2})日/gu)) {
+              matches.push({ start: hit.index, end: hit.index + hit[0].length, outputs: [
+                hit[1] + "/" + hit[2] + "/" + hit[3]
+              ] });
+            }
+          } else {
+            const prefix = pattern.from.slice(0, -1);
+            let start = source.indexOf(prefix);
+            while (start >= 0) {
+              matches.push({
+                start, end: start + prefix.length,
+                outputs: pattern.outputs.map((output) => output.slice(0, -1))
+              });
+              start = source.indexOf(prefix, start + 1);
+            }
+          }
+          for (const match of matches) {
+            const segment = source.slice(match.start, match.end);
+            const context = contextFor(match.start, match.end, segment);
+            const state = { profileId, context, lexemes: new Set() };
+            const evaluated = vm.run(programId, state);
+            if (!evaluated.mechanisms?.length) continue;
+            executedProgramIds.add(programId);
+            const edges = match.outputs.map((output) => ({
+              output, sequenceId: -1, candidate: match.outputs.length > 1,
+              programs: [programId]
+            }));
+            runs.push({
+              start: match.start, end: match.end, stage: "profile", direction: "to-modern",
+              channel: "surface", lookupSequenceId: -1, text: segment, sequenceId: -1,
+              edges, preserved: false, mechanisms: evaluated.mechanisms,
+              executedProgramIds: [programId], trace: evaluated.trace
+            });
+            for (const [i, edge] of edges.entries()) {
+              candidates.push({
+                start: match.start, end: match.end, output: edge.output,
+                policy: "anywhere", precedence: 1000 + (Number(rule.priority) || 0),
+                origin: "program", ref: "program:" + programId, programIds: [programId],
+                candidate: edge.candidate, stage: "profile", direction: "to-modern",
+                channel: "surface",
+                key: "program:pattern:" + programId + ":" + match.start + ":" + match.end + ":" + i
+              });
             }
           }
         }
