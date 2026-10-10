@@ -1,6 +1,7 @@
 name: Verify
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches: [main]
@@ -27,9 +28,9 @@ jobs:
         run: npm run build:site
 
   pilot-head:
-    # 書戻しの単独受入PRに限定した、読み取り専用の正確なコミット検証。
-    # 既存のcheck行列によるPR仮想マージ検証は変更しない。
-    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'artifact/devflow384/replay-415-s36' && github.event.pull_request.head.repo.full_name == github.repository }}
+    # #300受入専用。mainから明示的に手動起動された場合だけ、
+    # PR #304の書戻しHEADを読み取り専用で両OS検証する。
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -37,12 +38,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: 87557afe9d3585252c94cf5352515943323dd708
           persist-credentials: false
-      - name: 実際にcheckoutしたコミットSHAとPR HEADの一致を検証
+      - name: checkoutしたコミットSHAの完全一致を検証
         shell: bash
         env:
-          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_HEAD: 87557afe9d3585252c94cf5352515943323dd708
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
