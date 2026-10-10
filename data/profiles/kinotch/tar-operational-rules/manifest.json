@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1",
+  "kind": "tar-kinotch-profile-rule-home-manifest",
+  "owner": "japanese-orthography#299",
+  "profileId": "kinotch-fixed",
+  "authority": "compatibility_profile",
+  "origin": "tar",
+  "source": {
+    "repository": "kinoko34077/txt-auto-replace",
+    "commit": "198f8560613d23417cb0f87172ae8662e722ca30",
+    "paths": [
+      "tongwentang_pref6_current_json/",
+      "transform-settings (8).json"
+    ],
+    "flatRecords": 3438,
+    "structuredRuleObjects": 2279
+  },
+  "referenceIndex": "source-case-index.json",
+  "canonicalCorpora": [
+    {
+      "path": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/simple-exact-rules.json",
+      "records": 3163,
+      "cases": 3166
+    },
+    {
+      "path": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/context-rules.json",
+      "records": 670,
+      "cases": 670
+    },
+    {
+      "path": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/candidate-rules.json",
+      "records": 165,
+      "cases": 165
+    },
+    {
+      "path": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/pattern-rules.json",
+      "records": 7,
+      "cases": 7
+    }
+  ],
+  "evidence": {
+    "fixture": "data/migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/parity-fixture.json",
+    "staticSummary": "data/reports/tar-parity-summary.json",
+    "runtimeSummary": "data/reports/tar-runtime-parity-summary.json",
+    "runtimeReport": "data/reports/tar-runtime-parity.json"
+  },
+  "accounting": {
+    "fixtureCases": 4036,
+    "indexedCases": 4008,
+    "disabledCases": 28,
+    "dropped": 0
+  },
+  "policy": {
+    "genericRuleAdmission": false,
+    "disabledRulesActivated": false,
+    "ruleBodiesDuplicated": false
+  }
+}
