@@ -26,7 +26,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: npm run build:site
 
-pilot-head:
+  pilot-head:
     # Read-only, exact-commit verification for the isolated writeback acceptance PR.
     # Keep the existing check matrix (PR merge-tree verification) unchanged.
     if: ${{ github.event_name == 'pull_request' && github.head_ref == 'artifact/devflow384/replay-415-s36' && github.event.pull_request.head.repo.full_name == github.repository }}
