@@ -30,7 +30,7 @@ jobs:
   pilot-head:
     # #300受入専用。mainから明示的に手動起動された場合だけ、
     # PR #304の書戻しHEADを読み取り専用で両OS検証する。
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
