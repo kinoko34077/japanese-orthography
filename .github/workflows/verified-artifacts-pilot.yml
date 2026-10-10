@@ -1,10 +1,8 @@
-# TEMPLATE — not active in devflow. Install as
-#   kinoko34077/japanese-orthography:.github/workflows/verified-artifacts-pilot.yml
-# only after the reusable workflow at b88f0c789dd011be324cba6239990230c5f1c98a has passed an independent
-# security Review (devflow#384 S3). Replace both b88f0c789dd011be324cba6239990230c5f1c98a placeholders with
-# the same exact reviewed 40-hex devflow commit SHA. The writer refuses to run
-# unless this file, read at the run's workflow_sha, pins that same SHA twice,
-# is workflow_dispatch-only, forwards no credentials and has no shell steps.
+# JO Pilot caller — proposed scoped admission for devflow#415 / JO#300.
+# Security review and separate Human merge gate required before activating.
+# The replay acceptance mode is restricted to one fresh, isolated scratch PR
+# branch; this proposal does not create that branch or execute the writer.
+# No extra credentials, new permissions, or arbitrary shell commands.
 name: Verified artifacts pilot (devflow#384)
 
 on:
@@ -19,9 +17,9 @@ on:
         type: string
         required: true
       mode:
-        description: dry-run or write
+        description: dry-run, write, or dedicated acceptance-only write-replay-test
         type: choice
-        options: [dry-run, write]
+        options: [dry-run, write, write-replay-test]
         default: dry-run
 
 permissions: {}
@@ -32,13 +30,16 @@ concurrency:
 
 jobs:
   writeback:
+    # Normal modes retain their previous accepted scope. Replay is for one
+    # newly isolated scratch branch; never use an older Pilot branch or #301.
+    if: ${{ inputs.mode != 'write-replay-test' || inputs.target_branch == 'artifact/devflow384/replay-415-s36' }}
     permissions:
       contents: write
       actions: read
       pull-requests: read
-    uses: kinoko34077/devflow/.github/workflows/generated-artifact-writeback.yml@b88f0c789dd011be324cba6239990230c5f1c98a
+    uses: kinoko34077/devflow/.github/workflows/generated-artifact-writeback.yml@f886877e7110f2499125ecc6e07294798c33fe93
     with:
-      devflow_sha: b88f0c789dd011be324cba6239990230c5f1c98a
+      devflow_sha: f886877e7110f2499125ecc6e07294798c33fe93
       target_branch: ${{ inputs.target_branch }}
       expected_head: ${{ inputs.expected_head }}
       mode: ${{ inputs.mode }}
