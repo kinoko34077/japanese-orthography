@@ -2,9 +2,9 @@
   "schemaVersion": "1",
   "kind": "browser-pack-payload-decomposition",
   "owner": "japanese-orthography#211 A (spec #208 §16.1)",
-  "packDigest": "38850e90e70ed1b05c2138dc0228005aa1511b998f92665870658462fc07de38",
-  "totalBytes": 149652436,
-  "classTotalBytes": 149652436,
+  "packDigest": "cd6df7a0a3af9dfc7301ffde3456d90d0e5d9da0f99cf26acab336e6af475677",
+  "totalBytes": 149652954,
+  "classTotalBytes": 149652954,
   "classes": {
     "bundle-container": {
       "sections": 330,
@@ -88,13 +88,13 @@
     },
     "profile": {
       "sections": 3,
-      "bytes": 317950,
+      "bytes": 318468,
       "unicodeStringBytes": 0,
       "stringOffsetBytes": 0,
       "symbolTokenBytes": 0,
       "integerBytes": 0,
       "overheadBytes": 0,
-      "jsonBytes": 317950
+      "jsonBytes": 318468
     },
     "provenance-evidence": {
       "sections": 660,

@@ -4,12 +4,12 @@
   "owner": "japanese-orthography#166",
   "note": "Every record enumerated by a source adapter has exactly one disposition. Source files are provenance roots and are not modified.",
   "totals": {
-    "inputRecords": 279558,
-    "disposedRecords": 279558,
+    "inputRecords": 279565,
+    "disposedRecords": 279565,
     "unaccounted": 0,
     "byDisposition": {
       "literal_fact": 228384,
-      "rule_definition": 4023,
+      "rule_definition": 4030,
       "rule_binding": 10975,
       "profile_policy": 419,
       "derived_only": 34276,
@@ -17,11 +17,11 @@
     }
   },
   "graph": {
-    "sources": 32,
+    "sources": 33,
     "facts": 561488,
-    "rules": 4442,
+    "rules": 4449,
     "bindings": 10964,
-    "sha256": "b51a80dc10dae3810798d72b04c295e188d193916148135f0d6a584b2f678117"
+    "sha256": "be550139d6453dd21c7a167103f603d7d4ab83af9e2dfe0770d2aeefda8d2197"
   },
   "bySource": {
     "derivation/kana-conventions": {
@@ -179,6 +179,14 @@
     "migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/context-rules": {
       "literal_fact": 0,
       "rule_definition": 670,
+      "rule_binding": 0,
+      "profile_policy": 0,
+      "derived_only": 0,
+      "excluded_with_reason": 0
+    },
+    "migrations/tar/198f8560613d23417cb0f87172ae8662e722ca30/pattern-rules": {
+      "literal_fact": 0,
+      "rule_definition": 7,
       "rule_binding": 0,
       "profile_policy": 0,
       "derived_only": 0,

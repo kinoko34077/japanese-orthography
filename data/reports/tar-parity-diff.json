@@ -15,8 +15,8 @@
   },
   "baseline": {
     "profileId": "kinotch-fixed",
-    "ruleIrDigest": "646b7cbd311aaa7eecad37eb5ea88adf8d7fb205a16d405af1fa27950c323cb1",
-    "ruleCount": 195295
+    "ruleIrDigest": "8c397f06dcdf2b6bfb8e0846067fdd05e91c5864f427b3de3ed80f9d598e83bd",
+    "ruleCount": 195302
   },
   "statuses": {
     "AMBIGUOUS": 2397,

@@ -1,9 +1,9 @@
 {
-  "canonicalGraphSha256": "5c575c5a356d1f491cd493c43ca97344bba5d1ee5d1c934eb1e89abe1a1bbe74",
+  "canonicalGraphSha256": "759ec9bd0748becd1c9e8320e365616c748f00b7aca4d4192817dc50d36799cc",
   "compilerVersion": "1",
   "kind": "japanese-orthography-browser-pack",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
-  "packDigest": "7526595afcca46b8c3f4dea7ce099e6419c9d330b4c06431129fe8c4089eeba4",
+  "packDigest": "29f563476c0c516f747f76b74fa014419566d2e7e00c24e853ba04e04efbde95",
   "profiles": [
     {
       "policySectionId": "profile-policy@historical",
@@ -19841,14 +19841,14 @@
       }
     },
     {
-      "byteLength": 158700,
+      "byteLength": 158959,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-historical.json",
       "profileId": "historical",
       "sectionId": "profile-policy@historical",
-      "sha256": "fd34c90482118ba161d772223df90c9afdebb73ba2224c7a3cb1a98636dea7f1"
+      "sha256": "4460c478accbfc738c260123eac6849f98ce18b1891eb8f5326cd5b83aa2ba59"
     },
     {
       "byteLength": 616,
@@ -19861,14 +19861,14 @@
       "sha256": "32dcca6a2f9e7d504ee03273c807f9f0091445fdc3564c686f96f5be3489b806"
     },
     {
-      "byteLength": 158634,
+      "byteLength": 158893,
       "encoding": "json",
       "kind": "profile-policy",
       "loading": "eager",
       "path": "profile-policy-modern.json",
       "profileId": "modern",
       "sectionId": "profile-policy@modern",
-      "sha256": "0c7faf56f2bb679181247f1a123c57a74afeda7ed83bd35b84476fad998520a8"
+      "sha256": "c98b29180d36617c446be1f6a7c95c5bbb348f573aa42e4c6ce15b9e644b36aa"
     },
     {
       "byteLength": 10048,
@@ -32120,5 +32120,5 @@
       "sha256": "23299459bee162d29f371eb64dc85f5fe7117ed0a370fe472254bf7bbee6e5b4"
     }
   ],
-  "sourceSetDigest": "28e22e22629574fc85095b1b34bd816f192b64c9a4939e0be9ef221dcede675c"
+  "sourceSetDigest": "a8a8ef5c8079e0911b5593cfb2df0c330b1e0e118207fa6fb835234d455a5b2c"
 }

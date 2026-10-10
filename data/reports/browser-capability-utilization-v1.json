@@ -2,11 +2,11 @@
   "schemaVersion": "1",
   "kind": "browser-capability-utilization",
   "owner": "japanese-orthography#196 A",
-  "packDigest": "7526595afcca46b8c3f4dea7ce099e6419c9d330b4c06431129fe8c4089eeba4",
+  "packDigest": "29f563476c0c516f747f76b74fa014419566d2e7e00c24e853ba04e04efbde95",
   "lexicalNamespaceId": "jmdict-lexeme-contract:2026-10-01",
   "canonical": {
     "facts": 561488,
-    "rules": 4447,
+    "rules": 4454,
     "bindings": 10964,
     "factsByKindAndV1Route": {
       "form_relation": {
@@ -30,9 +30,9 @@
         "not_executed": 484
       },
       "orthographic": {
-        "total": 3947,
+        "total": 3954,
         "char_rule": 5,
-        "not_executed": 3168,
+        "not_executed": 3175,
         "exact_token_rule": 774
       },
       "phonological": {
@@ -59,7 +59,7 @@
     }
   },
   "probes": {
-    "eagerBytes": 800912,
+    "eagerBytes": 801430,
     "profiles": [
       "modern",
       "historical",
@@ -99,9 +99,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 123712,
-          "total": 924624
+          "total": 925142
         }
       },
       {
@@ -141,9 +141,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 123712,
-          "total": 924624
+          "total": 925142
         }
       },
       {
@@ -183,9 +183,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 123712,
-          "total": 924624
+          "total": 925142
         }
       },
       {
@@ -220,9 +220,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 255936,
-          "total": 1056848
+          "total": 1057366
         }
       },
       {
@@ -261,9 +261,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 255936,
-          "total": 1056848
+          "total": 1057366
         }
       },
       {
@@ -302,9 +302,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 255936,
-          "total": 1056848
+          "total": 1057366
         }
       },
       {
@@ -340,9 +340,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122012,
-          "total": 922924
+          "total": 923442
         }
       },
       {
@@ -378,9 +378,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122012,
-          "total": 922924
+          "total": 923442
         }
       },
       {
@@ -416,9 +416,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122012,
-          "total": 922924
+          "total": 923442
         }
       },
       {
@@ -453,9 +453,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 222912,
-          "total": 1023824
+          "total": 1024342
         }
       },
       {
@@ -490,9 +490,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 222912,
-          "total": 1023824
+          "total": 1024342
         }
       },
       {
@@ -527,9 +527,9 @@
           "total": 16
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 222912,
-          "total": 1023824
+          "total": 1024342
         }
       },
       {
@@ -564,9 +564,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 132112,
-          "total": 933024
+          "total": 933542
         }
       },
       {
@@ -601,9 +601,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 132112,
-          "total": 933024
+          "total": 933542
         }
       },
       {
@@ -638,9 +638,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 132112,
-          "total": 933024
+          "total": 933542
         }
       },
       {
@@ -676,9 +676,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 256892,
-          "total": 1057804
+          "total": 1058322
         }
       },
       {
@@ -714,9 +714,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 256892,
-          "total": 1057804
+          "total": 1058322
         }
       },
       {
@@ -756,9 +756,9 @@
           "total": 19
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 256892,
-          "total": 1057804
+          "total": 1058322
         }
       },
       {
@@ -795,9 +795,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 119992,
-          "total": 920904
+          "total": 921422
         }
       },
       {
@@ -840,9 +840,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 119992,
-          "total": 920904
+          "total": 921422
         }
       },
       {
@@ -885,9 +885,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 119992,
-          "total": 920904
+          "total": 921422
         }
       },
       {
@@ -924,9 +924,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122092,
-          "total": 923004
+          "total": 923522
         }
       },
       {
@@ -969,9 +969,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122092,
-          "total": 923004
+          "total": 923522
         }
       },
       {
@@ -1014,9 +1014,9 @@
           "total": 13
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 122092,
-          "total": 923004
+          "total": 923522
         }
       },
       {
@@ -1052,9 +1052,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 457504,
-          "total": 1258416
+          "total": 1258934
         }
       },
       {
@@ -1096,9 +1096,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 457504,
-          "total": 1258416
+          "total": 1258934
         }
       },
       {
@@ -1140,9 +1140,9 @@
           "total": 31
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 457504,
-          "total": 1258416
+          "total": 1258934
         }
       },
       {
@@ -1178,9 +1178,9 @@
           "total": 28
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 392420,
-          "total": 1193332
+          "total": 1193850
         }
       },
       {
@@ -1220,9 +1220,9 @@
           "total": 28
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 392420,
-          "total": 1193332
+          "total": 1193850
         }
       },
       {
@@ -1262,9 +1262,9 @@
           "total": 28
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 392420,
-          "total": 1193332
+          "total": 1193850
         }
       },
       {
@@ -1303,9 +1303,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 369148,
-          "total": 1170060
+          "total": 1170578
         }
       },
       {
@@ -1348,9 +1348,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 369148,
-          "total": 1170060
+          "total": 1170578
         }
       },
       {
@@ -1393,9 +1393,9 @@
           "total": 25
         },
         "transferredBytes": {
-          "eager": 800912,
+          "eager": 801430,
           "onDemand": 369148,
-          "total": 1170060
+          "total": 1170578
         }
       }
     ],

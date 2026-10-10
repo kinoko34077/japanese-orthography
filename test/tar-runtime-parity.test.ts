@@ -101,7 +101,22 @@ test('explicit and same-input TAR alternatives execute as candidate sets without
   assert.equal(report.accounting.candidateReviewRequired, 1);
   assert.equal(report.accounting.conflictingSimpleInputsDeferred, 0);
   assert.equal(report.statuses.CANDIDATE_REQUIRED ?? 0, 0);
-  assert.deepEqual(summary.requiredNextGates, ['pattern-parity']);
+  assert.deepEqual(summary.requiredNextGates, []);
+});
+
+test('all seven TAR wildcard/regex Rule Programs have executed and disabled rules remain inactive', async () => {
+  const [report, summary] = await Promise.all([read(TAR_RUNTIME_PARITY_REPORT), read(TAR_RUNTIME_PARITY_SUMMARY)]);
+  const rules = report.records.filter((record: any) =>
+    record.sourceEnabled && (record.input.endsWith('*') || record.input.includes('\\d{4}')));
+  assert.equal(rules.length, 7);
+  assert.ok(rules.every((record: any) => record.status === 'PASS'));
+  assert.equal(report.accounting.patternCasesExecuted, 7);
+  assert.equal(report.accounting.executableCasesTested, 4008);
+  assert.equal(report.statuses.PASS, 4008);
+  assert.equal(report.statuses.DISABLED, 28);
+  assert.equal(report.statuses.PATTERN_REQUIRED ?? 0, 0);
+  assert.equal(report.accounting.dropped, 0);
+  assert.equal(summary.finalExecutionParity, true);
 });
 
 test('only runtime-executed cases carry actual output and candidate observations stay explicit', async () => {
