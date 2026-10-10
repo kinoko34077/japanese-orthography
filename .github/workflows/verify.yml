@@ -27,8 +27,8 @@ jobs:
         run: npm run build:site
 
   pilot-head:
-    # Read-only, exact-commit verification for the isolated writeback acceptance PR.
-    # Keep the existing check matrix (PR merge-tree verification) unchanged.
+    # 書戻しの単独受入PRに限定した、読み取り専用の正確なコミット検証。
+    # 既存のcheck行列によるPR仮想マージ検証は変更しない。
     if: ${{ github.event_name == 'pull_request' && github.head_ref == 'artifact/devflow384/replay-415-s36' && github.event.pull_request.head.repo.full_name == github.repository }}
     strategy:
       matrix:
@@ -39,7 +39,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
-      - name: Verify the exact PR HEAD commit was checked out
+      - name: 実際にcheckoutしたコミットSHAとPR HEADの一致を検証
         shell: bash
         env:
           EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
