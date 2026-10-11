@@ -1,8 +1,6 @@
-# JO Pilot caller — proposed scoped admission for devflow#415 / JO#300.
-# Security review and separate Human merge gate required before activating.
-# The replay acceptance mode is restricted to one fresh, isolated scratch PR
-# branch; this proposal does not create that branch or execute the writer.
-# No extra credentials, new permissions, or arbitrary shell commands.
+# JO #300単一リポジトリPilot用の手動起動Caller。
+# 権限付きジョブはreview済みdevflow SHAに固定。実行はdry-run/writeのみ。
+# 生成元と書込側を権限分離し、個別PR/expected HEAD等はwriterが検証する。
 name: Verified artifacts pilot (devflow#384)
 
 on:
@@ -17,9 +15,9 @@ on:
         type: string
         required: true
       mode:
-        description: dry-run, write, or dedicated acceptance-only write-replay-test
+        description: dry-run or write
         type: choice
-        options: [dry-run, write, write-replay-test]
+        options: [dry-run, write]
         default: dry-run
 
 permissions: {}
@@ -30,9 +28,6 @@ concurrency:
 
 jobs:
   writeback:
-    # Normal modes retain their previous accepted scope. Replay is for one
-    # newly isolated scratch branch; never use an older Pilot branch or #301.
-    if: ${{ inputs.mode != 'write-replay-test' || inputs.target_branch == 'artifact/devflow384/replay-415-s36' }}
     permissions:
       contents: write
       actions: read
