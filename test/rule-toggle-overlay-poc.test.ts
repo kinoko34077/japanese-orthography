@@ -76,8 +76,23 @@ test('#313 setting update advances revision/cache partition and reset restores s
   assert.equal(back.revision, 2);
 });
 
+test('#313 equal revision on independent overlays or branches never aliases a different setting cache', () => {
+  const clean = createToggleOverlay(nodes, rules);
+  const initiallyOff = createToggleOverlay(nodes, rules, { rules: { 'tar:high': false } });
+  assert.equal(clean.revision, initiallyOff.revision);
+  assert.notEqual(clean.cacheKey('same-artifact', 'kinotch-fixed'),
+    initiallyOff.cacheKey('same-artifact', 'kinotch-fixed'));
+  const left = clean.withSettings({ rules: { 'tar:high': false } });
+  const right = clean.withSettings({ rules: { 'tar:low': false } });
+  assert.equal(left.revision, right.revision);
+  assert.notEqual(left.cacheKey('same-artifact', 'kinotch-fixed'),
+    right.cacheKey('same-artifact', 'kinotch-fixed'));
+});
+
 test('#313 rejects unknown rule settings/candidates, duplicate IDs and missing/cyclic parents', () => {
   assert.throws(() => createToggleOverlay(nodes, rules, { rules: { 'tar:unknown': true } }), /unknown toggle/);
+  assert.throws(() => createToggleOverlay(nodes, rules, { globalEnabled: null } as unknown as Parameters<typeof createToggleOverlay>[2]), /invalid global/);
+  assert.throws(() => createToggleOverlay(nodes, [rule('tar:fractional', 99, 1.5, 1)]), /invalid/);
   assert.throws(() => createToggleOverlay(nodes, rules).withSettings({ nodes: { wrong: true } }), /unknown toggle/);
   assert.throws(() => createToggleOverlay(nodes, rules).select([{ logicalRuleId: 'alien', occurrenceId: 'x' }], 'kinotch-fixed'), /unknown logical/);
   assert.throws(() => createToggleOverlay(nodes, [...rules, rules[0]!]), /duplicate/);
