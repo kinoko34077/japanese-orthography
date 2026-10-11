@@ -55,7 +55,7 @@ export function planTarRuleJoin(corpora:readonly Corpus[]):Mapped[]{
 }
 
 export async function auditTarRuleProgramJoin(root:string){
-  const [simple,context,candidate,pattern]=await Promise.all(
+  const corpora=await Promise.all(
     ['simple-exact','context','candidate','pattern'].map(async k=>
       JSON.parse(await readFile(resolve(root,BASE+k+'-rules.json'),'utf8')) as Corpus)
   );
@@ -64,7 +64,7 @@ export async function auditTarRuleProgramJoin(root:string){
     readFile(resolve(root,'data/reports/rule-program-summary.json'),'utf8').then(JSON.parse) as Promise<{irDigest:string;programs:number}>,
     readFile(resolve(root,'data/profiles/kinotch/tar-operational-rules/source-case-index.json'),'utf8').then(JSON.parse) as Promise<{entries:Array<{sourceCaseId:string}>;disabledSourceCaseIds:string[]}>
   ]);
-  const rows=planTarRuleJoin([simple,context,candidate,pattern]);
+  const rows=planTarRuleJoin(corpora);
   ensure(home.entries.length===4008 && home.disabledSourceCaseIds.length===28,'profile home count drift');
   const caseIds=new Set(rows.map(r=>r.sourceCaseId));
   for(const ref of home.entries)ensure(caseIds.has(ref.sourceCaseId),'profile home case absent');
