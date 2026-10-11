@@ -47,7 +47,7 @@
       transform: async (text, profileId, renderMode = "plain") => {
         const token = {};
         latestTransform = token;
-        const reply = await send({ type: "transform", text, profileId, renderMode });
+        const reply = await send({ type: "transform", text, profileId, renderMode, sourceBackedTokenInference: profileId === "kinotch-fixed" });
         return { ...reply, stale: latestTransform !== token };
       },
       detail: (resultId, detailRef) => send({ type: "detail", resultId, detailRef }),
