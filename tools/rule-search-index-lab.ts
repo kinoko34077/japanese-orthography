@@ -43,6 +43,7 @@ export function compareSearchKeys(
     }
     return hits;
   };
+  const trieBuildStart = performance.now();
   const root: TrieNode = { next: new Map() };
   let nodes=1, edges=0;
   for (const key of keys) {
@@ -55,6 +56,31 @@ export function compareSearchKeys(
     if (node.key) throw new Error('duplicate SymbolId sequence with different SequenceIds');
     node.key=key;
   }
+  const trieBuildMs = performance.now() - trieBuildStart;
+  const heapBeforeBucket = process.memoryUsage().heapUsed;
+  const bucketBuildStart = performance.now();
+  const buckets = new Map<number,SearchKey[]>();
+  for(const key of keys){
+    const head=key.symbols[0]!;
+    const group=buckets.get(head)??[];
+    group.push(key);
+    buckets.set(head,group);
+  }
+  for(const group of buckets.values()) group.sort((a,b)=>a.symbols.length-b.symbols.length || a.sequenceId-b.sequenceId);
+  const bucketBuildMs = performance.now()-bucketBuildStart;
+  const bucketHeapDelta = process.memoryUsage().heapUsed-heapBeforeBucket;
+  const bucket = (tokens: readonly number[]): SearchHit[] => {
+    const hits: SearchHit[]=[];
+    for(let start=0;start<tokens.length;start++) {
+      for(const key of buckets.get(tokens[start]!)??[]) {
+        if(start+key.symbols.length>tokens.length)continue;
+        let match=true;
+        for(let j=1;j<key.symbols.length;j++) if(tokens[start+j]!==key.symbols[j]){match=false;break;}
+        if(match) hits.push({start,end:start+key.symbols.length,sequenceId:key.sequenceId,postings:key.postings});
+      }
+    }
+    return hits;
+  };
   const trie = (tokens: readonly number[]): SearchHit[] => {
     const hits: SearchHit[] = [];
     for (let start=0;start<tokens.length;start++) {
@@ -73,14 +99,18 @@ export function compareSearchKeys(
     if (!tokens.every(validId)) throw new Error('invalid token stream');
     const a=baseline(tokens).map(signature);
     const b=trie(tokens).map(signature);
-    const mismatch=a.findIndex((entry,i)=>entry!==b[i]);
-    if (a.length!==b.length || mismatch>=0) throw new Error('candidate drift: '+JSON.stringify({
-      baseline:a.length,trie:b.length,mismatch,
-      expected:a[mismatch]??null,actual:b[mismatch]??null
-    }));
+    const c=bucket(tokens).map(signature);
+    for(const [strategy,other] of [['trie',b],['bucket',c]] as const){
+      const mismatch=a.findIndex((entry,i)=>entry!==other[i]);
+      if (a.length!==other.length || mismatch>=0) throw new Error('candidate drift: '+JSON.stringify({
+        strategy,baseline:a.length,other:other.length,mismatch,
+        expected:a[mismatch]??null,actual:other[mismatch]??null
+      }));
+    }
     return { candidates:a.length, digest:createHash('sha256').update(JSON.stringify(a)).digest('hex') };
   };
-  return { baseline,trie,parity,nodes,edges,keyCount:keys.length,lengthCount:lengths.length };
+  return { baseline,trie,bucket,parity,nodes,edges,trieBuildMs,bucketBuildMs,bucketHeapDelta,bucketGroups:buckets.size,
+    keyCount:keys.length,lengthCount:lengths.length };
 }
 
 const require = createRequire(import.meta.url);
@@ -160,15 +190,18 @@ export async function measureSearchCandidates(root:string,lengths:readonly numbe
     const inputDigest=createHash('sha256').update(JSON.stringify(tokens)).digest('hex');
     const startBase=performance.now(),left=matcher.baseline(tokens),baseMs=performance.now()-startBase;
     const startTrie=performance.now(),right=matcher.trie(tokens),trieMs=performance.now()-startTrie;
+    const startBucket=performance.now(),bucket=matcher.bucket(tokens),bucketMs=performance.now()-startBucket;
     const parity=matcher.parity(tokens);
-    if(left.length!==right.length)throw new Error('candidate mismatch');
-    results.push({length,inputDigest,baseMs,trieMs,...parity});
+    if(left.length!==right.length || left.length!==bucket.length)throw new Error('candidate mismatch');
+    results.push({length,inputDigest,baseMs,trieMs,bucketMs,...parity});
   }
   return {
     kind:'jo321-symbolid-search-poc',packDigest:snapshot.packDigest,packSource:source,keys:matcher.keyCount,
     inputLengths:matcher.lengthCount,trieNodes:matcher.nodes,trieEdges:matcher.edges,
-    buildMs,memoryBefore:before,memoryAfter:after,results,
-    scope:'Only exact SymbolId key candidate discovery; excludes tokenContext alternatives, VM, stages, lexical/Ruby, browser/network. Synthetic SymbolId input; no long-text speed claim. Timing single-shot; no p95 or peak RSS.'
+    buildMs,trieBuildMs:matcher.trieBuildMs,bucketBuildMs:matcher.bucketBuildMs,
+    bucketGroups:matcher.bucketGroups,bucketHeapDelta:matcher.bucketHeapDelta,
+    memoryBefore:before,memoryAfter:after,results,
+    scope:'Only exact SymbolId key candidate discovery; excludes tokenContext alternatives, VM, stages, lexical/Ruby, browser/network. Synthetic SymbolId input; no long-text speed claim. Bucket heap delta is non-GC-normalized and includes allocation noise. Timing single-shot; no p95 or peak RSS.'
   };
 }
 
