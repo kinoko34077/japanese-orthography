@@ -696,23 +696,24 @@
         && !scope.lexicalMatches.some((entry) => entry.start === 0 && entry.end === text.length)) {
         scope = { ...scope, lexicalMatches: [...scope.lexicalMatches, { start: 0, end: text.length }] };
       }
+      const baseContext = suppliedProgramContext ?? programContextFor(p);
       // #310: only infer the exact POS field proved by a single source-backed lexical
       // reading/surface posting. This is NOT a general tokenizer or a UniDic pos1 claim.
       // Refuse longer competing spans and unsegmented adjacent kana, and leave the
       // original user-supplied tokenWindow path unchanged for TAR parity witnesses.
       const inferredContextFor = (start, end, segment) => {
-        if (!sourceBackedTokenInference || suppliedProgramContext?.tokenWindow || profileId !== "kinotch-fixed") return suppliedProgramContext;
+        if (!sourceBackedTokenInference || baseContext?.tokenWindow || profileId !== "kinotch-fixed") return baseContext;
         const boundary = /[\s、。！？!?.,;:「」『』（）()]/u;
         if ((start > 0 && !boundary.test(text[start - 1]))
-          || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
+          || (end < text.length && !boundary.test(text[end]))) return baseContext;
         // Cheap evidence gate first: the VM scans many substrings; only full
         // lexical keys with exactly one adv candidate need overlap analysis.
         const candidates = scope.candidatesFor(start, end);
-        if (candidates.length !== 1) return suppliedProgramContext;
+        if (candidates.length !== 1) return baseContext;
         const candidate = candidates[0];
         const morphology = candidate.morphology;
         if (candidate.reading !== segment || morphology?.source !== "jmdict"
-          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return suppliedProgramContext;
+          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return baseContext;
         // A full-length lexical unit outranks shorter overlapping analyses under
         // the accepted fewest-segments path rule; a same/longer span does not.
         const competing = scope.lexicalMatches.some((match) =>
@@ -720,18 +721,21 @@
           && (match.start !== start || match.end !== end)
           && match.end - match.start >= end - start);
         if (competing || !scope.lexicalMatches.some((match) => match.start === start && match.end === end)) {
-          return suppliedProgramContext;
+          return baseContext;
         }
         return {
-          ...(suppliedProgramContext ?? {}),
+          ...(baseContext ?? {}),
           tarAutoEvidence: "jmdict-adv-pos-only-v1",
           tokenWindow: { tokens: [{ surface_form: segment, pos: "副詞" }], index: 0 }
         };
       };
+      const contextualOptions = sourceBackedTokenInference && profileId === "kinotch-fixed" && !baseContext?.tokenWindow
+        ? { contextFor: inferredContextFor }
+        : { context: baseContext };
       const observation = await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
-        contextFor: inferredContextFor
+        ...contextualOptions
       });
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
@@ -744,7 +748,7 @@
       return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
         scope,
         observation: { ...observation, candidates: surfaceCandidates },
-        programContext: suppliedProgramContext
+        programContext: baseContext
       });
     };
     const compareProgramOutput = (legacy, program) => {
