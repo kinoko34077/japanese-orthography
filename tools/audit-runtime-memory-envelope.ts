@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-type Section = { sectionId:string; kind:string; loading:string; byteLength:number; rowCount:number };
+type Section = { sectionId:string; kind:string; loading:string; byteLength:number; encoding?:string; rowCount?:number };
 type Manifest = { packDigest:string; sections:Section[] };
 type Stat = { sections:number; bytes:number; gzipBytes:number };
 type Report = { packDigest:string; sizes:{
@@ -32,7 +32,8 @@ export function auditMemoryEnvelope(manifest:Manifest,report:Report){
     must(typeof section.sectionId==='string' && !ids.has(section.sectionId),'duplicate/invalid section ID');
     ids.add(section.sectionId);
     must(Number.isSafeInteger(section.byteLength) && section.byteLength>=0 &&
-      Number.isSafeInteger(section.rowCount) && section.rowCount>=0,
+      (section.rowCount === undefined ? section.encoding === 'json' :
+        Number.isSafeInteger(section.rowCount) && section.rowCount>=0),
       'invalid byteLength/rowCount for '+section.sectionId);
     must(['eager','lazy','on-demand'].includes(section.loading),'unknown loading '+section.sectionId);
     fullBytes+=section.byteLength;
