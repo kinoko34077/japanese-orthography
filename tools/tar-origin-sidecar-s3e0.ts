@@ -8,9 +8,9 @@ import { joinSharedOutputEditableOrigins, type SharedOutputOrigin } from './tar-
 const PIN = '198f8560613d23417cb0f87172ae8662e722ca30';
 const cmp = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 const valid = (s: unknown): s is string => typeof s === 'string' && s.length > 0;
-const check = (condition: unknown, message: string): asserts condition => {
+function check(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error('TAR origin sidecar: ' + message);
-};
+}
 
 export interface OriginSidecarRow {
   /** 生成時の実行ID。ビルド更新で変わる。永続設定に使わない。 */
