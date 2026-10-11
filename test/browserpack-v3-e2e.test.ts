@@ -55,6 +55,27 @@ test('vm-authoritative applies source-backed all-class Sino component evidence t
   assert.equal(result.result.spans[0].certainty, 'unique');
 });
 
+test('#317 caches Sino-component lookup by a stable pack-local component array without changing Ruby results', async () => {
+  const variants = [
+    { text: '必要', expected: '｜必要《ひつえう》' },
+    { text: '学校', expected: '｜學校《がくかう》' }
+  ];
+  // Distinct input words repeatedly share the same pack-local Sino component table.
+  // A cache keyed only by the first word would incorrectly reuse an unrelated mapping.
+  for (let round = 0; round < 2; round += 1) {
+    for (const { text, expected } of variants) {
+      const reply = await service.handle({
+        type: 'transform', requestId: 'jo317-' + round + '-' + text, text,
+        profileId: 'historical', renderMode: 'ruby-whole-explicit',
+        executionMode: 'vm-authoritative'
+      });
+      assert.equal(reply.type, 'result', reply.message);
+      assert.equal(reply.result.renderedText, expected);
+      assert.equal(reply.result.engine, 'rule-program');
+    }
+  }
+});
+
 test('Rule Program parity covers the real-text corpus across every render mode', async () => {
   const renderModes = [
     'plain',
