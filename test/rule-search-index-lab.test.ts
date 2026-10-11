@@ -72,8 +72,8 @@ test('#321 pair key across 65536 boundary has no collision and preserves real pr
   const matcher=compareSearchKeys(collisionKeys,s=>find.get(s.join(','))??-1);
   const stream=[0,65536,1,0,65536,0,1,0];
   assert.deepEqual(matcher.pairBucket(stream),matcher.baseline(stream));
-  assert.deepEqual(matcher.pairBucket(stream).map(h=>h.sequenceId),[201,202,203,202]);
-  assert.equal(matcher.parity(stream).candidates,4);
+  assert.deepEqual(matcher.pairBucket(stream).map(h=>h.sequenceId),[201,202,201,203,202]);
+  assert.equal(matcher.parity(stream).candidates,5);
   assert.throws(()=>compareSearchKeys([{
     sequenceId:301,symbols:[2**26,1],postings:[]
   }],()=>-1),/capacity/);
