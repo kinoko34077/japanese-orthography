@@ -28,6 +28,8 @@ concurrency:
 
 jobs:
   writeback:
+    # choiceはAPI経由の入力値を制約しないため、実行条件で許可モードを厳密に検査。
+    if: ${{ inputs.mode == 'dry-run' || inputs.mode == 'write' }}
     permissions:
       contents: write
       actions: read
