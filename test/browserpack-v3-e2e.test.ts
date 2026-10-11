@@ -254,6 +254,14 @@ test('#310 real-text TAR POS admission uses only uniquely source-backed adverb e
     assert.equal(reply.type, 'result', reply.message);
     return reply.result.renderedText;
   };
+  // The accepted source-witness parity contract is preserved when the Pages flag is absent.
+  const baseline = await service.handle({
+    type: 'transform', requestId: 'tar-unflagged-baseline',
+    text: 'もちろん', profileId: 'kinotch-fixed', renderMode: 'plain',
+    executionMode: 'vm-authoritative'
+  });
+  assert.equal(baseline.type, 'result', baseline.message);
+  assert.equal(baseline.result.renderedText, 'もちろん');
   // JMdict reading-index has one 'adv' lexical candidate for もちろん.
   assert.equal(await run('もちろん'), '勿論');
   assert.equal(await run('もちろん 学校'), '勿論 學校');
