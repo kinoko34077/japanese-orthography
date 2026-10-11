@@ -63,7 +63,7 @@ export function createToggleOverlay(
       || ruleMap.has(rule.logicalRuleId) || !nodeMap.has(rule.nodeId)
       || !safeNumber(rule.programId) || rule.programId < 0
       || !safeNumber(rule.stageOrder) || !safeNumber(rule.sourceOrder)
-      || !Number.isFinite(rule.priority)
+      || !safeNumber(rule.priority)
       || typeof rule.enabledByDefault !== 'boolean'
       || !Array.isArray(rule.allowedProfiles)) throw new Error('invalid or duplicate toggle rule');
     ruleMap.set(rule.logicalRuleId, { ...rule, allowedProfiles: [...rule.allowedProfiles] });
@@ -87,6 +87,13 @@ export function createToggleOverlay(
   };
   const initialSettings = readPatch({}, initial);
   const make = (settings: ReturnType<typeof readPatch>, revision: number) => {
+    // 同じrevisionを使う独立インスタンス/分岐で衝突しないよう、差分設定を昇順で正規化する。
+    // immutable source/default policyはartifactDigestに属する。これは疎なoverrideの完全表現。
+    const effectiveSettings = JSON.stringify([
+      settings.globalEnabled,
+      Object.entries(settings.nodes).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0),
+      Object.entries(settings.rules).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
+    ]);
     const enabled = (rule: ToggleRule, profileId: string): boolean => {
       if (!settings.globalEnabled || rule.sourceLockedOff
         || !rule.allowedProfiles.includes(profileId)
@@ -105,7 +112,7 @@ export function createToggleOverlay(
         if (!rule) throw new Error('unknown logical Rule ID: ' + logicalRuleId);
         return enabled(rule, profileId);
       },
-      /** 候補列挙後にmaskを評価する。OFF規則を競合選択前に落とし、下位候補を再選択可能にする。 */
+      /** 候補列挙後にmaskを評価して整列する。occurrence単位の勝者決定は呼び出し側で行う。 */
       select: (candidates: readonly ToggleCandidate[], profileId: string): ToggleSelection[] => {
         const selected = candidates.flatMap((c) => {
           const rule = ruleMap.get(c.logicalRuleId);
@@ -115,11 +122,11 @@ export function createToggleOverlay(
         selected.sort((a, b) => a.rule.stageOrder - b.rule.stageOrder
           || b.rule.priority - a.rule.priority
           || a.rule.sourceOrder - b.rule.sourceOrder
-          || a.logicalRuleId.localeCompare(b.logicalRuleId));
+          || (a.logicalRuleId < b.logicalRuleId ? -1 : a.logicalRuleId > b.logicalRuleId ? 1 : 0));
         return selected.map(({ logicalRuleId, occurrenceId, programId }) => ({ logicalRuleId, occurrenceId, programId }));
       },
       /** 生成物fingerprintとprofileに設定revisionを結合し、旧text/plan/token cacheの再利用を防ぐ。 */
-      cacheKey: (artifactDigest: string, profileId: string) => JSON.stringify([artifactDigest, profileId, revision]),
+      cacheKey: (artifactDigest: string, profileId: string) => JSON.stringify([artifactDigest, profileId, effectiveSettings, revision]),
       withSettings: (patch: ToggleSettings) => make(readPatch(settings, patch), revision + 1)
     });
   };
