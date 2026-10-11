@@ -13,9 +13,9 @@
 ## 実行
 ```sh
 node --import tsx --test test/rule-search-index-lab.test.ts
-node --max-old-space-size=1024 --import tsx tools/rule-search-index-lab.ts --lengths=250,1000,3000
+node --max-old-space-size=1024 --import tsx tools/rule-search-index-lab.ts --lengths=250,1000,3000 --source=published
 ```
-2行目はpack binaryの生成済み実体を参照するため、`data/browser-pack-v3`配下に対応するsection bodyが存在する環境でのみ実行可能。最大10,000 SymbolId、4ケースまでの明示制限あり。CPU/メモリを抑制できない環境では別プロセスのwall上限付きで実行する。
+2行目は公開済BrowserPackのmanifestを取得し、ローカル正本manifestのpackDigestと、読込む3 sectionのSHA-256を厳密検査する。オフライン測定には`--source=local`を指定し、`data/browser-pack-v3`配下に対応するsection bodyが必要。最大10,000 SymbolId、4ケースまでの明示制限あり。CPU/メモリを抑制できない環境では別プロセスのwall上限付きで実行する。
 
 ## 解釈上の禁止
 Trie方式のMap nodeはオブジェクト領域が増える可能性がある。生の`nodes`、索引build ms、`process.memoryUsage`前後、検索wall msは測るが、peak RSS・GC正規化・定常20MB達成は示さない。本文変換のtokenContext、basic_form、kana alternates、Ruby保護、lexeme判定、stage/priority/VMはPoC範囲外。これらを持つproduction runtimeの全出力が一致した証拠とはせず、採用前に別途端末・本文・profile・TAR fixtureの回帰試験を必須とする。
