@@ -19,7 +19,7 @@ test('#319 audits all accepted TAR records without losing 3166→3163 relation a
   assert.equal(report.programMapping.status, 'not-established');
   assert.ok(report.sourceIdentityKeys > 0);
   assert.ok(report.aggregateRelationsWithMultipleCases > 0);
-  assert.ok(report.sourceKeysSharedAcrossCases >= 0);
+  assert.equal(report.aggregateRelationsWithMultipleCases, 3);
 });
 
 test('#319 fails closed on wrong corpus cardinality and source snapshot', () => {
