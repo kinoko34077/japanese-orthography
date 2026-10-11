@@ -8,12 +8,13 @@ TARの独立entryを同一Programへコンパイルした場合でも、**Progra
 - `editableEntryKeys`: 固定snapshot `198f8560613d23417cb0f87172ae8662e722ca30` のentry識別子。構造化IDとflat locatorを混同せず、**snapshotを更新した際の移行・永続性は未証明**。
 - `canonicalRuleId`: 正規化後のRule IR論理rule ID。原典編集entryの数とは独立。
 - `programId`: Rule IRと同一Digestでコンパイルされた生成順index。再コンパイル後も同じIDとは限らない。
+- `provenancePriority`: 原典監査で追跡した候補出力の優先値。共有出力は`null`であり、実行時の競合・適用順を上書きする権限はない。
 - `output`: 一つのProgram内部の出力枝。共有出力の可編集原典2つはOR意味論、補助flatのevidence-only参照はON/OFF権限を持たない。
 
 ## 現段階の実データ受入境界
 `auditTarBranchProvenance(root)` が原典・正規IR・rule-program-summaryの件数とDigest一致を検証した後、既存の`resolveCandidateGroupOrigins`全120件および`joinSharedOutputEditableOrigins`3件を、`projectTarOriginSidecar`で厳密に合成する。
 
-期待値は合計**123 Program×output枝**、候補側editable **120**、same-output側editable **6**、補助evidence-only **3**。強い編集元のないflat候補entryは固定snapshot下の位置依存キーとしてのみ保有。異snapshot、重複・不明キー、対応の曖昧性はfail-closed。
+期待値は合計**123個のProgram×output対応枝（63 Programに属する）**、候補側editable **120**、same-output側editable **6**、補助evidence-only **3**。強い編集元のないflat候補entryは固定snapshot下の位置依存キーとしてのみ保有。異snapshot、重複・不明キー、対応の曖昧性はfail-closed。
 
 ## 次段階 S3-E1の前提（未実装）
 1. 生成時に`sourceCommit + irDigest + ProgramIndex`を一体で検証する。Packの再生成でProgramIdが変われば旧sidecarを拒否。
