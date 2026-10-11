@@ -61,3 +61,20 @@ test('#321 rejects duplicate SequenceId, divergent identical sequence and invali
   assert.throws(()=>make().parity([NaN]),/invalid/);
   assert.throws(()=>make().parity([-1]),/invalid/);
 });
+
+test('#321 pair key across 65536 boundary has no collision and preserves real prefix',()=>{
+  const collisionKeys:SearchKey[]=[
+    {sequenceId:201,symbols:[0,65536],postings:[{stage:0,direction:0,channel:0,programs:[201]}]},
+    {sequenceId:202,symbols:[1,0],postings:[{stage:0,direction:0,channel:0,programs:[202]}]},
+    {sequenceId:203,symbols:[65536,0],postings:[{stage:4,direction:1,channel:0,programs:[203]}]}
+  ];
+  const find=new Map(collisionKeys.map(k=>[k.symbols.join(','),k.sequenceId]));
+  const matcher=compareSearchKeys(collisionKeys,s=>find.get(s.join(','))??-1);
+  const stream=[0,65536,1,0,65536,0,1,0];
+  assert.deepEqual(matcher.pairBucket(stream),matcher.baseline(stream));
+  assert.deepEqual(matcher.pairBucket(stream).map(h=>h.sequenceId),[201,202,203,202]);
+  assert.equal(matcher.parity(stream).candidates,4);
+  assert.throws(()=>compareSearchKeys([{
+    sequenceId:301,symbols:[2**26,1],postings:[]
+  }],()=>-1),/capacity/);
+});
