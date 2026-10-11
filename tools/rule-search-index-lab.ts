@@ -93,16 +93,16 @@ export async function readAcceptedSearchSnapshot(root: string, source: 'local' |
   };
   const publishedBase = 'https://kinoko34077.github.io/japanese-orthography/browser-pack/';
   if (source === 'published') {
-    const result = await fetch(publishedBase + 'manifest.json');
+    const result = await globalThis.fetch(publishedBase + 'manifest.json');
     if (!result.ok) throw new Error('published manifest HTTP ' + result.status);
     const published = await result.json() as {packDigest:string};
     if (published.packDigest !== manifest.packDigest) throw new Error('published pack digest mismatch');
   }
-  const fetch=async(id:string) => {
+  const loadSection=async(id:string) => {
     const meta=manifest.sections.find(s=>s.sectionId===id);
     if (!meta) throw new Error('missing pack section '+id);
     const bytes=source === 'published' ? await (async()=>{
-      const response=await fetch(new URL(meta.path,publishedBase));
+      const response=await globalThis.fetch(new URL(meta.path,publishedBase));
       if (!response.ok) throw new Error('published section HTTP '+response.status+' '+id);
       return Buffer.from(await response.arrayBuffer());
     })() : await readFile(resolve(dir,meta.path));
@@ -111,7 +111,7 @@ export async function readAcceptedSearchSnapshot(root: string, source: 'local' |
     return decodeSection(bytes);
   };
   const [registry, seq, index]=await Promise.all([
-    fetch('symbol-registry'),fetch('sequence-pool'),fetch('rule-program-index')
+    loadSection('symbol-registry'),loadSection('sequence-pool'),loadSection('rule-program-index')
   ]);
   const atoms:string[]=[];
   for(let i=0;i<registry.rowCount('atoms');i++) atoms.push(registry.string('atoms',i));
