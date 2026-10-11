@@ -86,6 +86,12 @@ test('#349 S3-E1 provenance未認証・多重Program・変形出力を勝手に�
 test('#349 S3-E1 不明設定・profile eligibility欠落・枝重複を明示拒否',()=>{
   const high=makeCandidate('high','甲',10,9,makeProof(row));
   const sidecar={sourceCommit,irDigest,rows:[row]};
+  assert.throws(()=>maskCertifiedCandidatesBeforeArbitration('あ',[high],
+    {...sidecar,sourceCommit:'unknown'}, {[entryA]:true}),/source\/digest invalid/);
+  assert.deepEqual(maskCertifiedCandidatesBeforeArbitration('あ',
+    [{...high,certifiedOrigin:{...makeProof(row),editableEntryKeys:null} as unknown as CertifiedBranch}],
+    sidecar,{[entryA]:true},{[entryA]:false}).unsupported.map(x=>x.reason),
+    ['branch_proof_mismatch']);
   assert.throws(()=>maskCertifiedCandidatesBeforeArbitration('あ',[high],sidecar,{}),
     /missing\/unknown immutable eligibility/);
   assert.throws(()=>maskCertifiedCandidatesBeforeArbitration('あ',[high],sidecar,
