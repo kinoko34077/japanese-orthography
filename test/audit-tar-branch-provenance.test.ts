@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import {
   resolveCandidateGroupOrigins, enabledCandidateBranches, sourceEntryKey, auditTarBranchProvenance
 } from '../tools/audit-tar-branch-provenance.ts';
@@ -58,7 +59,7 @@ test('#327 rejects mismatched provenance, output ambiguity and alternate Group/I
 });
 
 test('#327 real accepted TAR candidate groups and shared simple-exact are joinable to fixed canonical IR',async()=>{
-  const report=await auditTarBranchProvenance(new URL('..',import.meta.url).pathname);
+  const report=await auditTarBranchProvenance(fileURLToPath(new URL('..',import.meta.url)));
   assert.equal(report.candidateGroups,60);
   assert.equal(report.candidateBranchOrigins,120);
   assert.equal(report.uniqueCandidateEntryKeys,120);
