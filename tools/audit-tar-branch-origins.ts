@@ -40,7 +40,7 @@ export function mapCandidateBranchOrigins(doc:{records:Member[];groups:Group[]})
     out.push({groupId:group.id,input:group.input,branches});
   }
   ensure(out.length===60 && used.size===120,'candidate groups not fully mapped');
-  return out.sort((a,b)=>a.groupId.localeCompare(b.groupId,'en'));
+  return out.sort((a,b)=>a.groupId<b.groupId?-1:a.groupId>b.groupId?1:0);
 }
 
 /**
