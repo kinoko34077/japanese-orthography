@@ -153,6 +153,8 @@ export async function auditTarBranchProvenance(root: string) {
     flatCandidateEntries:candidates.filter(x=>x.originKind==='flat').length,
     structuredCandidateEntries:candidates.filter(x=>x.originKind==='structured').length,
     candidateExamples:candidates.slice(0,6),
+    /** #349 read-only sidecar用：正本IR照合済みの120枝。永続設定キーへの昇格禁止。 */
+    candidateOrigins:candidates,
     simpleSharedRelations:simpleShared.length,
     simpleShared,
     excludedCandidateCases:candidate.records.filter(x=>x.candidateKind==='review-empty-output').length,
