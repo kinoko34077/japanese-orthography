@@ -698,11 +698,11 @@
       }
       // #310: only infer the exact POS field proved by a single source-backed lexical
       // reading/surface posting. This is NOT a general tokenizer or a UniDic pos1 claim.
-      // Refuse overlapping lexical spans and unsegmented adjacent kana, and leave the
+      // Refuse longer competing spans and unsegmented adjacent kana, and leave the
       // original user-supplied tokenWindow path unchanged for TAR parity witnesses.
       const inferredContextFor = (start, end, segment) => {
         if (suppliedProgramContext?.tokenWindow || profileId !== "kinotch-fixed") return suppliedProgramContext;
-        const boundary = /[\\s、。！？!?.,;:「」『』（）()]/u;
+        const boundary = /[\s、。！？!?.,;:「」『』（）()]/u;
         if ((start > 0 && !boundary.test(text[start - 1]))
           || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
         // A full-length lexical unit outranks shorter overlapping analyses under the
