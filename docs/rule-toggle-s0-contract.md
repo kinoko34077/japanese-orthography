@@ -21,7 +21,7 @@
 | 個別ルール | 永続キーは論理Rule ID。ProgramId、dense slot、sourceCaseを相互混同しない |
 | 重複の統合 | 異なる論理ルールが同一Program／出力へ集約されても個別にOFF可。候補と由来を紐付けたまま判定する |
 | 優先順位 | stage依存・bundle順・priority・tie順を保存。規則がOFFなら競合候補の選択をやり直す |
-| 設定改訂 | 設定改訂を含むcache keyを使い、旧候補・token・Plan・出力を再利用しない |
+| 設定改訂 | 設定改訂に加えて正規化した有効overrideの完全表現をcache keyに含め、独立インスタンスや分岐が同一revisionでも旧候補・token・Plan・出力を再利用しない |
 | 不正設定 | 未知ID／重複ID／欠落親／親循環などはfail-closed。削除・改称された旧IDには明示移行表を要求 |
 
 ### IDの対応モデル（実装前に監査必須）
@@ -42,9 +42,9 @@ Rule IR ── compiler ── ProgramId / posting / VM ── input candidate +
 
 - 親OFF／child ON、immutable source OFF、profile deny。
 - 同一ProgramIdに由来する別の論理Ruleを別々にOFF。
-- 上位候補OFF時の下位候補復活。元候補を破棄した後に後掛けmaskする方式は禁止。
+- 上位候補OFF時の下位候補復活。元候補を破棄した後に後掛けmaskする方式は禁止。PoCの`select`は**有効候補を整列して返すのみ**で、同一occurrenceの最終勝者決定・多段競合解決は未接続。
 - stable logical IDによるProgramIdの付け替え耐性、未知ID拒否。
-- 改訂番号によるcache partition。
+- 設定内容の正規化＋改訂番号によるcache partition。同revision・別初期設定、同親からの異なる分岐での衝突拒否。
 
 **非実装**: 個別entryへの実際の原典source-case mapping、現行Rule VMへのmask投入、TAR stageを含む多段再変換、連鎖依存、profile UI・永続保存、全19.5万Programへのzero-copy bitset、公開Pages。これらはS2/S3/S4の設計検証とCIを経て個別PRとする。
 
@@ -59,3 +59,6 @@ Rule IR ── compiler ── ProgramId / posting / VM ── input candidate +
 5. 次のランタイム試験で採用する曖昧性golden・DISABLED28 guard。
 
 **S0の仕様テスト合格だけでS3を受入としない。** 正規CIと独立レビューを経て、採用判断は#313、性能判断は#314へ記録する。
+
+## 独立レビューB1修正
+PR #315の初回静的レビューで、初期設定や枝分かれした設定が同じrevision番号となり、`cacheKey`が衝突するB1が発見された。PoCでglobalEnabledとソート済みnode/rule overrideの完全なシリアライズを含めるよう修正した。最終tie-breakもlocaleCompareからUnicodeコードポイント比較へ変更し、priorityを整数へ限定。未知の`globalEnabled:null`は拒否し、反例を契約テストへ追加した。これらはS0 PoCの変更でありproduction適用は未実施。
