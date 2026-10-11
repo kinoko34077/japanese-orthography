@@ -144,3 +144,45 @@ test('parity mode compares the legacy rendered output with the assembled VM outp
     authority: 'legacy'
   });
 });
+
+test('#310 preserves legacy rule constraints in ordinary and inferred-context scans', async () => {
+  const seen: Array<Record<string, unknown> | undefined> = [];
+  const vmPack = {
+    ...pack, hasSection: () => true,
+    ruleCount: () => 1,
+    getRule: () => ({ predicate: { constraint: 'constraint-from-pack' } })
+  };
+  const programRuntime = {
+    createBrowserProgramRuntime: async () => ({
+      transformText: async (source: string, _profileId: string, options: any) => {
+        const ctx = typeof options.contextFor === 'function'
+          ? options.contextFor(0, source.length, source)
+          : options.context;
+        seen.push(ctx);
+        return {
+          candidates: [], contextual: [], lexicalMatchCount: 0,
+          trace: { executedProgramIds: [], runs: [] }
+        };
+      }
+    })
+  };
+  const service = createTransformService({
+    openPack: async () => vmPack, executionMode: 'vm-authoritative', programRuntime
+  });
+  for (const [profileId, inference] of [
+    ['historical', false],
+    ['historical', true],
+    ['kinotch-fixed', true]
+  ] as const) {
+    const reply = await service.handle({
+      type: 'transform', requestId: profileId + String(inference),
+      text: '甲', profileId, renderMode: 'plain', sourceBackedTokenInference: inference
+    });
+    assert.equal(reply.type, 'result', reply.message);
+  }
+  assert.equal(seen.length, 3);
+  for (const ctx of seen) assert.ok(
+    Array.isArray(ctx?.constraints) && ctx.constraints.includes('constraint-from-pack'),
+    'accepted constraint context must survive both static and contextual scans'
+  );
+});

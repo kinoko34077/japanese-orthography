@@ -244,3 +244,37 @@ test('R7 real-text corpus keeps lexical, reading, history, Ruby, and UTF-16 boun
   assert.equal(componentRuby.units[0].unit.sourceSurface, '学校');
   assert.deepEqual(componentRuby.spans.map((span: any) => [span.start, span.end]), [[0, 11]]);
 });
+
+test('#310 real-text TAR POS admission uses only uniquely source-backed adverb evidence', async () => {
+  const run = async (source: string, profileId = 'kinotch-fixed') => {
+    const reply = await service.handle({
+      type: 'transform', requestId: 'tar-real-' + profileId + '-' + source,
+      text: source, profileId, renderMode: 'plain', executionMode: 'vm-authoritative', sourceBackedTokenInference: true
+    });
+    assert.equal(reply.type, 'result', reply.message);
+    return reply.result.renderedText;
+  };
+  // The accepted source-witness parity contract is preserved when the Pages flag is absent.
+  const baseline = await service.handle({
+    type: 'transform', requestId: 'tar-unflagged-baseline',
+    text: 'もちろん', profileId: 'kinotch-fixed', renderMode: 'plain',
+    executionMode: 'vm-authoritative'
+  });
+  assert.equal(baseline.type, 'result', baseline.message);
+  assert.equal(baseline.result.renderedText, 'もちろん');
+  // JMdict reading-index has one 'adv' lexical candidate for もちろん.
+  assert.equal(await run('もちろん'), '勿論');
+  assert.equal(await run('もちろん 学校'), '勿論 學校');
+  assert.equal(await run('もちろん。'), '勿論｡');
+  // No inferred token boundary: do not rewrite an arbitrary kana substring.
+  assert.equal(await run('もちろんさ'), 'もちろんさ');
+  assert.equal(await run('もちろんs'), 'もちろんs');
+  assert.equal(await run('もちろん\t学校'), '勿論\t學校');
+  // JMdict 'adv' does NOT prove TAR's additional pos1='一般' condition.
+  assert.equal(await run('やっぱり'), 'やっぱり');
+  // Ambiguous 'こと' readings cannot be used to invent noun/non-independent POS.
+  assert.equal(await run('こと'), 'ヿ');
+  // A KiNoTch-specific TAR transformation must never leak into generic profiles.
+  assert.equal(await run('もちろん', 'historical'), 'もちろん');
+  assert.equal(await run('もちろん', 'modern'), 'もちろん');
+});

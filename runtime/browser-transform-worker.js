@@ -56,7 +56,7 @@
     const lexicalScopeFor = async (p, text) => {
       if (!selectedLexicalRuntime || typeof p.hasSection !== "function" || !p.hasSection("lexical-directory")
         || typeof p.eagerSection !== "function" || !p.eagerSection("lexical-directory")) {
-        return { lexicalMatches: [], lexemesFor: () => new Set() };
+        return { lexicalMatches: [], candidatesFor: () => [], lexemesFor: () => new Set() };
       }
       if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
       const lexical = lexicalFor.get(p);
@@ -690,16 +690,52 @@
         units
       };
     };
-    const transformWithProgram = async (p, hot, text, profileId, renderMode, suppliedProgramContext = undefined) => {
+    const transformWithProgram = async (p, hot, text, profileId, renderMode, suppliedProgramContext = undefined, sourceBackedTokenInference = false) => {
       let scope = await lexicalScopeFor(p, text);
       if (suppliedProgramContext?.tokenWindow
         && !scope.lexicalMatches.some((entry) => entry.start === 0 && entry.end === text.length)) {
         scope = { ...scope, lexicalMatches: [...scope.lexicalMatches, { start: 0, end: text.length }] };
       }
+      const baseContext = suppliedProgramContext ?? programContextFor(p);
+      // #310: only infer the exact POS field proved by a single source-backed lexical
+      // reading/surface posting. This is NOT a general tokenizer or a UniDic pos1 claim.
+      // Refuse longer competing spans and unsegmented adjacent kana, and leave the
+      // original user-supplied tokenWindow path unchanged for TAR parity witnesses.
+      const inferredContextFor = (start, end, segment) => {
+        if (!sourceBackedTokenInference || baseContext?.tokenWindow || profileId !== "kinotch-fixed") return baseContext;
+        const boundary = /[\s、。！？!?.,;:「」『』（）()]/u;
+        if ((start > 0 && !boundary.test(text[start - 1]))
+          || (end < text.length && !boundary.test(text[end]))) return baseContext;
+        // Cheap evidence gate first: the VM scans many substrings; only full
+        // lexical keys with exactly one adv candidate need overlap analysis.
+        const candidates = scope.candidatesFor(start, end);
+        if (candidates.length !== 1) return baseContext;
+        const candidate = candidates[0];
+        const morphology = candidate.morphology;
+        if (candidate.reading !== segment || morphology?.source !== "jmdict"
+          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return baseContext;
+        // A full-length lexical unit outranks shorter overlapping analyses under
+        // the accepted fewest-segments path rule; a same/longer span does not.
+        const competing = scope.lexicalMatches.some((match) =>
+          match.start < end && start < match.end
+          && (match.start !== start || match.end !== end)
+          && match.end - match.start >= end - start);
+        if (competing || !scope.lexicalMatches.some((match) => match.start === start && match.end === end)) {
+          return baseContext;
+        }
+        return {
+          ...(baseContext ?? {}),
+          tarAutoEvidence: "jmdict-adv-pos-only-v1",
+          tokenWindow: { tokens: [{ surface_form: segment, pos: "副詞" }], index: 0 }
+        };
+      };
+      const contextualOptions = sourceBackedTokenInference && profileId === "kinotch-fixed" && !baseContext?.tokenWindow
+        ? { contextFor: inferredContextFor }
+        : { context: baseContext };
       const observation = await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
-        context: suppliedProgramContext ?? programContextFor(p)
+        ...contextualOptions
       });
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
@@ -712,7 +748,7 @@
       return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
         scope,
         observation: { ...observation, candidates: surfaceCandidates },
-        programContext: suppliedProgramContext
+        programContext: baseContext
       });
     };
     const compareProgramOutput = (legacy, program) => {
@@ -778,7 +814,7 @@
               ? { ...(baseContext ?? {}), tokenWindow: message.tokenWindow }
               : baseContext;
             raw = (message.renderMode ?? "plain") === "plain" && !normalizedRuby
-              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode, programContext)
+              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode, programContext, message.sourceBackedTokenInference === true)
               : await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { rubyEvidence: normalizedRuby?.ranges ?? [], programContext });
             raw = restoreRubyInputRanges(raw, source, normalizedRuby);
             raw.renderMode = message.renderMode ?? "plain";

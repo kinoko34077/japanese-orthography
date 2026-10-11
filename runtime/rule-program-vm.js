@@ -150,6 +150,20 @@
     const tarContextMatches = (rule, context) => {
       const window = context?.tokenWindow;
       if (!window || !Array.isArray(window.tokens) || !Number.isInteger(window.index)) return false;
+      // #310: a lexical dictionary's "adv" proves POS, not tokenization or
+      // TAR pos1/lemma/neighbor/sequence/matchOptions. Only the corresponding
+      // source rule's sole positive current.POS condition may use this evidence.
+      if (context.tarAutoEvidence !== undefined) {
+        const current = rule?.conditions?.current;
+        if (context.tarAutoEvidence !== "jmdict-adv-pos-only-v1"
+          || rule?.ruleType != null || rule?.matchTarget != null || rule?.matchOptions != null
+          || rule?.sequence != null || rule?.tarPattern != null
+          || !rule?.conditions || Object.keys(rule.conditions).length !== 1
+          || !current || Array.isArray(current) || typeof current !== "object"
+          || Object.keys(current).length !== 1 || current.pos !== "副詞"
+          || window.tokens.length !== 1 || window.index !== 0
+          || window.tokens[0]?.pos !== "副詞" || window.tokens[0]?.surface_form !== rule.from) return false;
+      }
       const tokens = window.tokens;
       const index = window.index;
       const kanaInsensitive = rule?.matchOptions?.kana_insensitive === true;
