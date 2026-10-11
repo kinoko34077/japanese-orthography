@@ -4,6 +4,7 @@
  */
 import type { OriginSidecarRow } from './tar-origin-sidecar-s3e0.ts';
 
+const PIN = '198f8560613d23417cb0f87172ae8662e722ca30';
 const valid = (s: unknown): s is string => typeof s === 'string' && s.length > 0;
 function check(value: unknown, reason: string): asserts value {
   if (!value) throw new Error('TAR candidate origin mask: ' + reason);
@@ -55,7 +56,7 @@ export function maskCertifiedCandidatesBeforeArbitration<T extends OriginCandida
   eligibilityByEntry: Readonly<Record<string, boolean>>,
   enabledByEntry: Readonly<Record<string, boolean | null>> = {}
 ): { candidates: T[]; blockedKeys: string[]; unsupported: MaskDiagnostic[] } {
-  check(valid(sidecar.sourceCommit) && /^[0-9a-f]{64}$/u.test(sidecar.irDigest),
+  check(sidecar.sourceCommit === PIN && /^[0-9a-f]{64}$/u.test(sidecar.irDigest),
     'sidecar source/digest invalid');
   const rows = new Map<string, OriginSidecarRow>();
   const candidateProgramIds = new Set<number>();
@@ -107,6 +108,7 @@ export function maskCertifiedCandidatesBeforeArbitration<T extends OriginCandida
       && candidate.stage === proof.stage && candidate.direction === proof.direction
       && candidate.channel === proof.channel
       && [proof.stage,proof.direction,proof.channel].every(valid)
+      && Array.isArray(proof.editableEntryKeys)
       && proof.editableEntryKeys.length === row.editableEntryKeys.length
       && proof.editableEntryKeys.every((id,i) => id === row.editableEntryKeys[i]);
     if (!correct) {
