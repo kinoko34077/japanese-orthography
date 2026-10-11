@@ -35,6 +35,7 @@ test('#349 保守的123枝sidecarの最小合同テスト：原典entry・補助
   assert.equal(result.sharedOutputBranches, 1);
   assert.equal(result.editableOriginCount, 4);
   assert.equal(result.evidenceOnlyRefCount, 1);
+  assert.deepEqual(result.rows.map(r => r.provenancePriority), [30, 20, null]);
   const [a,b,shared] = result.rows;
   assert.deepEqual([a?.output,b?.output], ['何','孰']); // outputの安定コードポイント順
   assert.deepEqual(shared?.editableEntryKeys, [structured('entry-shared-a'), structured('entry-shared-b')]);
@@ -56,6 +57,10 @@ test('#349 不明スナップショット・重複枝・出典権限混同・Pro
   assert.throws(()=>projectTarOriginSidecar({...fixture,candidateOrigins:[
     {...fixture.candidateOrigins[0]!,programId:100}, fixture.candidateOrigins[1]!
   ]}),/invalid branch/);
+  assert.throws(()=>projectTarOriginSidecar({...fixture,candidateOrigins:[
+    fixture.candidateOrigins[0]!,
+    {...fixture.candidateOrigins[1]!,sourceCaseId:fixture.candidateOrigins[0]!.sourceCaseId}
+  ]}),/source case reused/);
   assert.throws(()=>projectTarOriginSidecar({...fixture,candidateOrigins:[
     {...fixture.candidateOrigins[0]!,entryKey:structured('entry-shared-a')},fixture.candidateOrigins[1]!
   ]}),/editable origin reused/);
