@@ -55,9 +55,11 @@ export function planTarRuleJoin(corpora:readonly Corpus[]):Mapped[]{
 }
 
 export async function auditTarRuleProgramJoin(root:string){
-  const [simple,context,candidate,pattern,irExpected,programExpected,home]=await Promise.all([
-    ...['simple-exact','context','candidate','pattern'].map(async k=>
-      JSON.parse(await readFile(resolve(root,BASE+k+'-rules.json'),'utf8')) as Corpus),
+  const [simple,context,candidate,pattern]=await Promise.all(
+    ['simple-exact','context','candidate','pattern'].map(async k=>
+      JSON.parse(await readFile(resolve(root,BASE+k+'-rules.json'),'utf8')) as Corpus)
+  );
+  const [irExpected,programExpected,home]=await Promise.all([
     readFile(resolve(root,'data/reports/rule-ir-summary.json'),'utf8').then(JSON.parse) as Promise<{digest:string;rules:number}>,
     readFile(resolve(root,'data/reports/rule-program-summary.json'),'utf8').then(JSON.parse) as Promise<{irDigest:string;programs:number}>,
     readFile(resolve(root,'data/profiles/kinotch/tar-operational-rules/source-case-index.json'),'utf8').then(JSON.parse) as Promise<{entries:Array<{sourceCaseId:string}>;disabledSourceCaseIds:string[]}>
@@ -113,7 +115,7 @@ export async function auditTarRuleProgramJoin(root:string){
     canonicalRulesInSource:new Set(rows.map(x=>x.canonicalRuleId).filter(Boolean)).size,
     tracedPrograms:programSources.size,
     programsSharedByCases:multiCasePrograms.length,
-    maxCasesPerProgram:Math.max(0,...[...programSources.values()].map(v=>v.length)),
+    maxCasesPerProgram:[...programSources.values()].reduce((n,v)=>Math.max(n,v.length),0),
     sharedProgramSamples:multiCasePrograms.slice(0,8).map(([programId,cases])=>({
       programId,caseCount:cases.length,canonicalIds:ir.rules[programId]?.canonicalIds.slice(0,5)??[]
     })),
