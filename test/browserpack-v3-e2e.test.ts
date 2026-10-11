@@ -268,6 +268,8 @@ test('#310 real-text TAR POS admission uses only uniquely source-backed adverb e
   assert.equal(await run('もちろん。'), '勿論。');
   // No inferred token boundary: do not rewrite an arbitrary kana substring.
   assert.equal(await run('もちろんさ'), 'もちろんさ');
+  assert.equal(await run('もちろんs'), 'もちろんs');
+  assert.equal(await run('もちろん\t学校'), '勿論\t學校');
   // JMdict 'adv' does NOT prove TAR's additional pos1='一般' condition.
   assert.equal(await run('やっぱり'), 'やっぱり');
   // Ambiguous 'こと' readings cannot be used to invent noun/non-independent POS.
