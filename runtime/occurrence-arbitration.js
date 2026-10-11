@@ -53,7 +53,9 @@
           throw new TypeError("Invalid lexical DAG edge");
         }
       }
-      return { kind: "dag", length, edges };
+      // #340: DAGの順序は候補非依存。同じ安定比較を一度だけ適用し、入力を破壊しない。
+      const sortedEdges = [...edges].sort((a, b) => a.start - b.start || a.end - b.end);
+      return { kind: "dag", length, edges: sortedEdges };
     }
     if (!Array.isArray(lexical.paths) || lexical.paths.length === 0) {
       throw new TypeError("Lexical occurrence context requires a dag or at least one path");
@@ -154,7 +156,7 @@
       return { all: results.every(Boolean), some: results.some(Boolean) };
     }
     const reach = new Map([[0, new Set([0])]]);
-    const edges = [...evidence.edges].sort((a, b) => a.start - b.start || a.end - b.end);
+    const edges = evidence.edges;
     for (const edge of edges) {
       const from = reach.get(edge.start);
       if (!from) continue;
