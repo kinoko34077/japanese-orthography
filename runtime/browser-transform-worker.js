@@ -705,8 +705,16 @@
         const boundary = /[\s、。！？!?.,;:「」『』（）()]/u;
         if ((start > 0 && !boundary.test(text[start - 1]))
           || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
-        // A full-length lexical unit outranks shorter overlapping analyses under the
-        // accepted fewest-segments path rule; a same/longer competing span does not.
+        // Cheap evidence gate first: the VM scans many substrings; only full
+        // lexical keys with exactly one adv candidate need overlap analysis.
+        const candidates = scope.candidatesFor(start, end);
+        if (candidates.length !== 1) return suppliedProgramContext;
+        const candidate = candidates[0];
+        const morphology = candidate.morphology;
+        if (candidate.reading !== segment || morphology?.source !== "jmdict"
+          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return suppliedProgramContext;
+        // A full-length lexical unit outranks shorter overlapping analyses under
+        // the accepted fewest-segments path rule; a same/longer span does not.
         const competing = scope.lexicalMatches.some((match) =>
           match.start < end && start < match.end
           && (match.start !== start || match.end !== end)
@@ -714,12 +722,6 @@
         if (competing || !scope.lexicalMatches.some((match) => match.start === start && match.end === end)) {
           return suppliedProgramContext;
         }
-        const candidates = scope.candidatesFor(start, end);
-        if (candidates.length !== 1) return suppliedProgramContext;
-        const candidate = candidates[0];
-        const morphology = candidate.morphology;
-        if (candidate.reading !== segment || morphology?.source !== "jmdict"
-          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return suppliedProgramContext;
         return {
           ...(suppliedProgramContext ?? {}),
           tarAutoEvidence: "jmdict-adv-pos-only-v1",
