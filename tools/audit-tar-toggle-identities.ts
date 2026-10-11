@@ -56,7 +56,8 @@ export function auditTarToggleIdentities(docs: readonly SourceDocument[], home: 
       ensure(valid(recordId) && Array.isArray(ids) && ids.length > 0, 'record/case identity at ' + path + '/' + recordIndex);
       if (ids.length > 1) recordsWithSharedCases++;
       const refs: SourceRef[] = i === 3 ? [
-        { kind: 'structured', path: 'transform-settings (8).json', sourceId: rec.sourceRuleId, locator: rec.locator }
+        { kind: 'structured', path: 'transform-settings (8).json', sourceId: recordId,
+          ...(valid(rec.locator) ? { locator: rec.locator } : {}) }
       ] : rec.sourceRefs ?? [];
       ensure(Array.isArray(refs) && refs.length > 0, 'missing origin references for ' + recordId);
       const keys = new Set<string>(), strongKeys = new Set<string>();
