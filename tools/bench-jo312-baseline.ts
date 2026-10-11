@@ -29,18 +29,38 @@ const script = fileURLToPath(import.meta.url);
 const root = resolve(dirname(script), '..');
 const require = createRequire(import.meta.url);
 
-const runOne = async (length: number, profileId: string) => {
+type PackSource = 'local' | 'published';
+const PUBLISHED_BASE = 'https://kinoko34077.github.io/japanese-orthography/browser-pack/';
+const runOne = async (length: number, profileId: string, packSource: PackSource) => {
   const { openBrowserPack } = require('../runtime/browser-pack-runtime.js');
   const { createTransformService } = require('../runtime/browser-transform-worker.js');
   const packDir = resolve(root, 'data/browser-pack-v3');
   const manifest = JSON.parse(await readFile(resolve(packDir, 'manifest.json'), 'utf8')) as {
     packDigest: string; sections: Array<{ sectionId: string; path: string }>;
   };
+  let manifestFetchMs = 0;
+  let manifestFetchBodyBytes = 0;
+  if (packSource === 'published') {
+    const beforeManifest = performance.now();
+    const response = await fetch(PUBLISHED_BASE + 'manifest.json');
+    if (!response.ok) throw new Error('published manifest HTTP ' + response.status);
+    const body = await response.text();
+    manifestFetchMs = performance.now() - beforeManifest;
+    manifestFetchBodyBytes = Buffer.byteLength(body);
+    const published = JSON.parse(body) as { packDigest: string };
+    if (published.packDigest !== manifest.packDigest) throw new Error('published pack digest differs from local accepted manifest');
+  }
   const sectionLoads: Array<{ id: string; bytes: number }> = [];
   const service = createTransformService({
     executionMode: 'vm-authoritative',
     openPack: async () => openBrowserPack(manifest, async (section: { sectionId: string; path: string }) => {
-      const body = await readFile(resolve(packDir, section.path));
+      const body = packSource === 'published'
+        ? await (async () => {
+          const response = await fetch(new URL(section.path, PUBLISHED_BASE));
+          if (!response.ok) throw new Error('published section HTTP ' + response.status + ': ' + section.sectionId);
+          return Buffer.from(await response.arrayBuffer());
+        })()
+        : await readFile(resolve(packDir, section.path));
       sectionLoads.push({ id: section.sectionId, bytes: body.byteLength });
       return body;
     })
@@ -74,6 +94,7 @@ const runOne = async (length: number, profileId: string) => {
   const loadedIds = new Set(sectionLoads.map(x => x.id));
   return {
     kind: 'jo312-s1-browser-baseline', baseline: 'synthetic-repeated-Japanese-text',
+    packSource, manifestFetchMs, manifestFetchBodyBytes,
     node: process.version, platform: process.platform, arch: process.arch,
     profileId, renderMode: 'plain', executionMode: 'vm-authoritative',
     packDigest: manifest.packDigest, inputLength: length, inputSha256: originalDigest,
@@ -95,16 +116,18 @@ export function runBoundedBaseline(
   lengths: readonly number[],
   profileId = 'kinotch-fixed',
   timeoutMs = 15_000,
-  heapMb = 512
+  heapMb = 512,
+  packSource: PackSource = 'published'
 ): { kind: string; note: string; records: BenchRecord[] } {
   if (lengths.length === 0 || lengths.some(n => !Number.isSafeInteger(n) || n < 1 || n > 100_000)
     || !Number.isSafeInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000
     || !Number.isSafeInteger(heapMb) || heapMb < 128 || heapMb > 2048
-    || !['kinotch-fixed', 'historical', 'modern'].includes(profileId)) throw new Error('invalid benchmark parameters');
+    || !['kinotch-fixed', 'historical', 'modern'].includes(profileId)
+    || !['local', 'published'].includes(packSource)) throw new Error('invalid benchmark parameters');
   const records = lengths.map(length => {
     const child = spawnSync(process.execPath, [
       '--max-old-space-size=' + heapMb, '--import', 'tsx', script, '--child',
-      '--length=' + length, '--profile=' + profileId
+      '--length=' + length, '--profile=' + profileId, '--source=' + packSource
     ], { cwd: root, timeout: timeoutMs, encoding: 'utf8', maxBuffer: 2 * 1024 * 1024 });
     if (child.error && (child.error as NodeJS.ErrnoException).code === 'ETIMEDOUT') {
       return { length, profileId, status: 'timeout' as const, error: 'wall-clock timeout ' + timeoutMs + 'ms' };
@@ -121,7 +144,7 @@ export function runBoundedBaseline(
   });
   return {
     kind: 'jo312-s1-bounded-baseline-results',
-    note: 'synthetic corpus only; child V8 heap limit is NOT an RSS limit. No DOM/render timing. One observation per case, not statistical p95.',
+    note: 'synthetic corpus only; published provider includes network fetch; fetchedBytes are decoded HTTP/file bodies, NOT wire bytes. Child V8 heap limit is NOT an RSS limit. No DOM/render timing. One observation per case, not statistical p95.',
     records
   };
 }
@@ -138,11 +161,15 @@ if (process.argv[1] && resolve(process.argv[1]) === script) {
     process.argv.find(a => a.startsWith('--' + name + '='))?.slice(name.length + 3) ?? fallback;
   const profile = strOpt('profile', 'kinotch-fixed');
   if (child) {
-    const result = await runOne(numOpt('length', 1000), profile);
+    const source = strOpt('source', 'published');
+    if (source !== 'local' && source !== 'published') throw new Error('invalid --source');
+    const result = await runOne(numOpt('length', 1000), profile, source);
     process.stdout.write(JSON.stringify(result) + '\n');
   } else {
     const lengths = strOpt('lengths', '1000,10000,50000,100000').split(',').map(Number);
-    const result = runBoundedBaseline(lengths, profile, numOpt('timeout-ms', 15000), numOpt('heap-mb', 512));
+    const source = strOpt('source', 'published');
+    if (source !== 'local' && source !== 'published') throw new Error('invalid --source');
+    const result = runBoundedBaseline(lengths, profile, numOpt('timeout-ms', 15000), numOpt('heap-mb', 512), source);
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   }
 }
