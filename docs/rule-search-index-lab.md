@@ -12,6 +12,9 @@
 - 完全一致判定：各候補の`(start,end,SequenceId,stage,direction,channel,ProgramIds順)`を比較し、候補数だけの一致では合格させない。重複Programや別channelを除去しない。
 - 実験データ：固定種で実packに存在するSymbolId列を結合する合成シーケンス。**実記事・実日本語自然文や外部ブラウザ速度を代表しない**。
 
+
+- **衝突ガード（追加検証）**：2文字ペアIDを `first * 2^26 + second` で構成し、各SymbolIdが2^26未満であることを実行時確認する。候補判定時は先頭2字も再照合する。65536境界で旧数式が衝突する反例を回帰テストに追加。合成文区切りIDも実キーの最大値+1で選ぶ。過去の先頭2字方式の実測は修正前コードによるもので、**修正版の本pack再測定までは採用数値を更新しない**。
+
 ## 実行
 ```sh
 node --import tsx --test test/rule-search-index-lab.test.ts
