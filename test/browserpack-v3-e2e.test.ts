@@ -71,7 +71,7 @@ test('#317 caches Sino-component lookup by a stable pack-local component array w
       });
       assert.equal(reply.type, 'result', reply.message);
       assert.equal(reply.result.renderedText, expected);
-      assert.equal(reply.result.engine, 'rule-program');
+      assert.equal(reply.result.executionMode, 'vm-authoritative');
     }
   }
 });
