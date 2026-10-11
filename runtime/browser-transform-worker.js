@@ -161,13 +161,21 @@
       sinoFor.set(p, promise);
       return promise;
     };
+    // #317: sinoComponentsFor(pack)はpackごとに同じ読み取り専用配列を再利用する。
+    // 長文では全候補spanがこの配列を参照するため、文字索引の全件再構築を避ける。
+    // WeakMapはcreateTransformService内に閉じ、別pack/別配列へ混入させない。
+    const sinoByCharacter = new WeakMap();
     const alignSinoComponents = (surface, modernReading, components) => {
       const chars = [...surface];
-      const byCharacter = new Map();
-      for (const component of components) {
-        const list = byCharacter.get(component.character) ?? [];
-        list.push(component);
-        byCharacter.set(component.character, list);
+      let byCharacter = sinoByCharacter.get(components);
+      if (!byCharacter) {
+        byCharacter = new Map();
+        for (const component of components) {
+          const list = byCharacter.get(component.character) ?? [];
+          list.push(component);
+          byCharacter.set(component.character, list);
+        }
+        sinoByCharacter.set(components, byCharacter);
       }
       const paths = [];
       const walk = (characterIndex, readingIndex, parts) => {
