@@ -56,7 +56,7 @@
     const lexicalScopeFor = async (p, text) => {
       if (!selectedLexicalRuntime || typeof p.hasSection !== "function" || !p.hasSection("lexical-directory")
         || typeof p.eagerSection !== "function" || !p.eagerSection("lexical-directory")) {
-        return { lexicalMatches: [], lexemesFor: () => new Set() };
+        return { lexicalMatches: [], candidatesFor: () => [], lexemesFor: () => new Set() };
       }
       if (!lexicalFor.has(p)) lexicalFor.set(p, selectedLexicalRuntime.createBrowserLexicalRuntime(p));
       const lexical = lexicalFor.get(p);
