@@ -705,8 +705,15 @@
         const boundary = /[\\s、。！？!?.,;:「」『』（）()]/u;
         if ((start > 0 && !boundary.test(text[start - 1]))
           || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
-        const overlaps = scope.lexicalMatches.filter((match) => match.start < end && start < match.end);
-        if (overlaps.length !== 1 || overlaps[0].start !== start || overlaps[0].end !== end) return suppliedProgramContext;
+        // A full-length lexical unit outranks shorter overlapping analyses under the
+        // accepted fewest-segments path rule; a same/longer competing span does not.
+        const competing = scope.lexicalMatches.some((match) =>
+          match.start < end && start < match.end
+          && (match.start !== start || match.end !== end)
+          && match.end - match.start >= end - start);
+        if (competing || !scope.lexicalMatches.some((match) => match.start === start && match.end === end)) {
+          return suppliedProgramContext;
+        }
         const candidates = scope.candidatesFor(start, end);
         if (candidates.length !== 1) return suppliedProgramContext;
         const candidate = candidates[0];
