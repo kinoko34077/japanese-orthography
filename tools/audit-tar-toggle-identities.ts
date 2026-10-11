@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateTarPatternCorpus } from './tar-pattern.ts';
 
 /**
  * #319: TAR source-case → 原典entryの全件照合。read-only / 本番未接続。
@@ -136,8 +137,9 @@ export function auditTarToggleIdentities(docs: readonly SourceDocument[], home: 
     sourceKeysSharedAcrossCases: sharedSourceKeys.length,
     maxCasesPerSourceKey: sharedSourceKeys[0]?.cases ?? 1,
     sharedSourceKeyExamples: sharedSourceKeys.slice(0, 8),
-    divergentInputForms: divergentInput.length,
-    divergentInputExamples: divergentInput.slice(0, 8).map(([from, outputs])=>({from, distinctOutputs: outputs.size})),
+    sameSurfaceMultipleOutputsIgnoringContext: divergentInput.length,
+    sameSurfaceMultipleOutputExamples: divergentInput.slice(0, 8).map(([from, outputs])=>({from, distinctOutputs: outputs.size})),
+    sameSurfaceCaveat: 'Raw from text only; profile, sequence and token context are NOT distinguished. Not an ambiguity estimate.',
     programMapping: { status: 'not-established', reason: 'Compiled ProgramId is a build-local index; source provenance alone cannot prove one-to-one or many-to-one runtime mapping. Runtime/evidence join required.' },
     logicalIdPolicy: {
       strong: 'source commit + structured source path + sourceId (editable entry, within pinned source snapshot only)',
@@ -148,6 +150,8 @@ export function auditTarToggleIdentities(docs: readonly SourceDocument[], home: 
 }
 
 export async function runTarToggleIdentityCensus(root: string) {
+  // #291 の既存固定原典照合を再利用し、patternのsourceRuleIdを捏造せず毎回verifyする。
+  await validateTarPatternCorpus(root);
   const docs = await Promise.all(TAR_CORPORA.map(async name =>
     JSON.parse(await readFile(resolve(root, corpusPath(name)), 'utf8')) as SourceDocument));
   const home = JSON.parse(await readFile(resolve(root,
