@@ -81,6 +81,36 @@ export function compareSearchKeys(
     }
     return hits;
   };
+  const pairHeapBefore = process.memoryUsage().heapUsed;
+  const pairBuildStart = performance.now();
+  const singles = new Map<number, SearchKey>();
+  const pairs = new Map<number, SearchKey[]>();
+  for (const key of keys) {
+    if(key.symbols.length===1) { singles.set(key.symbols[0]!,key);continue; }
+    const pair = key.symbols[0]!*65536+key.symbols[1]!;
+    const group = pairs.get(pair)??[];
+    group.push(key);
+    pairs.set(pair,group);
+  }
+  for(const group of pairs.values()) group.sort((a,b)=>a.symbols.length-b.symbols.length || a.sequenceId-b.sequenceId);
+  const pairBuildMs = performance.now()-pairBuildStart;
+  const pairHeapDelta = process.memoryUsage().heapUsed-pairHeapBefore;
+  const pairBucket = (tokens:readonly number[]):SearchHit[]=>{
+    const hits:SearchHit[]=[];
+    for(let start=0;start<tokens.length;start++){
+      const one=singles.get(tokens[start]!);
+      if(one)hits.push({start,end:start+1,sequenceId:one.sequenceId,postings:one.postings});
+      if(start+1>=tokens.length)continue;
+      const pair=tokens[start]!*65536+tokens[start+1]!;
+      for(const key of pairs.get(pair)??[]){
+        if(start+key.symbols.length>tokens.length)continue;
+        let good=true;
+        for(let j=2;j<key.symbols.length;j++)if(tokens[start+j]!==key.symbols[j]){good=false;break;}
+        if(good)hits.push({start,end:start+key.symbols.length,sequenceId:key.sequenceId,postings:key.postings});
+      }
+    }
+    return hits;
+  };
   const trie = (tokens: readonly number[]): SearchHit[] => {
     const hits: SearchHit[] = [];
     for (let start=0;start<tokens.length;start++) {
@@ -100,7 +130,8 @@ export function compareSearchKeys(
     const a=baseline(tokens).map(signature);
     const b=trie(tokens).map(signature);
     const c=bucket(tokens).map(signature);
-    for(const [strategy,other] of [['trie',b],['bucket',c]] as const){
+    const d=pairBucket(tokens).map(signature);
+    for(const [strategy,other] of [['trie',b],['bucket',c],['pairBucket',d]] as const){
       const mismatch=a.findIndex((entry,i)=>entry!==other[i]);
       if (a.length!==other.length || mismatch>=0) throw new Error('candidate drift: '+JSON.stringify({
         strategy,baseline:a.length,other:other.length,mismatch,
@@ -109,7 +140,8 @@ export function compareSearchKeys(
     }
     return { candidates:a.length, digest:createHash('sha256').update(JSON.stringify(a)).digest('hex') };
   };
-  return { baseline,trie,bucket,parity,nodes,edges,trieBuildMs,bucketBuildMs,bucketHeapDelta,bucketGroups:buckets.size,
+  return { baseline,trie,bucket,pairBucket,parity,nodes,edges,trieBuildMs,bucketBuildMs,bucketHeapDelta,bucketGroups:buckets.size,
+    pairBuildMs,pairHeapDelta,pairGroups:pairs.size,singleGroups:singles.size,
     keyCount:keys.length,lengthCount:lengths.length };
 }
 
@@ -191,15 +223,18 @@ export async function measureSearchCandidates(root:string,lengths:readonly numbe
     const startBase=performance.now(),left=matcher.baseline(tokens),baseMs=performance.now()-startBase;
     const startTrie=performance.now(),right=matcher.trie(tokens),trieMs=performance.now()-startTrie;
     const startBucket=performance.now(),bucket=matcher.bucket(tokens),bucketMs=performance.now()-startBucket;
+    const startPair=performance.now(),pair=matcher.pairBucket(tokens),pairMs=performance.now()-startPair;
     const parity=matcher.parity(tokens);
-    if(left.length!==right.length || left.length!==bucket.length)throw new Error('candidate mismatch');
-    results.push({length,inputDigest,baseMs,trieMs,bucketMs,...parity});
+    if(left.length!==right.length || left.length!==bucket.length || left.length!==pair.length)throw new Error('candidate mismatch');
+    results.push({length,inputDigest,baseMs,trieMs,bucketMs,pairMs,...parity});
   }
   return {
     kind:'jo321-symbolid-search-poc',packDigest:snapshot.packDigest,packSource:source,keys:matcher.keyCount,
     inputLengths:matcher.lengthCount,trieNodes:matcher.nodes,trieEdges:matcher.edges,
     buildMs,trieBuildMs:matcher.trieBuildMs,bucketBuildMs:matcher.bucketBuildMs,
     bucketGroups:matcher.bucketGroups,bucketHeapDelta:matcher.bucketHeapDelta,
+    pairGroups:matcher.pairGroups,singleGroups:matcher.singleGroups,
+    pairBuildMs:matcher.pairBuildMs,pairHeapDelta:matcher.pairHeapDelta,
     memoryBefore:before,memoryAfter:after,results,
     scope:'Only exact SymbolId key candidate discovery; excludes tokenContext alternatives, VM, stages, lexical/Ruby, browser/network. Synthetic SymbolId input; no long-text speed claim. Bucket heap delta is non-GC-normalized and includes allocation noise. Timing single-shot; no p95 or peak RSS.'
   };
