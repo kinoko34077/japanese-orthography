@@ -247,13 +247,24 @@
     // deterministic result for the exact same occurrence. Preserve the candidate in diagnostics,
     // but keep it out of render arbitration when a non-candidate peer covers the identical span.
     // Candidate-only groups continue through the ordinary conflict path and therefore remain unresolved.
+    // #347: 大量候補では同一spanの確定peerだけを一度索引化し、candidateごとの
+    // live全件走査(O(n^2))を避ける。少量の候補は従来の早期終了を保つ。
+    const useDeterministicPeerIndex = live.length >= 256 && live.some((item) => item.candidate === true);
+    const deterministicPeerIndex = useDeterministicPeerIndex ? new Set() : null;
+    if (deterministicPeerIndex) {
+      for (const item of live) {
+        if (item.candidate !== true) deterministicPeerIndex.add(JSON.stringify([item.start, item.end]));
+      }
+    }
     const renderLive = [];
     for (const candidate of live) {
-      const deterministicPeer = candidate.candidate === true && live.some((other) =>
-        other !== candidate
-        && other.candidate !== true
-        && other.start === candidate.start
-        && other.end === candidate.end);
+      const deterministicPeer = candidate.candidate === true && (deterministicPeerIndex
+        ? deterministicPeerIndex.has(JSON.stringify([candidate.start, candidate.end]))
+        : live.some((other) =>
+          other !== candidate
+          && other.candidate !== true
+          && other.start === candidate.start
+          && other.end === candidate.end));
       if (deterministicPeer) {
         blocked.push({ candidate, reason: "candidate_alternative" });
         continue;
