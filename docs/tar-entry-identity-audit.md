@@ -27,7 +27,7 @@ node --import tsx --test test/audit-tar-toggle-identities.test.ts
 
 `tools/audit-tar-toggle-identities.ts`は4成果物と`source-case-index.json`を読み込み、4,005関係（3,163+670+165+7）／4,008 active cases（3,166+670+165+7）／28 disabled casesを検証する。index `recordIndex` とIDも厳密照合し、不整合はfail closed。
 
-出力はsource identity keyの多重参照数、structured強識別子未確認数、原典参照の多重性、同一入力に異なる出力を持つ関係の存在を集計する。**この集計に含む`sourceIdentityKeys`はProgramへ既に紐付いた数ではない。** `programMapping.status`は意図的に `not-established` として出力する。
+出力はsource identity keyの多重参照数、structured強識別子未確認数、原典参照の多重性、同一入力に異なる出力を持つ関係の存在を集計する。最後の集計は**文脈・profileを無視した同一字面の粗い集計であり、曖昧性の実測値ではない**。patternの7件は、既存 `validateTarPatternCorpus` を先行実行して固定原典`transform-settings (8).json`とfixture／成果物を全件照合する。**この集計に含む`sourceIdentityKeys`はProgramへ既に紐付いた数ではない。** `programMapping.status`は意図的に `not-established` として出力する。
 
 ## S3-Bへ進む条件
 - source case → source entry の実レコード分布を監査結果とともに#319へ記録。
