@@ -12,7 +12,7 @@ node --import tsx tools/bench-jo312-baseline.ts --lengths=1000 --source=local
 - 実際の `runtime/browser-transform-worker.js` と `data/browser-pack-v3/manifest.json` を使う。デフォルトの `published` はHTTP公開Pack（manifestのdigestをrepositoryのmanifestと照合）をsection providerとして使用する。`local` は生成済みbinary sectionのある作業環境専用。通常のshallow cloneにはmanifestしかなく、`local` はENOENTとなる点を明示する。
 - 子プロセスを長さごとに隔離し、`--timeout-ms`超過で強制終了・`status=timeout`。続く小／大ケースを破棄せず別行に記録する。デフォルト15秒は初期安全上限で**速度合格閾値ではない**。
 - `--heap-mb` はV8 old-space上限。プロセス全体RSS／OS物理RAMの厳密上限ではないため、システム低メモリ時には手動停止する。
-- `published` の通信・CDNキャッシュ・回線状況は計測に含まれる。HTTPセクションの取得byte数はデコード済みbodyで、gzip圧縮のwire byteではない。`local`はファイル読込で条件が異なり、両者のwallを同じ環境の直接比較値として扱わない。
+- `published` の通信・CDNキャッシュ・回線状況は計測に含まれる。HTTPセクションの取得byte数はデコード済みbodyで、gzip圧縮のwire byteではない。providerの各読込に費やした時間の合算`sectionProviderMs`を別指標として記録し、cold wallに含まれる通信・ファイル読込待ちを区別する。ただし逐次／並列fetchが混在し得るためこの値をwallから単純減算して純CPU時間と定義しない。`local`はファイル読込で条件が異なり、両者のwallを同じ環境の直接比較値として扱わない。
 - `process.memoryUsage` は「呼出し前後」の観測であり、peakメモリでもブラウザ実測でもない。`reportedElapsedMs` はWorker返答値、`wallMs`はprocess側計測。NULLは未計測値として保持。
 - 自動処理は一ケースにつき一観測なのでmedian/p95を報告しない。正式ベースラインでは反復回数・端末OS/CPU/RAM・Node versionと端末性能を固定し、複数回実行の分布を別記録。
 - 現在報告値（BrowserPack全187.6MB／gzip73.2MB）は既存レポート `data/reports/browser-pack-v3-measurements.json` の全セクション合計。通常使用時のresident RAMやChrome JS heapと同じではない。
@@ -30,3 +30,5 @@ node --import tsx tools/bench-jo312-baseline.ts --lengths=1000 --source=local
 
 ## 初回実査で確認した環境差
 最初のcloneで`--source=local`方式を試したところ`symbol-registry.bin`が無く、変換開始前にENOENTとなった。これは速度測定の失敗でなく、生成済みセクションがGit管理外であるという測定準備の制約。この失敗を#314に記録し、再現可能な配信済みPackのdigestを照合する`published`方式へ拡張した。
+
+独立レビューの非ブロッキング指摘に従い、`--child`でもprofile allowlistを再検証するよう修正済み。外部GETを含む `published` 系列は自動CIの測定実行には組み込まない。
