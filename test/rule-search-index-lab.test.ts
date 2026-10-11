@@ -21,6 +21,7 @@ test('#321 preserves exact candidate order, offsets, SequenceId and each stage/d
   const a=matcher.baseline(stream);
   const b=matcher.trie(stream);
   assert.deepEqual(b,a);
+  assert.deepEqual(matcher.bucket(stream),a);
   assert.deepEqual(b.map(x=>[x.start,x.end,x.sequenceId]),[
     [0,2,14],[1,2,10],[1,3,11],[1,4,13],
     [2,3,12],[3,4,10],[3,5,11],[4,5,12],[6,7,10]
@@ -32,18 +33,21 @@ test('#321 preserves exact candidate order, offsets, SequenceId and each stage/d
 test('#321 overlapping prefix and identical program outputs do not collapse different source keys',()=>{
   const m=make();
   assert.deepEqual(m.baseline([1,2,1]),m.trie([1,2,1]));
+  assert.deepEqual(m.baseline([1,2,1]),m.bucket([1,2,1]));
   assert.deepEqual(m.trie([1,2,1]).map(x=>x.sequenceId),[10,11,13,12,10]);
 });
 
 test('#321 fully unknown token streams are empty, bounded synthetic tokens are reproducible',()=>{
   const m=make();
   assert.deepEqual(m.trie([999,999,999]),[]);
+  assert.deepEqual(m.bucket([999,999,999]),[]);
   assert.equal(m.parity([999,999,999]).candidates,0);
   const a=makeSyntheticSymbols(keys,250);
   const b=makeSyntheticSymbols(keys,250);
   assert.equal(a.length,250);
   assert.deepEqual(a,b);
   assert.deepEqual(m.baseline(a),m.trie(a));
+  assert.deepEqual(m.baseline(a),m.bucket(a));
   assert.throws(()=>makeSyntheticSymbols(keys,10001),/invalid/);
 });
 
