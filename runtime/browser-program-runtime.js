@@ -207,10 +207,15 @@
       const source = `${text ?? ""}`;
       const atoms = SymbolRegistryRuntime.atomsOf(source);
       const tokens = symbolizer.symbolize(source);
-      const offsets = [0], invalidSymbolPrefix = [0];
+      const offsets = [0], invalidSymbolPrefix = [0], hiraganaPrefix = [0], katakanaPrefix = [0];
       for (const [i, atom] of atoms.entries()) {
         offsets.push(offsets.at(-1) + atom.length);
         invalidSymbolPrefix.push(invalidSymbolPrefix[i] + (typeof tokens[i] === "number" ? 0 : 1));
+        // #338: かな変換は既存の正確なコードポイント範囲以外で恒等変換となる。
+        // atomsOfは結合符を直前のatomに付すが、かな基底符号点はatomの先頭にある。
+        const code = atom.codePointAt(0);
+        hiraganaPrefix.push(hiraganaPrefix[i] + (code >= 0x3041 && code <= 0x3096 ? 1 : 0));
+        katakanaPrefix.push(katakanaPrefix[i] + (code >= 0x30a1 && code <= 0x30f6 ? 1 : 0));
       }
       const stages = options.stages ?? STAGES;
       const directions = options.directions ?? DIRECTIONS;
@@ -245,8 +250,8 @@
           const current = window?.tokens?.[window.index];
           const alternateTexts = [
             typeof current?.basic_form === "string" ? current.basic_form : null,
-            toHiragana(segment),
-            toKatakana(segment)
+            katakanaPrefix[end] !== katakanaPrefix[start] ? toHiragana(segment) : null,
+            hiraganaPrefix[end] !== hiraganaPrefix[start] ? toKatakana(segment) : null
           ].filter((value) => value && value !== segment);
           for (const alternate of alternateTexts) {
             const symbols = symbolizer.sequenceOf(alternate);
