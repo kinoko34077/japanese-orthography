@@ -72,6 +72,13 @@
       inputLengths.add(pool.symbols(input).length);
     }
 
+    // #325: raw直接一致が不可能なspanではSequencePool二分探索を省略する。
+    // 別のbasic_form・ひらがな/カタカナ候補は従来どおり各spanで探索する。
+    const prefixGuard = SequencePoolRuntime.createIndexPrefixGuard(
+      [...new Set([...index.keys()].map((key) => Number(key.slice(key.lastIndexOf("|") + 1))))],
+      (id) => pool.symbols(id)
+    );
+
     // #289: context rules may be selected by an observed token's basic form or by a
     // kana-insensitive spelling. Keep those alternate lookups restricted to Programs that
     // actually carry a TAR tokenContext predicate so unrelated exact/profile Programs cannot leak.
@@ -212,9 +219,15 @@
         for (const length of lengths) {
           const end = start + length;
           if (end > tokens.length) break;
-          const sequence = tokens.slice(start, end);
-          if (!sequence.every((token) => typeof token === "number")) continue;
-          const sequenceId = pool.find(sequence);
+          const possibleRaw = prefixGuard.mayContain(length, tokens[start], tokens[start + 1]);
+          // 元々の未登録SymbolId spanは候補にならない。空入力等は安全側で旧経路へ。
+          const sequenceId = possibleRaw
+            ? (() => {
+              const sequence = tokens.slice(start, end);
+              return sequence.every((token) => typeof token === "number") ? pool.find(sequence) : -1;
+            })()
+            : -1;
+          if (length > 0 && !tokens.slice(start, end).every((token) => typeof token === "number")) continue;
           const segment = source.slice(offsets[start], offsets[end]);
           const suppliedSymbol = typeof options.symbolFor === "function" ? options.symbolFor(offsets[start], offsets[end], segment) : undefined;
           const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
