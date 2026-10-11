@@ -50,10 +50,11 @@ const runOne = async (length: number, profileId: string, packSource: PackSource)
     const published = JSON.parse(body) as { packDigest: string };
     if (published.packDigest !== manifest.packDigest) throw new Error('published pack digest differs from local accepted manifest');
   }
-  const sectionLoads: Array<{ id: string; bytes: number }> = [];
+  const sectionLoads: Array<{ id: string; bytes: number; providerMs: number }> = [];
   const service = createTransformService({
     executionMode: 'vm-authoritative',
     openPack: async () => openBrowserPack(manifest, async (section: { sectionId: string; path: string }) => {
+      const providerStarted = performance.now();
       const body = packSource === 'published'
         ? await (async () => {
           const response = await fetch(new URL(section.path, PUBLISHED_BASE));
@@ -61,7 +62,7 @@ const runOne = async (length: number, profileId: string, packSource: PackSource)
           return Buffer.from(await response.arrayBuffer());
         })()
         : await readFile(resolve(packDir, section.path));
-      sectionLoads.push({ id: section.sectionId, bytes: body.byteLength });
+      sectionLoads.push({ id: section.sectionId, bytes: body.byteLength, providerMs: performance.now() - providerStarted });
       return body;
     })
   });
@@ -88,6 +89,7 @@ const runOne = async (length: number, profileId: string, packSource: PackSource)
       wallMs, reportedElapsedMs: result.elapsedMs ?? null,
       fetchedSections: sectionLoads.length - previousLoadCount,
       fetchedBytes: sectionLoads.slice(previousLoadCount).reduce((sum, x) => sum + x.bytes, 0),
+      sectionProviderMs: sectionLoads.slice(previousLoadCount).reduce((sum, x) => sum + x.providerMs, 0),
       memoryAfter: process.memoryUsage()
     });
   }
@@ -160,6 +162,7 @@ if (process.argv[1] && resolve(process.argv[1]) === script) {
   const strOpt = (name: string, fallback: string) =>
     process.argv.find(a => a.startsWith('--' + name + '='))?.slice(name.length + 3) ?? fallback;
   const profile = strOpt('profile', 'kinotch-fixed');
+  if (!['kinotch-fixed', 'historical', 'modern'].includes(profile)) throw new Error('invalid --profile');
   if (child) {
     const source = strOpt('source', 'published');
     if (source !== 'local' && source !== 'published') throw new Error('invalid --source');
