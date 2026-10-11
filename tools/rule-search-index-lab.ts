@@ -204,7 +204,9 @@ export function makeSyntheticSymbols(keys:readonly SearchKey[],length:number):nu
   if (!Number.isSafeInteger(length) || length<1 || length>10_000) throw new Error('invalid synthetic length');
   const available=keys.filter(k=>k.symbols.length>0 && k.symbols.length<=8);
   if(!available.length)throw new Error('no suitable search sequences');
-  const separator=Math.max(...keys.flatMap(k=>k.symbols)) + 1;
+  let largestSymbol = 0;
+  for(const key of keys) for(const symbol of key.symbols) if(symbol>largestSymbol)largestSymbol=symbol;
+  const separator=largestSymbol+1;
   if(!Number.isSafeInteger(separator))throw new Error('cannot allocate nonexisting separator ID');
   const out:number[]=[];
   let seed=0x1234abcd;
