@@ -65,17 +65,19 @@
     vm.verify();
     const index = new Map();
     const inputLengths = new Set();
+    const indexedInputIds = new Set();
     for (let i = 0; i < indexSection.rowCount("stage"); i += 1) {
       const input = indexSection.value("input", i);
       const key = keyOf(STAGES[indexSection.value("stage", i)], DIRECTIONS[indexSection.value("direction", i)], CHANNELS[indexSection.value("channel", i)], input);
       index.set(key, [...indexSection.list("programs", i)]);
       inputLengths.add(pool.symbols(input).length);
+      indexedInputIds.add(input);
     }
 
     // #325: raw直接一致が不可能なspanではSequencePool二分探索を省略する。
     // 別のbasic_form・ひらがな/カタカナ候補は従来どおり各spanで探索する。
     const prefixGuard = SequencePoolRuntime.createIndexPrefixGuard(
-      [...new Set([...index.keys()].map((key) => Number(key.slice(key.lastIndexOf("|") + 1))))],
+      indexedInputIds,
       (id) => pool.symbols(id)
     );
 
@@ -205,8 +207,11 @@
       const source = `${text ?? ""}`;
       const atoms = SymbolRegistryRuntime.atomsOf(source);
       const tokens = symbolizer.symbolize(source);
-      const offsets = [0];
-      for (const atom of atoms) offsets.push(offsets.at(-1) + atom.length);
+      const offsets = [0], invalidSymbolPrefix = [0];
+      for (const [i, atom] of atoms.entries()) {
+        offsets.push(offsets.at(-1) + atom.length);
+        invalidSymbolPrefix.push(invalidSymbolPrefix[i] + (typeof tokens[i] === "number" ? 0 : 1));
+      }
       const stages = options.stages ?? STAGES;
       const directions = options.directions ?? DIRECTIONS;
       const channels = options.channels ?? CHANNELS;
@@ -219,6 +224,7 @@
         for (const length of lengths) {
           const end = start + length;
           if (end > tokens.length) break;
+          if (invalidSymbolPrefix[end] !== invalidSymbolPrefix[start]) continue;
           const possibleRaw = prefixGuard.mayContain(length, tokens[start], tokens[start + 1]);
           // 元々の未登録SymbolId spanは候補にならない。空入力等は安全側で旧経路へ。
           const sequenceId = possibleRaw
@@ -227,7 +233,7 @@
               return sequence.every((token) => typeof token === "number") ? pool.find(sequence) : -1;
             })()
             : -1;
-          if (length > 0 && !tokens.slice(start, end).every((token) => typeof token === "number")) continue;
+
           const segment = source.slice(offsets[start], offsets[end]);
           const suppliedSymbol = typeof options.symbolFor === "function" ? options.symbolFor(offsets[start], offsets[end], segment) : undefined;
           const symbol = typeof suppliedSymbol === "string" ? symbolizer.idOf(suppliedSymbol) : suppliedSymbol;
