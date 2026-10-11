@@ -86,15 +86,28 @@ export function compareSearchKeys(
 const require = createRequire(import.meta.url);
 const { decodeSection } = require('../runtime/browser-pack-binary.js');
 const { createSequencePool } = require('../runtime/sequence-pool-runtime.js');
-export async function readAcceptedSearchSnapshot(root: string): Promise<SearchSnapshot> {
+export async function readAcceptedSearchSnapshot(root: string, source: 'local' | 'published' = 'local'): Promise<SearchSnapshot> {
   const dir=resolve(root,'data/browser-pack-v3');
   const manifest=JSON.parse(await readFile(resolve(dir,'manifest.json'),'utf8')) as {
-    packDigest: string; sections: Array<{sectionId:string;path:string}>;
+    packDigest: string; sections: Array<{sectionId:string;path:string;sha256:string}>;
   };
+  const publishedBase = 'https://kinoko34077.github.io/japanese-orthography/browser-pack/';
+  if (source === 'published') {
+    const result = await fetch(publishedBase + 'manifest.json');
+    if (!result.ok) throw new Error('published manifest HTTP ' + result.status);
+    const published = await result.json() as {packDigest:string};
+    if (published.packDigest !== manifest.packDigest) throw new Error('published pack digest mismatch');
+  }
   const fetch=async(id:string) => {
     const meta=manifest.sections.find(s=>s.sectionId===id);
     if (!meta) throw new Error('missing pack section '+id);
-    const bytes=await readFile(resolve(dir,meta.path));
+    const bytes=source === 'published' ? await (async()=>{
+      const response=await fetch(new URL(meta.path,publishedBase));
+      if (!response.ok) throw new Error('published section HTTP '+response.status+' '+id);
+      return Buffer.from(await response.arrayBuffer());
+    })() : await readFile(resolve(dir,meta.path));
+    if (createHash('sha256').update(bytes).digest('hex') !== meta.sha256)
+      throw new Error('section digest mismatch '+id);
     return decodeSection(bytes);
   };
   const [registry, seq, index]=await Promise.all([
@@ -134,16 +147,16 @@ export function makeSyntheticSymbols(keys:readonly SearchKey[],length:number):nu
   return out.slice(0,length);
 }
 
-export async function measureSearchCandidates(root:string,lengths:readonly number[]) {
-  const source=await readAcceptedSearchSnapshot(root);
+export async function measureSearchCandidates(root:string,lengths:readonly number[],source:'local'|'published'='local') {
+  const snapshot=await readAcceptedSearchSnapshot(root,source);
   const before=process.memoryUsage();
   const builtAt=performance.now();
-  const matcher=compareSearchKeys(source.keys,source.find);
+  const matcher=compareSearchKeys(snapshot.keys,snapshot.find);
   const buildMs=performance.now()-builtAt;
   const after=process.memoryUsage();
   const results=[];
   for(const length of lengths) {
-    const tokens=makeSyntheticSymbols(source.keys,length);
+    const tokens=makeSyntheticSymbols(snapshot.keys,length);
     const inputDigest=createHash('sha256').update(JSON.stringify(tokens)).digest('hex');
     const startBase=performance.now(),left=matcher.baseline(tokens),baseMs=performance.now()-startBase;
     const startTrie=performance.now(),right=matcher.trie(tokens),trieMs=performance.now()-startTrie;
@@ -152,7 +165,7 @@ export async function measureSearchCandidates(root:string,lengths:readonly numbe
     results.push({length,inputDigest,baseMs,trieMs,...parity});
   }
   return {
-    kind:'jo321-symbolid-search-poc',packDigest:source.packDigest,keys:matcher.keyCount,
+    kind:'jo321-symbolid-search-poc',packDigest:snapshot.packDigest,packSource:source,keys:matcher.keyCount,
     inputLengths:matcher.lengthCount,trieNodes:matcher.nodes,trieEdges:matcher.edges,
     buildMs,memoryBefore:before,memoryAfter:after,results,
     scope:'Only exact SymbolId key candidate discovery; excludes tokenContext alternatives, VM, stages, lexical/Ruby, browser/network. Synthetic SymbolId input; no long-text speed claim. Timing single-shot; no p95 or peak RSS.'
@@ -164,5 +177,8 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
     .split(',').map(Number);
   if(lengths.length<1||lengths.length>4||lengths.some(x=>!Number.isSafeInteger(x)||x<1||x>10000))
     throw new Error('invalid bounded lengths');
-  process.stdout.write(JSON.stringify(await measureSearchCandidates(process.cwd(),lengths),null,2)+'\n');
+  const source=process.argv.includes('--source=published') ? 'published' : 'local';
+  if (process.argv.some(x=>x.startsWith('--source=') && x!=='--source=published' && x!=='--source=local'))
+    throw new Error('unknown pack source');
+  process.stdout.write(JSON.stringify(await measureSearchCandidates(process.cwd(),lengths,source),null,2)+'\n');
 }
