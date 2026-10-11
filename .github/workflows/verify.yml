@@ -1,7 +1,6 @@
 name: Verify
 
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches: [main]
@@ -17,36 +16,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run check
-      - name: Build the static site (dist-site/, not published)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run build:site
-
-  pilot-head:
-    # #300受入専用。mainから明示的に手動起動された場合だけ、
-    # PR #304の書戻しHEADを読み取り専用で両OS検証する。
-    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: 87557afe9d3585252c94cf5352515943323dd708
-          persist-credentials: false
-      - name: checkoutしたコミットSHAの完全一致を検証
-        shell: bash
-        env:
-          EXPECTED_HEAD: 87557afe9d3585252c94cf5352515943323dd708
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
       - uses: actions/setup-node@v7
         with:
           node-version: 22
