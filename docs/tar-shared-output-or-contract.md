@@ -5,11 +5,11 @@
 
 ## 入出力の区別
 - `sourceCaseId`: fixtureのテストケース識別子。永続設定キーにしない。
-- `sourceKeys`: #327 `sourceEntryKey` による、**この固定原典snapshot内**での個別編集entry識別子。flat locatorは更新をまたいで安定する保証がない。
+- `sourceKeys`: #327 `sourceEntryKey` による**全出典参照**（この固定原典snapshotに限定）。各shared-outputにはstructured編集entryを指すkeyが2件、**編集不可の補助flat証拠refが1件**含まれる。flatはORの有効元に含めない。
 - `canonicalRuleId`: 正本規則の識別子。共有出力時に必ずしも個別TAR entryに一対一対応しない。
 - `programId`: 生成物内の配列index。永続的なtoggle identityではない。
 
-#327 の `simpleShared` は、それぞれ **2個のsourceCase**・**2個の異なるsourceKeys** が存在することを検証する。ただしsourceCaseとeditable entryの**各組の対応を追加立証したものではない**。このPoCはsourceCaseの位置からentryを推測しない。原典snapshot更新・ID移行の契約は将来の独立工程とする。
+#327 の `simpleShared` は各々 **2個のstructured sourceCase** に対して **3個のsourceKeys（structured編集entry 2個＋flat補助出典1個）** を保持する。#344 は固定実原典3関係すべてについて `tar:structured:<sourceId>:from[n]` とstructured entry keyを厳密照合し、**6/6 sourceCaseが異なる編集entryへ一意join**することを確認した。flatは根拠として保持するだけでユーザ切替の編集originではない。caseの配列位置からentryを推測しない。原典更新後のID移行は未証明。
 
 ## 出力枝の生存条件
 同じProgram・同じ出力枝を `B` とし、対応するsource entryを `e1,e2` とする。
