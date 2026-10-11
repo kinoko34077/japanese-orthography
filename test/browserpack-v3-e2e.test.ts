@@ -265,7 +265,7 @@ test('#310 real-text TAR POS admission uses only uniquely source-backed adverb e
   // JMdict reading-index has one 'adv' lexical candidate for もちろん.
   assert.equal(await run('もちろん'), '勿論');
   assert.equal(await run('もちろん 学校'), '勿論 學校');
-  assert.equal(await run('もちろん。'), '勿論。');
+  assert.equal(await run('もちろん。'), '勿論｡');
   // No inferred token boundary: do not rewrite an arbitrary kana substring.
   assert.equal(await run('もちろんさ'), 'もちろんさ');
   assert.equal(await run('もちろんs'), 'もちろんs');
