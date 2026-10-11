@@ -696,10 +696,33 @@
         && !scope.lexicalMatches.some((entry) => entry.start === 0 && entry.end === text.length)) {
         scope = { ...scope, lexicalMatches: [...scope.lexicalMatches, { start: 0, end: text.length }] };
       }
+      // #310: only infer the exact POS field proved by a single source-backed lexical
+      // reading/surface posting. This is NOT a general tokenizer or a UniDic pos1 claim.
+      // Refuse overlapping lexical spans and unsegmented adjacent kana, and leave the
+      // original user-supplied tokenWindow path unchanged for TAR parity witnesses.
+      const inferredContextFor = (start, end, segment) => {
+        if (suppliedProgramContext?.tokenWindow || profileId !== "kinotch-fixed") return suppliedProgramContext;
+        const boundary = /[\\s、。！？!?.,;:「」『』（）()]/u;
+        if ((start > 0 && !boundary.test(text[start - 1]))
+          || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
+        const overlaps = scope.lexicalMatches.filter((match) => match.start < end && start < match.end);
+        if (overlaps.length !== 1 || overlaps[0].start !== start || overlaps[0].end !== end) return suppliedProgramContext;
+        const candidates = scope.candidatesFor(start, end);
+        if (candidates.length !== 1) return suppliedProgramContext;
+        const candidate = candidates[0];
+        const morphology = candidate.morphology;
+        if (candidate.reading !== segment || morphology?.source !== "jmdict"
+          || morphology.partOfSpeech?.length !== 1 || morphology.partOfSpeech[0] !== "adv") return suppliedProgramContext;
+        return {
+          ...(suppliedProgramContext ?? {}),
+          tarAutoEvidence: "jmdict-adv-pos-only-v1",
+          tokenWindow: { tokens: [{ surface_form: segment, pos: "副詞" }], index: 0 }
+        };
+      };
       const observation = await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
-        context: suppliedProgramContext ?? programContextFor(p)
+        contextFor: inferredContextFor
       });
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
