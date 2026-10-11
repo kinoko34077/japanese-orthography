@@ -28,7 +28,7 @@ type HomeIndex = { sourceCommit: string; profileId: string; entries: HomeEntry[]
 
 const cmp = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 const valid = (x: unknown): x is string => typeof x === 'string' && x.length > 0;
-const ensure = (ok: unknown, message: string): asserts ok => { if (!ok) throw new Error('TAR identity census: ' + message); };
+function ensure(ok: unknown, message: string): asserts ok { if (!ok) throw new Error('TAR identity census: ' + message); }
 const corpusPath = (name: string) => 'data/migrations/tar/' + TAR_PIN + '/' + name + '-rules.json';
 
 type AuditCase = { caseId: string; corpus: string; recordId: string; keys: string[]; strongKeys: string[] };
