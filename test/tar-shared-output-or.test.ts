@@ -1,67 +1,65 @@
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { auditTarBranchProvenance } from '../tools/audit-tar-branch-provenance.ts';
+import { auditTarBranchProvenance, sourceEntryKey } from '../tools/audit-tar-branch-provenance.ts';
 import {
-  enabledSharedOutputBranches, type SharedOutputOrigin
+  enabledSharedOutputBranches, joinSharedOutputEditableOrigins, type SharedOutputOrigin
 } from '../tools/tar-shared-output-or.ts';
 
+const sourceKey=(id:string)=>sourceEntryKey({kind:'structured',path:'transform-settings (8).json',sourceId:id});
+const a=sourceKey('entry-one'), b=sourceKey('entry-two');
+const flat=sourceEntryKey({kind:'flat',path:'supplementary-evidence.json',locator:'groups[0].entries[0]'});
 const rows: SharedOutputOrigin[] = [{
-  programId: 15, canonicalRuleId: 'rule:fixed', input: '漢字', output: '異體',
-  sourceCaseIds: ['case:one','case:two'], sourceKeys: ['entry:one','entry:two']
+  programId:15,canonicalRuleId:'rule:fixed',input:'漢字',output:'異體',
+  sourceCaseIds:['tar:structured:entry-one:from[0]','tar:structured:entry-two:from[1]'],
+  sourceKeys:[a,flat,b]
 }];
-const permit = { 'entry:one': true, 'entry:two': true };
+const permit={ [a]:true,[b]:true };
 
-test('#344 two independent origins retain one shared output via OR and both disabled suppress it', () => {
-  const all = enabledSharedOutputBranches(rows, permit);
-  assert.deepEqual(all.map(x => x.output), ['異體']);
-  assert.deepEqual(all[0]!.activeSourceKeys, ['entry:one','entry:two']);
-  assert.deepEqual(enabledSharedOutputBranches(rows, permit, { 'entry:one': false })[0]!.activeSourceKeys, ['entry:two']);
-  assert.deepEqual(enabledSharedOutputBranches(rows, permit, { 'entry:two': false })[0]!.activeSourceKeys, ['entry:one']);
-  assert.deepEqual(enabledSharedOutputBranches(rows, permit,
-    { 'entry:one': false, 'entry:two': false }), []);
-  assert.deepEqual(enabledSharedOutputBranches(rows, permit,
-    { 'entry:one': null, 'entry:two': null }), all);
+test('#344 two editable origins share one output; evidence-only flat source cannot resurrect OFF branches',()=>{
+  const join=joinSharedOutputEditableOrigins(rows[0]!);
+  assert.equal(join.caseJoins.length,2);
+  assert.deepEqual(join.editableKeys,[a,b].sort());
+  assert.deepEqual(join.evidenceOnlyKeys,[flat]);
+  const all=enabledSharedOutputBranches(rows,permit);
+  assert.deepEqual(all.map(x=>x.output),['異體']);
+  assert.deepEqual(all[0]!.activeSourceKeys,[a,b].sort());
+  assert.deepEqual(all[0]!.evidenceOnlySourceKeys,[flat]);
+  assert.deepEqual(enabledSharedOutputBranches(rows,permit,{[a]:false})[0]!.activeSourceKeys,[b]);
+  assert.deepEqual(enabledSharedOutputBranches(rows,permit,{[b]:false})[0]!.activeSourceKeys,[a]);
+  assert.deepEqual(enabledSharedOutputBranches(rows,permit,{[a]:false,[b]:false}),[]);
+  assert.deepEqual(enabledSharedOutputBranches(rows,permit,{[a]:null,[b]:null}),all);
+  assert.throws(()=>enabledSharedOutputBranches(rows,permit,{[flat]:true}),/unknown editable entry/);
 });
 
-test('#344 profile deny/source lock is intersected, never overridden by user toggle', () => {
-  assert.deepEqual(enabledSharedOutputBranches(rows,
-    { 'entry:one': false, 'entry:two': true },
-    { 'entry:one': true })[0]!.activeSourceKeys, ['entry:two']);
-  assert.deepEqual(enabledSharedOutputBranches(rows,
-    { 'entry:one': false, 'entry:two': false },
-    { 'entry:one': true, 'entry:two': true }), []);
-  assert.throws(() => enabledSharedOutputBranches(rows, { 'entry:one': true }), /missing eligibility/);
+test('#344 profile/sourceLock and parent deny are not overridden by user ON',()=>{
+  assert.deepEqual(enabledSharedOutputBranches(rows,{[a]:false,[b]:true},{[a]:true})[0]!.activeSourceKeys,[b]);
+  assert.deepEqual(enabledSharedOutputBranches(rows,{[a]:false,[b]:false},{[a]:true,[b]:true}),[]);
+  assert.throws(()=>enabledSharedOutputBranches(rows,{[a]:true}),/missing eligibility/);
 });
 
-test('#344 ambiguous, unknown, or shared branch duplicate identities reject without taking whole Program offline', () => {
-  assert.throws(() => enabledSharedOutputBranches(rows, permit, { 'unknown': false }), /unknown editable entry/);
-  assert.throws(() => enabledSharedOutputBranches(rows, { ...permit, unknown: true }), /unknown entry eligibility/);
-  assert.throws(() => enabledSharedOutputBranches([{ ...rows[0]!, sourceKeys: ['entry:one','entry:one'] }],
-    permit), /cardinality unproven/);
-  assert.throws(() => enabledSharedOutputBranches([{ ...rows[0]!, sourceCaseIds: ['a','a'] }],
-    permit), /cardinality unproven/);
-  assert.throws(() => enabledSharedOutputBranches([rows[0]!,{ ...rows[0]!, canonicalRuleId: 'different' }],
-    permit), /mapped twice/);
+test('#344 malformed case, duplicate or unknown origin fail-closed, rather than mask a whole Program',()=>{
+  assert.throws(()=>enabledSharedOutputBranches(rows,permit,{'unknown':false}),/unknown editable entry/);
+  assert.throws(()=>enabledSharedOutputBranches(rows,{...permit,unknown:true}),/unknown entry eligibility/);
+  assert.throws(()=>joinSharedOutputEditableOrigins({...rows[0]!,sourceKeys:[a,a,b]}),/cardinality unproven/);
+  assert.throws(()=>joinSharedOutputEditableOrigins({...rows[0]!,sourceCaseIds:['a','a']}),/cardinality unproven/);
+  assert.throws(()=>joinSharedOutputEditableOrigins({...rows[0]!,sourceKeys:[a,b,sourceKey('entry-extra')]}),/unexpected additional structured origin/);
+  assert.throws(()=>joinSharedOutputEditableOrigins({...rows[0]!,sourceCaseIds:
+    ['tar:structured:entry-one:from[0]','tar:structured:entry-missing:from[0]']}),/join ambiguous\/missing/);
+  assert.throws(()=>enabledSharedOutputBranches([rows[0]!,{...rows[0]!,canonicalRuleId:'different'}],permit),/mapped twice/);
 });
 
-test('#344 accepted fixed TAR simple-exact shared-output census admits OR only for proven two-origin rows', async () => {
-  const report = await auditTarBranchProvenance(fileURLToPath(new URL('..', import.meta.url)));
-  assert.equal(report.simpleSharedRelations, 3);
-  const shared = report.simpleShared;
-  for (const item of shared) {
-    assert.equal(item.sourceCaseIds.length, 2);
-    assert.equal(item.sourceKeys.length, 2,
-      'the fixed snapshot must provide two separately editable source keys');
-  }
-  const eligible = Object.fromEntries(shared.flatMap(x => x.sourceKeys.map(key => [key,true])));
-  const selected = enabledSharedOutputBranches(shared, eligible);
-  assert.equal(selected.length, 3);
-  const first = shared[0]!;
-  const disabledOne = enabledSharedOutputBranches(shared, eligible, { [first.sourceKeys[0]!]: false });
-  assert.equal(disabledOne.length, 3);
-  const disabledBoth = enabledSharedOutputBranches(shared, eligible, {
-    [first.sourceKeys[0]!]: false, [first.sourceKeys[1]!]: false
-  });
-  assert.equal(disabledBoth.length, 2);
+test('#344 fixed TAR shared-output 3 records have two editable structured cases plus evidence-only flat refs',async()=>{
+  const report=await auditTarBranchProvenance(fileURLToPath(new URL('..',import.meta.url)));
+  assert.equal(report.simpleSharedRelations,3);
+  const shared=report.simpleShared;
+  const joins=shared.map(joinSharedOutputEditableOrigins);
+  assert.deepEqual(joins.map(x=>x.editableKeys.length),[2,2,2]);
+  assert.deepEqual(joins.map(x=>x.evidenceOnlyKeys.length),[1,1,1]);
+  const eligible=Object.fromEntries(joins.flatMap(x=>x.editableKeys.map(key=>[key,true])));
+  const selected=enabledSharedOutputBranches(shared,eligible);
+  assert.equal(selected.length,3);
+  const first=joins[0]!.editableKeys;
+  assert.equal(enabledSharedOutputBranches(shared,eligible,{[first[0]!]:false}).length,3);
+  assert.equal(enabledSharedOutputBranches(shared,eligible,{[first[0]!]:false,[first[1]!]:false}).length,2);
 });
