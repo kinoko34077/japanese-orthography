@@ -17,9 +17,9 @@ export interface SharedOutputSelection {
   output: string;
   activeSourceKeys: string[];
 }
-const check = (condition: unknown, reason: string): asserts condition => {
+function check(condition: unknown, reason: string): asserts condition {
   if (!condition) throw new Error('TAR shared output OR: ' + reason);
-};
+}
 const validId = (s: unknown): s is string => typeof s === 'string' && s.length > 0;
 
 /**
