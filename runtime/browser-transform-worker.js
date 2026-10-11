@@ -690,7 +690,7 @@
         units
       };
     };
-    const transformWithProgram = async (p, hot, text, profileId, renderMode, suppliedProgramContext = undefined) => {
+    const transformWithProgram = async (p, hot, text, profileId, renderMode, suppliedProgramContext = undefined, sourceBackedTokenInference = false) => {
       let scope = await lexicalScopeFor(p, text);
       if (suppliedProgramContext?.tokenWindow
         && !scope.lexicalMatches.some((entry) => entry.start === 0 && entry.end === text.length)) {
@@ -701,7 +701,7 @@
       // Refuse longer competing spans and unsegmented adjacent kana, and leave the
       // original user-supplied tokenWindow path unchanged for TAR parity witnesses.
       const inferredContextFor = (start, end, segment) => {
-        if (suppliedProgramContext?.tokenWindow || profileId !== "kinotch-fixed") return suppliedProgramContext;
+        if (!sourceBackedTokenInference || suppliedProgramContext?.tokenWindow || profileId !== "kinotch-fixed") return suppliedProgramContext;
         const boundary = /[\s、。！？!?.,;:「」『』（）()]/u;
         if ((start > 0 && !boundary.test(text[start - 1]))
           || (end < text.length && !boundary.test(text[end]))) return suppliedProgramContext;
@@ -810,7 +810,7 @@
               ? { ...(baseContext ?? {}), tokenWindow: message.tokenWindow }
               : baseContext;
             raw = (message.renderMode ?? "plain") === "plain" && !normalizedRuby
-              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode, programContext)
+              ? await transformWithProgram(p, hot, programSource, message.profileId, message.renderMode, programContext, message.sourceBackedTokenInference === true)
               : await transformWithProgramRuby(p, hot, programSource, message.profileId, message.renderMode, { rubyEvidence: normalizedRuby?.ranges ?? [], programContext });
             raw = restoreRubyInputRanges(raw, source, normalizedRuby);
             raw.renderMode = message.renderMode ?? "plain";
