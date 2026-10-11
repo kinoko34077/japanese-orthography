@@ -85,9 +85,15 @@ export function compareSearchKeys(
   const pairBuildStart = performance.now();
   const singles = new Map<number, SearchKey>();
   const pairs = new Map<number, SearchKey[]>();
+  // 2^26進法ならSymbolId<2^26の全てのペアをNumberの整数精度内で区別できる。
+  const base = 2 ** 26;
+  const pairId = (first: number, second: number) => {
+    if (first >= base || second >= base) throw new RangeError('SymbolId exceeds pair key capacity');
+    return first * base + second;
+  };
   for (const key of keys) {
     if(key.symbols.length===1) { singles.set(key.symbols[0]!,key);continue; }
-    const pair = key.symbols[0]!*65536+key.symbols[1]!;
+    const pair = pairId(key.symbols[0]!, key.symbols[1]!);
     const group = pairs.get(pair)??[];
     group.push(key);
     pairs.set(pair,group);
@@ -101,11 +107,11 @@ export function compareSearchKeys(
       const one=singles.get(tokens[start]!);
       if(one)hits.push({start,end:start+1,sequenceId:one.sequenceId,postings:one.postings});
       if(start+1>=tokens.length)continue;
-      const pair=tokens[start]!*65536+tokens[start+1]!;
+      const pair=pairId(tokens[start]!,tokens[start+1]!);
       for(const key of pairs.get(pair)??[]){
         if(start+key.symbols.length>tokens.length)continue;
         let good=true;
-        for(let j=2;j<key.symbols.length;j++)if(tokens[start+j]!==key.symbols[j]){good=false;break;}
+        for(let j=0;j<key.symbols.length;j++)if(tokens[start+j]!==key.symbols[j]){good=false;break;}
         if(good)hits.push({start,end:start+key.symbols.length,sequenceId:key.sequenceId,postings:key.postings});
       }
     }
@@ -198,13 +204,15 @@ export function makeSyntheticSymbols(keys:readonly SearchKey[],length:number):nu
   if (!Number.isSafeInteger(length) || length<1 || length>10_000) throw new Error('invalid synthetic length');
   const available=keys.filter(k=>k.symbols.length>0 && k.symbols.length<=8);
   if(!available.length)throw new Error('no suitable search sequences');
+  const separator=Math.max(...keys.flatMap(k=>k.symbols)) + 1;
+  if(!Number.isSafeInteger(separator))throw new Error('cannot allocate nonexisting separator ID');
   const out:number[]=[];
   let seed=0x1234abcd;
   while(out.length<length) {
     seed=(Math.imul(seed,1664525)+1013904223)>>>0;
     const k=available[seed%available.length]!;
     out.push(...k.symbols);
-    if((seed&7)===0) out.push(65534);
+    if((seed&7)===0) out.push(separator);
   }
   return out.slice(0,length);
 }
