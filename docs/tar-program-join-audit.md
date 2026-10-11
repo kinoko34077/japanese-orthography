@@ -23,3 +23,8 @@ node --max-old-space-size=1200 --import tsx tools/audit-tar-program-join.ts
 
 ## 次段階
 join結果にmissingがあれば正本・generatorの不一致原因を分離。multi-source-per-Programは、`canonical Rule→IR branch→Program output occurrence`を確認するまで**個別ON/OFFの本番導入を保留**。これらを満たした限定overlayを後続S3-Cへ分離する。
+
+## 候補グループの枝別原典対応（#323後半）
+`tools/audit-tar-branch-origins.ts` は4 corpusのうち候補165件に含まれる、同一入力競合120件→60 groupの各`memberRecordId`を`expectedOutputs`と突き合わせる。原典2件がそれぞれ別の出力枝を所有する場合、片方のactiveをfalseにしても別の出力候補は残る孤立PoCを`test/audit-tar-branch-origins.test.ts`で検査。
+
+この対応は **sourceCase→canonical group output** の単位。まだcompiled Programの`branches`／実行時`edges`に永続論理entry IDを埋め込んでいない。`sourceCaseId`を設定IDとして保存しない。multi-origin同一出力と、TAR優先順位・連鎖処理を含む本番ON/OFFの受入は別ゲート。
