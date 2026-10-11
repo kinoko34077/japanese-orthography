@@ -58,3 +58,38 @@ test('#347 本番arbitrate同一span確定候補とcandidate-only曖昧性の現
   assert.ok(!candidateOnly.blocked.some((x:any)=>x.reason==='candidate_alternative'));
   assert.equal(candidateOnly.unresolved.length,1);
 });
+
+
+test('#347 production適応閾値を跨ぐ大量分散spanでも同じ出力・blocked理由になる', () => {
+  const make=(count:number)=>{
+    const candidates=[] as Array<{key:string;start:number;end:number;output:string;candidate:boolean;policy:string}>;
+    for(let i=0;i<count;i++){
+      const start=i*2;
+      candidates.push({key:'det-'+i,start,end:start+1,output:'甲',candidate:false,policy:'anywhere'});
+      candidates.push({key:'alt-'+i,start,end:start+1,output:'乙',candidate:true,policy:'anywhere'});
+    }
+    return candidates;
+  };
+  for(const count of [40,128,300]) {
+    const rows=make(count);
+    const out=arbitrate({length:count*2,lexical:null,candidates:rows});
+    assert.equal(out.accepted.length,count);
+    assert.ok(out.accepted.every((r:any)=>r.key.startsWith('det-')));
+    assert.equal(out.blocked.length,count);
+    assert.ok(out.blocked.every((r:any)=>r.reason==='candidate_alternative'
+      && r.candidate.key.startsWith('alt-')));
+    assert.deepEqual(out.unresolved,[]);
+    const reversed=arbitrate({length:count*2,lexical:null,candidates:[...rows].reverse()});
+    assert.deepEqual(reversed,out);
+  }
+});
+
+test('#347 同一span候補のみ・異span孤立候補の意味論を閾値以上でも保存',()=>{
+  const candidates=Array.from({length:270},(_,i)=>({
+    key:'candidate-'+i,start:i*2,end:i*2+1,output:'甲',candidate:true,policy:'anywhere'
+  }));
+  const result=arbitrate({length:540,lexical:null,candidates});
+  assert.equal(result.accepted.length,270);
+  assert.deepEqual(result.blocked,[]);
+  assert.deepEqual(result.unresolved,[]);
+});
