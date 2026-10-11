@@ -26,6 +26,8 @@ export interface OriginSidecarRow {
   evidenceOnlyKeys: string[];
   /** 対応監査専用であり、永続設定キーではない。 */
   sourceCaseIds: string[];
+  /** 監査上の枝別優先値。実行時precedenceの正本へ置換してはならない。 */
+  provenancePriority: number | null;
 }
 
 export interface SidecarInputs {
@@ -56,6 +58,7 @@ export function projectTarOriginSidecar(input: SidecarInputs) {
   const rows: OriginSidecarRow[] = [];
   const seenBranches = new Set<string>();
   const seenOrigins = new Set<string>();
+  const seenCases = new Set<string>();
   const branchKey = (p: number, r: string, from: string, to: string) =>
     JSON.stringify([p, r, from, to]);
   const add = (row: OriginSidecarRow) => {
@@ -72,6 +75,12 @@ export function projectTarOriginSidecar(input: SidecarInputs) {
       check(!seenOrigins.has(origin), 'editable origin reused across branches');
       seenOrigins.add(origin);
     }
+    check(row.sourceCaseIds.length > 0 && new Set(row.sourceCaseIds).size === row.sourceCaseIds.length,
+      'invalid or duplicate source case');
+    for (const sourceCaseId of row.sourceCaseIds) {
+      check(valid(sourceCaseId) && !seenCases.has(sourceCaseId), 'source case reused across branches');
+      seenCases.add(sourceCaseId);
+    }
     rows.push(row);
   };
   for (const entry of input.candidateOrigins) {
@@ -83,7 +92,7 @@ export function projectTarOriginSidecar(input: SidecarInputs) {
       programId: entry.programId, canonicalRuleId: entry.canonicalRuleId,
       input: entry.input, output: entry.output, kind: 'candidate',
       editableEntryKeys: [entry.entryKey], evidenceOnlyKeys: [],
-      sourceCaseIds: [entry.sourceCaseId]
+      sourceCaseIds: [entry.sourceCaseId], provenancePriority: entry.priority
     });
   }
   for (const shared of input.simpleShared) {
@@ -97,7 +106,7 @@ export function projectTarOriginSidecar(input: SidecarInputs) {
       input: shared.input, output: shared.output, kind: 'shared-output',
       editableEntryKeys: origins.editableKeys,
       evidenceOnlyKeys: origins.evidenceOnlyKeys,
-      sourceCaseIds: origins.caseJoins.map(x => x.sourceCaseId)
+      sourceCaseIds: origins.caseJoins.map(x => x.sourceCaseId), provenancePriority: null
     });
   }
   rows.sort((a, b) => a.programId - b.programId
