@@ -249,7 +249,7 @@ test('#310 real-text TAR POS admission uses only uniquely source-backed adverb e
   const run = async (source: string, profileId = 'kinotch-fixed') => {
     const reply = await service.handle({
       type: 'transform', requestId: 'tar-real-' + profileId + '-' + source,
-      text: source, profileId, renderMode: 'plain', executionMode: 'vm-authoritative'
+      text: source, profileId, renderMode: 'plain', executionMode: 'vm-authoritative', sourceBackedTokenInference: true
     });
     assert.equal(reply.type, 'result', reply.message);
     return reply.result.renderedText;
