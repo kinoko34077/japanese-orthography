@@ -41,7 +41,7 @@ const sample=()=>{
     }));
   return {
     sidecar:{sourceCommit:PIN,irDigest:'a'.repeat(64),rows},
-    ir:{digest:'a'.repeat(64),rules:[group,shared]} as RuleIR,
+    ir:{digest:'a'.repeat(64),rules:[group,shared]} as unknown as RuleIR,
     p:p as unknown as CompiledPrograms
   };
 };
