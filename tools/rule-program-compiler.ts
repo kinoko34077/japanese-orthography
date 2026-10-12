@@ -207,9 +207,10 @@ export function programView(p: CompiledPrograms) {
   };
 }
 
-export function createVM(p: CompiledPrograms, registry: SymbolRegistry) {
+/** VM枝の実行位置はopt-in診断のみ。原典entryの認証はこの関数で行わない。 */
+export function createVM(p: CompiledPrograms, registry: SymbolRegistry, options: { traceEmissions?: boolean } = {}) {
   const pool = createSequencePool(decodeSection(p.pool.section), registry.atoms);
-  return createRuleVM({ programs: programView(p), pool, predicates: p.predicates, profileBits: p.profileBits, lexemeSets: p.lexemeSets, lexemeSetModes: p.lexemeSetModes, mechanismCount: p.mechanisms.length });
+  return createRuleVM({ programs: programView(p), pool, predicates: p.predicates, profileBits: p.profileBits, lexemeSets: p.lexemeSets, lexemeSetModes: p.lexemeSetModes, mechanismCount: p.mechanisms.length, traceEmissions: options.traceEmissions === true });
 }
 
 export function summarizePrograms(p: CompiledPrograms, ir: RuleIR) {
