@@ -35,7 +35,7 @@
    *             direct(i): boolean, outputs(i): Uint32Array, flags(i): Uint8Array }
    * predicates: array of { constraint?, usage?, period? } (index = predId)
    */
-  const createRuleVM = ({ programs, pool, predicates = [], profileBits = {}, lexemeSets = [], lexemeSetModes = [], mechanismCount = Infinity }) => {
+  const createRuleVM = ({ programs, pool, predicates = [], profileBits = {}, lexemeSets = [], lexemeSetModes = [], mechanismCount = Infinity, traceEmissions = false }) => {
     const MAX_DEPTH = 16;
 
     const verify = () => {
@@ -228,7 +228,9 @@
 
     /**
      * Run program `p` on a state { profileId, symbol?, lexemes?: Set<number>, context? }.
-     * Returns { edges: [{ output, sequenceId, candidate, programs: [...] }], preserved, trace }.
+     * traceEmissions=true のときだけedge.emission={programId,branchOrdinal}を追加する。
+     * 原典entryの認証情報ではなく、実VMが発行したProgram内の枝位置だけを示す。
+     * 既定falseは従来のedge shapeを保持する。CALLでは実際の発行元Programを記録する。
      */
     const run = (p, state, depth = 0, path = []) => {
       if (depth > MAX_DEPTH) throw new Error("RuleProgramVM: CALL depth exceeded");
@@ -236,12 +238,17 @@
       if (programs.direct(p)) {
         const outputs = programs.outputs(p);
         const flags = programs.flags(p);
-        return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace })), preserved: false, trace };
+        // 通常実行には追加edgeプロパティもspread用の空objectも生成しない。
+        if (!traceEmissions) {
+          return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace })), preserved: false, trace };
+        }
+        return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace, emission: { programId: p, branchOrdinal: i } })), preserved: false, trace };
       }
       const code = programs.code(p);
       const edges = [];
       const mechanisms = [];
       let preserved = false;
+      let emissionOrdinal = 0;
       for (let pc = 0; pc < code.length;) {
         const op = code[pc];
         const arg = code[pc + 1];
@@ -260,7 +267,12 @@
         else if (op === OP.MECH) mechanisms.push(arg);
         else if (op === OP.TEST_PRED) { if (!satisfies(predicates[arg], state.context)) return { edges: [], preserved: false, trace }; }
         else if (op === OP.CALL) { const r = run(arg, state, depth + 1, trace); edges.push(...r.edges); preserved = preserved || r.preserved; }
-        else if (op === OP.EMIT) edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace });
+        else if (op === OP.EMIT) {
+          if (traceEmissions) {
+            edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace, emission: { programId: p, branchOrdinal: emissionOrdinal } });
+            emissionOrdinal += 1;
+          } else edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace });
+        }
         else if (op === OP.PRESERVE) preserved = true;
         pc += 1 + ARITY[op];
       }
