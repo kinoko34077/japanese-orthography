@@ -9,7 +9,7 @@ import { auditTarOriginSidecar } from '../tools/tar-origin-sidecar-s3e0.ts';
 import { normalizeAcceptedOrthographySources, assertNoSilentSourceDrop } from '../tools/orthography-source-normalization.ts';
 import { withProfileRules } from '../tools/orthography-policy.ts';
 import { compileRuleIR, type RuleIR } from '../tools/rule-ir.ts';
-import { compilePrograms, type CompiledPrograms } from '../tools/rule-program-compiler.ts';
+import { compilePrograms, createVM, type CompiledPrograms } from '../tools/rule-program-compiler.ts';
 import { SYMBOL_REGISTRY, type SymbolRegistry } from '../tools/symbol-registry.ts';
 
 const require = createRequire(import.meta.url);
@@ -94,6 +94,35 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
   assert.equal(report.checkedBranches,123);
   assert.equal(report.checkedPrograms,63);
   assert.equal(report.directBranches+report.bytecodeBranches,123);
+
+  // E2-P1: 静的compilerだけでなく、実行中の正規VM.runが実際に出力した
+  // 63 Programの123枝を全件照合。CALLや変形出力を出さない固定範囲に限定する。
+  const vm=createVM(program,registry);
+  vm.verify();
+  const originsByProgram=new Map<number,Set<string>>();
+  for(const row of sidecar.rows){
+    const outputs=originsByProgram.get(row.programId)??new Set<string>();
+    assert.ok(!outputs.has(row.output),'一つのProgram内で枝別の出力識別が重複');
+    outputs.add(row.output);
+    originsByProgram.set(row.programId,outputs);
+  }
+  assert.equal(originsByProgram.size,63);
+  let executedBranches=0;
+  for(const [programId,expectedOutputs] of originsByProgram){
+    const result=vm.run(programId,{profileId:'kinotch-fixed'});
+    assert.equal(result.preserved,false);
+    assert.deepEqual(
+      result.edges.map((edge:{output:string})=>edge.output).sort(),
+      [...expectedOutputs].sort(),
+      `Program ${programId}: 実VM出力の枝別一致`
+    );
+    for(const edge of result.edges){
+      assert.deepEqual(edge.programs,[programId],`Program ${programId}: 実行された単独Programの追跡`);
+      assert.equal(typeof edge.sequenceId,'number');
+    }
+    executedBranches+=result.edges.length;
+  }
+  assert.equal(executedBranches,123);
   assert.ok(report.results.every(r=>r.stage==='profile'
     && r.direction==='to-modern'&&r.channel==='surface'));
 });
