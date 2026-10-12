@@ -30,7 +30,8 @@ const makeCandidate = (key:string, output:string, precedence:number, programId:n
   certifiedOrigin?:CertifiedBranch)=>({
   key,output,precedence, start:0,end:1,policy:'anywhere',
   origin:'program',ref:'program:'+programId,programIds:[programId],
-  stage:'profile',direction:'to-modern',channel:'surface',certifiedOrigin
+  stage:'profile',direction:'to-modern',channel:'surface',
+  ...(certifiedOrigin === undefined ? {} : { certifiedOrigin })
 });
 const render=(candidates:readonly ReturnType<typeof makeCandidate>[]) =>
   planner.assemble('あ','kinotch-fixed',planner.lexicalDag(1,[],[[0,1]]),[...candidates],[],{}).renderedText;
