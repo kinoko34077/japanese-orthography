@@ -238,7 +238,11 @@
       if (programs.direct(p)) {
         const outputs = programs.outputs(p);
         const flags = programs.flags(p);
-        return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace, ...(traceEmissions ? { emission: { programId: p, branchOrdinal: i } } : {}) })), preserved: false, trace };
+        // 通常実行には追加edgeプロパティもspread用の空objectも生成しない。
+        if (!traceEmissions) {
+          return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace })), preserved: false, trace };
+        }
+        return { edges: [...outputs].map((s, i) => ({ sequenceId: s, output: pool.text(s), candidate: (flags[i] & FLAG.CANDIDATE) !== 0 || outputs.length > 1, programs: trace, emission: { programId: p, branchOrdinal: i } })), preserved: false, trace };
       }
       const code = programs.code(p);
       const edges = [];
@@ -264,8 +268,10 @@
         else if (op === OP.TEST_PRED) { if (!satisfies(predicates[arg], state.context)) return { edges: [], preserved: false, trace }; }
         else if (op === OP.CALL) { const r = run(arg, state, depth + 1, trace); edges.push(...r.edges); preserved = preserved || r.preserved; }
         else if (op === OP.EMIT) {
-          edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace, ...(traceEmissions ? { emission: { programId: p, branchOrdinal: emissionOrdinal } } : {}) });
-          emissionOrdinal += 1;
+          if (traceEmissions) {
+            edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace, emission: { programId: p, branchOrdinal: emissionOrdinal } });
+            emissionOrdinal += 1;
+          } else edges.push({ sequenceId: arg, output: pool.text(arg), candidate: (code[pc + 2] & FLAG.CANDIDATE) !== 0, programs: trace });
         }
         else if (op === OP.PRESERVE) preserved = true;
         pc += 1 + ARITY[op];
