@@ -8,7 +8,7 @@
 
 - `programId`は実際に`direct`または`OP.EMIT`を発行したProgram。CALLがあれば呼出元ではなく**実際の発行先**を示す。既存`edge.programs`は変更しない。
 - `branchOrdinal`は実際のdirect出力配列indexまたはそのProgram内の`OP.EMIT`の0始まり順番。実行時ProgramIdや序数は永続的な原典entry IDではない。
-- デフォルトは`traceEmissions:false`。既存edgeの構造、値、優先度、候補フラグ、呼び出し順、性能・Packは変更しない（opt-inパスを本番Workerで起動しない）。
+- デフォルトは`traceEmissions:false`。既存edgeの構造、値、優先度、候補フラグ、呼び出し順、Packは変更しない（性能差は測定して確認する）（opt-inパスを本番Workerで起動しない）。
 - 追加情報だけでは原典で認証した`editableEntryKeys`や`canonicalRuleId`にならない。原典source snapshot・IR digest・Pack digestとProgram枝の安全な結合は別途必要。
 
 ## 回帰
