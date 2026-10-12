@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { auditTarCompiledEmissions } from '../tools/tar-compiled-emission-audit-s3e2.ts';
+import { createAuditedTarEmissionJoin } from '../tools/tar-audited-emission-join-s3e2.ts';
 import { auditTarOriginSidecar } from '../tools/tar-origin-sidecar-s3e0.ts';
 import { normalizeAcceptedOrthographySources, assertNoSilentSourceDrop } from '../tools/orthography-source-normalization.ts';
 import { withProfileRules } from '../tools/orthography-policy.ts';
@@ -123,6 +124,50 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
     executedBranches+=result.edges.length;
   }
   assert.equal(executedBranches,123);
+
+  // E2-P3: 正規IR/Programで検証した123枝を、opt-inの実VM発行位置へ対応付ける。
+  const join=createAuditedTarEmissionJoin(sidecar,ir,program);
+  assert.equal(join.verifiedPrograms,63);
+  assert.equal(join.verifiedBranches,123);
+  const tracedVm=createVM(program,registry,{traceEmissions:true});
+  tracedVm.verify();
+  let matched=0;
+  for(const [programId,expectedOutputs] of originsByProgram){
+    const input=sidecar.rows.find(row=>row.programId===programId)!.input;
+    const result=tracedVm.run(programId,{profileId:'kinotch-fixed'});
+    assert.equal(result.edges.length,expectedOutputs.size);
+    for(const edge of result.edges){
+      const witness=join.match({
+        edge,input,stage:'profile',direction:'to-modern',
+        channel:'surface',profileId:'kinotch-fixed'
+      });
+      assert.equal(witness.status,'matched');
+      if(witness.status==='matched'){
+        assert.equal(witness.entry.programId,programId);
+        assert.equal(witness.entry.output,edge.output);
+        assert.ok(witness.entry.editableEntryKeys.length>=1);
+      }
+      matched+=1;
+    }
+  }
+  assert.equal(matched,123);
+  const sampleRow=sidecar.rows[0]!;
+  const real=tracedVm.run(sampleRow.programId,{profileId:'kinotch-fixed'}).edges
+    .find((edge:{output:string})=>edge.output===sampleRow.output)!;
+  const input=sampleRow.input;
+  const check=(edge:unknown,inputText=input,profileId='kinotch-fixed')=>join.match({
+    edge:edge as {output?:unknown;programs?:unknown;emission?:unknown},
+    input:inputText,profileId,stage:'profile',direction:'to-modern',channel:'surface'
+  });
+  assert.equal(check(real).status,'matched');
+  assert.equal(check(real,input+'異').status,'unsupported','元文字列が違う場合は拒否');
+  assert.equal(check(real,input,'historical').status,'unsupported','profile違いでは拒否');
+  assert.equal(check({...real,output:'偽'}).status,'unsupported','出力改竄では拒否');
+  assert.equal(check({...real,emission:{programId:sampleRow.programId,branchOrdinal:999}}).status,
+    'unsupported','未監査の枝番号は拒否');
+  assert.equal(check({...real,programs:[sampleRow.programId, sampleRow.programId]}).status,
+    'unsupported','複合経路を認証済みにしない');
+  assert.equal(check({...real,emission:undefined}).status,'unsupported','証拠なしの候補は拒否');
   assert.ok(report.results.every(r=>r.stage==='profile'
     && r.direction==='to-modern'&&r.channel==='surface'));
 });
