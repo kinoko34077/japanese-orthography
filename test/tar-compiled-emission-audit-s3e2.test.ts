@@ -7,6 +7,7 @@ import test from 'node:test';
 import { auditTarCompiledEmissions } from '../tools/tar-compiled-emission-audit-s3e2.ts';
 import { createAuditedTarEmissionJoin } from '../tools/tar-audited-emission-join-s3e2.ts';
 import { auditTarOriginPackIdentity } from '../tools/tar-pack-identity-admission-s3e2.ts';
+import { sealBrowserPackManifest } from '../tools/browser-pack-model.ts';
 import { auditTarOriginSidecar } from '../tools/tar-origin-sidecar-s3e0.ts';
 import { normalizeAcceptedOrthographySources, assertNoSilentSourceDrop } from '../tools/orthography-source-normalization.ts';
 import { withProfileRules } from '../tools/orthography-policy.ts';
@@ -137,6 +138,15 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
   assert.equal(admitted.packDigest,packManifest.packDigest);
   assert.equal(admitted.programCount,195302);
   assert.equal(admitted.runtimeOriginAuthenticated,false);
+  const resealedUnrelatedIr=sealBrowserPackManifest({
+    ...packManifest,
+    ruleRuntime:{...packManifest.ruleRuntime,programDigest:'0'.repeat(64)}
+  });
+  assert.throws(()=>auditTarOriginPackIdentity({
+    sourceCommit:sidecar.sourceCommit,sidecarIrDigest:sidecar.irDigest,
+    ir,programs:program,manifest:resealedUnrelatedIr,
+    expectedPackDigest:resealedUnrelatedIr.packDigest
+  }),/IR does not match compiler program identity/,'manifestと受入digestを共に変更しても異なるProgramを認証しない');
   assert.throws(()=>auditTarOriginPackIdentity({
     sourceCommit:'wrong',sidecarIrDigest:sidecar.irDigest,
     ir,programs:program,manifest:packManifest,expectedPackDigest:packReport.packDigest
