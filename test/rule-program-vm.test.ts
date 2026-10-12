@@ -132,6 +132,50 @@ test('the verifier fails closed on bad opcodes, ranges, unknown calls and missin
   assert.throws(bad([OP.TEST_PRED]), /truncated/);
 });
 
+test('#349 S3-E2 VMの実発行枝ordinalはopt-inでdirect/bytecode/CALLを追跡し既定出力を維持', () => {
+  const traced = createVM(programs, registry, { traceEmissions: true });
+  traced.verify();
+
+  const [directId] = lookup('lexical', 'reconstruct', 'reading', 'ドイツ');
+  assert.ok(directId !== undefined && programs.direct[directId]);
+  const originalDirect = vm.run(directId, { profileId: 'historical' });
+  const traceDirect = traced.run(directId, { profileId: 'historical' });
+  assert.equal(Object.hasOwn(originalDirect.edges[0]!, 'emission'), false);
+  assert.deepEqual(traceDirect.edges.map((edge: { emission: unknown }) => edge.emission),
+    programs.outputs[directId]!.map((_, i) => ({ programId: directId, branchOrdinal: i })));
+  assert.deepEqual(traceDirect.edges.map((edge: { output: string; candidate: boolean }) =>
+    [edge.output, edge.candidate]), originalDirect.edges.map((edge: { output: string; candidate: boolean }) =>
+    [edge.output, edge.candidate]));
+
+  const [profileId] = lookup('profile', 'to-modern', 'surface', 'こと');
+  assert.ok(profileId !== undefined && !programs.direct[profileId]);
+  const tracedProfile = traced.run(profileId, { profileId: 'kinotch-fixed' });
+  assert.deepEqual(tracedProfile.edges.map((edge: { emission: unknown }) => edge.emission),
+    [{ programId: profileId, branchOrdinal: 0 }]);
+  assert.deepEqual(traced.run(profileId, { profileId: 'historical' }).edges, []);
+
+  const parents = lookup('diachronic', 'to-historical', 'reading', 'ほう')
+    .filter((p) => programs.evidence[p]!.ruleId.startsWith('binding:'));
+  assert.equal(parents.length, 2);
+  for (const parent of parents) {
+    const input = { profileId: 'historical', symbol: symbolizer.idOf('法') };
+    const plain = vm.run(parent, input);
+    const enriched = traced.run(parent, input);
+    assert.equal(enriched.edges.length, plain.edges.length);
+    assert.ok(enriched.edges.length > 0);
+    for (const edge of enriched.edges as Array<{
+      programs: number[]; emission: { programId: number; branchOrdinal: number }
+    }>) {
+      assert.ok(edge.programs.length > 1, 'CALL先の実発行元であること');
+      assert.equal(edge.emission.programId, edge.programs.at(-1));
+      assert.notEqual(edge.emission.programId, parent);
+      assert.equal(edge.emission.branchOrdinal, 0);
+    }
+    assert.deepEqual(enriched.edges.map((edge: { output: string }) => edge.output),
+      plain.edges.map((edge: { output: string }) => edge.output));
+  }
+});
+
 test('the committed program summary describes the accepted knowledge', async () => {
   const summary = JSON.parse(await readFile(new URL(`../${RULE_PROGRAM_SUMMARY}`, import.meta.url), 'utf8'));
   assert.equal(summary.programs, summary.directPrograms + summary.bytecodePrograms);
