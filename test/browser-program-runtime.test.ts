@@ -163,6 +163,31 @@ test('#349 E2-P5 実PackのVM発行枝は明示opt-inの生候補だけへ伝搬
   assert.ok(ordinary.run({
     stage:'lexical',direction:'reconstruct',channel:'reading',text:'ドイツ',profileId:'modern'
   }).edges.every((edge: object) => !Object.hasOwn(edge,'emission')));
+  // P10b2a: 同一runtimeの実VM生候補だけが内部で所有を証明できる。
+  assert.equal(typeof ordinary.ownsTracedEmission,'undefined','公開標準経路に照合を追加しない');
+  assert.equal(out.every((candidate:object)=>traced.ownsTracedEmission(candidate)),true);
+  const original=out[0]!;
+  const shallow={...original};
+  assert.equal(traced.ownsTracedEmission(shallow),false,'浅いコピーは同一参照でない');
+  assert.equal(traced.ownsTracedEmission(JSON.parse(JSON.stringify(original))),false,
+    '値だけをコピーした偽発行情報は不適合');
+  const second=await createBrowserProgramRuntime(pack,{traceEmissions:true});
+  assert.equal(second.ownsTracedEmission(original),false,'同一Packでも別runtimeへ横流し不可');
+  const initial=original.emission.branchOrdinal;
+  original.emission.branchOrdinal=initial+100;
+  assert.equal(traced.ownsTracedEmission(original),false,'登録済み候補の枝番号改竄も拒否');
+  original.emission.branchOrdinal=initial;
+  assert.equal(traced.ownsTracedEmission(original),true,'復元された実候補は元の登録内容と一致');
+  // JSON.stringify(candidate)単体ならtoJSONを後付けして元の値を偽装できる。
+  const originalOutput=original.output;
+  const unmodified=JSON.parse(JSON.stringify(original));
+  original.output='偽造';
+  original.toJSON=()=>unmodified;
+  assert.equal(traced.ownsTracedEmission(original),false,'toJSON上書きによる改竄隠蔽も拒否');
+  delete original.toJSON;
+  original.output=originalOutput;
+  assert.equal(traced.ownsTracedEmission(original),true);
+  assert.equal(traced.ownsTracedEmission({emission:original.emission}),false);
 });
 
 test('#349 E2-P5 basic_form・かな差異の検索候補には原典枝位置を断定しない', async () => {

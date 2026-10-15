@@ -20,6 +20,26 @@
   const createBrowserProgramRuntime = async (pack, options = {}) => {
     // 診断専用の明示opt-in。既定の公開Workerは発行枝を追跡しない。
     const traceEmissions = options.traceEmissions === true;
+    // P10b2a: opt-inで実VMから生まれた生候補objectだけをインスタンス内で記録。
+    // 値のコピー・別runtimeのobject・登録後の改変は所有証拠にならない。
+    const tracedCandidateSnapshots = traceEmissions ? new WeakMap() : null;
+    // Object.toJSONの後付けで内容改竄を隠せないよう、既知フィールドを直接採取する。
+    const snapshotCandidate = (candidate) => JSON.stringify([
+      Object.keys(candidate).sort(),
+      ["start", "end", "output", "policy", "precedence", "origin", "ref",
+        "candidate", "stage", "direction", "channel", "key"]
+        .map((name) => [typeof candidate[name], candidate[name]]),
+      Array.isArray(candidate.programIds) ? Array.from(candidate.programIds) : null,
+      candidate.emission && typeof candidate.emission === "object"
+        ? [Object.keys(candidate.emission).sort(), candidate.emission.programId,
+          candidate.emission.branchOrdinal] : null
+    ]);
+    const ownsTracedEmission = (candidate) => {
+      if (!tracedCandidateSnapshots || !candidate || typeof candidate !== "object"
+        || !tracedCandidateSnapshots.has(candidate)) return false;
+      try { return tracedCandidateSnapshots.get(candidate) === snapshotCandidate(candidate); }
+      catch { return false; }
+    };
     if (!pack || typeof pack.loadSection !== "function" || !pack.hasSection("sequence-pool")) {
       throw new Error("BrowserProgramRuntime requires BrowserPack v3 hot sections");
     }
@@ -292,6 +312,7 @@
                     programId: edge.emission.programId,
                     branchOrdinal: edge.emission.branchOrdinal
                   };
+                  tracedCandidateSnapshots.set(candidate, snapshotCandidate(candidate));
                 }
                 candidates.push(candidate);
               }
@@ -365,7 +386,11 @@
       }
       return { executedProgramIds: [...new Set(runs.flatMap((x) => x.executedProgramIds))], runs };
     };
-    return Object.freeze({ run, transformText, traceText, symbolId: (atom) => symbolizer.idOf(atom), sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); }, programCount: programView.count, sequenceCount: pool.count });
+    return Object.freeze({ run, transformText, traceText,
+      ...(traceEmissions ? { ownsTracedEmission } : {}),
+      symbolId: (atom) => symbolizer.idOf(atom),
+      sequenceId: (text) => { const sequence = symbolizer.sequenceOf(text); return sequence === null ? -1 : pool.find(sequence); },
+      programCount: programView.count, sequenceCount: pool.count });
   };
 
   return { createBrowserProgramRuntime };
