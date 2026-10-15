@@ -12,6 +12,7 @@ import { SYMBOL_REGISTRY, type SymbolRegistry } from '../tools/symbol-registry.t
 import { adapterFixture } from './fixtures/browser-pack-fixture.ts';
 import { canonicalizeOrthographyKnowledge } from '../tools/orthography-knowledge-model.ts';
 import { compileRuleIR } from '../tools/rule-ir.ts';
+import { openVerifiedTarHotPack } from '../tools/tar-verified-hot-pack-s3e2.ts';
 
 // #211 F — BrowserPack v3: symbol-encoded hot string columns, same semantics as v2.
 const require = createRequire(import.meta.url);
@@ -62,6 +63,57 @@ test('R5 #248 browser runtime rejects an incompatible Rule runtime identity befo
   const missing = JSON.parse(JSON.stringify(v3.manifest));
   missing.ruleRuntime.isaVersion = 'rule-program-isa-unknown';
   await assert.rejects(() => openBrowserPack(missing, async (s: { path: string }) => v3.files.get(s.path)!), /Rule runtime identity/);
+});
+
+test('#349 P10a 独立digestと実セクションhashを経たPackだけを内部準備として開く', async () => {
+  const called: string[] = [];
+  const verified = await openVerifiedTarHotPack({
+    manifest: v3.manifest,
+    expectedPackDigest: v3.manifest.packDigest,
+    sectionProvider: async section => {
+      called.push(section.sectionId);
+      return v3.files.get(section.path)!;
+    }
+  });
+  assert.equal(verified.packDigest, v3.manifest.packDigest);
+  assert.equal(verified.pack.packDigest, v3.manifest.packDigest);
+  assert.equal(verified.runtimeOriginAuthenticated, false, 'hot section検証は原典出自を認証しない');
+  assert.deepEqual(verified.verifiedHotSectionIds, [
+    'symbol-registry', 'sequence-pool', 'rule-programs', 'rule-program-index',
+    'rule-predicates', 'rule-lexeme-sets', 'rule-runtime-meta'
+  ]);
+  for (const sectionId of verified.verifiedHotSectionIds) {
+    assert.ok(called.includes(sectionId), sectionId+' の実bytesを必ず読込検証');
+  }
+});
+
+test('#349 P10a 別Pack lock・必須hot section改竄を拒否し未認証状態を保持', async () => {
+  let fetched = 0;
+  await assert.rejects(() => openVerifiedTarHotPack({
+    manifest: v3.manifest,
+    expectedPackDigest: '0'.repeat(64),
+    sectionProvider: async section => {
+      fetched++;
+      return v3.files.get(section.path)!;
+    }
+  }), /independent Pack digest mismatch/);
+  assert.equal(fetched, 0, '独立Pack lock不一致ではネットワーク取得しない');
+
+  const target = v3.manifest.sections.find(section => section.sectionId === 'rule-programs')!;
+  let tampered = 0;
+  await assert.rejects(() => openVerifiedTarHotPack({
+    manifest: v3.manifest,
+    expectedPackDigest: v3.manifest.packDigest,
+    sectionProvider: async section => {
+      const bytes = v3.files.get(section.path)!;
+      if (section.sectionId !== target.sectionId) return bytes;
+      tampered++;
+      const bad = Uint8Array.from(bytes);
+      bad[bad.length - 1] = bad[bad.length - 1]! ^ 1;
+      return bad;
+    }
+  }), /section rule-programs digest mismatch/);
+  assert.equal(tampered, 1, 'lazy hotの不正bytesはpreflight時点で必ず検出');
 });
 
 test('v3 converts, diagnoses and inspects exactly like v2 (every profile, render mode and detail)', async () => {
