@@ -178,6 +178,15 @@ test('#349 E2-P5 実PackのVM発行枝は明示opt-inの生候補だけへ伝搬
   assert.equal(traced.ownsTracedEmission(original),false,'登録済み候補の枝番号改竄も拒否');
   original.emission.branchOrdinal=initial;
   assert.equal(traced.ownsTracedEmission(original),true,'復元された実候補は元の登録内容と一致');
+  // JSON.stringify(candidate)単体ならtoJSONを後付けして元の値を偽装できる。
+  const originalOutput=original.output;
+  const unmodified=JSON.parse(JSON.stringify(original));
+  original.output='偽造';
+  original.toJSON=()=>unmodified;
+  assert.equal(traced.ownsTracedEmission(original),false,'toJSON上書きによる改竄隠蔽も拒否');
+  delete original.toJSON;
+  original.output=originalOutput;
+  assert.equal(traced.ownsTracedEmission(original),true);
   assert.equal(traced.ownsTracedEmission({emission:original.emission}),false);
 });
 
