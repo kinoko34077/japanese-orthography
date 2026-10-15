@@ -17,7 +17,9 @@
   const modes = ["all", "some", "none"];
   const keyOf = (stage, direction, channel, sequenceId) => `${stage}|${direction}|${channel}|${sequenceId}`;
 
-  const createBrowserProgramRuntime = async (pack) => {
+  const createBrowserProgramRuntime = async (pack, options = {}) => {
+    // 診断専用の明示opt-in。既定の公開Workerは発行枝を追跡しない。
+    const traceEmissions = options.traceEmissions === true;
     if (!pack || typeof pack.loadSection !== "function" || !pack.hasSection("sequence-pool")) {
       throw new Error("BrowserProgramRuntime requires BrowserPack v3 hot sections");
     }
@@ -61,7 +63,7 @@
     const profileBits = {};
     for (let i = 0; i < metaSection.rowCount("profileIds"); i += 1) profileBits[textOf(metaSection.list("profileIds", i))] = metaSection.value("profileBits", i);
     const mechanismCount = metaSection.rowCount("mechanisms");
-    const vm = RuleProgramVM.createRuleVM({ programs: programView, pool, predicates, profileBits, lexemeSets, lexemeSetModes, mechanismCount });
+    const vm = RuleProgramVM.createRuleVM({ programs: programView, pool, predicates, profileBits, lexemeSets, lexemeSetModes, mechanismCount, traceEmissions });
     vm.verify();
     const index = new Map();
     const inputLengths = new Set();
@@ -270,7 +272,7 @@
                       : stage === "lexical" ? "lexical_boundary" : "whole_lexeme";
                 const tarRule = rootProgramId === undefined ? null : tokenContextByProgram.get(rootProgramId);
                 const output = tarRule ? adaptTarOutput(edge.output, tarRule, context) : edge.output;
-                candidates.push({
+                const candidate = {
                   start: offsets[start], end: offsets[end], output,
                   policy,
                   // Structured TAR semantics are more specific than the naked simple-exact migration
@@ -278,7 +280,20 @@
                   precedence: tarRule ? 1000 + (Number(tarRule.priority) || 0) : stage === "profile" ? 1 : 0,
                   origin: "program", ref: `program:${programId}`, programIds: [...edge.programs], candidate: Boolean(edge.candidate), stage, direction, channel,
                   key: `program:${programId}:${stage}:${direction}:${channel}:${offsets[start]}:${offsets[end]}:${output}`
-                });
+                };
+                // VM自身が報告した発行位置を、値を変形していない生候補へだけ投影する。
+                // 異なるbasic_form、活用変形、CALL、patternは原典join未証明としてタグを付けない。
+                // emissionは原典entryの認証ではなく、将来のtrusted producer用の証拠断片。
+                if (traceEmissions && !contextOnly && output === edge.output
+                  && edge.programs.length === 1 && edge.emission
+                  && edge.emission.programId === edge.programs[0]
+                  && Number.isSafeInteger(edge.emission.branchOrdinal) && edge.emission.branchOrdinal >= 0) {
+                  candidate.emission = {
+                    programId: edge.emission.programId,
+                    branchOrdinal: edge.emission.branchOrdinal
+                  };
+                }
+                candidates.push(candidate);
               }
             }
           }
