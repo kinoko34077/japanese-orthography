@@ -45,7 +45,15 @@
     const gateProgramObservation = (p, sourceText, profileId, observation) => {
       if (!trustedCandidateGate) return observation;
       const original = observation.candidates ?? [];
+      // 参照が同じでもフィルタが候補の内容を書き換えたら不正。
+      // 検証コストは内部ゲート有効時だけ負担し、既定経路は触らない。
+      const snapshots = original.map((candidate) => JSON.stringify(candidate));
       const retained = trustedCandidateGate({ pack: p, sourceText, profileId, candidates: Object.freeze([...original]) });
+      for (let i = 0; i < original.length; i += 1) {
+        if (JSON.stringify(original[i]) !== snapshots[i]) {
+          throw new TypeError("trustedCandidateGate mutated an original candidate");
+        }
+      }
       if (!Array.isArray(retained)) throw new TypeError("trustedCandidateGate must return a candidate array");
       // 調停前フィルタは元の生候補を削るだけ。付替え・追加・並べ替えを認めない。
       let cursor = 0;
