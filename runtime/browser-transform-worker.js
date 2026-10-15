@@ -276,7 +276,14 @@
     };
     const programForPack = async (p) => {
       if (!selectedProgramRuntime || typeof p.hasSection !== "function" || !p.hasSection("sequence-pool")) return null;
-      if (!programFor.has(p)) programFor.set(p, selectedProgramRuntime.createBrowserProgramRuntime(p));
+      if (!programFor.has(p)) {
+        // P9: VM発行枝の記録は内部候補ゲートを明示接続したサービスだけで有効化。
+        // 公開Worker既定経路では既存どおり追加optionsなし。
+        const program = trustedCandidateGate === null
+          ? selectedProgramRuntime.createBrowserProgramRuntime(p)
+          : selectedProgramRuntime.createBrowserProgramRuntime(p, { traceEmissions: true });
+        programFor.set(p, program);
+      }
       return programFor.get(p);
     };
     const programDirection = (p, profileId) => {
