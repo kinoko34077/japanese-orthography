@@ -89,7 +89,7 @@ test('#349 P6 内部候補ゲートをplain/ruby双方の局所調停前に1回�
     const service = createTransformService({
       openPack:async()=>vmPack, executionMode:'vm-authoritative',programRuntime,
       trustedCandidateGate:({sourceText,profileId,candidates:raw}: {
-        sourceText:string;profileId:string;candidates:readonly typeof candidates[number][]
+        sourceText:string;profileId:string;candidates:readonly {key:string}[]
       })=>{
         calls.push(mode);
         assert.equal(sourceText,'甲');
