@@ -16,7 +16,7 @@
 
 `test/tar-closed-origin-audit-s3e2.test.ts`は固定source commit/IRの不一致、独立Pack lock不一致を**section provider呼出前に拒否する**負例を検証する。個別のPack実bytesの破損・hot section全種の負例は既受入P10a、VM元objectの所有／コピー・改竄負例はP10b2a、固定枝joinの正規実行全件はP3/P7のテストに依存する。
 
-**本番Packでの一気通貫の正常実行は未証明。** 現Gitの`data/browser-pack-v3/`にはmanifestがあるが物理section bytes群は存在しない。したがってこのPRのCIが通っても「187MB級の実本番Packに実源流から候補が出ている」「本番で規則OFFを安全に起動できる」と判定しない。原典全件・条件付き・adapt/call/patternや別snapshotへの対応も未実装。
+**実際に公開・配信されたPack bytesの一気通貫認証は未証明。** 現Gitの`data/browser-pack-v3/`にはmanifestのみ存在する。一方、既存Ubuntu Verifyの`npm run build:site`は全section bytesを非公開`dist-site/browser-pack/`へ再生成するため、その直後に`tools/verify-tar-closed-origin-site.ts`を追加実行し、固定source/IR/Programと独立Pack lockから現実の生成byteハッシュとVM候補の一意joinを正のE2Eとして検査する。正常系の達成は**そのCIが当該HEADで実際にSUCCESSしたときだけ**宣言する。仮に成功しても配信済みPagesのbytes同一性、全原典entry・条件付き・adapt/CALL/pattern、ユーザー設定ON/OFFまでは証明しない。
 
 本APIは局所的な調査出力として`matched`を返し得るが、そこでの照合状態は**ユーザー向けの認証済みmask許可ではない**。製品側の`runtimeOriginAuthenticated`は`false`のまま。真正な本番Pack実bytesを固定受入ビルドから供給し、正規IR/sidecar/Programを同じdeploy identityで追跡したpositive E2Eが成立してから、本番Worker候補ゲートと設定revisionの受入に進む。
 
