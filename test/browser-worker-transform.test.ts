@@ -70,6 +70,73 @@ test('vm-authoritative mode uses the Rule Program result without invoking the le
   assert.equal(legacyCalls, 0);
 });
 
+test('#349 P6 内部候補ゲートをplain/ruby双方の局所調停前に1回適用し次点を復帰', async () => {
+  const vmPack = { ...pack, hasSection: () => true };
+  const candidates = [
+    { start:0,end:1,output:'乙',policy:'anywhere',origin:'program',ref:'program:7',
+      programIds:[7],stage:'profile',direction:'to-modern',channel:'surface',
+      precedence:100,key:'high' },
+    { start:0,end:1,output:'丙',policy:'anywhere',origin:'program',ref:'program:8',
+      programIds:[8],stage:'profile',direction:'to-modern',channel:'surface',
+      precedence:1,key:'low' }
+  ];
+  const programRuntime = { createBrowserProgramRuntime: async () => ({
+    transformText: async () => ({ candidates,contextual:[],lexicalMatchCount:0,
+      trace:{executedProgramIds:[7,8],runs:[]} })
+  }) };
+  for (const mode of ['plain','ruby-whole-explicit']) {
+    const calls: string[] = [];
+    const service = createTransformService({
+      openPack:async()=>vmPack, executionMode:'vm-authoritative',programRuntime,
+      trustedCandidateGate:({sourceText,profileId,candidates:raw}: {
+        sourceText:string;profileId:string;candidates:readonly {key:string}[]
+      })=>{
+        calls.push(mode);
+        assert.equal(sourceText,'甲');
+        assert.equal(profileId,'kinotch-fixed');
+        assert.equal(raw.length,2);
+        assert.ok(Object.isFrozen(raw));
+        return raw.filter(candidate=>candidate.key!=='high');
+      }
+    });
+    const response = await service.handle({
+      type:'transform',requestId:mode,text:'甲',profileId:'kinotch-fixed',renderMode:mode
+    });
+    assert.equal(response.type,'result',response.message);
+    assert.equal(response.result.renderedText,'丙',mode);
+    assert.deepEqual(calls,[mode],mode+'で二重フィルタしない');
+  }
+  const standard = createTransformService({
+    openPack:async()=>vmPack,executionMode:'vm-authoritative',programRuntime
+  });
+  const unmasked = await standard.handle({
+    type:'transform',requestId:'standard',text:'甲',profileId:'kinotch-fixed',renderMode:'plain'
+  });
+  assert.equal(unmasked.result.renderedText,'乙','既定は優先候補を維持');
+});
+
+test('#349 P6 内部ゲートは候補の付替え・順序変更と不正な依存を拒否', async () => {
+  const vmPack={...pack,hasSection:()=>true};
+  const programRuntime={ createBrowserProgramRuntime:async()=>({
+    transformText:async()=>({ candidates:[{start:0,end:1,output:'乙',policy:'anywhere',
+      origin:'program',ref:'program:7',programIds:[7],key:'original'}],
+      contextual:[],lexicalMatchCount:0,trace:{executedProgramIds:[7],runs:[]} })
+  }) };
+  assert.throws(()=>createTransformService({openPack:async()=>vmPack,
+    executionMode:'vm-authoritative',programRuntime,trustedCandidateGate:'forged' as never}),
+    /internal function/);
+  const service=createTransformService({
+    openPack:async()=>vmPack,executionMode:'vm-authoritative',programRuntime,
+    trustedCandidateGate:({candidates:source}: {candidates:readonly Record<string,unknown>[]}) =>
+      source.map(candidate=>({...candidate}))
+  });
+  const reply=await service.handle({
+    type:'transform',requestId:'forged',text:'甲',profileId:'kinotch-fixed',renderMode:'plain'
+  });
+  assert.equal(reply.type,'error');
+  assert.match(reply.message,/unknown or reordered candidate/);
+});
+
 test('vm-authoritative mode rejects a pack without required hot sections instead of falling back', async () => {
   const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
   const reply = await service.handle({ type: 'transform', requestId: 'missing-hot', text: '甲', profileId: 'historical', renderMode: 'plain' });
