@@ -70,6 +70,46 @@ test('vm-authoritative mode uses the Rule Program result without invoking the le
   assert.equal(legacyCalls, 0);
 });
 
+test('#349 P9 VM発行位置は内部候補ゲート設定時だけopt-inで伝搬', async () => {
+  const vmPack = { ...pack, hasSection: () => true };
+  const constructorOptions: Array<{traceEmissions?: boolean} | undefined> = [];
+  const gatedEmissions: Array<{programId:number;branchOrdinal:number} | undefined> = [];
+  const programRuntime = {
+    createBrowserProgramRuntime: async (_pack:unknown, options?:{traceEmissions?:boolean}) => {
+      constructorOptions.push(options);
+      return { transformText: async () => ({
+        candidates: [{
+          start:0,end:1,output:'乙',policy:'anywhere',origin:'program',
+          ref:'program:7',programIds:[7],stage:'profile',
+          direction:'to-modern',channel:'surface',
+          ...(options?.traceEmissions ? {emission:{programId:7,branchOrdinal:0}} : {})
+        }],
+        contextual:[],lexicalMatchCount:0,trace:{executedProgramIds:[7],runs:[]}
+      }) };
+    }
+  };
+  for (const [i, gated] of [false,true].entries()) {
+    const service = createTransformService({
+      openPack:async()=>vmPack, executionMode:'vm-authoritative',programRuntime,
+      ...(gated ? {trustedCandidateGate: ({candidates}:{
+        candidates:readonly {emission?:{programId:number;branchOrdinal:number}}[]
+      }) => {
+        gatedEmissions.push(candidates[0]?.emission);
+        return [...candidates];
+      }} : {})
+    });
+    const result = await service.handle({
+      type:'transform',requestId:i,text:'甲',profileId:'kinotch-fixed',renderMode:'plain'
+    });
+    assert.equal(result.type,'result',result.message);
+    assert.equal(result.result.renderedText,'乙');
+  }
+  assert.deepEqual(constructorOptions,[undefined,{traceEmissions:true}],
+    '既定Workerでは新規trace設定を渡さない');
+  assert.deepEqual(gatedEmissions,[{programId:7,branchOrdinal:0}],
+    '明示した内部ゲートだけがVMの枝識別断片を観測する');
+});
+
 test('#349 P6 内部候補ゲートをplain/ruby双方の局所調停前に1回適用し次点を復帰', async () => {
   const vmPack = { ...pack, hasSection: () => true };
   const candidates = [
