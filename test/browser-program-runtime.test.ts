@@ -134,6 +134,57 @@ test('BrowserPack v3 carries the shared hot Rule Program sections and executes b
   assert.deepEqual(direct.executedProgramIds, [0]);
 });
 
+test('#349 E2-P5 実PackのVM発行枝は明示opt-inの生候補だけへ伝搬し既定は不変', async () => {
+  const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
+  const ordinary = await createBrowserProgramRuntime(pack);
+  const traced = await createBrowserProgramRuntime(pack, { traceEmissions: true });
+  const query = { stages: ['lexical'], directions: ['reconstruct'], channels: ['reading'] };
+  const plain = ordinary.transformText('ドイツ', 'modern', query);
+  const observed = traced.transformText('ドイツ', 'modern', query);
+  assert.deepEqual(
+    observed.candidates.map((candidate: { output: string; programIds: number[]; key: string }) =>
+      [candidate.output, candidate.programIds, candidate.key]),
+    plain.candidates.map((candidate: { output: string; programIds: number[]; key: string }) =>
+      [candidate.output, candidate.programIds, candidate.key])
+  );
+  assert.ok(plain.candidates.every((candidate: object) => !Object.hasOwn(candidate,'emission')));
+  const out = observed.candidates.filter((candidate: { output: string }) =>
+    ['独乙','独逸'].includes(candidate.output));
+  assert.equal(out.length,2);
+  assert.deepEqual(out.map((candidate: { emission?: {programId:number;branchOrdinal:number} })=>
+    candidate.emission?.branchOrdinal).sort(),[0,1]);
+  assert.ok(out.every((candidate: {emission?: {programId:number};programIds:number[]}) =>
+    candidate.emission?.programId === candidate.programIds[0]));
+  const run = traced.run({
+    stage:'lexical',direction:'reconstruct',channel:'reading',text:'ドイツ',profileId:'modern'
+  });
+  assert.deepEqual(run.edges.map((edge: {emission?: {branchOrdinal:number}}) =>
+    edge.emission?.branchOrdinal), [0,1]);
+  assert.ok(ordinary.run({
+    stage:'lexical',direction:'reconstruct',channel:'reading',text:'ドイツ',profileId:'modern'
+  }).edges.every((edge: object) => !Object.hasOwn(edge,'emission')));
+});
+
+test('#349 E2-P5 basic_form・かな差異の検索候補には原典枝位置を断定しない', async () => {
+  const pack = await openBrowserPack(tarContextV3.manifest, async (section: { path: string }) => tarContextV3.files.get(section.path)!);
+  const traced = await createBrowserProgramRuntime(pack, { traceEmissions: true });
+  const token = (surface: string, basic: string, pos: string, pos1 = '') => ({
+    surface_form:surface, basic_form:basic, pos, pos_detail_1:pos1,
+    pos_detail_2:'', pos_detail_3:'', conjugated_type:'', conjugated_form:'', reading:'',
+    pronunciation:'',word_type:''
+  });
+  const opts = (current: ReturnType<typeof token>) => ({
+    stages:['profile'],directions:['to-modern'],channels:['surface'],
+    context:{tokenWindow:{tokens:[current],index:0}}
+  });
+  const inflected = traced.transformText('なった','kinotch-fixed',opts(token('なった','なる','動詞','自立')));
+  assert.ok(inflected.candidates.some((c:{output:string})=>c.output==='成った'));
+  assert.ok(inflected.candidates.every((c:object)=>!Object.hasOwn(c,'emission')));
+  const kana = traced.transformText('かな','kinotch-fixed',opts(token('かな','かな','名詞')));
+  assert.ok(kana.candidates.some((c:{output:string})=>c.output==='仮名'));
+  assert.ok(kana.candidates.every((c:object)=>!Object.hasOwn(c,'emission')));
+});
+
 test('transformText passes lexical hypotheses to scoped Rule Programs', async () => {
   const pack = await openBrowserPack(v3.manifest, async (section: { path: string }) => v3.files.get(section.path)!);
   const runtime = await createBrowserProgramRuntime(pack);
