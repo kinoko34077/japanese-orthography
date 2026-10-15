@@ -218,7 +218,7 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
     'デフォルトONで現行raw候補の全順序・値を維持');
   assert.throws(()=>disabled.filter({...context,pack:{packDigest:'0'.repeat(64)}}),
     /Pack identity mismatch/);
-  const unverified={...rawCandidates[0],emission:{programId:target.programId,branchOrdinal:999}};
+  const unverified={...rawCandidates[0]!,emission:{programId:target.programId,branchOrdinal:999}};
   assert.equal(disabled.filter({...context,candidates:[unverified]}).length,1,
     '未監査の枝を推測でOFFにしない');
   assert.equal(disabled.filter({...context,profileId:'modern'}).length,rawCandidates.length,
