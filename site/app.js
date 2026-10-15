@@ -247,6 +247,7 @@
     let client = null;
     let current = null;
     let selected = null;
+    let detailGeneration = 0;
     let openReply = null;
     let manifest = null;
     let supportedRenderModes = new Set(["plain"]);
@@ -281,6 +282,7 @@
     };
 
     const closeDetail = ({ restoreFocus = false } = {}) => {
+      ++detailGeneration;
       $("detail").hidden = true;
       if (selected) {
         selected.setAttribute("aria-pressed", "false");
@@ -291,6 +293,8 @@
 
     const renderCurrent = () => {
       if (!current) return;
+      // Rebuilt result nodes invalidate any in-flight inspector response.
+      closeDetail();
       const diagnostic = resultView() === "diagnostic";
       const inspect = diagnostic && Boolean($("inspect")?.checked);
       $("result").innerHTML = renderResultHtml(current.result, { diagnostic, inspect });
@@ -307,19 +311,28 @@
       selected = element;
       element.setAttribute("aria-pressed", "true");
       const panel = $("detail");
+      const resultId = current.requestId;
+      const generation = ++detailGeneration;
+      const isCurrentSelection = () => generation === detailGeneration
+        && selected === element && element.isConnected && !panel.hidden
+        && current?.requestId === resultId && resultView() === "diagnostic";
       panel.hidden = false;
       $("detail-body").innerHTML = '<p class="muted">詳細を読み込み中…</p>';
       try {
-        const reply = await client.detail(current.requestId, ref);
+        const reply = await client.detail(resultId, ref);
+        if (!isCurrentSelection()) return;
         $("detail-body").innerHTML = reply.detail.kind === "unit" ? renderUnitDetailHtml(terms, reply.detail) : renderDetailHtml(terms, reply.detail);
         terms.bindHelp($("detail-body"));
       } catch (error) {
+        if (!isCurrentSelection()) return;
         $("detail-body").innerHTML = `<p class="muted">詳細を表示できませんでした: ${escapeHtml(error.message)}</p>`;
       }
     };
 
     const convert = async () => {
       if (!client) return;
+      // A new conversion invalidates old diagnostic evidence at its start.
+      closeDetail();
       status("必要な辞書データを確認し、変換しています…");
       try {
         const reply = await client.transform($("source").value, profile(), renderMode());
