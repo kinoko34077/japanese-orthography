@@ -216,6 +216,15 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
     'raw候補の同一参照を保持');
   assert.deepEqual(makeGate({}).filter(context),rawCandidates,
     'デフォルトONで現行raw候補の全順序・値を維持');
+  // P10b1 SECURITY NEGATIVE: packDigestを名乗るだけの別objectは、
+  // 内部PoC gateの旧値照合を通過する。真のPackインスタンス認証ではない。
+  const forgedPack={packDigest:packReport.packDigest};
+  assert.notEqual(forgedPack,context.pack);
+  const forgedCandidate=JSON.parse(JSON.stringify(rawCandidates[0]!));
+  assert.equal(disabled.filter({...context,pack:forgedPack,candidates:[forgedCandidate]}).length,0,
+    '未信頼のPack/candidateが値一致だけでOFFされ得る＝本番接続禁止の負例');
+  assert.equal(disabled.runtimeOriginAuthenticated,false);
+
   assert.throws(()=>disabled.filter({...context,pack:{packDigest:'0'.repeat(64)}}),
     /Pack identity mismatch/);
   const unverified={...rawCandidates[0]!,emission:{programId:target.programId,branchOrdinal:999}};
@@ -254,6 +263,16 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
     input:inputText,profileId,stage:'profile',direction:'to-modern',channel:'surface'
   });
   assert.equal(check(real).status,'matched');
+  // P10b1 SECURITY NEGATIVE: このmatchは実行元を認証しない。
+  // 正しいVM edgeから値をコピーした別objectは、実行されていないのにmatchedとなる。
+  // この弱い照合結果をそのまま本番OFF権限へ昇格させてはならない。
+  const forgedEdge=JSON.parse(JSON.stringify(real));
+  assert.notEqual(forgedEdge,real,'真正VM edgeとは別の任意object');
+  assert.equal(check(forgedEdge).status,'matched',
+    '値だけをコピーしたedgeが通過する＝真正producer未成立の証拠');
+  assert.equal(admitted.runtimeOriginAuthenticated,false,
+    '固定Pack/IR identity監査でもコピーedgeを真正と認めない');
+
   assert.equal(check(real,input+'異').status,'unsupported','元文字列が違う場合は拒否');
   assert.equal(check(real,input,'historical').status,'unsupported','profile違いでは拒否');
   assert.equal(check({...real,output:'偽'}).status,'unsupported','出力改竄では拒否');
