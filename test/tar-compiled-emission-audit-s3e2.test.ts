@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { auditTarCompiledEmissions } from '../tools/tar-compiled-emission-audit-s3e2.ts';
 import { createAuditedTarEmissionJoin } from '../tools/tar-audited-emission-join-s3e2.ts';
+import { createFixedTarOriginCandidateGate } from '../tools/tar-fixed-origin-candidate-gate-s3e2.ts';
 import { auditTarOriginPackIdentity } from '../tools/tar-pack-identity-admission-s3e2.ts';
 import { sealBrowserPackManifest } from '../tools/browser-pack-model.ts';
 import { auditTarOriginSidecar } from '../tools/tar-origin-sidecar-s3e0.ts';
@@ -185,6 +186,65 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
     }
   }
   assert.equal(matched,123);
+  // E2-P7: 正規IR/Pack digest・固定sidecar照合済みclosureを使い、候補前OFFの意味を検証。
+  const allEligible=Object.fromEntries(sidecar.rows.flatMap(row=>
+    row.editableEntryKeys.map(id=>[id,true])));
+  const target=sidecar.rows.find(row=>row.kind==='candidate')!;
+  const targetEdges=tracedVm.run(target.programId,{profileId:'kinotch-fixed'}).edges;
+  const rawCandidates=targetEdges.map((edge:{output:string;programs:number[];emission?:unknown})=>({
+    start:0,end:target.input.length,output:edge.output,origin:'program',
+    programIds:edge.programs,emission:edge.emission,
+    stage:'profile',direction:'to-modern',channel:'surface'
+  }));
+  const context={pack:{packDigest:packManifest.packDigest},sourceText:target.input,
+    profileId:'kinotch-fixed',candidates:rawCandidates};
+  const makeGate=(enabledByEntry:Record<string,boolean|null>,revision=1,
+    eligibilityByEntry=allEligible)=>createFixedTarOriginCandidateGate({
+    sidecar,ir,programs:program,manifest:packManifest,
+    expectedPackDigest:packReport.packDigest,
+    settings:{revision,eligibilityByEntry,enabledByEntry}
+  });
+  const disabled=makeGate({[target.editableEntryKeys[0]!]:false});
+  assert.equal(disabled.supportedBranches,123);
+  assert.equal(disabled.supportedPrograms,63);
+  assert.equal(disabled.revision,1);
+  assert.equal(disabled.runtimeOriginAuthenticated,false);
+  const filtered=disabled.filter(context);
+  assert.ok(filtered.every(candidate=>candidate.output!==target.output),
+    'OFFした原典候補枝だけを調停前に除外');
+  assert.ok(filtered.every(candidate=>rawCandidates.includes(candidate)),
+    'raw候補の同一参照を保持');
+  assert.deepEqual(makeGate({}).filter(context),rawCandidates,
+    'デフォルトONで現行raw候補の全順序・値を維持');
+  assert.throws(()=>disabled.filter({...context,pack:{packDigest:'0'.repeat(64)}}),
+    /Pack identity mismatch/);
+  const unverified={...rawCandidates[0]!,emission:{programId:target.programId,branchOrdinal:999}};
+  assert.equal(disabled.filter({...context,candidates:[unverified]}).length,1,
+    '未監査の枝を推測でOFFにしない');
+  assert.equal(disabled.filter({...context,profileId:'modern'}).length,rawCandidates.length,
+    '別profileは既存候補を保全');
+  const sourceLocked=makeGate({[target.editableEntryKeys[0]!]:true},2,{
+    ...allEligible,[target.editableEntryKeys[0]!]:false
+  });
+  assert.ok(sourceLocked.filter(context).every(candidate=>candidate.output!==target.output),
+    '原典lock/profile権限をユーザーONで再有効化しない');
+  assert.throws(()=>makeGate({'unknown-entry':false}),/unknown or invalid user setting/);
+  assert.throws(()=>makeGate({},-1),/invalid settings revision/);
+  const shared=sidecar.rows.find(row=>row.kind==='shared-output')!;
+  const sharedEdge=tracedVm.run(shared.programId,{profileId:'kinotch-fixed'}).edges
+    .find((edge:{output:string})=>edge.output===shared.output)!;
+  const sharedCandidate={
+    start:0,end:shared.input.length,output:sharedEdge.output,origin:'program',
+    programIds:sharedEdge.programs,emission:sharedEdge.emission,
+    stage:'profile',direction:'to-modern',channel:'surface'
+  };
+  const sharedRequest={pack:{packDigest:packManifest.packDigest},sourceText:shared.input,
+    profileId:'kinotch-fixed',candidates:[sharedCandidate]};
+  assert.equal(makeGate({[shared.editableEntryKeys[0]!]:false}).filter(sharedRequest).length,1,
+    '同一出力の別原典entryがONならORで保持');
+  assert.equal(makeGate(Object.fromEntries(shared.editableEntryKeys.map(id=>[id,false])))
+    .filter(sharedRequest).length,0,'共有出力は編集原典が全OFFのときだけ除外');
+
   const sampleRow=sidecar.rows[0]!;
   const real=tracedVm.run(sampleRow.programId,{profileId:'kinotch-fixed'}).edges
     .find((edge:{output:string})=>edge.output===sampleRow.output)!;
