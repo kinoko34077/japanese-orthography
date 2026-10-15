@@ -220,7 +220,8 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
   // 内部PoC gateの旧値照合を通過する。真のPackインスタンス認証ではない。
   const forgedPack={packDigest:packReport.packDigest};
   assert.notEqual(forgedPack,context.pack);
-  const forgedCandidate=JSON.parse(JSON.stringify(rawCandidates[0]!));
+  const sourceCandidate=rawCandidates.find(candidate=>candidate.output===target.output)!;
+  const forgedCandidate=JSON.parse(JSON.stringify(sourceCandidate));
   assert.equal(disabled.filter({...context,pack:forgedPack,candidates:[forgedCandidate]}).length,0,
     '未信頼のPack/candidateが値一致だけでOFFされ得る＝本番接続禁止の負例');
   assert.equal(disabled.runtimeOriginAuthenticated,false);
