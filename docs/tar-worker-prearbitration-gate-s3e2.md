@@ -20,3 +20,9 @@ P5は実BrowserPackからraw候補までVMの枝番号を限定的に運べる�
 `browser-worker-transform.test.ts`に通常plainとruby directの両経路を用意し、上位候補OFF時に下位候補が復帰すること、各入口の一度だけの発火、デフォルトの既存優先選択、値の置換・並べ替え拒否を確認する。正式CIでTAR parityと通常実行も再検証。実Pack A/B #343の安全block、S5-C #346実常駐メモリ、20MB/長文実測は別ゲート。
 
 P6自体のJS runtime変更は既定不作動の入口追加のみで、まだ利用者へ設定メニューを表示・公開しない。特定規則のOFFは次工程のtrusted producerと、設定階層・効果範囲が証明された場合のみ採用する。
+
+## P9 — VM発行枝トレースの内部opt-in
+
+`createTransformService` の構築引数に `trustedCandidateGate` を**内部コードが明示的に渡す場合だけ**、`programForPack` が `createBrowserProgramRuntime(pack, { traceEmissions: true })` を呼ぶ。ゲート未指定（通常公開Workerを含む）では従来どおり追加optionなしで起動する。plain/rubyの候補調停位置やゲートの同一参照・非改変検査は変えない。
+
+VM emissionの `programId/branchOrdinal` は単独では原典entryの認証情報にならない。これはP7の固定原典判定と、実BrowserPack/section bytes/IR/sourceを照合する将来のtrusted producerを結合するための**内部準備**に限る。利用者入力・postMessageからゲートやtraceの有効化はできず、現行公開Workerは未接続。ゲート有効時の速度・メモリ負荷は未実測であるため性能達成を主張しない。実Pack A/B #343の安全HOLDは維持する。
