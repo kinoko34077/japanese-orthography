@@ -137,6 +137,33 @@ test('#349 P6 内部ゲートは候補の付替え・順序変更と不正な依
   assert.match(reply.message,/unknown or reordered candidate/);
 });
 
+test('#349 P6 同一参照候補の内容・内側配列変更は拒否する', async () => {
+  const vmPack={...pack,hasSection:()=>true};
+  for(const property of ['output','programIds'] as const){
+    const programRuntime={ createBrowserProgramRuntime:async()=>({
+      transformText:async()=>({candidates:[{
+        start:0,end:1,output:'乙',policy:'anywhere',origin:'program',
+        ref:'program:7',programIds:[7],key:'original'
+      }],contextual:[],lexicalMatchCount:0,trace:{executedProgramIds:[7],runs:[]}})
+    })};
+    const service=createTransformService({
+      openPack:async()=>vmPack,executionMode:'vm-authoritative',programRuntime,
+      trustedCandidateGate:({candidates:original}:{
+        candidates:readonly {output:string;programIds:number[]}[]
+      })=>{
+        if(property==='output') original[0]!.output='偽';
+        else original[0]!.programIds[0]=999;
+        return [...original];
+      }
+    });
+    const reply=await service.handle({
+      type:'transform',requestId:property,text:'甲',profileId:'kinotch-fixed',renderMode:'plain'
+    });
+    assert.equal(reply.type,'error',property);
+    assert.match(reply.message,/mutated an original candidate/,property);
+  }
+});
+
 test('vm-authoritative mode rejects a pack without required hot sections instead of falling back', async () => {
   const service = createTransformService({ openPack: async () => pack, executionMode: 'vm-authoritative' });
   const reply = await service.handle({ type: 'transform', requestId: 'missing-hot', text: '甲', profileId: 'historical', renderMode: 'plain' });

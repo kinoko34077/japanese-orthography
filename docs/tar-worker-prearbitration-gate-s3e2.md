@@ -7,7 +7,7 @@ P5は実BrowserPackからraw候補までVMの枝番号を限定的に運べる�
 `createTransformService({ ..., trustedCandidateGate })`の**内部構築時のみ**指定できる同期関数を導入。WorkerのpostMessageの`transform`や`open`メッセージでは指定できない。既定値`null`は完全に不作動。
 
 - 入力：`{pack,sourceText,profileId,candidates}`。この段階の`candidates`はVM発行raw候補、配列を凍結した複製。
-- 出力：元候補の同一object参照を、元の順番のまま保持した部分列のみ。候補の追加・改造しての置換・再順序化は例外として拒否。返した候補だけを含む新しいobservationを組立てる。
+- 出力：元候補の同一object参照を、元の順番のまま保持した部分列のみ。候補の追加・改造しての置換・再順序化に加え、同一参照のobjectの属性や入れ子配列の改変も、内部ゲート適用前後のスナップショット比較で拒否。返した候補だけを含む新しいobservationを組立てる。この検査はゲート指定時だけ実行し、追加コストは本番採用前に測定する。
 - 通常plain入口：`hot.transformText`直後、`composeProgramSurfaceCandidates`が局所assembleする前に1回。
 - Ruby直入口：`hot.transformText`直後、`annotateProgramCandidates`および同出力dedupe/union・`localSurface`の前に1回。
 - plainからRuby共通後段へ渡る場合は`rawGateApplied`を内部で渡して二重適用しない。
