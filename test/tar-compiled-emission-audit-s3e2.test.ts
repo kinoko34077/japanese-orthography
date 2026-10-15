@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { auditTarCompiledEmissions } from '../tools/tar-compiled-emission-audit-s3e2.ts';
 import { createAuditedTarEmissionJoin } from '../tools/tar-audited-emission-join-s3e2.ts';
+import { auditTarOriginPackIdentity } from '../tools/tar-pack-identity-admission-s3e2.ts';
+import { sealBrowserPackManifest } from '../tools/browser-pack-model.ts';
 import { auditTarOriginSidecar } from '../tools/tar-origin-sidecar-s3e0.ts';
 import { normalizeAcceptedOrthographySources, assertNoSilentSourceDrop } from '../tools/orthography-source-normalization.ts';
 import { withProfileRules } from '../tools/orthography-policy.ts';
@@ -126,6 +128,38 @@ test('#349 E2-P0 固定TAR 123枝と正本compilerの実出力列を全件照合
   assert.equal(executedBranches,123);
 
   // E2-P3: 正規IR/Programで検証した123枝を、opt-inの実VM発行位置へ対応付ける。
+  // E2-P4: 正規の固定IR・Programと受入済みv3 manifestの意味識別子を結合する。
+  const packManifest=JSON.parse(await readFile(resolve(root,'data/browser-pack-v3/manifest.json'),'utf8'));
+  const packReport=JSON.parse(await readFile(resolve(root,'data/reports/browser-pack-v3-compiled.json'),'utf8'));
+  const admitted=auditTarOriginPackIdentity({
+    sourceCommit:sidecar.sourceCommit,sidecarIrDigest:sidecar.irDigest,
+    ir,programs:program,manifest:packManifest,expectedPackDigest:packReport.packDigest
+  });
+  assert.equal(admitted.packDigest,packManifest.packDigest);
+  assert.equal(admitted.programCount,195302);
+  assert.equal(admitted.runtimeOriginAuthenticated,false);
+  const resealedUnrelatedIr=sealBrowserPackManifest({
+    ...packManifest,
+    ruleRuntime:{...packManifest.ruleRuntime,programDigest:'0'.repeat(64)}
+  });
+  assert.throws(()=>auditTarOriginPackIdentity({
+    sourceCommit:sidecar.sourceCommit,sidecarIrDigest:sidecar.irDigest,
+    ir,programs:program,manifest:resealedUnrelatedIr,
+    expectedPackDigest:resealedUnrelatedIr.packDigest
+  }),/IR does not match compiler program identity/,'manifestと受入digestを共に変更しても異なるProgramを認証しない');
+  assert.throws(()=>auditTarOriginPackIdentity({
+    sourceCommit:'wrong',sidecarIrDigest:sidecar.irDigest,
+    ir,programs:program,manifest:packManifest,expectedPackDigest:packReport.packDigest
+  }),/source or IR identity drift/);
+  assert.throws(()=>auditTarOriginPackIdentity({
+    sourceCommit:sidecar.sourceCommit,sidecarIrDigest:sidecar.irDigest,
+    ir,programs:program,manifest:packManifest,expectedPackDigest:'0'.repeat(64)
+  }),/Pack identity not admitted/);
+  assert.throws(()=>auditTarOriginPackIdentity({
+    sourceCommit:sidecar.sourceCommit,sidecarIrDigest:sidecar.irDigest,
+    ir,programs:{count:program.count-1},manifest:packManifest,expectedPackDigest:packReport.packDigest
+  }),/Program count differs/);
+
   const join=createAuditedTarEmissionJoin(sidecar,ir,program);
   assert.equal(join.verifiedPrograms,63);
   assert.equal(join.verifiedBranches,123);
