@@ -32,12 +32,30 @@
     contextual: span.contextual.map((c) => ({ output: c.output, ref: c.fact.detailRef }))
   });
 
-  const createTransformService = ({ openPack, executionMode = "vm-authoritative", adapter: adapterOverride, lexicalRuntime: lexicalRuntimeOverride, programRuntime: programRuntimeOverride }) => {
+  const createTransformService = ({ openPack, executionMode = "vm-authoritative", adapter: adapterOverride, lexicalRuntime: lexicalRuntimeOverride, programRuntime: programRuntimeOverride, trustedCandidateGate = null }) => {
     const selectedAdapter = adapterOverride ?? adapter;
     const selectedLexicalRuntime = lexicalRuntimeOverride ?? lexicalRuntime;
     const selectedProgramRuntime = programRuntimeOverride ?? programRuntime;
     const executionModes = new Set(["legacy-only", "parity", "vm-authoritative"]);
     if (!executionModes.has(executionMode)) throw new RangeError(`unknown execution mode ${executionMode}`);
+    // インスタンス生成時の内部関数だけを許可する。Workerメッセージから設定しない。
+    if (trustedCandidateGate !== null && typeof trustedCandidateGate !== "function") {
+      throw new TypeError("trustedCandidateGate must be an internal function");
+    }
+    const gateProgramObservation = (p, sourceText, profileId, observation) => {
+      if (!trustedCandidateGate) return observation;
+      const original = observation.candidates ?? [];
+      const retained = trustedCandidateGate({ pack: p, sourceText, profileId, candidates: Object.freeze([...original]) });
+      if (!Array.isArray(retained)) throw new TypeError("trustedCandidateGate must return a candidate array");
+      // 調停前フィルタは元の生候補を削るだけ。付替え・追加・並べ替えを認めない。
+      let cursor = 0;
+      for (const candidate of retained) {
+        while (cursor < original.length && original[cursor] !== candidate) cursor += 1;
+        if (cursor === original.length) throw new TypeError("trustedCandidateGate returned an unknown or reordered candidate");
+        cursor += 1;
+      }
+      return { ...observation, candidates: retained };
+    };
     let packPromise = null;
     let opens = 0;
     const pack = () => {
@@ -528,11 +546,14 @@
     };
     const transformWithProgramRuby = async (p, hot, text, profileId, renderMode, supplied = {}) => {
       const scope = supplied.scope ?? await lexicalScopeFor(p, text);
-      const observation = supplied.observation ?? await hot.transformText(text, profileId, {
+      const rawObservation = supplied.observation ?? await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
         context: supplied.programContext ?? programContextFor(p)
       });
+      // ruby直接入口も、dedupe/unionと局所assembleの前に同じ候補ゲートを通す。
+      const observation = supplied.rawGateApplied ? rawObservation
+        : gateProgramObservation(p, text, profileId, rawObservation);
       const rawSurfaceCandidates = await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" }));
       const surfaceCandidates = [...rawSurfaceCandidates.reduce((byOutput, candidate) => {
         const key = `${candidate.start}:${candidate.end}:${candidate.output}`;
@@ -740,11 +761,12 @@
       const contextualOptions = sourceBackedTokenInference && profileId === "kinotch-fixed" && !baseContext?.tokenWindow
         ? { contextFor: inferredContextFor }
         : { context: baseContext };
-      const observation = await hot.transformText(text, profileId, {
+      const observation = gateProgramObservation(p, text, profileId, await hot.transformText(text, profileId, {
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
         ...contextualOptions
-      });
+      }));
+      // plainの局所assembleより前に除外し、ruby側では二重適用しない。
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
         text,
@@ -756,6 +778,7 @@
       return transformWithProgramRuby(p, hot, text, profileId, renderMode, {
         scope,
         observation: { ...observation, candidates: surfaceCandidates },
+        rawGateApplied: true,
         programContext: baseContext
       });
     };
