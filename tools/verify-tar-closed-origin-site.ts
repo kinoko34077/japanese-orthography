@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { createClosedTarOriginAudit } from './tar-closed-origin-audit-s3e2.ts';
 import { auditTarOriginSidecar } from './tar-origin-sidecar-s3e0.ts';
 import { normalizeAcceptedOrthographySources, assertNoSilentSourceDrop } from './orthography-source-normalization.ts';
@@ -20,6 +21,30 @@ const out = resolve(root, 'dist-site/browser-pack');
 const manifest = JSON.parse(await readFile(resolve(out, 'manifest.json'), 'utf8')) as BrowserPackManifestV1;
 const report = JSON.parse(await readFile(resolve(root, 'data/reports/browser-pack-v3-compiled.json'), 'utf8')) as {packDigest:string};
 assert.equal(manifest.packDigest, report.packDigest, '生成物と独立受入済みPack lockを照合');
+
+const {openFixedTarPack} = createRequire(import.meta.url)('../runtime/browser-tar-pack-lock.js');
+const fixedBrowser = await openFixedTarPack(manifest,
+  async (section:{path:string}) => readFile(resolve(out, section.path)));
+assert.equal(fixedBrowser.packDigest, report.packDigest);
+assert.equal(fixedBrowser.runtimeOriginAuthenticated, false);
+assert.equal(fixedBrowser.verifiedHotSectionIds.length, 7);
+assert.equal(fixedBrowser.isSameVerifiedPack(fixedBrowser.pack), true);
+assert.equal(fixedBrowser.isSameVerifiedPack({packDigest:report.packDigest}), false,
+  '値だけを合わせた偽Packを承認しない');
+await assert.rejects(openFixedTarPack(manifest, async (section:{path:string;sectionId:string}) => {
+  const bytes=await readFile(resolve(out, section.path));
+  if(section.sectionId==='symbol-registry') bytes[0]=(bytes[0] ?? 0)^1;
+  return bytes;
+}), /digest mismatch/, '実物理hot bytesの改竄は正規ローダーが拒否');
+console.log(JSON.stringify({
+  kind:'fixed-tar-browser-pack-lock-generated-positive-e2e',
+  packDigest:fixedBrowser.packDigest,
+  programDigest:fixedBrowser.programDigest,
+  verifiedHotSectionCount:fixedBrowser.verifiedHotSectionIds.length,
+  sameInstanceOnly:true, tamperedSectionRejected:true,
+  runtimeOriginAuthenticated:fixedBrowser.runtimeOriginAuthenticated,
+  publishedSiteBytesVerified:false
+}));
 
 const sidecar = await auditTarOriginSidecar(root);
 const normalized = await normalizeAcceptedOrthographySources(root);
