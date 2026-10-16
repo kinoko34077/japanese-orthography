@@ -43,6 +43,11 @@ const auditor = await createClosedTarOriginAudit({
 assert.equal(auditor.verifiedBranches, 123);
 assert.equal(auditor.runtimeOriginAuthenticated, false);
 
+// P10b2b-2: 静的123監査枝と「実Packの通常入力経路で実際に観測した枝」を厳密に区別。
+const branchKey = (programId: number, output: string) => JSON.stringify([programId, output]);
+const auditedKeys = new Set(sidecar.rows.map(row => branchKey(row.programId, row.output)));
+assert.equal(auditedKeys.size, auditor.verifiedBranches, '静的監査済み枝の一意性');
+const observedKeys = new Set<string>();
 let inspected = 0;
 let matched = 0;
 const samples = [...new Set(sidecar.rows.map(row => row.input))];
@@ -51,15 +56,38 @@ for (const sample of samples) {
   const result = auditor.inspect(sample, 'kinotch-fixed', {
     stages: ['profile'], directions: ['to-modern'], channels: ['surface']
   });
-  matched += result.filter((row: {status:string}) => row.status === 'matched').length;
-  if (matched >= 3) break;
+  for (const row of result as Array<{
+    status: string; entry?: { programId: number; output: string; kind: string }
+  }>) {
+    if (row.status !== 'matched') continue;
+    assert.ok(row.entry, 'matched状態に監査済み枝情報が必要');
+    const key = branchKey(row.entry.programId, row.entry.output);
+    assert.ok(auditedKeys.has(key), '未監査枝の実行時matchedを禁止');
+    observedKeys.add(key);
+    matched += 1;
+  }
 }
 assert.ok(matched > 0, '再生成した実Packから固定TAR認証済み枝の生候補が出ること');
+assert.ok(observedKeys.size <= auditor.verifiedBranches, '実観測数が固定監査枝数を超えない');
+const runtimeUnobservedRows = sidecar.rows.filter(row => !observedKeys.has(
+  branchKey(row.programId, row.output)));
+const observedCandidateBranches = sidecar.rows.filter(row => row.kind === 'candidate'
+  && observedKeys.has(branchKey(row.programId, row.output))).length;
+const observedSharedOutputBranches = sidecar.rows.filter(row => row.kind === 'shared-output'
+  && observedKeys.has(branchKey(row.programId, row.output))).length;
 console.log(JSON.stringify({
   kind: 'tar-closed-origin-audit-generated-pack-positive-e2e',
   packDigest: auditor.packDigest, irDigest: auditor.irDigest,
   verifiedBranches: auditor.verifiedBranches,
   inspectedInputs: inspected, matchedBranches: matched,
+  runtimeObservedDistinctBranches: observedKeys.size,
+  runtimeUnobservedBranches: runtimeUnobservedRows.length,
+  observedCandidateBranches, observedSharedOutputBranches,
+  runtimeUnobservedExamples: runtimeUnobservedRows.slice(0, 12).map(row => ({
+    programId: row.programId, kind: row.kind, output: row.output
+  })),
+  // 監査済みの静的123枝と実行時の正規観測数は別：未観測はOFFできる根拠にしない。
+  runtimeAllBranchesProven: observedKeys.size === auditor.verifiedBranches,
   runtimeOriginAuthenticated: auditor.runtimeOriginAuthenticated,
   publishedSiteBytesVerified: false
 }));
