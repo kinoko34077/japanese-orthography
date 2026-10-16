@@ -30,9 +30,10 @@
     if (!(originBytes instanceof ArrayBuffer) && !ArrayBuffer.isView(originBytes)) {
       throw new TypeError("TAR origin closure requires raw JSON bytes, not caller-supplied parsed objects");
     }
-    const data = originBytes instanceof ArrayBuffer
+    // digest計算中に外部が元Bufferを変更してもparse対象が揺れないよう、検証前に複製。
+    const data = (originBytes instanceof ArrayBuffer
       ? new Uint8Array(originBytes)
-      : new Uint8Array(originBytes.buffer, originBytes.byteOffset, originBytes.byteLength);
+      : new Uint8Array(originBytes.buffer, originBytes.byteOffset, originBytes.byteLength)).slice();
     if (data.byteLength !== 31798 || !root.crypto?.subtle) {
       throw new Error("TAR origin closure: pinned source size or WebCrypto unavailable");
     }
