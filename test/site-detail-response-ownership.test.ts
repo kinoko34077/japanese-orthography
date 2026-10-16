@@ -70,7 +70,7 @@ function fixture() {
   };
   const win = {
     document: doc, navigator: { onLine: true }, location: { href: 'https://example.test/' },
-    fetch: async (url: string) => ({ json: async () => url.endsWith('terminology-ja.json')
+    fetch: async (url: string | URL) => ({ json: async () => String(url).endsWith('terminology-ja.json')
       ? dictionary : { sections: [], compilerVersion: '3' } }),
     WorkerClient: { createWorkerClient: () => client },
     addEventListener() {},
