@@ -51,7 +51,7 @@ for (const sample of samples) {
   const result = auditor.inspect(sample, 'kinotch-fixed', {
     stages: ['profile'], directions: ['to-modern'], channels: ['surface']
   });
-  matched += result.filter(row => row.status === 'matched').length;
+  matched += result.filter((row: {status:string}) => row.status === 'matched').length;
   if (matched >= 3) break;
 }
 assert.ok(matched > 0, '再生成した実Packから固定TAR認証済み枝の生候補が出ること');
