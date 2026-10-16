@@ -2,10 +2,11 @@
   const commonJs = typeof module === "object" && module.exports;
   const packLock = commonJs ? require("./browser-tar-pack-lock.js") : root.BrowserTarPackLock;
   const programRuntime = commonJs ? require("./browser-program-runtime.js") : root.BrowserProgramRuntime;
-  const api = factory(root, packLock, programRuntime);
+  const workerRuntime = commonJs ? require("./browser-transform-worker.js") : root.BrowserTransformWorker;
+  const api = factory(root, packLock, programRuntime, workerRuntime);
   if (commonJs) module.exports = api;
   root.BrowserTarOriginClosure = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function (root, PackLock, ProgramRuntime) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (root, PackLock, ProgramRuntime, WorkerRuntime) {
   "use strict";
 
   // #349 P10b3c2: 正規生成JSONから独立して受入済みdigestを固定する。
@@ -85,12 +86,8 @@
     if (typeof hot.ownsTracedEmission !== "function") {
       throw new Error("TAR origin closure: genuine VM ownership required");
     }
-    const inspect = (sourceText, profileId, options = {}) => {
-      if (typeof sourceText !== "string" || typeof profileId !== "string") {
-        throw new TypeError("TAR origin closure: invalid transform input");
-      }
-      const observation = hot.transformText(sourceText, profileId, options);
-      return Object.freeze((observation.candidates ?? []).map((candidate) => {
+    // Workerの調停前ゲートと独立診断を同じ判定機構で評価し、二重VM生成を避ける。
+    const inspectCandidate = (candidate, sourceText, profileId) => {
         if (!hot.ownsTracedEmission(candidate)) return unsupported("candidate not owned by this VM");
         if (profileId !== "kinotch-fixed" || candidate?.origin !== "program"
           || candidate.stage !== "profile" || candidate.direction !== "to-modern"
@@ -112,15 +109,71 @@
           programId: entry.programId, branchOrdinal: entry.branchOrdinal,
           kind: entry.kind, editableEntryKeys: entry.editableEntryKeys
         });
-      }));
     };
+    const inspect = (sourceText, profileId, options = {}) => {
+      if (typeof sourceText !== "string" || typeof profileId !== "string") {
+        throw new TypeError("TAR origin closure: invalid transform input");
+      }
+      const observation = hot.transformText(sourceText, profileId, options);
+      return Object.freeze((observation.candidates ?? [])
+        .map((candidate) => inspectCandidate(candidate, sourceText, profileId)));
+    };
+    const createReadOnlyWorkerService = () => {
+      if (typeof WorkerRuntime?.createTransformService !== "function") {
+        throw new Error("TAR origin closure requires the existing Worker runtime");
+      }
+      let createdVMReuseCount = 0;
+      let lastAudit = Object.freeze({ seen: 0, matched: 0, unsupported: 0 });
+      // このoverrideは閉包で受入済みの同一Pack/同一VMだけを返す。
+      const sharedVM = Object.freeze({
+        createBrowserProgramRuntime: async (p, options) => {
+          if (p !== locked.pack || options?.traceEmissions !== true) {
+            throw new Error("TAR origin closure: foreign Pack or VM options");
+          }
+          createdVMReuseCount += 1;
+          return hot;
+        }
+      });
+      const service = WorkerRuntime.createTransformService({
+        openPack: async () => locked.pack,
+        executionMode: "vm-authoritative",
+        programRuntime: sharedVM,
+        trustedCandidateGate: ({pack, sourceText, profileId, candidates, isOriginalVmCandidate}) => {
+          if (pack !== locked.pack || !locked.isSameVerifiedPack(pack)) {
+            throw new Error("TAR origin closure: Worker Pack identity drift");
+          }
+          let matched = 0;
+          let unsupportedCount = 0;
+          for (const candidate of candidates) {
+            const result = inspectCandidate(candidate, sourceText, profileId);
+            if (result.status === "matched" && !isOriginalVmCandidate(candidate)) {
+              throw new Error("TAR origin closure: Worker VM ownership drift");
+            }
+            if (result.status === "matched") matched += 1;
+            else unsupportedCount += 1;
+          }
+          lastAudit = Object.freeze({seen:candidates.length, matched, unsupported:unsupportedCount});
+          // 診断のみ：候補削除や優先順位・順序の変更を行わない。
+          return [...candidates];
+        }
+      });
+      return Object.freeze({
+        handle: (message) => service.handle(message),
+        opens: () => service.opens(),
+        sharedVMReuses: () => createdVMReuseCount,
+        lastAudit: () => lastAudit,
+        runtimeOriginAuthenticated: false
+      });
+    };
+
     return Object.freeze({
       kind: "fixed-tar-origin-closure-s3e2-p10b3c2-readonly",
       sourceCommit: PIN.sourceCommit, packDigest: PIN.packDigest, irDigest: PIN.irDigest,
       programDigest: PIN.programDigest, auditedBranches: byBranch.size,
       editableOriginCount: editableKeys.size,
       runtimeOriginAuthenticated: false,
-      inspect
+      inspect,
+      createReadOnlyWorkerService
     });
   };
   return Object.freeze({ openFixedTarOriginClosure });
