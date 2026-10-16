@@ -28,3 +28,6 @@ jobs:
       - name: Verify closed TAR origin against generated Pack (not published)
         if: matrix.os == 'ubuntu-latest'
         run: node --import tsx tools/verify-tar-closed-origin-site.ts
+      - name: Verify generated fixed TAR origin index (not published)
+        if: matrix.os == 'ubuntu-latest'
+        run: node --import tsx tools/verify-tar-browser-origin-index-site.ts

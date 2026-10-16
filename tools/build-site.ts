@@ -2,6 +2,7 @@ import { copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { serializeBrowserPackManifest } from './browser-pack-model.ts';
 import { buildAcceptedBrowserPack, buildAcceptedBrowserPackV2, buildAcceptedBrowserPackV3 } from './generate-browser-pack.ts';
+import { buildFixedTarBrowserOriginIndex } from './build-tar-browser-origin-index-s3e2.ts';
 
 // #185 G/I: assemble the static GitHub Pages site.
 //   dist-site/                 site/* (HTML, CSS, UI scripts, terminology)
@@ -48,6 +49,13 @@ export async function buildSite(rootDir: string, outDir = resolve(rootDir, SITE_
     files += 1;
   }
   await writeFile(resolve(outDir, 'browser-pack', 'manifest.json'), serializeBrowserPackManifest(build.manifest));
+  // S3-E2-P10b3c-1：正規固定TAR枝の読取データのみを同じ非公開サイト成果物に出力。
+  // ブラウザ側独立hash pin未設置の間、変換候補OFFを許可する認証証拠には使わない。
+  if (pack === 'v3') {
+    const tarIndex=await buildFixedTarBrowserOriginIndex(rootDir,build.manifest);
+    await writeFile(resolve(outDir,'browser-pack','tar-origin-index.json'),tarIndex.bytes);
+    files += 1;
+  }
   // GitHub Pages must serve the files as-is (no Jekyll processing of names/paths)
   await writeFile(resolve(outDir, '.nojekyll'), '');
   return { outDir, packDigest: build.manifest.packDigest, files: files + 2 };
