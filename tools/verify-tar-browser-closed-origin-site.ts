@@ -55,6 +55,33 @@ await assert.rejects(openFixedTarOriginClosure(badManifest,async()=>{
   throw new Error('bad Pack manifest rejected before sections');
 },indexBytes),/independent accepted identity mismatch/);
 assert.equal(attemptedBad,0);
+// S3-E2-P10b3c3：公開Workerの既存サービスを同一Pack・同一VMで再利用するread-only試験。
+const sharedService=auditor.createReadOnlyWorkerService();
+const workerModes=['plain','ruby-whole-explicit'] as const;
+const workerAudit=[];
+for (const renderMode of workerModes) {
+  const response=await sharedService.handle({
+    type:'transform',requestId:'p10b3c3-'+renderMode,
+    text:inputs[0]!,profileId:'kinotch-fixed',renderMode
+  });
+  assert.equal(response.type,'result',
+    'Worker '+renderMode+' はread-onlyゲートによって変換不能にならない: '+response.message);
+  assert.equal(typeof response.result.renderedText,'string');
+  const audit=sharedService.lastAudit() as {seen:number;matched:number;unsupported:number};
+  assert.ok(audit.seen>0,'Worker '+renderMode+' は実VM候補を調停前に処理');
+  assert.equal(audit.seen,audit.matched+audit.unsupported,'候補の保存・分類に欠落なし');
+  workerAudit.push({renderMode,...audit});
+}
+assert.equal(sharedService.opens(),1,'同一WorkerでPackを二度開かない');
+assert.equal(sharedService.sharedVMReuses(),1,'Workerは検証済みの単一VMを再利用');
+assert.equal(sharedService.runtimeOriginAuthenticated,false);
+console.log(JSON.stringify({
+  kind:'fixed-tar-worker-shared-readonly-generated-pack-e2e',
+  workerAudit,packOpens:sharedService.opens(),
+  sharedVMReuses:sharedService.sharedVMReuses(),
+  originalCandidatesPreserved:true,publicWorkerMaskEnabled:false,
+  runtimeOriginAuthenticated:sharedService.runtimeOriginAuthenticated
+}));
 console.log(JSON.stringify({
   kind:'fixed-tar-browser-closed-origin-generated-pack-positive-e2e',
   sha256:'500fa882847aa1ac8e8f1cbb1f619527f28e1608819e1105adb5233a3c5d102e',
