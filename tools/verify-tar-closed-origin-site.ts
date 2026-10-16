@@ -33,7 +33,7 @@ assert.equal(fixedBrowser.isSameVerifiedPack({packDigest:report.packDigest}), fa
   '値だけを合わせた偽Packを承認しない');
 await assert.rejects(openFixedTarPack(manifest, async (section:{path:string;sectionId:string}) => {
   const bytes=await readFile(resolve(out, section.path));
-  if(section.sectionId==='symbol-registry') bytes[0]^=1;
+  if(section.sectionId==='symbol-registry') bytes[0]=(bytes[0] ?? 0)^1;
   return bytes;
 }), /digest mismatch/, '実物理hot bytesの改竄は正規ローダーが拒否');
 console.log(JSON.stringify({
