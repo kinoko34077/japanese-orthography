@@ -224,6 +224,36 @@ test('transformText passes lexical hypotheses to scoped Rule Programs', async ()
   assert.ok(result.trace.executedProgramIds.length > 0);
 });
 
+test('#349 P10b3a 実Pack・実VMの候補所有照合をWorker内部gateのplain/rubyで確認', async () => {
+  const pack = await openBrowserPack(profileAnywhereV3.manifest,
+    async (section: {path:string}) => profileAnywhereV3.files.get(section.path)!);
+  for (const mode of ['plain', 'ruby-whole-explicit']) {
+    const checks: Array<{original:boolean;copied:boolean;forged:boolean}> = [];
+    const service = createTransformService({
+      openPack: async () => pack, executionMode:'vm-authoritative',
+      trustedCandidateGate:({candidates,isOriginalVmCandidate}:{
+        candidates:readonly {output:string;emission?:{programId:number;branchOrdinal:number}}[];
+        isOriginalVmCandidate:(candidate:object)=>boolean
+      })=>{
+        const direct=candidates.find(candidate=>candidate.output==='學');
+        assert.ok(direct,mode+' では実VM由来の出力候補が必要');
+        checks.push({
+          original:isOriginalVmCandidate(direct),
+          copied:isOriginalVmCandidate({...direct}),
+          forged:isOriginalVmCandidate({emission:direct.emission})
+        });
+        return [...candidates];
+      }
+    });
+    const response=await service.handle({
+      type:'transform',requestId:'p10b3a-real-'+mode,
+      text:'校',profileId:'kinotch-fixed',renderMode:mode
+    });
+    assert.equal(response.type,'result',response.message);
+    assert.deepEqual(checks,[{original:true,copied:false,forged:false}],mode);
+  }
+});
+
 test('profile-stage Rule Programs preserve explicit anywhere scope through runtime arbitration', async () => {
   const pack = await openBrowserPack(profileAnywhereV3.manifest, async (section: { path: string }) => profileAnywhereV3.files.get(section.path)!);
   const runtime = await createBrowserProgramRuntime(pack);

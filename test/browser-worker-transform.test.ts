@@ -110,6 +110,50 @@ test('#349 P9 VM発行位置は内部候補ゲート設定時だけopt-inで伝�
     '明示した内部ゲートだけがVMの枝識別断片を観測する');
 });
 
+test('#349 P10b3a 同一VM生候補の所有照合をplain/ruby内部ゲートにのみ渡す', async () => {
+  const vmPack = { ...pack, hasSection: () => true };
+  for (const mode of ['plain', 'ruby-whole-explicit']) {
+    const verifiedObjects = new WeakSet<object>();
+    const constructorOptions: Array<{traceEmissions?:boolean} | undefined> = [];
+    const checks: Array<{original:boolean;clone:boolean;forged:boolean}> = [];
+    const programRuntime = { createBrowserProgramRuntime: async (_pack:unknown, options?:{traceEmissions?:boolean}) => {
+      constructorOptions.push(options);
+      return {
+        transformText: async () => {
+          const candidate = {start:0,end:1,output:'乙',policy:'anywhere',origin:'program',
+            ref:'program:7',programIds:[7],stage:'profile',direction:'to-modern',
+            channel:'surface',emission:{programId:7,branchOrdinal:0}};
+          verifiedObjects.add(candidate);
+          return { candidates:[candidate], contextual:[],lexicalMatchCount:0,
+            trace:{executedProgramIds:[7],runs:[]} };
+        },
+        ownsTracedEmission: (candidate:object) => verifiedObjects.has(candidate)
+      };
+    } };
+    const service = createTransformService({
+      openPack: async () => vmPack, executionMode:'vm-authoritative', programRuntime,
+      trustedCandidateGate: ({candidates, isOriginalVmCandidate}:{
+        candidates:readonly {emission:{programId:number;branchOrdinal:number}}[];
+        isOriginalVmCandidate:(candidate:object)=>boolean
+      }) => {
+        const source=candidates[0]!;
+        checks.push({
+          original:isOriginalVmCandidate(source),
+          clone:isOriginalVmCandidate({...source}),
+          forged:isOriginalVmCandidate({emission:{...source.emission}})
+        });
+        return [...candidates];
+      }
+    });
+    const result = await service.handle({
+      type:'transform',requestId:'p10b3a-'+mode,text:'甲',profileId:'kinotch-fixed',renderMode:mode
+    });
+    assert.equal(result.type,'result',result.message);
+    assert.deepEqual(constructorOptions,[{traceEmissions:true}],mode);
+    assert.deepEqual(checks,[{original:true,clone:false,forged:false}],mode);
+  }
+});
+
 test('#349 P6 内部候補ゲートをplain/ruby双方の局所調停前に1回適用し次点を復帰', async () => {
   const vmPack = { ...pack, hasSection: () => true };
   const candidates = [

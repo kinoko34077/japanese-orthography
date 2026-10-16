@@ -42,13 +42,18 @@
     if (trustedCandidateGate !== null && typeof trustedCandidateGate !== "function") {
       throw new TypeError("trustedCandidateGate must be an internal function");
     }
-    const gateProgramObservation = (p, sourceText, profileId, observation) => {
+    const gateProgramObservation = (p, sourceText, profileId, observation, hot) => {
       if (!trustedCandidateGate) return observation;
       const original = observation.candidates ?? [];
       // 参照が同じでもフィルタが候補の内容を書き換えたら不正。
       // 検証コストは内部ゲート有効時だけ負担し、既定経路は触らない。
       const snapshots = original.map((candidate) => JSON.stringify(candidate));
-      const retained = trustedCandidateGate({ pack: p, sourceText, profileId, candidates: Object.freeze([...original]) });
+      // P10b3a: 同じhotが発行した生候補かだけを内部ゲートへ読取専用で渡す。
+      // 呼出側でruntimeを差替え可能な検証環境では、これ単体はPack原典認証ではない。
+      const isOriginalVmCandidate = (candidate) =>
+        typeof hot?.ownsTracedEmission === "function" && hot.ownsTracedEmission(candidate) === true;
+      const retained = trustedCandidateGate({ pack: p, sourceText, profileId,
+        candidates: Object.freeze([...original]), isOriginalVmCandidate });
       for (let i = 0; i < original.length; i += 1) {
         if (JSON.stringify(original[i]) !== snapshots[i]) {
           throw new TypeError("trustedCandidateGate mutated an original candidate");
@@ -568,7 +573,7 @@
       });
       // ruby直接入口も、dedupe/unionと局所assembleの前に同じ候補ゲートを通す。
       const observation = supplied.rawGateApplied ? rawObservation
-        : gateProgramObservation(p, text, profileId, rawObservation);
+        : gateProgramObservation(p, text, profileId, rawObservation, hot);
       const rawSurfaceCandidates = await annotateProgramCandidates(p, surfaceCandidatesOf(observation, { lexicalMatches: scope.lexicalMatches, sourceText: text, authority: "source_rule" }));
       const surfaceCandidates = [...rawSurfaceCandidates.reduce((byOutput, candidate) => {
         const key = `${candidate.start}:${candidate.end}:${candidate.output}`;
@@ -780,7 +785,7 @@
         directions: programDirection(p, profileId),
         lexemesFor: scope.lexemesFor,
         ...contextualOptions
-      }));
+      }), hot);
       // plainの局所assembleより前に除外し、ruby側では二重適用しない。
       const surfaceCandidates = await composeProgramSurfaceCandidates(
         p,
