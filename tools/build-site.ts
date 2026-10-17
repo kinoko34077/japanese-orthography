@@ -27,6 +27,8 @@ export const SITE_RUNTIME_MODULES = [
   'rule-program-vm.js',
   'browser-program-runtime.js',
   'browser-transform-worker.js'
+  ,'browser-tar-pack-lock.js'
+  ,'browser-tar-origin-closure.js'
 ];
 
 /** #211 J: the site ships BrowserPack v3 (symbol-encoded hot pack, lazy cold evidence); `--v2` / `--v1` keep the earlier builds available. */
