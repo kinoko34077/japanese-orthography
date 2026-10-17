@@ -931,6 +931,10 @@
   /** Wire the service to a dedicated Worker scope; the pack is fetched relative to the manifest URL. */
   const attachToWorkerScope = (scope) => {
     let manifestUrl = null;
+    let tarOriginDiagnosticReadOnly = false;
+    let workerServiceUsed = false;
+    let diagnosticPromise = null;
+    let diagnosticModulesLoaded = false;
     const service = createTransformService({
       executionMode: "vm-authoritative",
       openPack: async () => {
@@ -943,10 +947,69 @@
         return runtime.openBrowserPack(manifest, sections.fetchSection);
       }
     });
+    // P10b3c4: 明示opt-inのときだけ配信済み固定原典と実Pack/VMを同じWorkerへ読み込む。
+    // 既定configure/変換は従来serviceに進むため追加fetch・module import・候補削除なし。
+    const diagnosticService = () => {
+      if (!diagnosticPromise) diagnosticPromise = (async () => {
+        if (!manifestUrl) throw new Error("TAR origin diagnostic: pack location not configured");
+        if (!diagnosticModulesLoaded) {
+          if (typeof scope.importScripts !== "function") {
+            throw new Error("TAR origin diagnostic: Worker script loader unavailable");
+          }
+          scope.importScripts("browser-tar-pack-lock.js", "browser-tar-origin-closure.js");
+          diagnosticModulesLoaded = true;
+        }
+        if (typeof scope.BrowserTarOriginClosure?.openFixedTarOriginClosure !== "function") {
+          throw new Error("TAR origin diagnostic: pinned origin closure unavailable");
+        }
+        const fetchImpl = scope.fetch.bind(scope);
+        const response = await fetchImpl(manifestUrl, { cache: "no-cache" });
+        if (!response.ok) throw new Error("TAR origin diagnostic: manifest fetch failed");
+        const manifest = await response.json();
+        const indexUrl = new URL("tar-origin-index.json", manifestUrl).href;
+        const indexResponse = await fetchImpl(indexUrl, { cache: "no-store" });
+        if (!indexResponse.ok) throw new Error("TAR origin diagnostic: source index fetch failed");
+        const originBytes = await indexResponse.arrayBuffer();
+        const sections = fetcher.createSectionFetcher({
+          manifestUrl, fetchImpl, cachesImpl: scope.caches ?? null, subtleImpl: scope.crypto.subtle
+        });
+        const closure = await scope.BrowserTarOriginClosure.openFixedTarOriginClosure(
+          manifest, sections.fetchSection, originBytes
+        );
+        return closure.createReadOnlyWorkerService();
+      })();
+      return diagnosticPromise;
+    };
     scope.addEventListener("message", async (event) => {
       const message = event.data;
-      if (message?.type === "configure") { manifestUrl = message.manifestUrl; scope.postMessage({ type: "configured", requestId: message.requestId }); return; }
-      scope.postMessage(await service.handle(message));
+      if (message?.type === "configure") {
+        const requestedDiagnostic = message.tarOriginDiagnosticReadOnly === true;
+        // 初回使用後の診断切替はPack/VMを二重保持させ得るため、旧サービスを継続する。
+        // 診断を使わない従来configure→configureの振舞いには介入しない。
+        if (workerServiceUsed && (tarOriginDiagnosticReadOnly || requestedDiagnostic)) {
+          scope.postMessage({ type: "error", requestId: message.requestId,
+            message: "TAR origin diagnostic: restart Worker before changing diagnostic configuration" });
+          return;
+        }
+        manifestUrl = message.manifestUrl;
+        tarOriginDiagnosticReadOnly = requestedDiagnostic;
+        diagnosticPromise = null;
+        scope.postMessage({ type: "configured", requestId: message.requestId });
+        return;
+      }
+      workerServiceUsed = true;
+      if (!tarOriginDiagnosticReadOnly) {
+        scope.postMessage(await service.handle(message));
+        return;
+      }
+      try {
+        // 生成した認証済みPack/VMとWorker変換が同一のインスタンスを再利用する。
+        const diagnostic = await diagnosticService();
+        scope.postMessage(await diagnostic.handle(message));
+      } catch (error) {
+        scope.postMessage({ type: "error", requestId: message?.requestId ?? null,
+          message: `TAR origin diagnostic: ${error?.message ?? error}` });
+      }
     });
   };
 
