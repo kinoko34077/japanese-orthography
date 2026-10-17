@@ -932,6 +932,7 @@
   const attachToWorkerScope = (scope) => {
     let manifestUrl = null;
     let tarOriginDiagnosticReadOnly = false;
+    let workerServiceUsed = false;
     let diagnosticPromise = null;
     let diagnosticModulesLoaded = false;
     const service = createTransformService({
@@ -982,12 +983,21 @@
     scope.addEventListener("message", async (event) => {
       const message = event.data;
       if (message?.type === "configure") {
+        const requestedDiagnostic = message.tarOriginDiagnosticReadOnly === true;
+        // 初回使用後の診断切替はPack/VMを二重保持させ得るため、旧サービスを継続する。
+        // 診断を使わない従来configure→configureの振舞いには介入しない。
+        if (workerServiceUsed && (tarOriginDiagnosticReadOnly || requestedDiagnostic)) {
+          scope.postMessage({ type: "error", requestId: message.requestId,
+            message: "TAR origin diagnostic: restart Worker before changing diagnostic configuration" });
+          return;
+        }
         manifestUrl = message.manifestUrl;
-        tarOriginDiagnosticReadOnly = message.tarOriginDiagnosticReadOnly === true;
+        tarOriginDiagnosticReadOnly = requestedDiagnostic;
         diagnosticPromise = null;
         scope.postMessage({ type: "configured", requestId: message.requestId });
         return;
       }
+      workerServiceUsed = true;
       if (!tarOriginDiagnosticReadOnly) {
         scope.postMessage(await service.handle(message));
         return;
