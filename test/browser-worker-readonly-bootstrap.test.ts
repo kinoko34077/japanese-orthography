@@ -83,3 +83,20 @@ test('#349 P10b3c4 opt-inの原典JSON不良は正常変換へフォールバッ
   assert.equal(bad.type,'error');
   assert.match(bad.message??'',/TAR origin diagnostic/);
 });
+
+test('#349 P10b3c4 Worker使用後の診断経路切替はPack二重化を防ぐため拒否',async()=>{
+  const worker=fixtureScope();
+  await worker.send({type:'configure',manifestUrl:'https://example.test/browser-pack/manifest.json',
+    requestId:'old-config'});
+  const first=await worker.send({type:'not-a-request',requestId:'old-service'});
+  assert.equal(first.type,'error');
+  const attempted=await worker.send({
+    type:'configure',manifestUrl:'https://example.test/browser-pack/manifest.json',
+    tarOriginDiagnosticReadOnly:true,requestId:'late-config'
+  });
+  assert.equal(attempted.type,'error');
+  assert.equal(attempted.requestId,'late-config');
+  assert.match(attempted.message??'',/restart Worker/);
+  assert.equal(worker.imports.length,0);
+  assert.equal(worker.requests(),0);
+});
