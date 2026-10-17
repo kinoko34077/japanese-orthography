@@ -17,7 +17,11 @@ const fixtureScope = (fetchFn?: (url:string)=>Promise<unknown>) => {
       callbacks.push(callback);
     },
     postMessage: (reply:Reply) => { replies.push(reply); },
-    importScripts: (...names:string[]) => { imports.push(names); },
+    importScripts: (...names:string[]) => {
+      imports.push(names);
+      (scope as unknown as {BrowserTarOriginClosure:unknown}).BrowserTarOriginClosure =
+        require('../runtime/browser-tar-origin-closure.js');
+    },
     fetch: async (url:string) => { requests++;return fetchFn ? fetchFn(url) : Promise.reject(new Error('no network')); },
     crypto: globalThis.crypto,
     caches:null
