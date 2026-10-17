@@ -11,7 +11,9 @@ const fixtureScope = (fetchFn?: (url:string)=>Promise<unknown>) => {
   const callbacks: Array<(event:{data:Record<string,unknown>})=>Promise<void>> = [];
   const imports:string[][] = [];
   let requests = 0;
+  let installedClosure: unknown = null;
   const scope = {
+    get BrowserTarOriginClosure() { return installedClosure; },
     addEventListener: (type:string, callback:(event:{data:Record<string,unknown>})=>Promise<void>) => {
       assert.equal(type,'message');
       callbacks.push(callback);
@@ -19,8 +21,7 @@ const fixtureScope = (fetchFn?: (url:string)=>Promise<unknown>) => {
     postMessage: (reply:Reply) => { replies.push(reply); },
     importScripts: (...names:string[]) => {
       imports.push(names);
-      (scope as unknown as {BrowserTarOriginClosure:unknown}).BrowserTarOriginClosure =
-        require('../runtime/browser-tar-origin-closure.js');
+      installedClosure = require('../runtime/browser-tar-origin-closure.js');
     },
     fetch: async (url:string) => { requests++;return fetchFn ? fetchFn(url) : Promise.reject(new Error('no network')); },
     crypto: globalThis.crypto,
