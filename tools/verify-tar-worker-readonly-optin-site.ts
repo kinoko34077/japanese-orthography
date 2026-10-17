@@ -70,7 +70,7 @@ assert.deepEqual(await worker.send({type:'configure',requestId:'config',manifest
 assert.deepEqual(worker.counts,{manifest:0,index:0,section:0,imports:0},
   'configure ACKの前後で非同期ロードを発生させない');
 const opened=await worker.send({type:'open',requestId:'open'});
-assert.equal(opened.type,'opened',opened.message);
+assert.equal(opened.type,'opened',opened.message || 'open diagnostic request should succeed');
 const index=JSON.parse(tarIndex.toString('utf8')) as {rows:Array<{input:string}>};
 const input=index.rows[0]!.input;
 const results=[];
@@ -79,7 +79,7 @@ for(const mode of ['plain','ruby-whole-explicit']){
     type:'transform',requestId:'transform-'+mode,text:input,
     profileId:'kinotch-fixed',renderMode:mode
   });
-  assert.equal(transformed.type,'result',transformed.message);
+  assert.equal(transformed.type,'result',transformed.message || 'transform should return a result');
   assert.equal(typeof transformed.result?.renderedText,'string');
   results.push({mode,text:transformed.result!.renderedText});
 }
