@@ -91,7 +91,9 @@
     for (let i = 0; i < indexSection.rowCount("stage"); i += 1) {
       const input = indexSection.value("input", i);
       const key = keyOf(STAGES[indexSection.value("stage", i)], DIRECTIONS[indexSection.value("direction", i)], CHANNELS[indexSection.value("channel", i)], input);
-      index.set(key, [...indexSection.list("programs", i)]);
+      // #342: binary-columnarの既存TypedArray viewを保持し、全行JS配列複製を省く。
+      // 利用側はfilter/反復だけで索引postings自体を書き換えない。
+      index.set(key, indexSection.list("programs", i));
       inputLengths.add(pool.symbols(input).length);
       indexedInputIds.add(input);
     }
